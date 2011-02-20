@@ -80,6 +80,17 @@ public class Models3DScene extends AbstractScene {
 
 		//Load the meshes with the ModelImporterFactory (A file can contain more than 1 mesh)
 		//Loads 3ds model
+		//Get the factory for loading .3ds files
+				//	ModelImporterFactory modelFactory = ModelImporterFactory.getFactory(
+				//".3ds");
+					//				".obj");
+		
+				//		MTTriangleMesh[] meshi = modelFactory.loadModel(pa, System.getProperty("user.dir") + File.separator + "examples" + File.separator + "models3D"  + File.separator + "data" +  File.separator +
+				//				"monkey.obj", 180,   true, true );
+				//"kentosaurus" + File.separator + "kentrosaurus.3ds", 180,   true, false );
+		
+				//Vector3D translationToScreenCenter = new Vector3D();
+		
 		MTTriangleMesh[] meshes = ModelImporterFactory.loadModel(mtApplication, modelsPath + "jazz_Obj" + MTApplication.separator + "honda_jazz.obj", 180, true, false );
 		
 		//Get the biggest mesh in the group to use as a reference for setting the position/scale

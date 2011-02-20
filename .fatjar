@@ -1,0 +1,14 @@
+#Fat Jar Configuration File
+#Sun Feb 20 22:45:49 CET 2011
+onejar.license.required=true
+manifest.classpath=
+manifest.removesigners=true
+onejar.checkbox=false
+jarname=MT4j_fat.jar
+manifest.mergeall=true
+manifest.mainclass=advanced.mtShell.StartMTShell
+manifest.file=<createnew>
+jarname.isextern=false
+onejar.expand=
+excludes=
+includes=
