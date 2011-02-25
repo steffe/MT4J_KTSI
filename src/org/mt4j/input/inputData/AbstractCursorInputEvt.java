@@ -45,6 +45,8 @@ public abstract class AbstractCursorInputEvt extends MTInputEvent {
 	
 	public static final int INPUT_ENDED = 2;
 
+	public static final int INPUT_STARTED = 0;
+
 	/** The position x. */
 	private float positionX;
 	

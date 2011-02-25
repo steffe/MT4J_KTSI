@@ -43,6 +43,8 @@ public abstract class MTGestureEvent extends MTInputEvent {
 	
 	/** The Constant GESTURE_ENDED. */
 	public static final int GESTURE_ENDED 	= 2;
+
+	public static final int GESTURE_STARTED = 0;
 	
 	/**
 	 * Instantiates a new gesture event.
