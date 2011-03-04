@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xs:schema targetNamespace="http://ktsi.ch/mt4j/touchMod"
+    xmlns:at="http://ktsi.ch/mt4j/touchMod"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    elementFormDefault="qualified">
+
+    <xs:element name="Attributs">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="Attribut" type="at:Attribut"/>
+                <xs:element name="ID" type="xs:ID"/>
+                <xs:element name="Definition" type="at:Definitions" 
+			    minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element name="Values" type="at:Values" 
+			    minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="Attribut">
+        <xs:sequence>
+            <xs:element name="name" type="xs:string"/>
+            <xs:element name="address" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="Definitions">
+        <xs:sequence>
+            <xs:element name="Lenght" type="xs:int"/>
+            <xs:element name="Font" type="xs:string"/>
+            <xs:element name="mMode" type="xs:int"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="Values">
+        <xs:sequence>
+            <xs:element name="text" type="xs:string"/>
+            <xs:element name="color" type="xs:string"/>
+            <xs:element name="order" type="xs:int"/>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>

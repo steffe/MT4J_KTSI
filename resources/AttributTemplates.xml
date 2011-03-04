@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<at:Attribut-Templates xmlns:at="http://ktsi.ch/mt4j/touchMod">
+    <at:Attribut>
+        <at:ID>00001</at:ID>
+        <at:name>TextField</at:name>
+        <at:address></at:address>
+    	<at:Definitions>
+        	<at:Lenght>250</at:Lenght>
+        	<at:Font>5</at:Font>
+        	<at:mMode>1</at:mMode>
+    	</at:Definitions>
+    	<at:Values>
+        	<at:text></at:text>
+        	<at:color></at:color>
+        	<at:order></at:order>
+    	</at:Values>
+    </at:Attribut>
+       <at:Attribut>
+        <at:ID>00001</at:ID>
+        <at:name>DateField</at:name>
+        <at:address></at:address>
+    	<at:Definitions>
+        	<at:Format></at:Format>
+        	<at:Font>5</at:Font>
+        	<at:mMode>1</at:mMode>
+    	</at:Definitions>
+    	<at:Values>
+        	<at:text></at:text>
+        	<at:color></at:color>
+        	<at:order></at:order>
+    	</at:Values>
+    </at:Attribut>
+</at:Attribut-Templates>
+
