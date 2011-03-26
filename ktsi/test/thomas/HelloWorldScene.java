@@ -1,5 +1,6 @@
 package test.thomas;
 
+import java.awt.TextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -15,6 +16,7 @@ import org.mt4j.components.visibleComponents.shapes.MTRectangle;
 import org.mt4j.components.visibleComponents.shapes.MTRoundRectangle;
 import org.mt4j.components.visibleComponents.widgets.MTTextArea;
 import org.mt4j.components.visibleComponents.widgets.MTTextArea.ExpandDirection;
+import org.mt4j.components.visibleComponents.widgets.MTTextField;
 import org.mt4j.components.visibleComponents.widgets.buttons.MTImageButton;
 import org.mt4j.components.visibleComponents.widgets.buttons.MTSvgButton;
 import org.mt4j.components.visibleComponents.widgets.keyboard.MTKeyboard;
@@ -32,30 +34,50 @@ import processing.core.PImage;
 
 public class HelloWorldScene extends AbstractScene {
 
-	private MTRectangle rect;
 	private MTApplication mtApplication;
+	/*
+	private MTRectangle rect;
 	private MTRoundRectangle round_Rect;
+	private MTRoundRectangle baserect;
 	private MTTextArea infobox;
+	private MTTextArea textField;
 	private int h;
 	private int w;
 	private int zoomFac;
+	private int obSizeWidht;
+	private int obSizeHeight;
+	private int numberAttribut;
+	private MTImageButton buttonMaxMin;
+	private MTImageButton buttonRotate;
+	private MTImageButton buttonKeyboard;
+	private int minmaxModus;
+	private MTColor greypez = new MTColor(12,12,12,34);
+	private MTTextField desc_info;
+	*/
 	
 	public HelloWorldScene(MTApplication mtAppl, String name) {
 		super(mtAppl, name);
 		this.mtApplication=mtAppl;
-		
-		MTColor white = new MTColor(0,0,0);
-		MTColor speblue = new MTColor(51,102,255);
 		this.setClearColor(new MTColor(100, 100, 100, 255));
 		//Show touches
 		this.registerGlobalInputProcessor(new CursorTracer(mtApplication, this));
 		
+		/*
+		MTColor white = new MTColor(0,0,0);
+		MTColor speblue = new MTColor(51,102,255);
+
+		obSizeWidht = 300; // Grösse Min
+		obSizeHeight = 200; // Grösse Min
+		numberAttribut =2; // Anzahl Attribute (Bild, Text) im Objekt vorhanden.
+		
+
+		
 		IFont fontArial = FontManager.getInstance().createFont(mtApplication, "arial.ttf", 
-				30, 	//Font size
+				25, 	//Font size
 				MTColor.BLACK,  //Font fill color
 				white);	//Font outline color
 		//Create a textfield
-		MTTextArea textField = new MTTextArea(mtApplication, fontArial); 
+		textField = new MTTextArea(mtApplication, fontArial); 
 		textField.setNoStroke(true);
 		textField.setNoFill(true);
 		textField.setText("F5E Tiger");
@@ -63,18 +85,26 @@ public class HelloWorldScene extends AbstractScene {
 		//textField.setPositionGlobal(new Vector3D(mtApplication.width/2f, mtApplication.height/2f));
 		//Add the textfield to our canvas
 		textField.setPickable(false);
-		textField.translate(new Vector3D(0,0,0));
+		textField.translate(new Vector3D(5,5));
+		
+		// Base Rect 
+		
+		baserect = new MTRoundRectangle(10,10,0,obSizeWidht-20,obSizeHeight-20,5,5,mtApplication);
+		baserect.setNoStroke(true);
+		baserect.setStrokeColor(MTColor.GRAY);
+		baserect.setFillColor(MTColor.GRAY);
+		baserect.setPickable(false);
 		
 		
 		// Add Round Rectangle
-		round_Rect = new MTRoundRectangle(0, 0, 0, 300, 200, 15, 15, mtApplication);
+		round_Rect = new MTRoundRectangle(0, 0, 0, obSizeWidht, obSizeHeight, 10, 10, mtApplication);
 		round_Rect.setPositionGlobal(new Vector3D(600,300));
-		round_Rect.setFillColor(new MTColor(12,12,12,34));
-		round_Rect.setStrokeWeight(32);
+		round_Rect.setFillColor(greypez);
+		round_Rect.setStrokeWeight(1);
 		round_Rect.setStrokeColor(speblue);
 		
 		// Show Image
-		PImage f5e = mtApplication.loadImage("test" + MTApplication.separator + "thomas"+ MTApplication.separator + "f5e2.png");
+		PImage f5e = mtApplication.loadImage("test" + MTApplication.separator + "thomas"+ MTApplication.separator + "image" + MTApplication.separator + "f5e2.png");
 		h = f5e.height;
 		w = f5e.width; 
 		zoomFac=3;
@@ -95,7 +125,7 @@ public class HelloWorldScene extends AbstractScene {
 				MTColor.BLACK,  //Font fill color
 				white);	//Font outline color
 		
-		infobox = new MTTextArea(180,20,80,140, fontArialMini,mtApplication); 
+		infobox = new MTTextArea(20,(obSizeHeight/numberAttribut)+10,obSizeWidht-40,(obSizeHeight/numberAttribut)-30, fontArialMini,mtApplication); 
 		infobox.setNoStroke(false);
 		infobox.setNoFill(true);
 		infobox.setText("xx");
@@ -103,19 +133,26 @@ public class HelloWorldScene extends AbstractScene {
 		infobox.translate(new Vector3D(0,0,0));
 	//	infobox.setPositionGlobal(new Vector3D(200,20));
 		infobox.setStrokeWeight(1);
-		infobox.setStrokeColor(MTColor.GREY);
+		infobox.setStrokeColor(MTColor.BLACK);
+		infobox.setName("Inhalt");
 	//	infobox.setSizeLocal(50, 140);
+	
+		// Description Field (Infobox)
+	
+		desc_info = new MTTextField(0,0, 50, 20,fontArialMini, mtApplication);
+		desc_info.setNoStroke(true);
+		desc_info.setNoFill(true);
+		desc_info.setText(infobox.getName());
 		
-		
-		// Button
-		PImage buttonImage = mtApplication.loadImage("test" + MTApplication.separator + "thomas"+ MTApplication.separator + "buttonRotate.png");
-		final MTImageButton buttonRotate = new MTImageButton(buttonImage, mtApplication);
+		// Button for Rotate
+		PImage buttonImage = mtApplication.loadImage("test" + MTApplication.separator + "thomas"+ MTApplication.separator + "image" + MTApplication.separator +  "buttonRotate.png");
+		buttonRotate = new MTImageButton(buttonImage, mtApplication);
 		buttonRotate.setSizeLocal(30,30);
 		buttonRotate.setFillColor(new MTColor(255,255,255,200));
 		buttonRotate.setName("KeyboardButton");
 		buttonRotate.setNoStroke(true);
 		//keyboardButton.translateGlobal(new Vector3D(-2,mtApplication.height-keyboardButton.getWidthXY(TransformSpace.GLOBAL)+2,0));
-		buttonRotate.setPositionGlobal(new Vector3D(20,180));
+		buttonRotate.setPositionGlobal(new Vector3D(20,obSizeHeight-20));
 		
 		buttonRotate.addActionListener(new ActionListener() {
 			
@@ -124,7 +161,7 @@ public class HelloWorldScene extends AbstractScene {
 				{
 				case TapEvent.BUTTON_CLICKED:
 					rect.rotateZ(new Vector3D(w/zoomFac,h/zoomFac,0), 180); // 516 x 316 
-					// rect.setSizeXYGlobal(120, 120); // Achtung auf Rückstellungen des Werts
+					// rect.setSizeXYGlobal(120, 120); // Achtung auf Rückstellungen des Wertes
 					break;
 				
 				default:
@@ -135,13 +172,13 @@ public class HelloWorldScene extends AbstractScene {
 		});
 		
 		// Button for Keyboard 
-		PImage buttonKeyboardImage = mtApplication.loadImage("test" + MTApplication.separator + "thomas"+ MTApplication.separator + "keyb128.png");
-		final MTImageButton buttonKeyboard= new MTImageButton(buttonKeyboardImage, mtApplication);
+		PImage buttonKeyboardImage = mtApplication.loadImage("test" + MTApplication.separator + "thomas"+ MTApplication.separator + "image" + MTApplication.separator + "keyb128.png");
+		buttonKeyboard= new MTImageButton(buttonKeyboardImage, mtApplication);
 		buttonKeyboard.setSizeLocal(30, 30);
 		buttonKeyboard.setFillColor(new MTColor(255,255,255,200));
 		buttonKeyboard.setName("KeyboardImage");
 		buttonKeyboard.setNoStroke(true);
-		buttonKeyboard.setPositionGlobal(new Vector3D(280,180));
+		buttonKeyboard.setPositionGlobal(new Vector3D(obSizeWidht-20,obSizeHeight-20));
 		
 		buttonKeyboard.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ke) {
@@ -153,6 +190,9 @@ public class HelloWorldScene extends AbstractScene {
 						//keyb.setSizeXYGlobal(400, 200);
 						keyb.setFillColor(new MTColor(30,30,30,210));
 						keyb.setStrokeColor(new MTColor(0,0,0,255));
+						keyb.setSizeXYGlobal(350, 200);
+						keyb.translate(new Vector3D(-50,50));
+						
 						
 				        final MTTextArea t = new MTTextArea(mtApplication, FontManager.getInstance().createFont(mtApplication, "arial.ttf", 50, 
 				        		new MTColor(0,0,0,255), //Fill color 
@@ -168,13 +208,12 @@ public class HelloWorldScene extends AbstractScene {
 						round_Rect.addChild(keyb);
 						
 						// Save Button, save text
-						/*
-						MTSvgButton saveButton = new MTSvgButton("test" + MTApplication.separator + "thomas"+ MTApplication.separator + "buttonSave.svg",mtApplication);
-						saveButton.scale(0.4f, 0.4f, 1, new Vector3D(0,0,0),TransformSpace.LOCAL);
-						saveButton.translate(new Vector3D(0,0,0));
-						saveButton.setBoundsPickingBehaviour(AbstractShape.BOUNDS_ONLY_CHECK);
-						*/
-						PImage saveButtonImage = mtApplication.loadImage("test" + MTApplication.separator + "thomas"+ MTApplication.separator + "buttonSave.png");
+						// MTSvgButton saveButton = new MTSvgButton("test" + MTApplication.separator + "thomas"+ MTApplication.separator + "buttonSave.svg",mtApplication);
+						// saveButton.scale(0.4f, 0.4f, 1, new Vector3D(0,0,0),TransformSpace.LOCAL);
+						// saveButton.translate(new Vector3D(0,0,0));
+						//saveButton.setBoundsPickingBehaviour(AbstractShape.BOUNDS_ONLY_CHECK);
+						
+						PImage saveButtonImage = mtApplication.loadImage("test" + MTApplication.separator + "thomas"+ MTApplication.separator + "image" + MTApplication.separator + "buttonSave.png");
 						final MTImageButton saveButton= new MTImageButton(saveButtonImage, mtApplication);
 						saveButton.setSizeLocal(50,50);
 						saveButton.setFillColor(new MTColor(255,255,255,200));
@@ -210,20 +249,96 @@ public class HelloWorldScene extends AbstractScene {
 			}
 		});
 		
-		
+		//Button Max/Min Modus
+		PImage buttonMaxMinImage = mtApplication.loadImage("test" + MTApplication.separator + "thomas"+ MTApplication.separator + "image" + MTApplication.separator +  "buttonMaxMin.png");
+		buttonMaxMin= new MTImageButton(buttonMaxMinImage, mtApplication);
+		buttonMaxMin.setSizeLocal(30, 30);
+		buttonMaxMin.setFillColor(new MTColor(255,255,255,200));
+		buttonMaxMin.setName("KeyboardImage");
+		buttonMaxMin.setNoStroke(true);
+		buttonMaxMin.setPositionGlobal(new Vector3D(obSizeWidht-20,20));
 
+		buttonMaxMin.addActionListener(new ActionListener() {
+			
+		float h= round_Rect.getHeightXY(TransformSpace.RELATIVE_TO_PARENT);
+		float w= round_Rect.getWidthXY(TransformSpace.RELATIVE_TO_PARENT);
+		MTColor cFill = new MTColor(round_Rect.getFillColor());
+		MTColor cRRFill= new MTColor(baserect.getFillColor());
+		
+			public void actionPerformed(ActionEvent mm) {
+				
+				switch (mm.getID()) {
+				case TapEvent.BUTTON_CLICKED:
+
+				if(minmaxModus==0){
+					obSizeHeight = 400;
+					obSizeWidht = 300;
+					round_Rect.setSizeLocal(obSizeWidht, obSizeHeight);
+					round_Rect.setFillColor(cFill);
+					baserect.setSizeLocal(obSizeWidht-20, obSizeHeight-20);
+					baserect.setFillColor(cRRFill);
+					buttonKeyboard.translate(new Vector3D(obSizeWidht-w,obSizeHeight-h));
+					buttonMaxMin.translate(new Vector3D(obSizeWidht-w,0));
+					buttonRotate.translate(new Vector3D(0,obSizeHeight-h));
+					
+					infobox.translate(new Vector3D(0,60)); 
+					desc_info.translate(new Vector3D(0,-25));
+					infobox.addChild(desc_info); // Text Beschrieb für Infobox wird der Box vererbt (einfachere Handhabung)
+					minmaxModus=1;
+					}
+				else{
+					round_Rect.setSizeLocal(w, h);
+					round_Rect.setFillColor(cFill);
+					baserect.setSizeLocal(w-20, h-20);
+					baserect.setFillColor(cRRFill);
+					buttonKeyboard.translate(new Vector3D(w-obSizeWidht,h-obSizeHeight));
+					buttonMaxMin.translate(new Vector3D(w-obSizeWidht,0));
+					buttonRotate.translate(new Vector3D(0,h-obSizeHeight));
+					
+					
+					infobox.translate(new Vector3D(0,-60));
+					desc_info.translate(new Vector3D(0,25));
+					infobox.removeChild(desc_info);
+					minmaxModus=0;
+					
+					}
+					break;
+
+				default:
+					break;
+				}
+				
+			}
+		});
+		
+		
+		System.out.println("Widht = "+w);
+		System.out.println("Height = " +h);
 		
 		// Add MTComponets to Canvas
 		// --------------------------------
-		round_Rect.addChild(textField);
-		round_Rect.addChild(rect);
+		round_Rect.addChild(baserect);
+		round_Rect.addChild(textField); //Titeltext
+		round_Rect.addChild(infobox); // Text mit Eingabebox
+		round_Rect.addChild(rect); // Bild 
 		round_Rect.addChild(buttonRotate);
 		round_Rect.addChild(buttonKeyboard);
-		round_Rect.addChild(infobox);
-		this.getCanvas().addChild(round_Rect);
+		round_Rect.addChild(buttonMaxMin);
+		
+		*/
+	
+		MyMTObject t1 = new MyMTObject(mtApplication);
+		
+		this.getCanvas().addChild(t1);
 	}
 	@Override
-	public void init() {}
+	public void init() {
+		
+		
+	}
 	@Override
-	public void shutDown() {}
+	public void shutDown() {
+		
+		
+	}
 }
