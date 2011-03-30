@@ -1,36 +1,17 @@
 package test.thomas;
 
-import java.awt.TextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.text.TabableView;
-
 import org.mt4j.MTApplication;
-import org.mt4j.components.MTComponent;
-import org.mt4j.components.TransformSpace;
-import org.mt4j.components.visibleComponents.font.FontManager;
-import org.mt4j.components.visibleComponents.font.IFont;
-import org.mt4j.components.visibleComponents.shapes.AbstractShape;
-import org.mt4j.components.visibleComponents.shapes.MTRectangle;
-import org.mt4j.components.visibleComponents.shapes.MTRoundRectangle;
-import org.mt4j.components.visibleComponents.widgets.MTTextArea;
-import org.mt4j.components.visibleComponents.widgets.MTTextArea.ExpandDirection;
-import org.mt4j.components.visibleComponents.widgets.MTTextField;
 import org.mt4j.components.visibleComponents.widgets.buttons.MTImageButton;
-import org.mt4j.components.visibleComponents.widgets.buttons.MTSvgButton;
-import org.mt4j.components.visibleComponents.widgets.keyboard.MTKeyboard;
 import org.mt4j.input.inputProcessors.componentProcessors.tapProcessor.TapEvent;
 import org.mt4j.input.inputProcessors.globalProcessors.CursorTracer;
 import org.mt4j.sceneManagement.AbstractScene;
 import org.mt4j.util.MTColor;
 import org.mt4j.util.math.Vector3D;
-
-import com.sun.opengl.impl.packrect.Rect;
-import com.sun.xml.internal.bind.v2.TODO;
-import com.sun.xml.internal.ws.api.model.wsdl.WSDLBoundOperation.ANONYMOUS;
 
 import processing.core.PImage;
 
@@ -64,7 +45,7 @@ public class HelloWorldScene extends AbstractScene {
 		this.registerGlobalInputProcessor(new CursorTracer(mtApplication, this));
 		
 		maxMyObjects=30;
-		counter=1;
+		counter=0;
 		myobjectList=new ArrayList<MyMTObject>();
 		
 		
@@ -85,9 +66,10 @@ public class HelloWorldScene extends AbstractScene {
 				switch(e.getID()){
 				case TapEvent.BUTTON_CLICKED:
 					//MyMTObject t1 = new MyMTObject(mtApplication,1);
+					//getCanvas().addChild(t1.getMyObjectBack());
 					myobjectList.add( new MyMTObject(mtApplication,counter) );				
 					getCanvas().addChild(myobjectList.get(counter).getMyObjectBack());	
-						
+					
 					counter++;
 						
 				break;
