@@ -13,6 +13,7 @@ import org.mt4j.components.visibleComponents.font.FontManager;
 import org.mt4j.components.visibleComponents.font.IFont;
 import org.mt4j.components.visibleComponents.shapes.MTRectangle;
 import org.mt4j.components.visibleComponents.shapes.MTRoundRectangle;
+import org.mt4j.components.visibleComponents.widgets.MTSceneMenu;
 import org.mt4j.components.visibleComponents.widgets.MTTextArea;
 import org.mt4j.components.visibleComponents.widgets.MTTextField;
 import org.mt4j.components.visibleComponents.widgets.MTTextArea.ExpandDirection;
@@ -28,6 +29,13 @@ import org.mt4j.util.math.Vector3D;
 import processing.core.PApplet;
 import processing.core.PGraphics;
 import processing.core.PImage;
+
+/**
+ * 
+ * The Class MyMTObject. Standard Class for all Object on the Table. 
+ * 
+ * @author tandrich
+ */
 
 public class MyMTObject extends MTComponent{
 
@@ -303,9 +311,8 @@ public class MyMTObject extends MTComponent{
 				
 			}
 		});
-		
-		
-		
+	
+	
 		
 		//System.out.println("Widht = "+w);
 		//System.out.println("Height = " +h);
@@ -350,3 +357,25 @@ public class MyMTObject extends MTComponent{
 	return id;
 	}
 }
+/**
+ * Struktur des Objekts
+ * ---------------------
+ * Alle Attribute sind unter Objekte und beinhalte ihre spezifischen Eigenschaften. Müssen über eine XML Schnittstelle anbindbar sein
+ * Max/Min Modus ??? 
+ * 
+ * Wie soll Anzahl Attribute und die Grösse des gesammt Objekt gehandhabt werden? 
+ * 1 Fixe Max/Min Grösse -> Attribute Teilen sich den vorhanden Platz. Mehre Attribute -> weniger Platz!
+ * 2.Attribute bekommen definierte Grösse zugeschrieben. Mehere Attribute ergeben ein grösser Objekt!
+ * 
+ * - Textarea (Textmenge grösser wie der vorgesehner Platz-> Abschneiden, Scrollbalgen, Schriftgrösse Anpassen)
+ * - Bild (JPEG vorhanden)
+ * - Zeichung (zum selber zeichnen)
+ * - Textlinie
+ * - Number, Data, Währung
+ * 
+ * Kontextmenü:
+ *  Anstatt Scene wird ein MTMyObject (roundRect) übergeben. CloseButton zerstört das Object und Restore übernimmt die Funktion des MIN/Max 
+ * 
+ * 
+ * 
+*/
