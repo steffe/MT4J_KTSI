@@ -99,6 +99,9 @@ public class HelloWorldScene extends AbstractScene {
 				switch(e.getID()){
 				case TapEvent.BUTTON_CLICKED:
 					counter--;
+					getCanvas().removeChild(myobjectList.get(counter).getMyObjectBack());
+					myobjectList.remove(counter);
+					
 					break;
 				
 				default:

@@ -3,31 +3,23 @@ package test.thomas;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import org.apache.batik.dom.AbstractComment;
 import org.mt4j.MTApplication;
-import org.mt4j.components.MTCanvas;
 import org.mt4j.components.MTComponent;
 import org.mt4j.components.TransformSpace;
-import org.mt4j.components.visibleComponents.AbstractVisibleComponent;
 import org.mt4j.components.visibleComponents.font.FontManager;
 import org.mt4j.components.visibleComponents.font.IFont;
 import org.mt4j.components.visibleComponents.shapes.MTRectangle;
 import org.mt4j.components.visibleComponents.shapes.MTRoundRectangle;
 import org.mt4j.components.visibleComponents.widgets.MTSceneMenu;
 import org.mt4j.components.visibleComponents.widgets.MTTextArea;
-import org.mt4j.components.visibleComponents.widgets.MTTextField;
 import org.mt4j.components.visibleComponents.widgets.MTTextArea.ExpandDirection;
+import org.mt4j.components.visibleComponents.widgets.MTTextField;
 import org.mt4j.components.visibleComponents.widgets.buttons.MTImageButton;
 import org.mt4j.components.visibleComponents.widgets.keyboard.MTKeyboard;
-import org.mt4j.input.inputProcessors.componentProcessors.AbstractComponentProcessor;
 import org.mt4j.input.inputProcessors.componentProcessors.tapProcessor.TapEvent;
-import org.mt4j.input.inputProcessors.globalProcessors.CursorTracer;
-import org.mt4j.sceneManagement.AbstractScene;
 import org.mt4j.util.MTColor;
 import org.mt4j.util.math.Vector3D;
 
-import processing.core.PApplet;
-import processing.core.PGraphics;
 import processing.core.PImage;
 
 /**
@@ -160,7 +152,7 @@ public class MyMTObject extends MTComponent{
 				switch(e.getID())
 				{
 				case TapEvent.BUTTON_CLICKED:
-					rect.rotateZ(new Vector3D(w/zoomFac,h/zoomFac,0), 180); // 516 x 316 
+					round_Rect.rotateZ(new Vector3D(w/zoomFac,h/zoomFac,0), 180); // 516 x 316 
 					// rect.setSizeXYGlobal(120, 120); // Achtung auf Rückstellungen des Wertes
 					break;
 				
