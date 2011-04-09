@@ -45,6 +45,7 @@ import org.mt4j.util.math.Vertex;
 
 import processing.core.PApplet;
 import processing.core.PGraphics;
+import test.thomas.MTNumKeyboard;
 
 /**
  * The Class MTTextArea. This widget allows to display text with a specified font.
@@ -1178,6 +1179,17 @@ public class MTTextArea extends MTRectangle implements IdragClusterable, ITextIn
 		this.setPositionRelativeToParent(new Vector3D(40, -this.getHeightXY(TransformSpace.LOCAL)*0.5f));
 	}
 
+	/**
+	 * Snap to NumKeyboard.
+	 * 
+	 * @param mtNumKeyboard the mtNumkeyboard
+	 */
+	public void snapToKeyboard(MTNumKeyboard mtNumKeyboard){
+		//OLD WAY
+//		this.translate(new Vector3D(30, -(getFont().getFontAbsoluteHeight() * (getLineCount())) + getFont().getFontMaxDescent() - borderHeight, 0));
+		mtNumKeyboard.addChild(this);
+		this.setPositionRelativeToParent(new Vector3D(40, -this.getHeightXY(TransformSpace.LOCAL)*0.5f));
+	}
 
 	public boolean isSelected() {
 		// TODO Auto-generated method stub

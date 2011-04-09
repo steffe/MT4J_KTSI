@@ -21,6 +21,7 @@ import org.mt4j.util.MTColor;
 import org.mt4j.util.math.Vector3D;
 
 import processing.core.PImage;
+import java.util.Calendar;
 
 /**
  * 
@@ -50,6 +51,8 @@ public class MyMTObject extends MTComponent{
 	private MTColor greypez = new MTColor(12,12,12,34);
 	private MTTextField desc_info;
 	private int id;
+	private IFont fontArialMini;
+	
 	
 	public MyMTObject(MTApplication pApplet_2, int id_2)  {
 		super (pApplet_2);
@@ -61,8 +64,7 @@ public class MyMTObject extends MTComponent{
 		obSizeWidht = 300; // Grösse Min
 		obSizeHeight = 200; // Grösse Min
 		numberAttribut =2; // Anzahl Attribute (Bild, Text) im Objekt vorhanden.
-
-		
+	
 		IFont fontArial = FontManager.getInstance().createFont(pApplet, "arial.ttf", 
 				25, 	//Font size
 				MTColor.BLACK,  //Font fill color
@@ -112,7 +114,7 @@ public class MyMTObject extends MTComponent{
 		//rect.rotateZ(new Vector3D(100,100),90); // Drehen eines Objekts		
 		
 		// Textfield for Input
-		IFont fontArialMini = FontManager.getInstance().createFont(pApplet, "arial.ttf", 
+		fontArialMini = FontManager.getInstance().createFont(pApplet, "arial.ttf", 
 				15, 	//Font size
 				MTColor.BLACK,  //Font fill color
 				white);	//Font outline color
@@ -156,6 +158,7 @@ public class MyMTObject extends MTComponent{
 					// rect.setSizeXYGlobal(120, 120); // Achtung auf Rückstellungen des Wertes
 					break;
 				
+					
 				default:
 					break;
 				}
@@ -184,7 +187,7 @@ public class MyMTObject extends MTComponent{
 						keyb.setStrokeColor(new MTColor(0,0,0,255));
 						keyb.setSizeXYGlobal(350, 200);
 						keyb.translate(new Vector3D(-50,50));
-						
+
 						
 				        final MTTextArea t = new MTTextArea(pApplet, FontManager.getInstance().createFont(pApplet, "arial.ttf", 50, 
 				        		new MTColor(0,0,0,255), //Fill color 
@@ -309,6 +312,8 @@ public class MyMTObject extends MTComponent{
 		//System.out.println("Widht = "+w);
 		//System.out.println("Height = " +h);
 		
+		MTNumField p1 = new MTNumField(pApplet,fontArialMini);
+		
 		// Add MTComponets to Canvas
 		// --------------------------------
 		round_Rect.addChild(baserect);
@@ -318,6 +323,7 @@ public class MyMTObject extends MTComponent{
 		round_Rect.addChild(buttonRotate);
 		round_Rect.addChild(buttonKeyboard);
 		round_Rect.addChild(buttonMaxMin);
+		round_Rect.addChild(p1.getMyAttributBack());
 		
 	}
 	/**

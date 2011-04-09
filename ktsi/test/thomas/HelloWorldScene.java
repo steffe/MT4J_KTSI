@@ -69,9 +69,9 @@ public class HelloWorldScene extends AbstractScene {
 					//getCanvas().addChild(t1.getMyObjectBack());
 					myobjectList.add( new MyMTObject(mtApplication,counter) );				
 					getCanvas().addChild(myobjectList.get(counter).getMyObjectBack());	
-					
+					System.out.println("Zähler vor Add: " +counter);
 					counter++;
-						
+					System.out.println("Zähler nach Add: " +counter);
 				break;
 				
 				default:
@@ -98,10 +98,17 @@ public class HelloWorldScene extends AbstractScene {
 			public void actionPerformed(ActionEvent e) {
 				switch(e.getID()){
 				case TapEvent.BUTTON_CLICKED:
-					counter--;
-					getCanvas().removeChild(myobjectList.get(counter).getMyObjectBack());
-					myobjectList.remove(counter);
+					if(counter != 0){
 					
+					getCanvas().removeChild(myobjectList.get(counter-1).getMyObjectBack()); // Entfernen des Objekts auf dem Canvas
+					myobjectList.remove(counter-1); // Remove Object from arryeList
+					
+					System.out.println("Zähler rem vor: " +counter);
+					counter--;
+				}
+					else {
+					System.out.println("Kein Objeckt zum enfernen vorhanden " +counter);	
+					}
 					break;
 				
 				default:
@@ -112,7 +119,10 @@ public class HelloWorldScene extends AbstractScene {
 			}
 		});
 
-
+		// MTNumKeyboard kn1= new MTNumKeyboard(mtApplication);
+		// this.getCanvas().addChild(kn1);
+		
+		
 		this.getCanvas().addChild(buttonDel);
 		this.getCanvas().addChild(buttonNew);
 		
