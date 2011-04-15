@@ -66,7 +66,7 @@ public class MyMTObject extends MTComponent{
 		numberAttribut =2; // Anzahl Attribute (Bild, Text) im Objekt vorhanden.
 	
 		IFont fontArial = FontManager.getInstance().createFont(pApplet, "arial.ttf", 
-				25, 	//Font size
+				15, 	//Font size
 				MTColor.BLACK,  //Font fill color
 				white);	//Font outline color
 		//Create a textfield
@@ -115,7 +115,7 @@ public class MyMTObject extends MTComponent{
 		
 		// Textfield for Input
 		fontArialMini = FontManager.getInstance().createFont(pApplet, "arial.ttf", 
-				15, 	//Font size
+				20, 	//Font size
 				MTColor.BLACK,  //Font fill color
 				white);	//Font outline color
 		
@@ -312,7 +312,8 @@ public class MyMTObject extends MTComponent{
 		//System.out.println("Widht = "+w);
 		//System.out.println("Height = " +h);
 		
-		MTNumField p1 = new MTNumField(pApplet,fontArialMini);
+		MTNumField p1 = new MTNumField(pApplet,fontArialMini,true);
+		//p1.setTextAlign(true);
 		
 		// Add MTComponets to Canvas
 		// --------------------------------

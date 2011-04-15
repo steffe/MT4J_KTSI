@@ -84,6 +84,7 @@ public class MTNumKeyboard extends MTRoundRectangle {
 	
 	private boolean hardwareInput;
 	
+	//FIXME Chanche from public to private with get Method  
 	public MTSvgButton keybCloseSvg;
 
 	/**
