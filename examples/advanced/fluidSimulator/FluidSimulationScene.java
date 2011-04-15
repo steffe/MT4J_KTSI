@@ -1,20 +1,33 @@
 /***********************************************************************
- * mt4j Copyright (c) 2008 - 2009 C.Ruff, Fraunhofer-Gesellschaft All rights reserved.
- *  
- *   This program is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
+ 
+ Copyright (c) 2008, 2009, Memo Akten, www.memo.tv
+ *** The Mega Super Awesome Visuals Company ***
+ * All rights reserved.
  *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
  *
- *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of MSA Visuals nor the names of its contributors
+ * may be used to endorse or promote products derived from this software
+ * without specific prior written permission.
  *
- ***********************************************************************/
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
+ * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+ * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * ***********************************************************************/ 
 package advanced.fluidSimulator;
 
 import java.awt.event.KeyEvent;
@@ -24,7 +37,7 @@ import javax.media.opengl.GL;
 
 import msafluid.MSAFluidSolver2D;
 
-import org.mt4j.MTApplication;
+import org.mt4j.AbstractMTApplication;
 import org.mt4j.components.MTComponent;
 import org.mt4j.input.IMTInputEventListener;
 import org.mt4j.input.inputData.AbstractCursorInputEvt;
@@ -32,22 +45,17 @@ import org.mt4j.input.inputData.InputCursor;
 import org.mt4j.input.inputData.MTInputEvent;
 import org.mt4j.sceneManagement.AbstractScene;
 import org.mt4j.util.MT4jSettings;
+import org.mt4j.util.PlatformUtil;
 import org.mt4j.util.math.Vector3D;
+import org.mt4j.util.opengl.GL10;
 
 import processing.core.PApplet;
+import processing.core.PConstants;
 import processing.core.PGraphics;
 import processing.core.PImage;
-import processing.opengl.PGraphicsOpenGL;
 
 import com.sun.opengl.util.BufferUtil;
 
-/**
- * The Class FluidSimulationScene.
- * 
- * The original fluid simulation code was taken from
- * memo akten (www.memo.tv)
- * 
- */
 public class FluidSimulationScene extends AbstractScene{
 	
 	private final float FLUID_WIDTH = 120;
@@ -60,9 +68,9 @@ public class FluidSimulationScene extends AbstractScene{
 	private ParticleSystem particleSystem;
 	/////////
 	
-	private MTApplication app;
+	private AbstractMTApplication app;
 
-	public FluidSimulationScene(MTApplication mtApplication, String name) {
+	public FluidSimulationScene(AbstractMTApplication mtApplication, String name) {
 		super(mtApplication, name);
 		this.app = mtApplication;
 		
@@ -93,14 +101,14 @@ public class FluidSimulationScene extends AbstractScene{
         	public boolean processInputEvent(MTInputEvent inEvt){
         		if(inEvt instanceof AbstractCursorInputEvt){
         			AbstractCursorInputEvt posEvt = (AbstractCursorInputEvt)inEvt;
-        			if (posEvt.hasTarget() && posEvt.getTargetComponent().equals(getCanvas())){
+        			if (posEvt.hasTarget() && posEvt.getTarget().equals(getCanvas())){
         				InputCursor m = posEvt.getCursor();
         				AbstractCursorInputEvt prev = m.getPreviousEventOf(posEvt);
         				if (prev == null)
         					prev = posEvt;
 
-        				Vector3D pos = new Vector3D(posEvt.getPosX(), posEvt.getPosY(), 0);
-        				Vector3D prevPos = new Vector3D(prev.getPosX(), prev.getPosY(), 0);
+        				Vector3D pos = new Vector3D(posEvt.getX(), posEvt.getY(), 0);
+        				Vector3D prevPos = new Vector3D(prev.getX(), prev.getY(), 0);
 
         				//System.out.println("Pos: " + pos);
         				float mouseNormX = pos.x * invWidth;
@@ -144,8 +152,9 @@ public class FluidSimulationScene extends AbstractScene{
 			g.tint(255,255,255,255);
 			
 			//FIXME TEST
-			PGraphicsOpenGL pgl = (PGraphicsOpenGL)g; 
-			GL gl = pgl.gl;
+//			PGraphicsOpenGL pgl = (PGraphicsOpenGL)g; 
+//			GL gl = pgl.gl;
+			GL10 gl = PlatformUtil.getGL();
 			gl.glDisableClientState(GL.GL_VERTEX_ARRAY);
 			gl.glDisableClientState(GL.GL_COLOR_ARRAY);
 			gl.glDisable(GL.GL_LINE_SMOOTH);
@@ -191,7 +200,7 @@ public class FluidSimulationScene extends AbstractScene{
 	        }
 	        
 	        float colorMult = 5;
-	        float velocityMult = 30.0f;
+	        float velocityMult = 20.0f;
 	 
 	        int index = fluidSolver.getIndexForNormalizedPosition(x, y);
 	 
@@ -234,9 +243,10 @@ public class FluidSimulationScene extends AbstractScene{
 	        
 //	        app.image(imgFluid, 0, 0, app.width, app.height); //FIXME this messes up blend transition!
 	        
-	        app.textureMode(app.NORMALIZED);
+	        app.textureMode(PConstants.NORMAL);
 //	        app.textureMode(app.IMAGE);
-	        app.beginShape(app.QUADS);
+//	        app.beginShape(MTApplication.QUADS);
+	        app.beginShape();
 	        app.texture(imgFluid);
 	        app.vertex(0, 0, 0, 0);
 	        app.vertex(app.width, 0, 1, 0);
@@ -251,14 +261,12 @@ public class FluidSimulationScene extends AbstractScene{
 	}
 
 	
-	//@Override
-	public void init() {
-		app.registerKeyEvent(this);
+	public void onEnter() {
+		getMTApplication().registerKeyEvent(this);
 	}
-
-	//@Override
-	public void shutDown() {
-		app.unregisterKeyEvent(this);
+	
+	public void onLeave() {	
+		getMTApplication().unregisterKeyEvent(this);
 		/*
 		mtApp.noSmooth();
 		mtApp.fill(255,255,255,255);
@@ -436,13 +444,16 @@ public class FluidSimulationScene extends AbstractScene{
 
 
 		public void updateAndDraw(){
-			PGraphicsOpenGL pgl = (PGraphicsOpenGL)p.g;         // processings opengl graphics object
-			GL gl = pgl.beginGL();                // JOGL's GL object
+//			PGraphicsOpenGL pgl = (PGraphicsOpenGL)p.g;         // processings opengl graphics object
+//			GL gl = pgl.beginGL();                // JOGL's GL object
+			GL10 gl = PlatformUtil.beginGL();
 
 			gl.glEnable( GL.GL_BLEND );             // enable blending
 			
+			/*
 			if(!drawFluid) 
 				fadeToColor(p, gl, 0, 0, 0, 0.05f);
+			*/
 
 			gl.glBlendFunc(GL.GL_ONE, GL.GL_ONE);  // additive blending (ignore alpha)
 			gl.glEnable(GL.GL_LINE_SMOOTH);        // make points round
@@ -465,6 +476,7 @@ public class FluidSimulationScene extends AbstractScene{
 				gl.glDrawArrays(GL.GL_LINES, 0, maxParticles * 2);
 			} 
 			else {
+				/*
 				gl.glBegin(GL.GL_LINES);               // start drawing points
 				for(int i=0; i<maxParticles; i++) {
 					if(particles[i].alpha > 0) {
@@ -473,16 +485,18 @@ public class FluidSimulationScene extends AbstractScene{
 					}
 				}
 				gl.glEnd();
+				*/
 			}
 
 //			gl.glDisable(GL.GL_BLEND);
 			//Reset blendfunction
 			gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
-			pgl.endGL();
+//			pgl.endGL();
+			PlatformUtil.endGL();
 		}
 
-		
-		public void fadeToColor(PApplet p, GL gl, float r, float g, float b, float speed) {
+		/*
+		public void fadeToColor(PApplet p, GL10 gl, float r, float g, float b, float speed) {
 //			gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
 			gl.glColor4f(r, g, b, speed);
 			gl.glBegin(GL.GL_QUADS);
@@ -492,6 +506,7 @@ public class FluidSimulationScene extends AbstractScene{
 				gl.glVertex2f(0, p.height);
 			gl.glEnd();
 		}
+		*/
 		
 
 		public void addParticles(float x, float y, int count ){

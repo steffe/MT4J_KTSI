@@ -6,7 +6,7 @@ import java.util.List;
 import org.jbox2d.collision.AABB;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.World;
-import org.mt4j.MTApplication;
+import org.mt4j.AbstractMTApplication;
 import org.mt4j.components.MTComponent;
 import org.mt4j.input.inputProcessors.globalProcessors.CursorTracer;
 import org.mt4j.sceneManagement.AbstractScene;
@@ -27,12 +27,12 @@ public class PhysicsScene extends AbstractScene {
 	
 	/** THE CANVAS SCALE **/
 	private float scale = 20;
-	private MTApplication app;
+	private AbstractMTApplication app;
 	private World world;
 	
 	private MTComponent physicsContainer;
 	
-	public PhysicsScene(MTApplication mtApplication, String name) {
+	public PhysicsScene(AbstractMTApplication mtApplication, String name) {
 		super(mtApplication, name);
 		this.app = mtApplication;
 		
@@ -136,12 +136,10 @@ public class PhysicsScene extends AbstractScene {
 		parent.addChild(borderBottom);
 	}
 
-	@Override
-	public void init() {
+	public void onEnter() {
 	}
-
-	@Override
-	public void shutDown() {
+	
+	public void onLeave() {	
 	}
 
 }

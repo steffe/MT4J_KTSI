@@ -35,24 +35,22 @@ import mri.v3ds.TexCoord3ds;
 import mri.v3ds.TextDecode3ds;
 import mri.v3ds.Vertex3ds;
 
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.apache.log4j.SimpleLayout;
-import org.mt4j.MTApplication;
-import org.mt4j.components.visibleComponents.GeometryInfo;
+import org.mt4j.AbstractMTApplication;
+import org.mt4j.components.visibleComponents.shapes.GeometryInfo;
 import org.mt4j.components.visibleComponents.shapes.mesh.MTTriangleMesh;
 import org.mt4j.util.MT4jSettings;
 import org.mt4j.util.TriangleNormalGenerator;
+import org.mt4j.util.logging.ILogger;
+import org.mt4j.util.logging.MTLoggerFactory;
 import org.mt4j.util.math.Tools3D;
 import org.mt4j.util.math.Vertex;
 import org.mt4j.util.modelImporter.ModelImporterFactory;
 import org.mt4j.util.opengl.GLTexture;
-import org.mt4j.util.opengl.GLTextureSettings;
 import org.mt4j.util.opengl.GLTexture.EXPANSION_FILTER;
 import org.mt4j.util.opengl.GLTexture.SHRINKAGE_FILTER;
 import org.mt4j.util.opengl.GLTexture.TEXTURE_TARGET;
 import org.mt4j.util.opengl.GLTexture.WRAP_MODE;
+import org.mt4j.util.opengl.GLTextureSettings;
 
 import processing.core.PApplet;
 import processing.core.PImage;
@@ -62,12 +60,9 @@ import processing.core.PImage;
  * @author Christopher Ruff
  */
 public class Model3dsFileFactory extends ModelImporterFactory{
-	private static final Logger logger = Logger.getLogger(Model3dsFileFactory.class.getName());
+	private static final ILogger logger = MTLoggerFactory.getLogger(Model3dsFileFactory.class.getName());
 	static{
-		logger.setLevel(Level.ERROR);
-		SimpleLayout l = new SimpleLayout();
-		ConsoleAppender ca = new ConsoleAppender(l);
-		logger.addAppender(ca);
+		logger.setLevel(ILogger.ERROR);
 	}
 	
 	private PApplet pa;
@@ -169,7 +164,7 @@ public class Model3dsFileFactory extends ModelImporterFactory{
 				
 				//Create the arrays needed for the cruncher
 				Vertex[] vertices 		= new Vertex[m.vertices()];
-				int[] indices 			= new int[m.faces()*3];
+				short[] indices 		= new short[m.faces()*3];
 				
 				int[] texCoordIndices 	= new int[m.faces()*3];
 				float[][] textureCoords = new float[m.texCoords()][2];
@@ -222,27 +217,26 @@ public class Model3dsFileFactory extends ModelImporterFactory{
 
 						//If not, create a new group and save it in map
 						if (group == null){
-							group = new Group(new Integer(fmat.matIndex()).toString());
+							group = new Group(Integer.toString(fmat.matIndex()));
 							materialIdToGroup.put(fmat.matIndex(), group);
 						}
 
 						//Go through all pointers to the faces for this material 
 						//and get the corresponding face
-						for (int j = 0; j < faceIndicesForMaterial.length; j++) {
-							int k = faceIndicesForMaterial[j];
-							Face3ds face = m.face(k);
+                        for (int k : faceIndicesForMaterial) {
+                            Face3ds face = m.face(k);
 
-							AFace aFace = new AFace();
-							aFace.p0 = face.P0;
-							aFace.p1 = face.P1;
-							aFace.p2 = face.P2;
+                            AFace aFace = new AFace();
+                            aFace.p0 = face.P0;
+                            aFace.p1 = face.P1;
+                            aFace.p2 = face.P2;
 
-							aFace.t0 = face.P0;
-							aFace.t1 = face.P1;
-							aFace.t2 = face.P2;
+                            aFace.t0 = face.P0;
+                            aFace.t1 = face.P1;
+                            aFace.t2 = face.P2;
 
-							group.addFace(aFace);
-						}
+                            group.addFace(aFace);
+                        }
 					}
 
 					Iterator<Integer> it = materialIdToGroup.keySet().iterator();
@@ -256,7 +250,7 @@ public class Model3dsFileFactory extends ModelImporterFactory{
 
 						//Get the new arrays 
 						Vertex[] newVertices 		= currentGroup.getGroupVertices(); 
-						int[] newIndices 			= currentGroup.getIndexArray(); 
+						short[] newIndices 			= currentGroup.getIndexArray(); 
 						float[][] newTextureCoords  = currentGroup.getGroupTexCoords();
 						int[] newTexIndices 		= currentGroup.getTexCoordIndices();
 
@@ -275,7 +269,7 @@ public class Model3dsFileFactory extends ModelImporterFactory{
 							MTTriangleMesh mesh = new MTTriangleMesh(pa, geometry);
 
 							if (mesh != null){
-								mesh.setName(m.name() + " material: " + new Integer(currentGroupName).toString());
+								mesh.setName(m.name() + " material: " + Integer.toString(currentGroupName));
 								//Assign texture
 								this.assignMaterial(pathToModel, file, scene, m, currentGroupName, mesh);
 
@@ -295,9 +289,9 @@ public class Model3dsFileFactory extends ModelImporterFactory{
 					for( int faceIndex = 0; faceIndex < m.faces(); faceIndex++ ){
 						Face3ds f = m.face( faceIndex );
 
-						indices[faceIndex*3] 	= f.P0;
-						indices[faceIndex*3+1] 	= f.P1;
-						indices[faceIndex*3+2] 	= f.P2;
+						indices[faceIndex*3] 	= (short) f.P0;
+						indices[faceIndex*3+1] 	= (short) f.P1;
+						indices[faceIndex*3+2] 	= (short) f.P2;
 
 						texCoordIndices[faceIndex*3] 	= f.P0;
 						texCoordIndices[faceIndex*3+1] 	= f.P1;
@@ -333,7 +327,7 @@ public class Model3dsFileFactory extends ModelImporterFactory{
 		long timeB = System.currentTimeMillis();
 		long delta = timeB-timeA;
 		logger.debug("Loaded model in: " + delta + " ms");
-		return (MTTriangleMesh[])returnMeshList.toArray(new MTTriangleMesh[returnMeshList.size()]);
+		return returnMeshList.toArray(new MTTriangleMesh[returnMeshList.size()]);
 	}
 			
 			
@@ -356,8 +350,8 @@ public class Model3dsFileFactory extends ModelImporterFactory{
 				String materialName = mat.name();
 				if (debug)
 					logger.debug("Material name for mesh \"" + mesh.getName() + ":-> \"" + materialName + "\"");
-				materialName.trim();
-				materialName.toLowerCase();
+				materialName = materialName.trim();
+				materialName = materialName.toLowerCase();
 
 				//Try to load texture
 				try {
@@ -383,7 +377,7 @@ public class Model3dsFileFactory extends ModelImporterFactory{
 						for (int j = 0; j < suffix.length; j++) {
 							String suffixString = suffix[j];
 							//Try to load and set texture to mesh
-							String texturePath 	= modelFolder + MTApplication.separator + materialName + "." +  suffixString;
+							String texturePath 	= modelFolder + AbstractMTApplication.separator + materialName + "." +  suffixString;
 							File textureFile = new File(texturePath);
 							if (textureFile.exists()){
 								boolean success = textureFile.renameTo(new File(texturePath));
@@ -419,8 +413,8 @@ public class Model3dsFileFactory extends ModelImporterFactory{
 						PImage texture = null;
 						String[] suffix = new String[]{"jpg", "JPG", "tga" , "TGA", "bmp", "BMP", "png", "PNG", "tiff", "TIFF"};
 						for (String suffixString : suffix) {
-							String modelFolder  = pathToModel.substring(0, pathToModel.lastIndexOf(MTApplication.separator));
-							String texturePath 	= modelFolder + MTApplication.separator + materialName + "." +  suffixString;
+							String modelFolder  = pathToModel.substring(0, pathToModel.lastIndexOf(AbstractMTApplication.separator));
+							String texturePath 	= modelFolder + AbstractMTApplication.separator + materialName + "." +  suffixString;
 							if (MT4jSettings.getInstance().isOpenGlMode()){
 								PImage img = pa.loadImage(texturePath);
 								if (Tools3D.isPowerOfTwoDimension(img)){
@@ -457,9 +451,9 @@ public class Model3dsFileFactory extends ModelImporterFactory{
 	public void setDebug(boolean debug) {
 		this.debug = debug;
 		if (debug)
-			logger.setLevel(Level.DEBUG);
+			logger.setLevel(ILogger.DEBUG);
 		else
-			logger.setLevel(Level.ERROR);
+			logger.setLevel(ILogger.ERROR);
 	}
 	
 	public void setFlipY(boolean flipY){
@@ -483,7 +477,7 @@ public class Model3dsFileFactory extends ModelImporterFactory{
 		private ArrayList<float[]> texCoordsForGroup;
 		private HashMap<Integer, Integer> oldTexIndexToNewTexIndex;
 		
-		private int[] indexArray;
+		private short[] indexArray;
 		
 		private int[] texCoordIndexArray;
 		
@@ -498,7 +492,7 @@ public class Model3dsFileFactory extends ModelImporterFactory{
 			texCoordsForGroup 			= new ArrayList<float[]>();
 			oldTexIndexToNewTexIndex 	= new HashMap<Integer, Integer>();
 			
-			indexArray 			= new int[0];
+			indexArray 			= new short[0];
 			texCoordIndexArray 	= new int[0];
 			
 			//name = "default";
@@ -521,7 +515,7 @@ public class Model3dsFileFactory extends ModelImporterFactory{
 		 * @param allTexCoords
 		 */
 		public void compileItsOwnLists(Vertex[] allFileVerts, float[][] allTexCoords){
-			indexArray = new int[faces.size()*3];
+			indexArray = new short[faces.size()*3];
 			
 			if (allTexCoords.length > 0){
 				texCoordIndexArray = new int[faces.size()*3];
@@ -627,9 +621,9 @@ public class Model3dsFileFactory extends ModelImporterFactory{
 					currentFace.p2 = newIndex;
 				}
 				
-				indexArray[i*3]   = currentFace.p0;
-				indexArray[i*3+1] = currentFace.p1;
-				indexArray[i*3+2] = currentFace.p2;
+				indexArray[i*3]   = (short) currentFace.p0;
+				indexArray[i*3+1] = (short) currentFace.p1;
+				indexArray[i*3+2] = (short) currentFace.p2;
 				
 				if (allTexCoords.length > 0){
 					texCoordIndexArray[i*3]   = currentFace.t0;
@@ -639,7 +633,7 @@ public class Model3dsFileFactory extends ModelImporterFactory{
 			}
 		}
 
-		public int[] getIndexArray() {
+		public short[] getIndexArray() {
 			return indexArray;
 		}
 

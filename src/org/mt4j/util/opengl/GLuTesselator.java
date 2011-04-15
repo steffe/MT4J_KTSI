@@ -211,11 +211,10 @@ public class GLuTesselator extends GLUtessellatorCallbackAdapter{
     	 */
     	private void tesselateContour(Vertex[] contour, int windingRule){
 	    	glu.gluTessBeginContour(tesselator);
-	    	for(int i = 0; i < contour.length; i++) {
-	    		Vertex v = contour[i];
-	    		double[] pv = {v.x,v.y,v.z, v.getR()/255.0,v.getG()/255.0,v.getB()/255.0,v.getA()/255.0}; //{v.x,v.y,v.z}; 
-	    		glu.gluTessVertex(tesselator, pv, 0, pv);
-	    	}
+            for (Vertex v : contour) {
+                double[] pv = {v.x, v.y, v.z, v.getR() / 255.0, v.getG() / 255.0, v.getB() / 255.0, v.getA() / 255.0}; //{v.x,v.y,v.z};
+                glu.gluTessVertex(tesselator, pv, 0, pv);
+            }
 	    	glu.gluTessEndContour(tesselator);
 	    }
 	    

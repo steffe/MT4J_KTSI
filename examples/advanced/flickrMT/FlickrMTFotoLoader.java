@@ -77,7 +77,7 @@ public class FlickrMTFotoLoader extends FlickrLoader {
 		String fotoName = foto.getTitle();
 		
 		//Create image object
-		MTImage photo = new MTImage(pa.loadImage(fotoUrl), pa);
+		MTImage photo = new MTImage(pa, pa.loadImage(fotoUrl));
 		photo.setName(fotoName);
 //		mtFotos[i] = photo;
 		mtFotos.add(photo);

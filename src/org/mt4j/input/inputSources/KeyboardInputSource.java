@@ -20,7 +20,7 @@ package org.mt4j.input.inputSources;
 
 import java.awt.event.KeyEvent;
 
-import org.mt4j.MTApplication;
+import org.mt4j.AbstractMTApplication;
 import org.mt4j.input.inputData.ActiveCursorPool;
 import org.mt4j.input.inputData.InputCursor;
 import org.mt4j.input.inputData.MTFingerInputEvt;
@@ -65,12 +65,29 @@ public class KeyboardInputSource extends AbstractInputSource {
 	 * 
 	 * @param pa the pa
 	 */
-	public KeyboardInputSource(MTApplication pa){
+	public KeyboardInputSource(AbstractMTApplication pa){
 		super(pa);
 		this.applet = pa;
 		applet.registerKeyEvent(this);
 		
+		
 //		applet.registerDraw(this);
+		
+//		//TODO
+//		pa.addKeyListener(new IKeyListener() {
+//			
+//			@Override
+//			public void keyRleased(char key, int keyCode) {
+//				// TODO Auto-generated method stub
+//				
+//			}
+//			
+//			@Override
+//			public void keyPressed(char key, int keyCode) {
+//				// TODO Auto-generated method stub
+//				
+//			}
+//		});
 		
 		this.locationX = 0;
 		this.locationY = 0;
@@ -220,7 +237,7 @@ public class KeyboardInputSource extends AbstractInputSource {
 	private void fingerDown(KeyEvent e){
 		if (!spaceHasBeenPressed){
 			InputCursor m = new InputCursor();
-			MTFingerInputEvt touchEvt = new MTFingerInputEvt(this, locationX, locationY, MTFingerInputEvt.INPUT_DETECTED, m);
+			MTFingerInputEvt touchEvt = new MTFingerInputEvt(this, locationX, locationY, MTFingerInputEvt.INPUT_STARTED, m);
 //			m.addEvent(touchEvt);
 			
 			lastUsedKeybID = m.getId();

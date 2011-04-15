@@ -1,6 +1,6 @@
 package org.mt4j.test.sceneManagement;
 
-import org.mt4j.MTApplication;
+import org.mt4j.AbstractMTApplication;
 import org.mt4j.test.AbstractWindowTestcase;
 import org.mt4j.test.testUtil.DummyScene;
 import org.mt4j.test.testUtil.TestRunnable;
@@ -12,7 +12,7 @@ public class SceneTest extends AbstractWindowTestcase {
 	private DummyScene sceneC;
 
 	@Override
-	public void inStartUp(MTApplication app) {
+	public void inStartUp(AbstractMTApplication app) {
 		//Add a scene to the mt application
 		this.sceneA = new DummyScene(app, "Dummy SceneA");
 		app.addScene(sceneA);

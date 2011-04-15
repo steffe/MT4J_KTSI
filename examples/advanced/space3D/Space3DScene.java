@@ -21,7 +21,7 @@ import java.awt.event.KeyEvent;
 
 import javax.media.opengl.GL;
 
-import org.mt4j.MTApplication;
+import org.mt4j.AbstractMTApplication;
 import org.mt4j.components.MTComponent;
 import org.mt4j.components.MTLight;
 import org.mt4j.components.TransformSpace;
@@ -41,23 +41,23 @@ import org.mt4j.input.inputProcessors.globalProcessors.CursorTracer;
 import org.mt4j.sceneManagement.AbstractScene;
 import org.mt4j.util.MT4jSettings;
 import org.mt4j.util.MTColor;
+import org.mt4j.util.PlatformUtil;
 import org.mt4j.util.animation.Animation;
 import org.mt4j.util.animation.AnimationEvent;
 import org.mt4j.util.animation.IAnimationListener;
 import org.mt4j.util.animation.MultiPurposeInterpolator;
-import org.mt4j.util.math.Tools3D;
 import org.mt4j.util.math.Vector3D;
 import org.mt4j.util.opengl.GLMaterial;
 import org.mt4j.util.opengl.GLTexture;
-import org.mt4j.util.opengl.GLTextureSettings;
 import org.mt4j.util.opengl.GLTexture.EXPANSION_FILTER;
 import org.mt4j.util.opengl.GLTexture.SHRINKAGE_FILTER;
 import org.mt4j.util.opengl.GLTexture.TEXTURE_TARGET;
 import org.mt4j.util.opengl.GLTexture.WRAP_MODE;
+import org.mt4j.util.opengl.GLTextureSettings;
 
 
 public class Space3DScene extends AbstractScene {
-	private MTApplication pa;
+	private AbstractMTApplication pa;
 	private MTSphere earth;
 
 	//TODO make earth spinnable with velocity
@@ -65,7 +65,7 @@ public class Space3DScene extends AbstractScene {
 	//Loads from file system only
 //	private String imagesPath = System.getProperty("user.dir") + File.separator + "examples" + File.separator +"advanced"+ File.separator+ File.separator + "space3D"  + File.separator + "data" +  File.separator ;
 	//allows loading from jar
-	private String imagesPath =  "advanced" + MTApplication.separator + "space3D" + MTApplication.separator + "data" +  MTApplication.separator ;
+	private String imagesPath =  "advanced" + AbstractMTApplication.separator + "space3D" + AbstractMTApplication.separator + "data" +  AbstractMTApplication.separator ;
 	
 	/**
 	 * Instantiates a new model display scene.
@@ -73,7 +73,7 @@ public class Space3DScene extends AbstractScene {
 	 * @param mtApplication the mt application
 	 * @param name the name
 	 */
-	public Space3DScene(MTApplication mtApplication, String name) {
+	public Space3DScene(AbstractMTApplication mtApplication, String name) {
 		super(mtApplication, name);
 		this.pa = mtApplication;
 		
@@ -95,7 +95,7 @@ public class Space3DScene extends AbstractScene {
 		MTLight light = new MTLight(pa, GL.GL_LIGHT3, new Vector3D(pa.width/5f,-pa.height/10f,0));
 		
 		//Set up a material to react to the light
-		GLMaterial material = new GLMaterial(Tools3D.getGL(pa));
+		GLMaterial material = new GLMaterial(PlatformUtil.getGL());
 		material.setAmbient(new float[]{ .1f, .1f, .1f, 1f });
 		material.setDiffuse(new float[]{ 1.0f, 1.0f, 1.0f, 1f } );
 		material.setEmission(new float[]{ .0f, .0f, .0f, 1f });
@@ -113,7 +113,7 @@ public class Space3DScene extends AbstractScene {
         //Animate earth rotation
         new Animation("rotation animation", new MultiPurposeInterpolator(0,360, 17000, 0, 1, -1) , earth).addAnimationListener(new IAnimationListener(){
         	public void processAnimationEvent(AnimationEvent ae) {
-        		earth.rotateY(earth.getCenterPointLocal(), ae.getCurrentStepDelta(), TransformSpace.LOCAL);
+        		earth.rotateY(earth.getCenterPointLocal(), ae.getDelta(), TransformSpace.LOCAL);
         	}}).start();
         
         //Put planets in a group that can be manipulated by gestures
@@ -147,24 +147,24 @@ public class Space3DScene extends AbstractScene {
         //Rotate the moon around the earth
         new Animation("moon animation", new MultiPurposeInterpolator(0,360, 12000, 0, 1, -1) , moonSphere).addAnimationListener(new IAnimationListener(){
         	public void processAnimationEvent(AnimationEvent ae) {
-        		moonSphere.rotateZ(earth.getCenterPointLocal(), ae.getCurrentStepDelta(), TransformSpace.RELATIVE_TO_PARENT);
+        		moonSphere.rotateZ(earth.getCenterPointLocal(), ae.getDelta(), TransformSpace.RELATIVE_TO_PARENT);
         	}}).start();
         //Rotate the moon around ints own center
         new Animation("moon animation around own axis", new MultiPurposeInterpolator(0,360, 9000, 0, 1, -1) , moonSphere).addAnimationListener(new IAnimationListener(){
         	public void processAnimationEvent(AnimationEvent ae) {
-        		moonSphere.rotateZ(moonSphere.getCenterPointLocal(), -3*ae.getCurrentStepDelta(), TransformSpace.LOCAL);
-        		moonSphere.rotateY(moonSphere.getCenterPointLocal(), 0.5f*ae.getCurrentStepDelta(), TransformSpace.LOCAL);
+        		moonSphere.rotateZ(moonSphere.getCenterPointLocal(), -3*ae.getDelta(), TransformSpace.LOCAL);
+        		moonSphere.rotateY(moonSphere.getCenterPointLocal(), 0.5f*ae.getDelta(), TransformSpace.LOCAL);
         	}}).start();
         earth.addChild(moonSphere);
 	}
 
 
-	public void init() {
-		pa.registerKeyEvent(this);
+	public void onEnter() {
+		getMTApplication().registerKeyEvent(this);
 	}
-
-	public void shutDown() {
-		pa.unregisterKeyEvent(this);
+	
+	public void onLeave() {	
+		getMTApplication().unregisterKeyEvent(this);
 	}
 	
 	public void keyEvent(KeyEvent e){

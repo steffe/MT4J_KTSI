@@ -20,7 +20,6 @@ package org.mt4j.util;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import org.mt4j.components.TransformSpace;
 import org.mt4j.components.bounds.BoundsZPlaneRectangle;
 import org.mt4j.components.bounds.IBoundingShape;
@@ -188,12 +187,11 @@ public class ShapeBuilder {
 			float upperLeftX = bounds.getVectorsLocal()[0].x;
 			float upperLeftY = bounds.getVectorsLocal()[0].y;
 			Vertex[] verts = returnComponent.getVerticesLocal();
-			for (int i = 0; i < verts.length; i++) {
-				Vertex vertex = verts[i];
-				vertex.setTexCoordU((vertex.x-upperLeftX)/width);
-				vertex.setTexCoordV((vertex.y-upperLeftY)/height);
-				//System.out.println("TexU:" + vertex.getTexCoordU() + " TexV:" + vertex.getTexCoordV());
-			}
+            for (Vertex vertex : verts) {
+                vertex.setTexCoordU((vertex.x - upperLeftX) / width);
+                vertex.setTexCoordV((vertex.y - upperLeftY) / height);
+                //System.out.println("TexU:" + vertex.getTexCoordU() + " TexV:" + vertex.getTexCoordV());
+            }
 			returnComponent.getGeometryInfo().updateTextureBuffer(returnComponent.isUseVBOs());
 		}
 		return returnComponent;
@@ -222,16 +220,14 @@ public class ShapeBuilder {
 				//ERROR
 			}
 		}
-		MTPolygon poly = new MTPolygon2D(verts, app);
-		return poly;
+		return new MTPolygon2D(verts, app);
 	}
 
 	
 	private AbstractShape createComplexPoly(ArrayList<Vertex[]> contours, int windingRuleOdd) {
 		int segments = 15; 
 		List<Vertex[]> bezierContours = ToolsGeometry.createVertexArrFromBezierVertexArrays(contours, segments);
-		MTComplexPolygon2D complexPoly = new MTComplexPolygon2D(app, bezierContours);
-		return complexPoly;
+		return new MTComplexPolygon2D(app, bezierContours);
 	}
 	
 	
@@ -249,7 +245,7 @@ public class ShapeBuilder {
 	
 	private class MTPolygon2D extends MTPolygon{
 		public MTPolygon2D(Vertex[] vertices, PApplet applet) {
-			super(vertices, applet);
+			super(applet, vertices);
 		}
 		
 		protected IBoundingShape computeDefaultBounds() {

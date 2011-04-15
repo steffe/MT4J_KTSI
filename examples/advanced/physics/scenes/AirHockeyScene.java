@@ -16,10 +16,8 @@ import org.jbox2d.dynamics.contacts.ContactResult;
 import org.jbox2d.dynamics.joints.Joint;
 import org.jbox2d.dynamics.joints.JointType;
 import org.jbox2d.dynamics.joints.MouseJoint;
-import org.mt4j.MTApplication;
+import org.mt4j.AbstractMTApplication;
 import org.mt4j.components.MTComponent;
-import org.mt4j.components.visibleComponents.font.FontManager;
-import org.mt4j.components.visibleComponents.font.IFont;
 import org.mt4j.components.visibleComponents.shapes.MTEllipse;
 import org.mt4j.components.visibleComponents.shapes.MTLine;
 import org.mt4j.components.visibleComponents.shapes.MTRectangle;
@@ -32,6 +30,8 @@ import org.mt4j.input.inputProcessors.globalProcessors.CursorTracer;
 import org.mt4j.sceneManagement.AbstractScene;
 import org.mt4j.util.MTColor;
 import org.mt4j.util.camera.MTCamera;
+import org.mt4j.util.font.FontManager;
+import org.mt4j.util.font.IFont;
 import org.mt4j.util.math.ToolsMath;
 import org.mt4j.util.math.Vector3D;
 
@@ -49,7 +49,7 @@ public class AirHockeyScene extends AbstractScene {
 	
 	/** THE CANVAS SCALE **/
 	private float scale = 20;
-	private MTApplication app;
+	private AbstractMTApplication app;
 	private World world;
 	
 	private MTComponent physicsContainer;
@@ -77,10 +77,10 @@ public class AirHockeyScene extends AbstractScene {
 	//TODO get graphics, sounds, effects
 	
 //	private String imagesPath = System.getProperty("user.dir") + File.separator + "examples" + File.separator +"advanced"+ File.separator +  "physics"  + File.separator + "data" +  File.separator  + "images" +  File.separator;
-	private String imagesPath =  "advanced" + MTApplication.separator +  "physics"  + MTApplication.separator + "data" +  MTApplication.separator  + "images" +  MTApplication.separator;
+	private String imagesPath =  "advanced" + AbstractMTApplication.separator +  "physics"  + AbstractMTApplication.separator + "data" +  AbstractMTApplication.separator  + "images" +  AbstractMTApplication.separator;
 	
 	
-	public AirHockeyScene(MTApplication mtApplication, String name) {
+	public AirHockeyScene(AbstractMTApplication mtApplication, String name) {
 		super(mtApplication, name);
 		this.app = mtApplication;
 //		this.setClearColor(new MTColor(120,150,150));
@@ -183,9 +183,9 @@ public class AirHockeyScene extends AbstractScene {
 		
 		//Make two components for both game field sides to drag the puks upon
 		MTRectangle leftSide = new MTRectangle(
-				PhysicsHelper.scaleDown(0, scale), PhysicsHelper.scaleDown(0, scale), 
-				PhysicsHelper.scaleDown(app.width/2f, scale), PhysicsHelper.scaleDown(app.height, scale)
-				, app);
+				app, PhysicsHelper.scaleDown(0, scale), 
+				PhysicsHelper.scaleDown(0, scale), PhysicsHelper.scaleDown(app.width/2f, scale)
+				, PhysicsHelper.scaleDown(app.height, scale));
 		leftSide.setName("left side");
 		leftSide.setNoFill(true); //Make it invisible -> only used for dragging
 		leftSide.setNoStroke(true);
@@ -195,9 +195,9 @@ public class AirHockeyScene extends AbstractScene {
 		leftSide.addGestureListener(DragProcessor.class, new GameFieldHalfDragListener(blueCircle));
 		physicsContainer.addChild(0, leftSide);
 		MTRectangle rightSide = new MTRectangle(
-				PhysicsHelper.scaleDown(app.width/2f, scale), PhysicsHelper.scaleDown(0, scale), 
-				PhysicsHelper.scaleDown(app.width, scale), PhysicsHelper.scaleDown(app.height, scale)
-				, app);
+				app, PhysicsHelper.scaleDown(app.width/2f, scale), 
+				PhysicsHelper.scaleDown(0, scale), PhysicsHelper.scaleDown(app.width, scale)
+				, PhysicsHelper.scaleDown(app.height, scale));
 		rightSide.setName("right Side");
 		rightSide.setNoFill(true); //Make it invisible -> only used for dragging
 		rightSide.setNoStroke(true);
@@ -211,7 +211,7 @@ public class AirHockeyScene extends AbstractScene {
 		MTComponent uiLayer = new MTComponent(mtApplication, new MTCamera(mtApplication));
 		uiLayer.setDepthBufferDisabled(true);
 		getCanvas().addChild(uiLayer);
-		IFont font = FontManager.getInstance().createFont(mtApplication, "arial", 50, new MTColor(255,255,255), new MTColor(0,0,0));
+		IFont font = FontManager.getInstance().createFont(mtApplication, "arial", 50, MTColor.WHITE);
 		
 		t1 = new MTTextArea(mtApplication, font);
 		t1.setPickable(false);
@@ -265,7 +265,7 @@ public class AirHockeyScene extends AbstractScene {
 				//Un-scale position from mt4j to box2d
 				PhysicsHelper.scaleDown(to, scale);
 				switch (de.getId()) {
-				case DragEvent.GESTURE_DETECTED:
+				case DragEvent.GESTURE_STARTED:
 					comp.sendToFront();
 					body.wakeUp();
 					body.setXForm(new Vec2(to.x,  to.y), body.getAngle());
@@ -275,7 +275,7 @@ public class AirHockeyScene extends AbstractScene {
 				case DragEvent.GESTURE_UPDATED:
 					mouseJoint = (MouseJoint) comp.getUserData(comp.getID());
 					if (mouseJoint != null){
-						boolean onCorrectGameSide = ((MTComponent)de.getTargetComponent()).containsPointGlobal(de.getTo());
+						boolean onCorrectGameSide = ((MTComponent)de.getTarget()).containsPointGlobal(de.getTo());
 						//System.out.println(((MTComponent)de.getTargetComponent()).getName()  + " Contains  " + to + " -> " + contains);
 						if (onCorrectGameSide){
 							mouseJoint.setTarget(new Vec2(to.x, to.y));	
@@ -563,14 +563,12 @@ public class AirHockeyScene extends AbstractScene {
 	}
 	
 
-	@Override
-	public void init() {
-		this.getMTApplication().registerKeyEvent(this);
+	public void onEnter() {
+		getMTApplication().registerKeyEvent(this);
 	}
-
-	@Override
-	public void shutDown() {
-		this.getMTApplication().unregisterKeyEvent(this);
+	
+	public void onLeave() {	
+		getMTApplication().unregisterKeyEvent(this);
 	}
 	
 	public void keyEvent(KeyEvent e){

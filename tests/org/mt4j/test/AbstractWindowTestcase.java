@@ -27,7 +27,7 @@ import javax.swing.JFrame;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
-import org.mt4j.MTApplication;
+import org.mt4j.AbstractMTApplication;
 import org.mt4j.sceneManagement.Iscene;
 import org.mt4j.test.testUtil.TestRunnable;
 
@@ -35,7 +35,7 @@ public abstract class AbstractWindowTestcase extends TestCase
 implements UncaughtExceptionHandler 
 {
 	private boolean startUpRun;
-	private MTApplication app;
+	private AbstractMTApplication app;
 //	private List<AssertionFailedError> errors;
 	private List<Throwable> errors;
 	
@@ -139,17 +139,16 @@ implements UncaughtExceptionHandler
 //		};
 //		runTest(test);
 		
-		final MTApplication appToDestroy = getMTApplication();
+		final AbstractMTApplication appToDestroy = getMTApplication();
 		appToDestroy.invokeLater(new Runnable() {
 			
 			public void run() {
 				Iscene[] scenes = appToDestroy.getScenes();
-				for (int i = 0; i < scenes.length; i++) {
-					Iscene iscene = scenes[i];
-					if (!iscene.destroy()){
-						iscene.getCanvas().destroy();
-					}
-				}
+                for (Iscene iscene : scenes) {
+                    if (!iscene.destroy()) {
+                        iscene.getCanvas().destroy();
+                    }
+                }
 			}
 		});
 //		getMTApplication().exit();
@@ -173,7 +172,7 @@ implements UncaughtExceptionHandler
 		}
 	}
 	
-	private class TestDummyMTApplication extends MTApplication {
+	private class TestDummyMTApplication extends AbstractMTApplication {
 		private static final long serialVersionUID = 1L;
 		@Override
 		public void startUp() {
@@ -182,10 +181,10 @@ implements UncaughtExceptionHandler
 		}
 	}
 	
-	public abstract void inStartUp(MTApplication app);
+	public abstract void inStartUp(AbstractMTApplication app);
 	
 	
-	public MTApplication getMTApplication(){
+	public AbstractMTApplication getMTApplication(){
 		return this.app;
 	}
 

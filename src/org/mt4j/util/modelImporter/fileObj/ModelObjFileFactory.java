@@ -56,18 +56,17 @@ import java.io.StreamTokenizer;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 
-import org.mt4j.MTApplication;
-import org.mt4j.components.visibleComponents.GeometryInfo;
+import org.mt4j.AbstractMTApplication;
+import org.mt4j.components.visibleComponents.shapes.GeometryInfo;
 import org.mt4j.components.visibleComponents.shapes.mesh.MTTriangleMesh;
+import org.mt4j.util.PlatformUtil;
 import org.mt4j.util.TriangleNormalGenerator;
 import org.mt4j.util.math.Vector3D;
 import org.mt4j.util.math.Vertex;
 import org.mt4j.util.modelImporter.ModelImporterFactory;
 
 import processing.core.PApplet;
-import processing.opengl.PGraphicsOpenGL;
 
 
 
@@ -448,7 +447,7 @@ public class ModelObjFileFactory  extends ModelImporterFactory {
 	 * j3d-examples/ObjLoad/ObjLoad.java.
 	 * @param flipTextureX 
 	 */
-	private MTTriangleMesh[] load(Reader reader, float creaseAngle, boolean flipTextureY, boolean flipTextureX) throws FileNotFoundException, ParsingErrorException {
+	private MTTriangleMesh[] load(Reader reader, float creaseAngle, boolean flipTextureY, boolean flipTextureX) throws ParsingErrorException {
 		// ObjectFileParser does lexical analysis
 		ObjectFileParser st = new ObjectFileParser(reader);
 
@@ -489,9 +488,7 @@ public class ModelObjFileFactory  extends ModelImporterFactory {
 
 //		if ((flags & RESIZE) != 0) 
 		resize(); //FIXME resize default ja / nein?
-
-		MTTriangleMesh[] meshes = createMeshesFromGroups(creaseAngle, flipTextureY, flipTextureX);
-		return meshes;
+		return createMeshesFromGroups(creaseAngle, flipTextureY, flipTextureX);
 	} // End of load(Reader)
 
 
@@ -510,55 +507,55 @@ public class ModelObjFileFactory  extends ModelImporterFactory {
 
 		//Go through all groups and create the meshes
 		int totalNumVerts = 0;
-		Iterator e = groupNameToGroupObj.keySet().iterator();
-		while (e.hasNext()) {
-			String currentGroupName = (String) e.next();
-			Group currentGroup = groupNameToGroupObj.get(currentGroupName);
+        for (String s : groupNameToGroupObj.keySet()) {
+            String currentGroupName = s;
+            Group currentGroup = groupNameToGroupObj.get(currentGroupName);
 
-			//Compile vertices/indices/texture arrays just for this group as a teilmenge from all with recalculated indices
-			currentGroup.compileItsOwnLists(coordList, texList);
+            //Compile vertices/indices/texture arrays just for this group as a teilmenge from all with recalculated indices
+            currentGroup.compileItsOwnLists(coordList, texList);
 
-			//Get the new arrays 
-			Vertex[] vertices 		= currentGroup.getGroupVertices(); //currentGroup.verticesForGroup.toArray(new Vertex[currentGroup.verticesForGroup.size()]);
-			int[] indices 			= currentGroup.getIndexArray(); //currentGroup.indexArray;
-			float[][] textureCoords = currentGroup.getGroupTexCoords(); //currentGroup.texCoordsForGroup.toArray(new float[currentGroup.texCoordsForGroup.size()][]);
-			int[] texIndices 		= currentGroup.getTexCoordIndices(); //currentGroup.texCoordIndexArray;
+            //Get the new arrays
+            Vertex[] vertices = currentGroup.getGroupVertices(); //currentGroup.verticesForGroup.toArray(new Vertex[currentGroup.verticesForGroup.size()]);
+            short[] indices = currentGroup.getIndexArray(); //currentGroup.indexArray;
+            float[][] textureCoords = currentGroup.getGroupTexCoords(); //currentGroup.texCoordsForGroup.toArray(new float[currentGroup.texCoordsForGroup.size()][]);
+            int[] texIndices = currentGroup.getTexCoordIndices(); //currentGroup.texCoordIndexArray;
 
-			System.out.println("\nGroup: \"" + currentGroup.name + "\" ->Vertices: " + currentGroup.verticesForGroup.size()+ " ->TextureCoords: " + currentGroup.texCoordsForGroup.size() + " ->Indices: " + currentGroup.indexArray.length + " ->Texcoord Indices: " + currentGroup.texCoordIndexArray.length );
-			System.out.println();
+            System.out.println("\nGroup: \"" + currentGroup.name + "\" ->Vertices: " + currentGroup.verticesForGroup.size() + " ->TextureCoords: " + currentGroup.texCoordsForGroup.size() + " ->Indices: " + currentGroup.indexArray.length + " ->Texcoord Indices: " + currentGroup.texCoordIndexArray.length);
+            System.out.println();
 
-			if (vertices.length > 2){
-				GeometryInfo geometry  = null;
+            if (vertices.length > 2) {
+                GeometryInfo geometry = null;
 
-				//Load as all vertex normals smoothed if creaseAngle == 180;
-				if (creaseAngle == 180){
-					geometry = normalGenerator.generateSmoothNormals(pa, vertices , indices, textureCoords, texIndices, creaseAngle, flipTextureY, flipTextureX);
-				}else{
-					geometry = normalGenerator.generateCreaseAngleNormals(pa, vertices, indices, textureCoords, texIndices, creaseAngle, flipTextureY, flipTextureX);
-				}
+                //Load as all vertex normals smoothed if creaseAngle == 180;
+                if (creaseAngle == 180) {
+                    geometry = normalGenerator.generateSmoothNormals(pa, vertices, indices, textureCoords, texIndices, creaseAngle, flipTextureY, flipTextureX);
+                } else {
+                    geometry = normalGenerator.generateCreaseAngleNormals(pa, vertices, indices, textureCoords, texIndices, creaseAngle, flipTextureY, flipTextureX);
+                }
 
-				MTTriangleMesh mesh = new MTTriangleMesh(pa, geometry);
+                MTTriangleMesh mesh = new MTTriangleMesh(pa, geometry);
 
-				if (mesh != null){
-					mesh.setName(currentGroupName);
-					//Assign texture and material
-					String matName = (String)groupMaterials.get(currentGroupName);
-					materials.assignMaterial(((PGraphicsOpenGL)pa.g).gl, matName, mesh);
-					
-					if (mesh.getTexture() != null){
-						mesh.setTextureEnabled(true);
-					}else{
-						System.out.println("No texture could be assigned to mesh.");
-					}
-					meshList.add(mesh);
-				}else{
-					System.err.println("Mesh not created, returned null from meshDenormalization.");
-				}
-			}else{
-				System.out.println("Group not created, < 2 vertices..");
-			}
-			totalNumVerts += currentGroup.verticesForGroup.size();
-		}
+                if (mesh != null) {
+                    mesh.setName(currentGroupName);
+                    //Assign texture and material
+                    String matName = groupMaterials.get(currentGroupName);
+//                    materials.assignMaterial(((PGraphicsOpenGL) pa.g).gl, matName, mesh);
+                    materials.assignMaterial(PlatformUtil.getGL(), matName, mesh);
+
+                    if (mesh.getTexture() != null) {
+                        mesh.setTextureEnabled(true);
+                    } else {
+                        System.out.println("No texture could be assigned to mesh.");
+                    }
+                    meshList.add(mesh);
+                } else {
+                    System.err.println("Mesh not created, returned null from meshDenormalization.");
+                }
+            } else {
+                System.out.println("Group not created, < 2 vertices..");
+            }
+            totalNumVerts += currentGroup.verticesForGroup.size();
+        }
 		System.out.println("All groups on .obj file have total number of vertices: " + totalNumVerts);
 
 		//Cleanup
@@ -749,7 +746,7 @@ public class ModelObjFileFactory  extends ModelImporterFactory {
 			if (vertIndex < 0) 
 				vertIndex += coordList.size() + 1;
 			
-			coordIdxList.add(new Integer(vertIndex));
+			coordIdxList.add(vertIndex);
 			
 			//	MODIFIED
 			faceVertIndices.add(vertIndex);
@@ -769,10 +766,10 @@ public class ModelObjFileFactory  extends ModelImporterFactory {
 					if (texIndex < 0) 
 						texIndex += texList.size() + 1;
 					
-					texIdxList.add(new Integer(texIndex));
+					texIdxList.add(texIndex);
 					
 					//MODIFIED
-					faceTexIndices.add(new Integer(texIndex)); 
+					faceTexIndices.add(texIndex);
 					
 					st.getToken();
 				}
@@ -785,7 +782,7 @@ public class ModelObjFileFactory  extends ModelImporterFactory {
 					if (normIndex < 0) 
 						normIndex += normList.size() + 1;
 					
-					normIdxList.add(new Integer(normIndex));
+					normIdxList.add(normIndex);
 					st.getToken();
 				}
 			}
@@ -795,8 +792,8 @@ public class ModelObjFileFactory  extends ModelImporterFactory {
 			count++;
 		}
 
-		Integer faceNum = new Integer(stripCounts.size());
-		stripCounts.add(new Integer(count));
+		Integer faceNum = stripCounts.size();
+		stripCounts.add(count);
 
 		// Add face to current groups
 		groups.put(faceNum, curGroup);
@@ -868,7 +865,7 @@ public class ModelObjFileFactory  extends ModelImporterFactory {
 		st.getToken();
 
 		// Find the Material Property of the current group
-		String curMat = (String)groupMaterials.get(curGroup);
+		String curMat = groupMaterials.get(curGroup);
 
 		// New faces will be added to the curGroup
 		if (st.ttype != ObjectFileParser.TT_WORD) 
@@ -902,7 +899,7 @@ public class ModelObjFileFactory  extends ModelImporterFactory {
 	void readMaterialName(ObjectFileParser st) throws ParsingErrorException {
 		st.getToken();
 		if (st.ttype == ObjectFileParser.TT_WORD) {
-			String useMaterialName = new String(st.sval);
+			String useMaterialName = st.sval;
 			
 			//////FIXME ADDED! added, to group by material if no groups are in obj file!
 //			if (curGroup.equalsIgnoreCase("default")){
@@ -982,13 +979,13 @@ public class ModelObjFileFactory  extends ModelImporterFactory {
 	 * containing that file.
 	 */
 	private void setBasePathFromFilename(String fileName) {
-		if (fileName.lastIndexOf(MTApplication.separator) == -1 && fileName.lastIndexOf(java.io.File.separator) == -1) {
+		if (fileName.lastIndexOf(AbstractMTApplication.separator) == -1 && fileName.lastIndexOf(java.io.File.separator) == -1) {
 			// No path given - current directory
 			setBasePath("");
 		} else{
-			if (fileName.lastIndexOf(MTApplication.separator) != -1 ) {
+			if (fileName.lastIndexOf(AbstractMTApplication.separator) != -1 ) {
 				setBasePath(
-						fileName.substring(0, fileName.lastIndexOf(MTApplication.separator)));
+						fileName.substring(0, fileName.lastIndexOf(AbstractMTApplication.separator)));
 			}else if (fileName.lastIndexOf(java.io.File.separator) != -1){
 				setBasePath(
 						fileName.substring(0, fileName.lastIndexOf(java.io.File.separator)));
@@ -1022,18 +1019,18 @@ public class ModelObjFileFactory  extends ModelImporterFactory {
 		Vertex[] limit = new Vertex[2];
 		limit[0] = new Vertex(Float.MAX_VALUE, Float.MAX_VALUE, Float.MAX_VALUE);
 		limit[1] = new Vertex(Float.MIN_VALUE, Float.MIN_VALUE, Float.MIN_VALUE);
-		for (int i = 0 ; i < coordList.size() ; i++) {
+        for (Vertex aCoordList : coordList) {
 
-			cur_vtx = (Vertex)coordList.get(i);
+            cur_vtx = aCoordList;
 
-			// Keep track of limits for normalization
-			if (cur_vtx.x < limit[0].x) limit[0].x = cur_vtx.x;
-			if (cur_vtx.x > limit[1].x) limit[1].x = cur_vtx.x;
-			if (cur_vtx.y < limit[0].y) limit[0].y = cur_vtx.y;
-			if (cur_vtx.y > limit[1].y) limit[1].y = cur_vtx.y;
-			if (cur_vtx.z < limit[0].z) limit[0].z = cur_vtx.z;
-			if (cur_vtx.z > limit[1].z) limit[1].z = cur_vtx.z;
-		}
+            // Keep track of limits for normalization
+            if (cur_vtx.x < limit[0].x) limit[0].x = cur_vtx.x;
+            if (cur_vtx.x > limit[1].x) limit[1].x = cur_vtx.x;
+            if (cur_vtx.y < limit[0].y) limit[0].y = cur_vtx.y;
+            if (cur_vtx.y > limit[1].y) limit[1].y = cur_vtx.y;
+            if (cur_vtx.z < limit[0].z) limit[0].z = cur_vtx.z;
+            if (cur_vtx.z > limit[1].z) limit[1].z = cur_vtx.z;
+        }
 
 		if ((DEBUG & 64) != 0) {
 			System.out.println("Model range: (" +
@@ -1076,7 +1073,7 @@ public class ModelObjFileFactory  extends ModelImporterFactory {
 
 		for (i = 0 ; i < coordList.size() ; i++) {
 
-			cur_vtx = (Vertex)coordList.get(i);
+			cur_vtx = coordList.get(i);
 
 //			cur_vtx.add(cur_vtx, offset);
 			Vector3D tmp = cur_vtx.getAdded(offset);
@@ -1202,10 +1199,10 @@ public class ModelObjFileFactory  extends ModelImporterFactory {
 //			basePath = MTApplication.separator;
 		
 //		basePath = basePath.replace('/', MTApplication.separatorChar);
-		basePath = basePath.replace('\\', MTApplication.separatorChar);
+		basePath = basePath.replace('\\', AbstractMTApplication.separatorChar);
 		
-		if (!basePath.endsWith(MTApplication.separator))
-			basePath = basePath + MTApplication.separator;
+		if (!basePath.endsWith(AbstractMTApplication.separator))
+			basePath = basePath + AbstractMTApplication.separator;
 		
 	} // End of setBasePath
 
@@ -1274,7 +1271,7 @@ public class ModelObjFileFactory  extends ModelImporterFactory {
 		private ArrayList<float[]> texCoordsForGroup;
 		private HashMap<Integer, Integer> oldTexIndexToNewTexIndex;
 		
-		private int[] indexArray;
+		private short[] indexArray;
 		
 		private int[] texCoordIndexArray;
 		
@@ -1288,7 +1285,7 @@ public class ModelObjFileFactory  extends ModelImporterFactory {
 			texCoordsForGroup = new ArrayList<float[]>();
 			oldTexIndexToNewTexIndex = new HashMap<Integer, Integer>();
 			
-			indexArray = new int[0];
+			indexArray = new short[0];
 			texCoordIndexArray = new int[0];
 			
 			name = "default";
@@ -1311,7 +1308,7 @@ public class ModelObjFileFactory  extends ModelImporterFactory {
 		 * @param allTexCoords
 		 */
 		public void compileItsOwnLists(ArrayList<Vertex> allFileVerts, ArrayList<float[]> allTexCoords){
-			indexArray = new int[faces.size()*3];
+			indexArray = new short[faces.size()*3];
 			
 			if (allTexCoords.size() > 0){
 				texCoordIndexArray = new int[faces.size()*3];
@@ -1417,9 +1414,9 @@ public class ModelObjFileFactory  extends ModelImporterFactory {
 					currentFace.p2 = newIndex;
 				}
 				
-				indexArray[i*3]   = currentFace.p0;
-				indexArray[i*3+1] = currentFace.p1;
-				indexArray[i*3+2] = currentFace.p2;
+				indexArray[i*3]   = (short) currentFace.p0;
+				indexArray[i*3+1] = (short) currentFace.p1;
+				indexArray[i*3+2] = (short) currentFace.p2;
 				
 				if (allTexCoords.size() > 0){
 					texCoordIndexArray[i*3]   = currentFace.t0;
@@ -1429,7 +1426,7 @@ public class ModelObjFileFactory  extends ModelImporterFactory {
 			}
 		}
 
-		public int[] getIndexArray() {
+		public short[] getIndexArray() {
 			return indexArray;
 		}
 

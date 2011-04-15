@@ -161,7 +161,7 @@ class ObjectFileParser extends StreamTokenizer {
 			getToken();
 			if (ttype != TT_WORD)
 				throw new ParsingErrorException("Expected number on line " + lineno());
-			nval =  (Double.valueOf(sval)).doubleValue();
+			nval = Double.valueOf(sval);
 		}
 		catch (NumberFormatException e) {
 			throw new ParsingErrorException(e.getMessage());

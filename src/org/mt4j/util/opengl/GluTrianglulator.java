@@ -18,14 +18,15 @@
 package org.mt4j.util.opengl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.media.opengl.glu.GLU;
 import javax.media.opengl.glu.GLUtessellator;
 import javax.media.opengl.glu.GLUtessellatorCallbackAdapter;
 
-import org.mt4j.MTApplication;
-import org.mt4j.components.visibleComponents.GeometryInfo;
+import org.mt4j.AbstractMTApplication;
+import org.mt4j.components.visibleComponents.shapes.GeometryInfo;
 import org.mt4j.components.visibleComponents.shapes.mesh.MTTriangleMesh;
 import org.mt4j.util.math.Vertex;
 
@@ -108,8 +109,8 @@ public class GluTrianglulator extends GLUtessellatorCallbackAdapter{
     
     @Override
     protected void finalize() throws Throwable {
-    	if (this.p instanceof MTApplication ) {
-			MTApplication mtApp = (MTApplication) this.p;
+    	if (this.p instanceof AbstractMTApplication ) {
+			AbstractMTApplication mtApp = (AbstractMTApplication) this.p;
 			mtApp.invokeLater(new Runnable() {
 				public void run() {
 					deleteTess();
@@ -254,18 +255,18 @@ public class GluTrianglulator extends GLUtessellatorCallbackAdapter{
     	 */
     	private List<Vertex> tesselateContour(Vertex[] contour, int windingRule){
     		if (contour.length == 3){
-    			for (Vertex v : contour){
-    				triList.add(v);
-    			}
+                triList.addAll(Arrays.asList(contour));
+                //for (Vertex v : contour){
+    			//	triList.add(v);
+    			//}
     			return this.triList;
     		}
     		
 	    	glu.gluTessBeginContour(tesselator);
-	    	for(int i = 0; i < contour.length; i++) {
-	    		Vertex v = contour[i];
-	    		double[] pv = {v.x,v.y,v.z, v.getR()/255.0,v.getG()/255.0,v.getB()/255.0,v.getA()/255.0}; //{v.x,v.y,v.z}; 
-	    		glu.gluTessVertex(tesselator, pv, 0, pv);
-	    	}
+            for (Vertex v : contour) {
+                double[] pv = {v.x, v.y, v.z, v.getR() / 255.0, v.getG() / 255.0, v.getB() / 255.0, v.getA() / 255.0}; //{v.x,v.y,v.z};
+                glu.gluTessVertex(tesselator, pv, 0, pv);
+            }
 	    	glu.gluTessEndContour(tesselator);
 	    	
 	    	return this.getTriList();

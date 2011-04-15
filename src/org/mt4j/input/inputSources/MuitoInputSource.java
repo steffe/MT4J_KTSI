@@ -26,7 +26,7 @@ import muito.motion.MotionProviderListener;
 import muito.motion.Settings;
 import muito.motion.provider.MuitoMotionTrackerPorvider;
 
-import org.mt4j.MTApplication;
+import org.mt4j.AbstractMTApplication;
 import org.mt4j.input.inputData.ActiveCursorPool;
 import org.mt4j.input.inputData.InputCursor;
 import org.mt4j.input.inputData.MTFingerInputEvt;
@@ -34,7 +34,8 @@ import org.mt4j.util.MT4jSettings;
 
 
 /**
- * The Class MuitoInputSource.
+ * The Class MuitoInputSource. This is an input protocol used internally at the Fraunhofer Institute.
+ * 
  * @author Christopher Ruff
  */
 public class MuitoInputSource extends AbstractInputSource implements MotionProviderListener {
@@ -49,7 +50,7 @@ public class MuitoInputSource extends AbstractInputSource implements MotionProvi
 	 * @param server the server
 	 * @param port the port
 	 */
-	public MuitoInputSource(MTApplication pa, String server, int port){
+	public MuitoInputSource(AbstractMTApplication pa, String server, int port){
 		super(pa);
 	    Settings.getInstance().setScreensizeX(MT4jSettings.getInstance().getWindowWidth());
 	    Settings.getInstance().setScreensizeY(MT4jSettings.getInstance().getWindowHeight());
@@ -65,10 +66,8 @@ public class MuitoInputSource extends AbstractInputSource implements MotionProvi
 	 */
 	public void newMotionProvided(Motion motion) {
 		MotionEvent me = motion.getLastEvent();
-		
 		InputCursor m = new InputCursor();
-		MTFingerInputEvt touchEvt = new MTFingerInputEvt(this, me.getXAbs(), me.getYAbs(), MTFingerInputEvt.INPUT_DETECTED, m);
-//		m.addEvent(touchEvt);
+		MTFingerInputEvt touchEvt = new MTFingerInputEvt(this, me.getXAbs(), me.getYAbs(), MTFingerInputEvt.INPUT_STARTED, m);
 		
 		long motionID = motion.getId();
 		ActiveCursorPool.getInstance().putActiveCursor(motionID, m);
@@ -84,11 +83,7 @@ public class MuitoInputSource extends AbstractInputSource implements MotionProvi
 	 */
 	public void providedMotionUpdated(Motion m, MotionEvent me) {
 		InputCursor mo = ActiveCursorPool.getInstance().getActiveCursorByID(muitoIDToInputMotionID.get(m.getId()));
-		
 		MTFingerInputEvt te = new MTFingerInputEvt(this, me.getXAbs(), me.getYAbs(), MTFingerInputEvt.INPUT_UPDATED, mo);
-//		m.addEvent(new MTFingerInputEvt2(this, e.getX(), e.getY(), MTFingerInputEvt.FINGER_UPDATE, m));
-		
-		//FIRE
 		this.enqueueInputEvent(te);
 	}
 	
@@ -99,27 +94,16 @@ public class MuitoInputSource extends AbstractInputSource implements MotionProvi
 	public void providedMotionCompleted(Motion m) {
 		long motionID = muitoIDToInputMotionID.get(m.getId());
 		InputCursor mo = ActiveCursorPool.getInstance().getActiveCursorByID(motionID);
-
 		MTFingerInputEvt te;
 		if (mo.getCurrentEvent() != null)
-			te = new MTFingerInputEvt(this, mo.getCurrentEvent().getPosX(), mo.getCurrentEvent().getPosY(), MTFingerInputEvt.INPUT_ENDED, mo);
+			te = new MTFingerInputEvt(this, mo.getCurrentEvent().getX(), mo.getCurrentEvent().getY(), MTFingerInputEvt.INPUT_ENDED, mo);
 		else
 			te = new MTFingerInputEvt(this, 0,0, MTFingerInputEvt.INPUT_ENDED, mo);
 		
-//		m.addEvent(te);
-		
 		this.enqueueInputEvent(te);
-		
 		ActiveCursorPool.getInstance().removeCursor(motionID);
-		
 		muitoIDToInputMotionID.remove(m.getId());		
 	}
-
-	
-//	@Override
-//	public boolean firesEventType(Class<? extends MTInputEvent> evtClass){
-//		return (evtClass == MTFingerInputEvt.class);
-//	}
 
 
 }

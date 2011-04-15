@@ -17,7 +17,7 @@
  ***********************************************************************/
 package org.mt4j.components.visibleComponents.widgets;
 
-import org.mt4j.MTApplication;
+import org.mt4j.AbstractMTApplication;
 import org.mt4j.components.TransformSpace;
 import org.mt4j.components.bounds.BoundsZPlaneRectangle;
 import org.mt4j.components.bounds.IBoundingShape;
@@ -25,12 +25,12 @@ import org.mt4j.components.visibleComponents.shapes.MTPolygon;
 import org.mt4j.util.MT4jSettings;
 import org.mt4j.util.math.Tools3D;
 import org.mt4j.util.math.Vertex;
-import org.mt4j.util.opengl.GLTextureSettings;
 import org.mt4j.util.opengl.GLTexture;
 import org.mt4j.util.opengl.GLTexture.EXPANSION_FILTER;
 import org.mt4j.util.opengl.GLTexture.SHRINKAGE_FILTER;
 import org.mt4j.util.opengl.GLTexture.TEXTURE_TARGET;
 import org.mt4j.util.opengl.GLTexture.WRAP_MODE;
+import org.mt4j.util.opengl.GLTextureSettings;
 
 import processing.core.PApplet;
 import processing.core.PImage;
@@ -53,12 +53,13 @@ public class MTBackgroundImage extends MTPolygon {
 	 * @param bgImage the bg image
 	 * @param tiled the tiled
 	 */
-	public MTBackgroundImage(MTApplication mtApp, PImage bgImage, boolean tiled) {
-		super(new Vertex[]{
+	public MTBackgroundImage(AbstractMTApplication mtApp, PImage bgImage, boolean tiled) {
+		super(mtApp, 
+				new Vertex[]{
 				new Vertex(0,0,0 , 0,0),
 				new Vertex(mtApp.width,0,0, 1,0),
 				new Vertex(mtApp.width,mtApp.height,0, 1,1),
-				new Vertex(0,mtApp.height,0, 0,1)}, mtApp);
+				new Vertex(0,mtApp.height,0, 0,1)});
 		
 		boolean pot = Tools3D.isPowerOfTwoDimension(bgImage);
 		
@@ -118,7 +119,7 @@ public class MTBackgroundImage extends MTPolygon {
 	 * @param stretchToFitHeight the stretch to fit height
 	 */
 	public MTBackgroundImage(PApplet pApplet, MTSvg svgImage, boolean stretchToFitWidth, boolean stretchToFitHeight) {
-		super(new Vertex[]{new Vertex(0,0,0 , 0,0),new Vertex(pApplet.width,0,0, 1,0),new Vertex(pApplet.width,pApplet.height,0, 1,1),new Vertex(0,pApplet.height,0, 0,1)}, pApplet);
+		super(pApplet, new Vertex[]{new Vertex(0,0,0 , 0,0),new Vertex(pApplet.width,0,0, 1,0),new Vertex(pApplet.width,pApplet.height,0, 1,1),new Vertex(0,pApplet.height,0, 0,1)});
 		this.svgImage = svgImage;
 		this.setPickable(false);
 		//Actually dont draw this polygon - only its children (this.setVisible(false) would not draw the children)

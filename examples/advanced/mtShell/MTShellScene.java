@@ -19,14 +19,8 @@ package advanced.mtShell;
 
 import java.awt.event.KeyEvent;
 
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.apache.log4j.SimpleLayout;
-import org.mt4j.MTApplication;
+import org.mt4j.AbstractMTApplication;
 import org.mt4j.components.TransformSpace;
-import org.mt4j.components.visibleComponents.font.FontManager;
-import org.mt4j.components.visibleComponents.font.IFont;
 import org.mt4j.components.visibleComponents.shapes.MTPolygon;
 import org.mt4j.components.visibleComponents.widgets.MTList;
 import org.mt4j.components.visibleComponents.widgets.MTListCell;
@@ -45,6 +39,10 @@ import org.mt4j.sceneManagement.Iscene;
 import org.mt4j.sceneManagement.transition.BlendTransition;
 import org.mt4j.sceneManagement.transition.FadeTransition;
 import org.mt4j.util.MTColor;
+import org.mt4j.util.font.FontManager;
+import org.mt4j.util.font.IFont;
+import org.mt4j.util.logging.ILogger;
+import org.mt4j.util.logging.MTLoggerFactory;
 import org.mt4j.util.math.Vector3D;
 import org.mt4j.util.math.Vertex;
 import org.mt4j.util.opengl.GLFBO;
@@ -52,7 +50,6 @@ import org.mt4j.util.opengl.GLFBO;
 import processing.core.PApplet;
 import processing.core.PImage;
 import scenes.WaterSceneExportObf;
-import sun.misc.GC;
 import advanced.drawing.MainDrawingScene;
 import advanced.flickrMT.FlickrScene;
 import advanced.fluidSimulator.FluidSimulationScene;
@@ -71,18 +68,15 @@ import advanced.touchTail.TouchTailScene;
  */
 public class MTShellScene extends AbstractScene {
 	/** The Constant logger. */
-	private static final Logger logger = Logger.getLogger(MTShellScene.class.getName());
+	private static final ILogger logger = MTLoggerFactory.getLogger(MTShellScene.class.getName());
 	static{
-//		logger.setLevel(Level.WARN);
-//		logger.setLevel(Level.DEBUG);
-		logger.setLevel(Level.INFO);
-		SimpleLayout l = new SimpleLayout();
-		ConsoleAppender ca = new ConsoleAppender(l);
-		logger.addAppender(ca);
+//		logger.setLevel(ILogger.WARN);
+//		logger.setLevel(ILogger.DEBUG);
+		logger.setLevel(ILogger.INFO);
 	}
 	
 	/** The app. */
-	private MTApplication app;
+	private AbstractMTApplication app;
 	
 	/** The has fbo. */
 	private boolean hasFBO;
@@ -125,13 +119,13 @@ public class MTShellScene extends AbstractScene {
 	 * @param mtApplication the mt application
 	 * @param name the name
 	 */
-	public MTShellScene(MTApplication mtApplication, String name) {
+	public MTShellScene(AbstractMTApplication mtApplication, String name) {
 		super(mtApplication, name);
 		this.app = mtApplication;
 		this.hasFBO = GLFBO.isSupported(app);
 //		this.hasFBO = false; // TEST
 		//IF we have no FBO directly switch to scene and ignore setting
-		this.switchDirectlyToScene = !this.hasFBO? true : switchDirectlyToScene; 
+		this.switchDirectlyToScene = !this.hasFBO || switchDirectlyToScene;
 		
 		this.registerGlobalInputProcessor(new CursorTracer(app, this));
 		
@@ -148,7 +142,7 @@ public class MTShellScene extends AbstractScene {
 					new Vertex(0,			app.height/1.7f,0,	170,170,140,255),
 					new Vertex(0, 			app.height/3,	0,	0,0,0,255),
 			};
-			MTPolygon p = new MTPolygon(vertices, getMTApplication());
+			MTPolygon p = new MTPolygon(getMTApplication(), vertices);
 			p.setName("upper gradient");
 			p.setNoStroke(true);
 			p.generateAndUseDisplayLists();
@@ -162,7 +156,7 @@ public class MTShellScene extends AbstractScene {
 					new Vertex(0,			app.height,			0,	0,0,0,255),
 					new Vertex(0, 			app.height/1.7f,	0, 	170,170,140,255),
 			};
-			MTPolygon p2 = new MTPolygon(vertices2, getMTApplication());
+			MTPolygon p2 = new MTPolygon(getMTApplication(), vertices2);
 			p2.setNoStroke(true);
 			p2.generateAndUseDisplayLists();
 			p2.setPickable(false);
@@ -179,7 +173,7 @@ public class MTShellScene extends AbstractScene {
 		listWidth = preferredIconHeight + displayHeightOfReflection + gapBetweenIconAndReflection;
 //		listHeight = app.width - 50;
 		listHeight = app.width;
-		list = new MTList(0,0, listWidth, listHeight, 40, mtApplication);
+		list = new MTList(mtApplication,0, 0, listWidth, listHeight, 40);
 		list.setFillColor(new MTColor(150,150,150,200));
 		list.setNoFill(true);
 		list.setNoStroke(true);
@@ -203,10 +197,7 @@ public class MTShellScene extends AbstractScene {
 		grad2.setFillColor(this.getClearColor());
 		 */
 		
-		//TODO does the font exist on all platforms? fallback to arial.ttf?
-		font = FontManager.getInstance().createFont(app, "SansSerif", 18, MTColor.WHITE, MTColor.WHITE);
-//		font = FontManager.getInstance().createFont(app, "arial.ttf", 18, new MTColor(255,255,255), new MTColor(255,255,255));
-		
+		font = FontManager.getInstance().createFont(app, "SansSerif", 18, MTColor.WHITE);
 		
 		this.addScene(new ICreateScene() {
 			public Iscene getNewScene() {
@@ -335,7 +326,7 @@ public class MTShellScene extends AbstractScene {
 	private String getPathToIcons(){
 //		return System.getProperty("user.dir")+File.separator+"examples"+File.separator+"advanced"+File.separator+"mtShell"+ File.separator +"data"+ File.separator+"images"+File.separator; 
 		//Load from classpath
-		return  "advanced" + MTApplication.separator + "mtShell" + MTApplication.separator + "data"+ MTApplication.separator + "images" + MTApplication.separator;
+		return  "advanced" + AbstractMTApplication.separator + "mtShell" + AbstractMTApplication.separator + "data"+ AbstractMTApplication.separator + "images" + AbstractMTApplication.separator;
 	}
 	
 	
@@ -360,7 +351,7 @@ public class MTShellScene extends AbstractScene {
 							((AbstractScene) scene).setTransition(new BlendTransition(app, 300));	
 						}
 						
-						final MTSceneWindow sceneWindow = new MTSceneWindow(scene, 100,50, app);
+						final MTSceneWindow sceneWindow = new MTSceneWindow(app, scene,100, 50);
 						sceneWindow.setFillColor(new MTColor(50,50,50,200));
 						sceneWindow.scaleGlobal(0.5f, 0.5f, 0.5f, sceneWindow.getCenterPointGlobal());
 						sceneWindow.addGestureListener(DragProcessor.class, new InertiaDragAction());
@@ -372,7 +363,7 @@ public class MTShellScene extends AbstractScene {
 						float menuHeight = 64;
 						MTSceneMenu sceneMenu = 
 						//new MTSceneMenu(this, app.width-menuWidth/2f, 0-menuHeight/2f, menuWidth, menuHeight, app);
-						new MTSceneMenu(scene, app.width-menuWidth, app.height-menuHeight, menuWidth, menuHeight, app);
+						new MTSceneMenu(app, scene, app.width-menuWidth, app.height-menuHeight, menuWidth, menuHeight);
 						sceneMenu.addToScene();
 						
 						app.addScene(scene);
@@ -408,7 +399,7 @@ public class MTShellScene extends AbstractScene {
 //		float listCellHeight = preferredIconWidth - border;
 		float listCellHeight = preferredIconWidth ;
 		
-		MTListCell cell = new MTListCell(realListCellWidth ,  listCellHeight, app);
+		MTListCell cell = new MTListCell(app ,  realListCellWidth, listCellHeight);
 		cell.setNoFill(true);
 		cell.setNoStroke(true);
 		
@@ -420,7 +411,7 @@ public class MTShellScene extends AbstractScene {
 				new Vertex(realListCellWidth-topShift - icon.height,	border,		  		0, 0,1),
 				new Vertex(realListCellWidth-topShift, 				border,		  		0, 0,0),
 		};
-		MTPolygon p = new MTPolygon(vertices, getMTApplication());
+		MTPolygon p = new MTPolygon(getMTApplication(), vertices);
 		p.setTexture(icon);
 //		p.setNoStroke(true);
 //		p.setStrokeColor(new MTColor(150,150,150, 255));
@@ -433,7 +424,7 @@ public class MTShellScene extends AbstractScene {
 				new Vertex(listCellWidth - icon.height - reflection.height - reflectionDistanceFromImage,				border,	0, 	0,1),
 				new Vertex(listCellWidth - icon.height - reflectionDistanceFromImage, 									border,	0, 	0,0),
 		};
-		MTPolygon pRef = new MTPolygon(verticesRef, getMTApplication());
+		MTPolygon pRef = new MTPolygon(getMTApplication(), verticesRef);
 		pRef.setTexture(reflection);
 		pRef.setNoStroke(true);
 		
@@ -550,19 +541,11 @@ public class MTShellScene extends AbstractScene {
 	}
 	
 	
-	/* (non-Javadoc)
-	 * @see org.mt4j.sceneManagement.AbstractScene#init()
-	 */
-	@Override
-	public void init() {
+	public void onEnter() {
 		getMTApplication().registerKeyEvent(this);
 	}
-
-	/* (non-Javadoc)
-	 * @see org.mt4j.sceneManagement.AbstractScene#shutDown()
-	 */
-	@Override
-	public void shutDown() {
+	
+	public void onLeave() {	
 		getMTApplication().unregisterKeyEvent(this);
 	}
 	
@@ -585,9 +568,9 @@ public class MTShellScene extends AbstractScene {
 		case KeyEvent.VK_C:
 			getMTApplication().invokeLater(new Runnable() {
 				public void run() {
-					System.gc();
-					GC.maxObjectInspectionAge();
-					System.runFinalization();
+//					System.gc();
+//					GC.maxObjectInspectionAge();
+//					System.runFinalization();
 				}
 			});
 			break;

@@ -34,12 +34,12 @@ import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
-import org.mt4j.MTApplication;
-import org.mt4j.util.opengl.GLTextureSettings;
+import org.mt4j.AbstractMTApplication;
 import org.mt4j.util.opengl.GLTexture;
 import org.mt4j.util.opengl.GLTexture.EXPANSION_FILTER;
 import org.mt4j.util.opengl.GLTexture.SHRINKAGE_FILTER;
 import org.mt4j.util.opengl.GLTexture.WRAP_MODE;
+import org.mt4j.util.opengl.GLTextureSettings;
 
 import processing.core.PImage;
 
@@ -65,7 +65,7 @@ public class SwingTextureRenderer {
 	private Component compToDraw;
 	
 	/** The mt app. */
-	private MTApplication mtApp;
+	private AbstractMTApplication mtApp;
 
 	/** The texture to render to. */
 	private GLTexture textureToRenderTo;
@@ -89,7 +89,7 @@ public class SwingTextureRenderer {
 	 * @param mtApp the mt app
 	 * @param compToRender the comp to render into texture
 	 */
-	public SwingTextureRenderer(MTApplication mtApp, Component compToRender) {
+	public SwingTextureRenderer(AbstractMTApplication mtApp, Component compToRender) {
 		super();
 		this.compToDraw = compToRender;
 		this.mtApp = mtApp;
@@ -235,7 +235,7 @@ public class SwingTextureRenderer {
 	 * @return the buffered image
 	 */
 	private BufferedImage paintComponentOffscreen(Component c, Container con, Rectangle rect) {
-		//FIXME nötig? paintComponent added anscheinend c nochmal zu con!?
+		//FIXME nï¿½tig? paintComponent added anscheinend c nochmal zu con!?
 		con.remove(c);
 		/*
 		BufferedImage img = new BufferedImage(rect.width, rect.height, BufferedImage.TYPE_INT_ARGB);  

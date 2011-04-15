@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
-import org.mt4j.MTApplication;
+import org.mt4j.AbstractMTApplication;
 import org.mt4j.input.inputData.ActiveCursorPool;
 import org.mt4j.input.inputData.InputCursor;
 import org.mt4j.input.inputData.MTFingerInputEvt;
@@ -27,7 +27,7 @@ public class MacTrackpadSource extends AbstractInputSource implements Observer {
 	private int windowWidth, windowHeight;
 	private Map<Integer, Long> fingerIdToCursorId;
 	
-	public MacTrackpadSource(MTApplication mtApp) {
+	public MacTrackpadSource(AbstractMTApplication mtApp) {
 		super(mtApp);
 		this.tpo = TouchpadObservable.getInstance();
 		this.tpo.addObserver(this);
@@ -52,7 +52,7 @@ public class MacTrackpadSource extends AbstractInputSource implements Observer {
 				cursor = new InputCursor();
 				fingerIdToCursorId.put(fingerID, cursor.getId());
 				cursorPool.putActiveCursor(cursor.getId(), cursor);
-				inputID = MTFingerInputEvt.INPUT_DETECTED;
+				inputID = MTFingerInputEvt.INPUT_STARTED;
 			} else { //updated finger
 				inputID = MTFingerInputEvt.INPUT_UPDATED;
 			}

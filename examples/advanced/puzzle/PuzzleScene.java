@@ -17,14 +17,12 @@
  ***********************************************************************/
 package advanced.puzzle;
 
-import org.mt4j.MTApplication;
+import org.mt4j.AbstractMTApplication;
 import org.mt4j.components.MTComponent;
 import org.mt4j.components.TransformSpace;
-import org.mt4j.components.visibleComponents.font.FontManager;
-import org.mt4j.components.visibleComponents.font.IFont;
 import org.mt4j.components.visibleComponents.shapes.AbstractShape;
-import org.mt4j.components.visibleComponents.shapes.MTRoundRectangle;
 import org.mt4j.components.visibleComponents.shapes.MTRectangle.PositionAnchor;
+import org.mt4j.components.visibleComponents.shapes.MTRoundRectangle;
 import org.mt4j.components.visibleComponents.widgets.MTBackgroundImage;
 import org.mt4j.components.visibleComponents.widgets.MTList;
 import org.mt4j.components.visibleComponents.widgets.MTListCell;
@@ -39,6 +37,9 @@ import org.mt4j.sceneManagement.AbstractScene;
 import org.mt4j.sceneManagement.IPreDrawAction;
 import org.mt4j.util.MT4jSettings;
 import org.mt4j.util.MTColor;
+import org.mt4j.util.animation.ani.AniAnimation;
+import org.mt4j.util.font.FontManager;
+import org.mt4j.util.font.IFont;
 import org.mt4j.util.math.ToolsMath;
 import org.mt4j.util.math.Vector3D;
 
@@ -49,7 +50,7 @@ public class PuzzleScene extends AbstractScene{
 	private PuzzleFactory pf;
 	
 	/** The images path. */
-	private String imagesPath = "advanced"+MTApplication.separator+"puzzle"+MTApplication.separator+"data"+MTApplication.separator;
+	private String imagesPath = "advanced"+AbstractMTApplication.separator+"puzzle"+AbstractMTApplication.separator+"data"+AbstractMTApplication.separator;
 	
 	/** The images names. */
 	private String[] imagesNames = new String[]{
@@ -64,7 +65,7 @@ public class PuzzleScene extends AbstractScene{
 	private MTList list;
 	private MTRoundRectangle loadingScreen;
 
-	public PuzzleScene(MTApplication mtApplication, String name) {
+	public PuzzleScene(AbstractMTApplication mtApplication, String name) {
 		super(mtApplication, name);
 		if (!MT4jSettings.getInstance().isOpenGlMode()){
 			System.err.println(this.getName() + " is only usable with the OpenGL renderer.");
@@ -83,7 +84,7 @@ public class PuzzleScene extends AbstractScene{
 		//Puzzle tile factory
 		this.pf = new PuzzleFactory(getMTApplication());
 		
-		IFont font = FontManager.getInstance().createFont(mtApplication, "SansSerif", 16, MTColor.WHITE, MTColor.WHITE, false);
+		IFont font = FontManager.getInstance().createFont(mtApplication, "SansSerif", 16, MTColor.WHITE, false);
 		
 		//New Puzzle button
 		MTRoundRectangle r = getRoundRectWithText(0, 0, 120, 35, "New Puzzle", font);
@@ -110,17 +111,16 @@ public class PuzzleScene extends AbstractScene{
 		float cellHeight = 40;
 		MTColor cellFillColor = new MTColor(MTColor.BLACK);
 		MTColor cellPressedFillColor = new MTColor(new MTColor(105,105,105));
-		list = new MTList(r.getWidthXY(TransformSpace.GLOBAL) + 5, 0, cellWidth+2, imagesNames.length* cellHeight + imagesNames.length*3, getMTApplication());
+		list = new MTList(getMTApplication(), r.getWidthXY(TransformSpace.GLOBAL) + 5, 0, cellWidth+2, imagesNames.length* cellHeight + imagesNames.length*3);
 		list.setNoFill(true);
 		list.setNoStroke(true);
 		list.unregisterAllInputProcessors();
 		list.setAnchor(PositionAnchor.UPPER_LEFT);
 //		list.setPositionGlobal(Vector3D.ZERO_VECTOR);
 		list.setVisible(false);
-		for (int i = 0; i < imagesNames.length; i++) {
-			String imageName = imagesNames[i];
-			list.addListElement(this.createListCell(imageName, font, cellWidth, cellHeight, cellFillColor, cellPressedFillColor));
-		}
+        for (String imageName : imagesNames) {
+            list.addListElement(this.createListCell(imageName, font, cellWidth, cellHeight, cellFillColor, cellPressedFillColor));
+        }
 		this.getCanvas().addChild(list);
 		
 		//Loading window
@@ -135,7 +135,7 @@ public class PuzzleScene extends AbstractScene{
 	
 	
 	private MTRoundRectangle getRoundRectWithText(float x, float y, float width, float height, String text, IFont font){
-		MTRoundRectangle r = new MTRoundRectangle(x, y, 0, width, height, 12, 12, getMTApplication());
+		MTRoundRectangle r = new MTRoundRectangle(getMTApplication(), x, y, 0, width, height, 12, 12);
 		r.unregisterAllInputProcessors();
 		r.setFillColor(MTColor.BLACK);
 		r.setStrokeColor(MTColor.BLACK);
@@ -152,7 +152,7 @@ public class PuzzleScene extends AbstractScene{
 	
 	
 	private MTListCell createListCell(final String imageName, IFont font, float cellWidth, float cellHeight, final MTColor cellFillColor, final MTColor cellPressedFillColor){
-		final MTListCell cell = new MTListCell(cellWidth, cellHeight, getMTApplication());
+		final MTListCell cell = new MTListCell(getMTApplication(), cellWidth, cellHeight);
 		cell.setFillColor(cellFillColor);
 		MTTextArea listLabel = new MTTextArea(getMTApplication(), font);
 		listLabel.setNoFill(true);
@@ -166,13 +166,13 @@ public class PuzzleScene extends AbstractScene{
 			public boolean processGestureEvent(MTGestureEvent ge) {
 				TapEvent te = (TapEvent)ge;
 				switch (te.getTapID()) { 
-				case TapEvent.BUTTON_DOWN:
+				case TapEvent.TAP_DOWN:
 					cell.setFillColor(cellPressedFillColor);
 					break;
-				case TapEvent.BUTTON_UP:
+				case TapEvent.TAP_UP:
 					cell.setFillColor(cellFillColor);
 					break;
-				case TapEvent.BUTTON_CLICKED:
+				case TapEvent.TAPPED:
 					//System.out.println("Button clicked: " + label);
 					cell.setFillColor(cellFillColor);
 					list.setVisible(false);
@@ -202,41 +202,45 @@ public class PuzzleScene extends AbstractScene{
 		}
 		PImage p = getMTApplication().loadImage(imagesPath + imageName);
 		AbstractShape[] tiles = pf.createTiles(p, this.horizontalTiles, this.verticalTiles);
-		for (int i = 0; i < tiles.length; i++) {
-			final AbstractShape sh = tiles[i];
-			//Delay to smooth the animation because of loading hickups
-			final float x = ToolsMath.getRandom(0, MT4jSettings.getInstance().getWindowWidth());
-			final float y = ToolsMath.getRandom(0, MT4jSettings.getInstance().getWindowHeight());
-			registerPreDrawAction(new IPreDrawAction() {
-				public void processAction() {
-					getMTApplication().invokeLater(new Runnable() {
-						public void run() {
-							registerPreDrawAction(new IPreDrawAction() {
-								public void processAction() {
-									getMTApplication().invokeLater(new Runnable() {
-										public void run() {
-											puzzleGroup.addChild(sh);
-											sh.tweenTranslateTo(x, y, 0, 400, 0f, 1.0f);
-										}
-									});
-								}
-								public boolean isLoop() {return false;}
-							});
-						}
-					});
-				}
-				public boolean isLoop() {return false;}
-			});
-			sh.rotateZ(sh.getCenterPointRelativeToParent(), ToolsMath.getRandom(0, 359));
-		}
+        for (final AbstractShape sh : tiles) {
+            //Delay to smooth the animation because of loading hickups
+            final float x = ToolsMath.getRandom(0, MT4jSettings.getInstance().getWindowWidth());
+            final float y = ToolsMath.getRandom(0, MT4jSettings.getInstance().getWindowHeight());
+            registerPreDrawAction(new IPreDrawAction() {
+                public void processAction() {
+                    getMTApplication().invokeLater(new Runnable() {
+                        public void run() {
+                            registerPreDrawAction(new IPreDrawAction() {
+                                public void processAction() {
+                                    getMTApplication().invokeLater(new Runnable() {
+                                        public void run() {
+                                            puzzleGroup.addChild(sh);
+//											sh.tweenTranslateTo(x, y, 0, 400, 0f, 1.0f);
+                                            sh.tweenTranslateTo(x, y, 0, 400, AniAnimation.CIRC_OUT, 0);
+                                        }
+                                    });
+                                }
+
+                                public boolean isLoop() {
+                                    return false;
+                                }
+                            });
+                        }
+                    });
+                }
+
+                public boolean isLoop() {
+                    return false;
+                }
+            });
+            sh.rotateZ(sh.getCenterPointRelativeToParent(), ToolsMath.getRandom(0, 359));
+        }
 	}
 	
 
-	@Override
-	public void init() {}
-
-	@Override
-	public void shutDown() {}
+	public void onEnter() {	}
+	
+	public void onLeave() {	}
 	
 	
 

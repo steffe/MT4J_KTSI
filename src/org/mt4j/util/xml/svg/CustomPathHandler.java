@@ -92,7 +92,7 @@ public class CustomPathHandler implements PathHandler {
 		//If the last contour wasnt closed with Z, 
 		//we save the last contour here,but without closing it
 		if (!currentSubPath.isEmpty()){
-			Vertex[] currentSplitPathArr = (Vertex[])currentSubPath.toArray(new Vertex[currentSubPath.size()]);
+			Vertex[] currentSplitPathArr = currentSubPath.toArray(new Vertex[currentSubPath.size()]);
 			subPaths.add(currentSplitPathArr);
 			currentSubPath.clear();
 		}
@@ -113,7 +113,7 @@ public class CustomPathHandler implements PathHandler {
 		//If the last contour wasnt closed with Z, 
 		//we save the last contour here, without closing it
 		if (!currentSubPath.isEmpty()){
-			Vertex[] currentSplitPathArr = (Vertex[])currentSubPath.toArray(new Vertex[currentSubPath.size()]);
+			Vertex[] currentSplitPathArr = currentSubPath.toArray(new Vertex[currentSubPath.size()]);
 			subPaths.add(currentSplitPathArr);
 			currentSubPath.clear();
 		}
@@ -508,7 +508,7 @@ public class CustomPathHandler implements PathHandler {
 		pathPoints.add(lastPointCopy);
 		
 		//Save the current contour and clear the current for the next contour
-		Vertex[] currentSplitPathArr = (Vertex[])currentSubPath.toArray(new Vertex[currentSubPath.size()]);
+		Vertex[] currentSplitPathArr = currentSubPath.toArray(new Vertex[currentSubPath.size()]);
 		subPaths.add(currentSplitPathArr);
 		currentSubPath.clear();
 	}
@@ -524,7 +524,7 @@ public class CustomPathHandler implements PathHandler {
 		//we have save the current contour here, but we dont close it
 		if (!currentSubPath.isEmpty()){
 			//Convert partial path list to array
-			Vertex[] currentSplitPathArr = (Vertex[])currentSubPath.toArray(new Vertex[currentSubPath.size()]);
+			Vertex[] currentSplitPathArr = currentSubPath.toArray(new Vertex[currentSubPath.size()]);
 
 			//Add partial path array to list of all partial paths of this glyph
 			subPaths.add(currentSplitPathArr);
@@ -548,7 +548,7 @@ public class CustomPathHandler implements PathHandler {
 	 * @return the path points array
 	 */
 	public Vertex[] getPathPointsArray() {
-		return (Vertex[])pathPoints.toArray(new Vertex[pathPoints.size()]);
+		return pathPoints.toArray(new Vertex[pathPoints.size()]);
 	}
 
 	/**
@@ -557,7 +557,7 @@ public class CustomPathHandler implements PathHandler {
 	 * @return the reverse move to vertices
 	 */
 	public Vertex[] getReverseMoveToVertices() {
-		return (Vertex[])reverseMoveToStack.toArray(new Vertex[reverseMoveToStack.size()]);
+		return reverseMoveToStack.toArray(new Vertex[reverseMoveToStack.size()]);
 	}
 
 	/**

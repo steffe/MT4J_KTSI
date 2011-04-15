@@ -1,5 +1,74 @@
 Change log for MT4j - Multi-Touch for Java
 
+=== Version 0.98 (30/3/2011): ===
+=== Input/Gestures: ===
+* added UniStroke stroke gesture processor (1$ Gesture)
+* added Rotate3D processor 3-finger gesture 
+* input event propagation - > MTInputEvent's now have a currentTarget and an eventPhase (CAPTURING_PHASE/AT_TARGET/BUBBLING_PHASE) and bubble up the component hierarchy - stop input event bubbling using mtInputEvent.stopPropagation() - -> we should use event.getCurrentTarget() for most tasks instead of
+getTarget() now -> only the processors of the parent that we set inputProcessor.setEnableForBubbledEvents(true) will use the bubbled events (false by default)
+* AbstractCursorProcessor now works with AbstractCursorInputEvt instead of MTFingerInputEvt -> Note: Fiducial Events will also trigger the default gestures!
+* input processors now have 2 more states: GESTURE_CANCELED and GESTURE_RESUMED -> GESTURE_CANCELED occurs when the gesture is aborted because a higher priority gesture took over one or more cursors. GESTURE_RESUMED is called if the gesture gets a lock on the needed cursors again - Note that after GESTURE_CANCELED, no GESTURE_ENDED has to follow because the gesture may never be resumed!
+* added MTMouseInputEvt which carries the mouse button and modifiers which was used in MouseInputSource
+* changed the TapProcessor to cancle the tap if the cursor is moved too far
+* added possibility to limit lasso size by limiting the vertex count and distance to last vertex
+
+=== Components: ===
+* for conformity reasons changed the constructors of many shapes and widgets to have the PApplet instance as their first paremeter
+* Cluster: dont attach the camera of one of the clustered components but instead return the camera at getViewingCam() 
+* removed textarea's snapToKeyboard method -> added snapToKeyboard(MTTextarea) method of MTKeyboard instead!
+* let AbstractShape implement ILassoable -> so all shapes can now be lassoed (in conjuction with a LassoProcessor ofc)
+* added removeAllListElements() to MTList
+* removed all AWT/Swing stuff from core -> so MTImageButton and MTSVGButton dont accept an ActionListener anymore! -> instead just add a TapProcessor gesture listener!
+* AbstractVisibleComponent: create a copy of the fill/stroke color upon setting it
+* MTColor: ability to create write protected/unchangeable colors
+* do automatic VBO deletion of AbstractShapes in GeometryInfo's finalize() method now
+* MTTriangleMesh: if custom outline contours are provided and drawing is set to use displaylists, the default outline displaylist is not created, which saves
+time and resources
+* AbstractShape: added drawPureGl abstract method
+* renamed get/setBoundingShape -> to get/setBounds() etc.
+* mtcliprectangle now also resets the clip size if the local size changes
+* changed keyboard input processors so that we can scale/rot keyboard if the cursors on the keys move too much
+
+=== Other: ===
+* added easy to use "Ani" animation library - added "AniAnimation" class which can replace the old "Animation" class
+* added basic css support (see MTCSSStylableShape and CSSStyleManager)- for custom behaviour you can override applyStylesCustom()
+* added extensions directory to mt4j-desktop distro
+* added OpenGL interfaces which are used instead of the real OpenGL context - GL10, GL11, GL20, GL11Plus (Desktop usually uses GL11Plus which implements all interfaces, Android GL10 or GL11)
+* added IGraphicsUtil interface and implementations to abstract graphics (Desktop jogl, Android OpenGL ES)
+* moved GeometryInfo class into shapes packages were it belongs
+* GeometryInfo: change OpenGL display list creation to not use the Tools3D method but to rather call the shapes drawPureGl() method so we dont need the
+draw logic twice
+* moved font facilities, factories into org.mt4j.util.font
+* font loading now only supports to specify fill color 
+* font characters overwritten draw methods now which dont set a color so that the font color can be set once before drawing all characters (i.e.
+in MTTextArea) and can be changed dynamically -> now new font has to be created if we just want a different font color!
+* InertiaDragAction: fix wrong behaviour if parents are transformed
+* removed the GPL tuioLib and added LGPL Tujo4J library
+* renamed iDragClusterable -> ILassoable
+* override PImage resize() in gltexture to refresh the gl texture object also
+* dont destroy gltexture in shape's destroy() method, but rely on the finalize() method (since we create and re-use GLTextures now in mtApplication.loadImage())
+* allow NPOT textures by using next power of two texture size (android mostly doesent support NPOT texture sizes OpenGL extensions)
+* added adaptTextureCoordsNPOT() method to Tools3D
+* added MTApplication.registerPreDrawAction(IPreDrawAction action) - similar to
+the methods in AbstractScene -> replaced PApplet.registerPre() calls with that (Android version doesent have
+these methods)
+* removed the (GPL) GStreamer and GSVideo library and put it into the extensions svn -> also moved MTMovieClip and MTVideoTexture to the extension
+* in fullscreen exclusive mode, its now possible to switch to a different screen
+resolution (* we now only set the window width/height to the screen dimensions if in non-exclusive fullscreen mode, else we try to switch to the given resolution)
+
+
+=== Examples: ===
+* added simple Processing particle engine example
+* you can now pan while you zoom in the Maps Example
+* maps scene: now we animate to the optimal zoom level after zoom gesture ended
+-> to get a clearer image
+* you can drag tiles while rotating in the Puzzle Example
+* added stroke gestures, double tap and flick to MTGesturesExamplesScene
+* added flick gestures to Scenes Example
+* added rotate3d processor to model in ModelsExample
+
+
+
 === Version 0.95 (08/13/2010): ===
 === Input: ===
 * added Mac OSX multitouch support (MacTrackPadSource)
@@ -110,8 +179,6 @@ tapProcessor.setDoubleTapTime(300); in (ms) -> to check if a TapEvent is a doubl
 * use finalize() in GLFBO, GLTexture and GluTriangulator to clean up the OpenGL resources
 * added ShapeBuilder utility class to create polygons using simple commands
 * many little fixes
-
-
 
 === Version 0.9 (02/23/2010): ===
 === Input: ===

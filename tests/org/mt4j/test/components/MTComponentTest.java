@@ -1,6 +1,6 @@
 package org.mt4j.test.components;
 
-import org.mt4j.MTApplication;
+import org.mt4j.AbstractMTApplication;
 import org.mt4j.components.MTCanvas;
 import org.mt4j.components.MTComponent;
 import org.mt4j.components.visibleComponents.shapes.MTRectangle;
@@ -16,11 +16,11 @@ import org.mt4j.util.math.Vector3D;
 
 public class MTComponentTest extends AbstractWindowTestcase {
 	private MTComponent parent;
-	private MTApplication app;
+	private AbstractMTApplication app;
 	private Iscene scene;
 	
 	@Override
-	public void inStartUp(MTApplication app) {
+	public void inStartUp(AbstractMTApplication app) {
 		this.app = app;
 		//Add a scene to the mt application
 		this.scene = new DummyScene(app, "Dummy Scene");
@@ -82,11 +82,11 @@ public class MTComponentTest extends AbstractWindowTestcase {
 			@Override
 			public void runMTTestCode() {
 				//Create 3 rectangles
-				MTRectangle rect1 = new MTRectangle(100,100,getMTApplication());
+				MTRectangle rect1 = new MTRectangle(getMTApplication(),100,100);
 				rect1.setFillColor(new MTColor(255,0,0));
-				MTRectangle rect2 = new MTRectangle(100,100,getMTApplication());
+				MTRectangle rect2 = new MTRectangle(getMTApplication(),100,100);
 				rect2.setFillColor(new MTColor(0,255,0));
-				MTRectangle rect3 = new MTRectangle(100,100,getMTApplication());
+				MTRectangle rect3 = new MTRectangle(getMTApplication(),100,100);
 				rect3.setFillColor(new MTColor(0,0,255));
 				
 				parent.addChild(rect1);

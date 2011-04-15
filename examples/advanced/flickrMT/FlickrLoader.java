@@ -306,21 +306,21 @@ private SearchParameters searchParameters;
 				sp.setLongitude(null);
 				
 				System.out.println("Places found: " + placesList.size());
-				for (int i = 0; i < placesList.size(); i++) {
-					Place place = (Place) placesList.get(i);
-					String placeID = place.getPlaceId();
-					//System.out.println("Place ID: " + placeID);
+                for (Object aPlacesList : placesList) {
+                    Place place = (Place) aPlacesList;
+                    String placeID = place.getPlaceId();
+                    //System.out.println("Place ID: " + placeID);
 
-					sp.setPlaceId(placeID);
-					sp.setWoeId(place.getWoeId());
-					
+                    sp.setPlaceId(placeID);
+                    sp.setWoeId(place.getWoeId());
+
 //					Location placeResolved = p.resolvePlaceURL(place.getPlaceUrl());
 //					System.out.println("Place: " + placeResolved);
-					
+
 //					sp.setBBox(
 //					48.5129f, 2.1740f, 
 //					48.5130f, 2.1741f);
-				}
+                }
 			}
 //			else if (isGeoSearch && sp.getLongitude() != null && sp.getLatitude() != null
 //					&& !usePlacesForGeoSearch){
@@ -369,29 +369,29 @@ private SearchParameters searchParameters;
 //					System.out.println("photosForLocation (location = stutgart mitte) returned fotos: " +  fot.size());
 					
 					//Go through all found fotos
-					for (int i = 0; i < photoList.size(); i++) {
-						Photo foto = (Photo) photoList.get(i);
-						//Add to result list
-						photos.add(foto);
-						
-						String id = foto.getId();
-						try {
-							GeoData loc = g.getLocation(id);
-							if (loc != null){
-								foto.setGeoData(loc);
-							}
-						} catch (Exception e) {
-							System.err.println("Error fetching geodata for foto");
-							e.printStackTrace();
-						}
-					}
+                    for (Object aPhotoList : photoList) {
+                        Photo foto = (Photo) aPhotoList;
+                        //Add to result list
+                        photos.add(foto);
+
+                        String id = foto.getId();
+                        try {
+                            GeoData loc = g.getLocation(id);
+                            if (loc != null) {
+                                foto.setGeoData(loc);
+                            }
+                        } catch (Exception e) {
+                            System.err.println("Error fetching geodata for foto");
+                            e.printStackTrace();
+                        }
+                    }
 				}
 			}else{
 				//Add to result list
 				if (photoList != null){
-					for (int i = 0; i < photoList.size(); i++) {
-						photos.add((Photo) photoList.get(i));
-					}
+                    for (Object aPhotoList : photoList) {
+                        photos.add((Photo) aPhotoList);
+                    }
 				}
 			}
 			

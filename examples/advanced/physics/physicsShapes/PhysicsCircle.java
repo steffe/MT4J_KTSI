@@ -5,7 +5,7 @@ import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.World;
-import org.mt4j.MTApplication;
+import org.mt4j.AbstractMTApplication;
 import org.mt4j.components.visibleComponents.shapes.MTEllipse;
 import org.mt4j.input.inputProcessors.componentProcessors.rotateProcessor.RotateProcessor;
 import org.mt4j.input.inputProcessors.componentProcessors.scaleProcessor.ScaleProcessor;
@@ -29,7 +29,7 @@ public class PhysicsCircle extends MTEllipse implements IPhysicsComponent{
 			World world, float density, float friction, float restitution, float worldScale
 	) {
 		//super(applet, centerPoint, radius/(float)worldScale, radius/(float)worldScale);
-		super(applet, centerPoint, radius/(float)worldScale, radius/(float)worldScale);
+		super(applet, centerPoint, radius/ worldScale, radius/ worldScale);
 		this.angle = 0;
 		this.world = world;
 		this.density = density;
@@ -40,7 +40,7 @@ public class PhysicsCircle extends MTEllipse implements IPhysicsComponent{
 		this.setGestureAllowance(RotateProcessor.class, false);
 		
 		BodyDef dymBodyDef = new BodyDef();
-		dymBodyDef.position = new Vec2(centerPoint.x /(float)worldScale, centerPoint.y /(float)worldScale);
+		dymBodyDef.position = new Vec2(centerPoint.x / worldScale, centerPoint.y / worldScale);
 		this.bodyDefB4CreationCallback(dymBodyDef);
 		this.body = this.world.createBody(dymBodyDef);
 		
@@ -48,7 +48,7 @@ public class PhysicsCircle extends MTEllipse implements IPhysicsComponent{
 //		circleDef.radius = radius/(float)worldScale; 
 		 //FIXME HACK so textured circles really connect to other bodies
 //		circleDef.radius = radius/(float)worldScale - 2/(float)worldScale; 
-		circleDef.radius = radius/(float)worldScale;
+		circleDef.radius = radius/ worldScale;
 		if (density != 0.0f){
 			circleDef.density 		= density;
 			circleDef.friction 		= friction;
@@ -95,7 +95,7 @@ public class PhysicsCircle extends MTEllipse implements IPhysicsComponent{
 	}
 	
 	public void setCenterRotation(float angle){
-		float degreeAngle = MTApplication.degrees(angle);
+		float degreeAngle = AbstractMTApplication.degrees(angle);
 		float oldAngle = this.getAngle();
 		float diff = degreeAngle-oldAngle;
 		//System.out.println("Old angle: " + oldAngle + " new angle:" + degreeAngle + " diff->" +  diff);

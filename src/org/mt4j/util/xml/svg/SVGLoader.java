@@ -21,10 +21,10 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.MultipleGradientPaint.CycleMethod;
 import java.awt.RadialGradientPaint;
 import java.awt.Rectangle;
 import java.awt.Stroke;
-import java.awt.MultipleGradientPaint.CycleMethod;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -41,11 +41,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
-import javax.media.opengl.GL;
-import javax.media.opengl.glu.GLU;
 import javax.swing.JPanel;
 
 import org.apache.batik.bridge.AbstractSVGGradientElementBridge;
+import org.apache.batik.bridge.AbstractSVGGradientElementBridge.SVGStopElementBridge;
+import org.apache.batik.bridge.AbstractSVGGradientElementBridge.Stop;
 import org.apache.batik.bridge.Bridge;
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.BridgeException;
@@ -59,8 +59,6 @@ import org.apache.batik.bridge.TextUtilities;
 import org.apache.batik.bridge.UnitProcessor;
 import org.apache.batik.bridge.UserAgent;
 import org.apache.batik.bridge.UserAgentAdapter;
-import org.apache.batik.bridge.AbstractSVGGradientElementBridge.SVGStopElementBridge;
-import org.apache.batik.bridge.AbstractSVGGradientElementBridge.Stop;
 import org.apache.batik.css.engine.SVGCSSEngine;
 import org.apache.batik.css.engine.value.ListValue;
 import org.apache.batik.css.engine.value.Value;
@@ -103,28 +101,22 @@ import org.apache.batik.parser.PathParser;
 import org.apache.batik.parser.TransformListParser;
 import org.apache.batik.util.SVGConstants;
 import org.apache.batik.util.XMLResourceDescriptor;
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.apache.log4j.SimpleLayout;
-import org.mt4j.MTApplication;
+import org.mt4j.AbstractMTApplication;
 import org.mt4j.components.MTComponent;
 import org.mt4j.components.TransformSpace;
 import org.mt4j.components.bounds.BoundsZPlaneRectangle;
 import org.mt4j.components.bounds.IBoundingShape;
 import org.mt4j.components.clipping.FillPaint;
 import org.mt4j.components.visibleComponents.AbstractVisibleComponent;
-import org.mt4j.components.visibleComponents.GeometryInfo;
-import org.mt4j.components.visibleComponents.font.FontManager;
-import org.mt4j.components.visibleComponents.font.IFont;
 import org.mt4j.components.visibleComponents.shapes.AbstractShape;
+import org.mt4j.components.visibleComponents.shapes.GeometryInfo;
 import org.mt4j.components.visibleComponents.shapes.MTEllipse;
 import org.mt4j.components.visibleComponents.shapes.MTLine;
 import org.mt4j.components.visibleComponents.shapes.MTPolygon;
 import org.mt4j.components.visibleComponents.shapes.MTRectangle;
+import org.mt4j.components.visibleComponents.shapes.MTRectangle.PositionAnchor;
 import org.mt4j.components.visibleComponents.shapes.MTRoundRectangle;
 import org.mt4j.components.visibleComponents.shapes.MTStencilPolygon;
-import org.mt4j.components.visibleComponents.shapes.MTRectangle.PositionAnchor;
 import org.mt4j.components.visibleComponents.shapes.mesh.MTTriangleMesh;
 import org.mt4j.components.visibleComponents.widgets.MTTextArea;
 import org.mt4j.input.gestureAction.DefaultDragAction;
@@ -137,14 +129,21 @@ import org.mt4j.input.inputProcessors.componentProcessors.scaleProcessor.ScalePr
 import org.mt4j.util.HelperMethods;
 import org.mt4j.util.MT4jSettings;
 import org.mt4j.util.MTColor;
+import org.mt4j.util.PlatformUtil;
 import org.mt4j.util.SwingTextureRenderer;
+import org.mt4j.util.font.FontManager;
+import org.mt4j.util.font.IFont;
+import org.mt4j.util.logging.ILogger;
+import org.mt4j.util.logging.MTLoggerFactory;
 import org.mt4j.util.math.ConvexityUtil;
 import org.mt4j.util.math.Matrix;
 import org.mt4j.util.math.ToolsGeometry;
 import org.mt4j.util.math.Vector3D;
 import org.mt4j.util.math.Vertex;
-import org.mt4j.util.opengl.GluTrianglulator;
+import org.mt4j.util.opengl.GL10;
+import org.mt4j.util.opengl.GL11Plus;
 import org.mt4j.util.opengl.GLTexture;
+import org.mt4j.util.opengl.GluTrianglulator;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -164,7 +163,6 @@ import org.w3c.dom.svg.SVGPointList;
 import org.w3c.dom.svg.SVGSVGElement;
 
 import processing.core.PApplet;
-import processing.opengl.PGraphicsOpenGL;
 
 
 /**
@@ -173,12 +171,9 @@ import processing.opengl.PGraphicsOpenGL;
  * @author Christopher Ruff
  */
 public class SVGLoader implements SVGConstants{
-	private static final Logger logger = Logger.getLogger(SVGLoader.class.getName());
+	private static final ILogger logger = MTLoggerFactory.getLogger(SVGLoader.class.getName());
 	static{
-		logger.setLevel(Level.ERROR);
-		SimpleLayout l = new SimpleLayout();
-		ConsoleAppender ca = new ConsoleAppender(l);
-		logger.addAppender(ca);
+		logger.setLevel(ILogger.ERROR);
 	}
 	
 	/** The svg doc. */
@@ -289,7 +284,7 @@ public class SVGLoader implements SVGConstants{
                 //FIXME HACK! this seems to help the "org.apache.batik.bridge.BridgeException: Unable to make sense of URL for connection" error
                 //occuring with windmill.svg if loading from inputstream instead of local file system file
                 //FIXME but this might create errors when loading external file like images from the relative svg path?
-            	((SVGDocument)doc).setDocumentURI("") ; 
+            	doc.setDocumentURI("") ; 
 //                String sub = filedescr.substring(0, filedescr.lastIndexOf(MTApplication.separator));
 //                System.out.println("F: " + filedescr + " sub; " + sub);
 //                svgDoc.setDocumentURI(sub+ MTApplication.separator) ; 
@@ -328,7 +323,7 @@ public class SVGLoader implements SVGConstants{
 		traverseSVGDoc(svgDoc, components);
 		opacityStack.pop();
 		
-		MTComponent[] comps = (MTComponent[])components.toArray(new MTComponent[components.size()]);
+		MTComponent[] comps = components.toArray(new MTComponent[components.size()]);
 		//Only returning the 1st component, since this should be the top-level <svg> element and only 1!?
 		return comps[0];
 	}
@@ -376,7 +371,7 @@ public class SVGLoader implements SVGConstants{
 			  SVGGraphicsElement svgGfx = (SVGGraphicsElement)node;
 			  //Handle inherited opacity settings
 			  float opac = queryPrimitiveFloatValue(svgGfx, "opacity", 1f);
-			  opacityStack.push(opac *= opacityStack.peek().floatValue());
+			  opacityStack.push(opac *= opacityStack.peek());
 		  }
 
 		  // if G (GROUP) element, add all children to this element
@@ -463,7 +458,7 @@ public class SVGLoader implements SVGConstants{
 			  //Traverse the children and add them to a new arraylist
 			  traverseChildren(gElem, groupChildren);
 			  
-			  MTComponent[] childComps = (MTComponent[])groupChildren.toArray(new MTComponent[groupChildren.size()]);
+			  MTComponent[] childComps = groupChildren.toArray(new MTComponent[groupChildren.size()]);
 			  //Add the children to the group
 			  group.addChildren(childComps);
 			  //Add the group to the arraylist of the parent
@@ -559,12 +554,12 @@ public class SVGLoader implements SVGConstants{
 					  if (useVectorFont)
 						  //Vector font
 						  font = FontManager.getInstance().createFont(pa, 
-								  "arial.ttf", Math.round(fontSize), fillColor, strokeColor);
+								  "arial.ttf", Math.round(fontSize), fillColor);
 					  else
 						  //Bitmap font
 						  font = FontManager.getInstance().createFont(pa, 
 //								  "Arial", Math.round(fontSize),
-								  fontFamily, Math.round(fontSize), fillColor, strokeColor);
+								  fontFamily, Math.round(fontSize), fillColor);
 //					  /* 
 
 					  IFont fontToUse = font;
@@ -601,7 +596,7 @@ public class SVGLoader implements SVGConstants{
 
 							  /////////////////////////////////////
 							  //Get the character information - font, colors
-							  String newFamilyName = new String(fontFamily);
+							  String newFamilyName = fontFamily;
 							  float newFontSize = fontSize;
 							  MTColor newFillColor = new MTColor(fillColor);
 							  MTColor newStrokeColor = new MTColor(strokeColor);
@@ -626,13 +621,12 @@ public class SVGLoader implements SVGConstants{
 							  if (gvtFonts!=null){
 								  if (gvtFonts instanceof List) {
 									  List<?> fonts = (List<?>) gvtFonts;
-									  for (Iterator<?> iterator = fonts.iterator(); iterator.hasNext();) {
-										  Object o = (Object) iterator.next();
-										  if (o instanceof GVTFont) {
-											  aGvtFont = (GVTFont) o;
-											  //logger.debug("Char font family: " + aGvtFont.getFamilyName() + " Size:" + aGvtFont.getSize());
-										  }
-									  }
+                                      for (Object o : fonts) {
+                                          if (o instanceof GVTFont) {
+                                              aGvtFont = (GVTFont) o;
+                                              //logger.debug("Char font family: " + aGvtFont.getFamilyName() + " Size:" + aGvtFont.getSize());
+                                          }
+                                      }
 								  }
 							  }
 							  if (aGvtFont != null){
@@ -652,11 +646,11 @@ public class SVGLoader implements SVGConstants{
 								  
 								  if (useVectorFont)
 									  fontToUse = FontManager.getInstance().createFont(pa, 
-											  "arial.ttf", Math.round(newFontSize), newFillColor, newStrokeColor);
+											  "arial.ttf", Math.round(newFontSize), newFillColor);
 								  else
 									  fontToUse = FontManager.getInstance().createFont(pa, //uses cached font if available
 //											  "Arial", Math.round(fontSize),
-											  newFamilyName, Math.round(newFontSize), newFillColor, newStrokeColor);
+											  newFamilyName, Math.round(newFontSize), newFillColor);
 								  if (fontToUse == null){
 									  fontToUse = font;
 								  }
@@ -780,15 +774,14 @@ public class SVGLoader implements SVGConstants{
 							  }
 							  //Add character to the current textarea in the list
 							  if (!textAreas.isEmpty()){
-								  textAreas.get(textAreas.size()-1).appendCharByUnicode(new Character(currentChar).toString());							
+								  textAreas.get(textAreas.size()-1).appendCharByUnicode(Character.toString(currentChar));
 							  }
 						  }
 						  //Set the positions of the textareas
-						  for (Iterator<MTTextArea> iterator = textAreas.iterator(); iterator.hasNext();) {
-							  MTTextArea textArea = (MTTextArea) iterator.next();
-							  logger.debug("Adding text area at: " + (Vector3D) textArea.getUserData("posRelParent"));
-							  textArea.setPositionRelativeToParent((Vector3D) textArea.getUserData("posRelParent"));
-						  }
+                          for (MTTextArea textArea : textAreas) {
+                              logger.debug("Adding text area at: " + (Vector3D) textArea.getUserData("posRelParent"));
+                              textArea.setPositionRelativeToParent((Vector3D) textArea.getUserData("posRelParent"));
+                          }
 						  comps.addAll(textAreas);
 					  }
 
@@ -876,14 +869,14 @@ public class SVGLoader implements SVGConstants{
 		  boolean noStroke 		= false;
 		  float strokeOpacity 	= 1;
 		  float fillOpacity   	= 1;
-		  int windingRule 		= GLU.GLU_TESS_WINDING_NONZERO;
+		  int windingRule 		= GluTrianglulator.WINDING_RULE_NONZERO;
 		  // SVG Defaults \\
 		  
 		  
 		  // Opacity, not as a style attribute but a separate 
 		  // as group opacity doesnt get computed right, so we 
 		  // mannually track it on a stack
-		  float opacity = opacityStack.peek().floatValue(); 
+		  float opacity = opacityStack.peek();
 		  //logger.debug("INHERITED OPACITY: " + opacity);
 		  
 		  
@@ -891,19 +884,17 @@ public class SVGLoader implements SVGConstants{
 		  Value fillRuleValue = CSSUtilities.getComputedStyle(gfxElem, SVGCSSEngine.FILL_RULE_INDEX);
 		  String fillRule = fillRuleValue.getStringValue();
 		  if (fillRule.equalsIgnoreCase("nonzero")){
-			  windingRule = GLU.GLU_TESS_WINDING_NONZERO;
+			  windingRule = GluTrianglulator.WINDING_RULE_NONZERO;
 		  }else if (fillRule.equalsIgnoreCase("evenodd")){
-			  windingRule = GLU.GLU_TESS_WINDING_ODD;
+			  windingRule = GluTrianglulator.WINDING_RULE_ODD;
 		  }else{
-			  windingRule = GLU.GLU_TESS_WINDING_NONZERO;
+			  windingRule = GluTrianglulator.WINDING_RULE_NONZERO;
 		  }
 		  //logger.debug("fillRule: " + fillRule);
 		  
 		  
 		  // Fill Opacity \\
-		  Value fillOpacValue = CSSUtilities.getComputedStyle(gfxElem, SVGCSSEngine.FILL_OPACITY_INDEX);
-		  float computedfillOpac = PaintServer.convertOpacity(fillOpacValue);
-		  fillOpacity = computedfillOpac;
+		  fillOpacity =  PaintServer.convertOpacity(CSSUtilities.getComputedStyle(gfxElem, SVGCSSEngine.FILL_OPACITY_INDEX));
 		  //Multiplicate inherited opacity with this components opacities
 		  fillOpacity 	*= opacity;
 		  //Save for eventual lineargradient creation later that needs the not interpolated value
@@ -939,9 +930,7 @@ public class SVGLoader implements SVGConstants{
 		  
 		  
 		  // Stroke Opacity \\
-		  Value strokeOpacValue = CSSUtilities.getComputedStyle(gfxElem, SVGCSSEngine.STROKE_OPACITY_INDEX);
-		  float computedStrokeOpacity = PaintServer.convertOpacity(strokeOpacValue);
-		  strokeOpacity = computedStrokeOpacity;
+		  strokeOpacity = PaintServer.convertOpacity(CSSUtilities.getComputedStyle(gfxElem, SVGCSSEngine.STROKE_OPACITY_INDEX));
 		  // Multiplicate inherited opacity with this components group opacities
 		  strokeOpacity *= opacity;
 		  
@@ -1053,9 +1042,9 @@ public class SVGLoader implements SVGConstants{
 					  rx = width/2;
 				  if (ry > height/2 )
 					  ry = height/2;
-				  comp = new MTRoundRectangle(x,y,0, width,height,rx, ry, pa);
+				  comp = new MTRoundRectangle(pa,x,y, 0,width,height, rx, ry);
 			  }else{
-				  comp = new MTRectangle(x,y, width,height, pa); 
+				  comp = new MTRectangle(pa,x, y,width, height); 
 			  }
 			  
 			  try{
@@ -1191,8 +1180,8 @@ public class SVGLoader implements SVGConstants{
 								  }
 							  }
 							//Per default use direct gl drawing and displaylists in OGL mode
-							if (pa instanceof MTApplication) {
-								MTApplication app = (MTApplication) pa;
+							if (pa instanceof AbstractMTApplication) {
+								AbstractMTApplication app = (AbstractMTApplication) pa;
 								app.invokeLater(new InvokeLaterAction(shape));
 							}
 						  }
@@ -1364,7 +1353,7 @@ public class SVGLoader implements SVGConstants{
         java.awt.Color [] colors  = new java.awt.Color[stopLength];
         Iterator<Stop> iter = stops.iterator();
         for (int i=0; iter.hasNext(); ++i) {
-        	Stop stop = (Stop)iter.next();
+        	Stop stop = iter.next();
         	offsets[i] = stop.offset;
         	colors[i] = stop.color;
         }
@@ -1456,8 +1445,8 @@ public class SVGLoader implements SVGConstants{
         	awtCycleMethod = CycleMethod.REFLECT;
         }
 
-        if (pa instanceof MTApplication) {
-        	MTApplication app = (MTApplication) pa;
+        if (pa instanceof AbstractMTApplication) {
+        	AbstractMTApplication app = (AbstractMTApplication) pa;
 
         	//Calculate a bounding rectangle from the rotated shape
         	BoundsZPlaneRectangle boundsZ = new BoundsZPlaneRectangle(shape, shape.getVerticesLocal());
@@ -1499,12 +1488,12 @@ public class SVGLoader implements SVGConstants{
 //      		GradientPanel gradPanel = new GradientPanel(bBoxWidth, bBoxHeight, r, offsets, colors, (float)c.getX(), (float)c.getY(), (float)f.getX(), (float)f.getY());
         		swingTex = new SwingTextureRenderer(app, gradPanel);
         		swingTex.scheduleRefresh();
-        		rectangle = new MTRectangle(new Vertex(boundsVecs[0]), bBoxWidth, bBoxHeight, pa);
+        		rectangle = new MTRectangle(pa, new Vertex(boundsVecs[0]), bBoxWidth, bBoxHeight);
         		rectangle.setName("Swing texture rendering");
         		rectangle.setTexture(swingTex.getTextureToRenderTo());
         		rectangle.setNoStroke(true);
         		rectangle.setPickable(false);
-        		rectangle.setFillDrawMode(GL.GL_QUADS);
+        		rectangle.setFillDrawMode(GL11Plus.GL_QUADS);
 
         		//Use displaylist by default for gradientshape
         		if (MT4jSettings.getInstance().isOpenGlMode()){
@@ -1539,7 +1528,7 @@ public class SVGLoader implements SVGConstants{
         		GradientPanel gradPanel = new GradientPanel(bBoxWidth, bBoxHeight, r, offsets, colors, (float)c.getX(), (float)c.getY(), (float)f.getX(), (float)f.getY(), awtCycleMethod);
         		swingTex = new SwingTextureRenderer(app, gradPanel);
         		swingTex.scheduleRefresh();
-        		rectangle = new MTRectangle(new Vertex(boundsVecs[0]), bBoxWidth, bBoxHeight, pa);
+        		rectangle = new MTRectangle(pa, new Vertex(boundsVecs[0]), bBoxWidth, bBoxHeight);
         		final GLTexture tex = swingTex.getTextureToRenderTo();
         		rectangle.setName("Swing texture rendering");
         		rectangle.setTexture(tex);
@@ -1560,7 +1549,8 @@ public class SVGLoader implements SVGConstants{
 					shape.addChild(rectanglePaintedComp);
         		 */
         	}
-        	FillPaint gradStencil = new FillPaint(((PGraphicsOpenGL)pa.g).gl, rectangle);
+//        	FillPaint gradStencil = new FillPaint(((PGraphicsOpenGL)pa.g).gl, rectangle);
+        	FillPaint gradStencil = new FillPaint(PlatformUtil.getGL(), rectangle);
         	return gradStencil;
 //      	return null;
         }
@@ -1765,7 +1755,8 @@ public class SVGLoader implements SVGConstants{
 	
 
 	private FillPaint setUpRotatedGradientUserSpace(AbstractShape testShape, float angle, List<Stop> stops, Point2D p1, Point2D p2){
-		GL gl = ((PGraphicsOpenGL)pa.g).gl;
+//		GL gl = ((PGraphicsOpenGL)pa.g).gl;
+		GL10 gl = PlatformUtil.getGL();
 		float gradAngle = angle;
 		
 		float invAngle = angle*-1;
@@ -1794,7 +1785,7 @@ public class SVGLoader implements SVGConstants{
 		System.arraycopy(gradientRectVerts, 0, shapeAndGradVerts, shapeVertsCopy.length, gradientRectVerts.length);
 		
 		//Create a temporary polygon with the roated vertices to calc BBox
-		MTPolygon inverseRotatedShape = new MTPolygon(shapeAndGradVerts, pa);
+		MTPolygon inverseRotatedShape = new MTPolygon(pa, shapeAndGradVerts);
 		//Calculate a bounding rectangle from the rotated shape
 		BoundsZPlaneRectangle inverseRotatedBounds = new BoundsZPlaneRectangle(inverseRotatedShape);
 		Vector3D[] invBoundsVecs = inverseRotatedBounds.getVectorsLocal();
@@ -1833,10 +1824,9 @@ public class SVGLoader implements SVGConstants{
 		
 		//Put gradient rectangle quads into a list
 		List<Vertex> gradientRectQuads = new ArrayList<Vertex>();
-		for (int i = 0; i < newBounds.length; i++) {
-			Vertex vertex = newBounds[i];
-			gradientRectQuads.add(vertex);
-		}
+        for (Vertex vertex : newBounds) {
+            gradientRectQuads.add(vertex);
+        }
 		
 		/* Bounding shape with gradient rectangle inside (can also overlap outlines)
 		 invBoundsVecs[0]   		invBoundsVecs[1]
@@ -1892,11 +1882,11 @@ public class SVGLoader implements SVGConstants{
 		newBounds = (Vertex[]) Vector3D.rotateZVectorArray(newBounds, testShape.getCenterPointLocal(), gradAngle);
 		
 		//Create gradient shape to paint over the real shape
-		MTPolygon p = new MTPolygon(newBounds,pa);
+		MTPolygon p = new MTPolygon(pa, newBounds);
         p.setNoStroke(true);
         p.setPickable(false);
         p.setStrokeWeight(testShape.getStrokeWeight());
-        p.setFillDrawMode(GL.GL_QUADS);
+        p.setFillDrawMode(GL11Plus.GL_QUADS);
         //Use displaylist by default for gradientshape
         p.generateAndUseDisplayLists();
         
@@ -1906,7 +1896,8 @@ public class SVGLoader implements SVGConstants{
 
 	
 	private FillPaint setUpRotatedGradientBBox(AbstractShape testShape, float angle, List<Stop> stops){
-			GL gl = ((PGraphicsOpenGL)pa.g).gl;
+//			GL gl = ((PGraphicsOpenGL)pa.g).gl;
+			GL10 gl = PlatformUtil.getGL();
 			float gradAngle = angle;
 			
 			//Get copy of shapes vertices
@@ -1915,7 +1906,7 @@ public class SVGLoader implements SVGConstants{
 			shapeVertsCopy = (Vertex[]) Vertex.rotateZVectorArray(shapeVertsCopy, testShape.getCenterPointLocal(), -gradAngle);
 			
 			//Create a temporary polygon with the roated vertices to calc BBox
-			MTPolygon inverseRotatedShape = new MTPolygon(shapeVertsCopy, pa);
+			MTPolygon inverseRotatedShape = new MTPolygon(pa, shapeVertsCopy);
 			//Calculate a bounding rectangle from the rotated shape
 			BoundsZPlaneRectangle inverseRotatedBounds = new BoundsZPlaneRectangle(inverseRotatedShape);
 			Vector3D[] invBoundsVecs = inverseRotatedBounds.getVectorsLocal();
@@ -1957,10 +1948,10 @@ public class SVGLoader implements SVGConstants{
 			newBounds = (Vertex[]) Vector3D.rotateZVectorArray(newBounds, testShape.getCenterPointLocal(), gradAngle);
 			
 			//Create gradient shape to paint over the real shape
-			MTPolygon p = new MTPolygon(newBounds,pa);
+			MTPolygon p = new MTPolygon(pa, newBounds);
 	        p.setNoStroke(true);
 	        p.setPickable(false);
-	        p.setFillDrawMode(GL.GL_QUADS);
+	        p.setFillDrawMode(GL11Plus.GL_QUADS);
 	        p.setStrokeWeight(testShape.getStrokeWeight());
 	        //Use displaylist by default for gradientshape
 	        p.generateAndUseDisplayLists();
@@ -1972,7 +1963,7 @@ public class SVGLoader implements SVGConstants{
 	    
 	
     private CycleMethodEnum getSpreadMethod(Element paintElement){
-    	String s = new String();
+    	String s = "";
         //SPREADMETHOD 'spreadMethod' attribute - default is pad
         CycleMethodEnum spreadMethod = MultipleGradientPaint.NO_CYCLE;
         s = SVGUtilities.getChainableAttributeNS(paintElement, null, SVG_SPREAD_METHOD_ATTRIBUTE, ctx);
@@ -1994,7 +1985,7 @@ public class SVGLoader implements SVGConstants{
     
     
     private AffineTransform getGradientTransform(Element paintElement){
-    	String s = new String();
+    	String s = "";
     	  //'gradientTransform' attribute - default is an Identity matrix
         AffineTransform transform;
         s = SVGUtilities.getChainableAttributeNS(paintElement, null, SVG_GRADIENT_TRANSFORM_ATTRIBUTE, ctx);
@@ -2305,7 +2296,7 @@ public class SVGLoader implements SVGConstants{
 			}else{
 				pathPoints.addAll(pathHandler.getReverseMoveToStack());
 			}
-			Vertex[] pathVertsStencilPrepared = (Vertex[])pathPoints.toArray(new Vertex[pathPoints.size()]);
+			Vertex[] pathVertsStencilPrepared = pathPoints.toArray(new Vertex[pathPoints.size()]);
 //			*/
 			
 			//Check if path vertices are empty
@@ -2381,7 +2372,7 @@ public class SVGLoader implements SVGConstants{
 			}
 		}
 		
-		MTStencilPolygon newShape = new MTStencilPolygon(stencilPreparedVerts, subPaths, pa);
+		MTStencilPolygon newShape = new MTStencilPolygon(pa, stencilPreparedVerts, subPaths);
 		return newShape;
 	}
 	
@@ -2423,7 +2414,7 @@ public class SVGLoader implements SVGConstants{
 	
 	private class SvgPolygon extends MTPolygon{
 		public SvgPolygon(Vertex[] vertices, PApplet applet) {
-			super(vertices, applet);
+			super(applet, vertices);
 		}
 		
 		protected IBoundingShape computeDefaultBounds() {
@@ -2529,9 +2520,8 @@ public class SVGLoader implements SVGConstants{
 		}
 		
 		//For lines or polygons do this
-//		MTPolygon poly = new MTPolygon(verts , pa);
-		MTPolygon poly = new SvgPolygon(verts,pa);
-		return poly;
+//		return new MTPolygon(verts , pa);
+		return new SvgPolygon(verts,pa);
 	}
 	
 	/**

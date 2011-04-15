@@ -17,16 +17,16 @@
  ***********************************************************************/
 package org.mt4j.sceneManagement.transition;
 
-import org.mt4j.MTApplication;
+import org.mt4j.AbstractMTApplication;
 import org.mt4j.components.TransformSpace;
 import org.mt4j.components.visibleComponents.shapes.MTRectangle;
 import org.mt4j.components.visibleComponents.widgets.MTSceneTexture;
 import org.mt4j.sceneManagement.Iscene;
 import org.mt4j.util.MTColor;
-import org.mt4j.util.animation.Animation;
 import org.mt4j.util.animation.AnimationEvent;
+import org.mt4j.util.animation.IAnimation;
 import org.mt4j.util.animation.IAnimationListener;
-import org.mt4j.util.animation.MultiPurposeInterpolator;
+import org.mt4j.util.animation.ani.AniAnimation;
 
 /**
  * The Class FlipTransition.
@@ -36,7 +36,7 @@ import org.mt4j.util.animation.MultiPurposeInterpolator;
 public class FlipTransition extends AbstractTransition {
 	
 	/** The app. */
-	private MTApplication app;
+	private AbstractMTApplication app;
 	
 	/** The finished. */
 	private boolean finished;
@@ -54,10 +54,10 @@ public class FlipTransition extends AbstractTransition {
 	private MTSceneTexture nextSceneWindow;
 	
 	/** The anim2. */
-	private Animation anim2;
+	private IAnimation anim2;
 	
 	/** The anim. */
-	private Animation anim;
+	private IAnimation anim;
 	
 	/** The duration. */
 	private long duration;
@@ -67,6 +67,10 @@ public class FlipTransition extends AbstractTransition {
 	
 	/** The next scene rectangle. */
 	private MTRectangle nextSceneRectangle;
+
+	private float totalAngleAnim;
+
+	private float totalAnim2;
 	
 	
 	/**
@@ -74,7 +78,7 @@ public class FlipTransition extends AbstractTransition {
 	 * 
 	 * @param mtApplication the mt application
 	 */
-	public FlipTransition(MTApplication mtApplication) {
+	public FlipTransition(AbstractMTApplication mtApplication) {
 		this(mtApplication, 2000);
 	}
 	
@@ -85,53 +89,38 @@ public class FlipTransition extends AbstractTransition {
 	 * @param mtApplication the mt application
 	 * @param duration the duration
 	 */
-	public FlipTransition(MTApplication mtApplication, long duration) {
+	public FlipTransition(AbstractMTApplication mtApplication, long duration) {
 		super(mtApplication, "Flip Transition");
 		this.app = mtApplication;
 		this.duration = duration;
 		this.finished = true;
 		
-		anim2 = new Animation("Flip animation 2", new MultiPurposeInterpolator(0,90, this.duration/2f, 0, 0.5f, 1) , this).addAnimationListener(new IAnimationListener(){
-			//@Override
+		
+//		anim2 = new Animation("Flip animation 2", new MultiPurposeInterpolator(0,90, this.duration/2f, 0, 0.5f, 1) , this);
+		anim2 = new AniAnimation(0, 90, (int)((float)this.duration/2f), AniAnimation.CIRC_OUT, this);
+		anim2.addAnimationListener(new IAnimationListener(){
 			public void processAnimationEvent(AnimationEvent ae) {
-				switch (ae.getId()) {
-				case AnimationEvent.ANIMATION_STARTED:
-				case AnimationEvent.ANIMATION_UPDATED:
-//					nextSceneWindow.rotateYGlobal(lastSceneWindow.getCenterPointGlobal(), ae.getAnimation().getInterpolator().getCurrentStepDelta());
-					nextSceneRectangle.rotateYGlobal(lastSceneWindow.getCenterPointGlobal(), ae.getAnimation().getInterpolator().getCurrentStepDelta());
-					break;
-				case AnimationEvent.ANIMATION_ENDED:
-					nextSceneRectangle.rotateYGlobal(lastSceneWindow.getCenterPointGlobal(), ae.getAnimation().getInterpolator().getCurrentStepDelta());
+				nextSceneRectangle.rotateYGlobal(nextSceneRectangle.getCenterPointGlobal(), ae.getDelta());
+				if (ae.getId() == AnimationEvent.ANIMATION_ENDED){
 					finished = true;
-					break;
-				default:
-					break;
 				}
 			}});
-		anim2.setResetOnFinish(true);
+//		((Animation)anim2).setResetOnFinish(true);
 		
-        anim = new Animation("Flip animation 1", new MultiPurposeInterpolator(0,90, this.duration/2f, 0.5f, 1, 1) , this).addAnimationListener(new IAnimationListener(){
-        	//@Override
+//        anim = new Animation("Flip animation 1", new MultiPurposeInterpolator(0,90, this.duration/2f, 0.5f, 1, 1) , this);
+		anim = new AniAnimation(0,90, (int)((float)this.duration/2f), AniAnimation.LINEAR, this);
+        anim.addAnimationListener(new IAnimationListener(){
         	public void processAnimationEvent(AnimationEvent ae) {
-        		switch (ae.getId()) {
-				case AnimationEvent.ANIMATION_STARTED:
-				case AnimationEvent.ANIMATION_UPDATED:
-//					lastSceneWindow.rotateYGlobal(lastSceneWindow.getCenterPointGlobal(), ae.getAnimation().getInterpolator().getCurrentStepDelta());
-					lastSceneRectangle.rotateYGlobal(lastSceneWindow.getCenterPointGlobal(), ae.getAnimation().getInterpolator().getCurrentStepDelta());
-					break;
-				case AnimationEvent.ANIMATION_ENDED:
-					lastSceneRectangle.rotateYGlobal(lastSceneWindow.getCenterPointGlobal(), ae.getAnimation().getInterpolator().getCurrentStepDelta());
+        		lastSceneRectangle.rotateYGlobal(lastSceneRectangle.getCenterPointGlobal(), ae.getDelta());
+        		if (ae.getId() == AnimationEvent.ANIMATION_ENDED){
 //					nextSceneWindow.setVisible(true);
 //					lastSceneWindow.setVisible(false);
 					lastSceneRectangle.setVisible(false);
 					nextSceneRectangle.setVisible(true);
 					anim2.start();
-					break;
-				default:
-					break;
 				}
         	}});
-       anim.setResetOnFinish(true);
+//        ((Animation)anim2).setResetOnFinish(true);
 		
 	}
 
@@ -163,12 +152,12 @@ public class FlipTransition extends AbstractTransition {
 				lastSceneWindow = new MTSceneTexture(app,0, 0, lastScene);
 				nextSceneWindow = new MTSceneTexture(app,0, 0, nextScene);
 
-				lastSceneRectangle = new MTRectangle(0,0, app.width, app.height, app);
+				lastSceneRectangle = new MTRectangle(app,0, 0, app.width, app.height);
 				lastSceneRectangle.setGeometryInfo(lastSceneWindow.getGeometryInfo());
 				lastSceneRectangle.setTexture(lastSceneWindow.getTexture());
 				lastSceneRectangle.setStrokeColor(new MTColor(0,0,0,255));
 
-				nextSceneRectangle = new MTRectangle(0,0, app.width, app.height, app);
+				nextSceneRectangle = new MTRectangle(app,0, 0, app.width, app.height);
 				nextSceneRectangle.setGeometryInfo(nextSceneWindow.getGeometryInfo());
 				nextSceneRectangle.setTexture(nextSceneWindow.getTexture());
 				nextSceneRectangle.setStrokeColor(new MTColor(0,0,0,255));
@@ -182,6 +171,8 @@ public class FlipTransition extends AbstractTransition {
 				//Draw scenes into texture once!
 				lastSceneWindow.drawComponent(app.g);
 				nextSceneWindow.drawComponent(app.g);
+				
+				anim.start();
 			}
 		});
 
@@ -189,17 +180,12 @@ public class FlipTransition extends AbstractTransition {
 //		this.getCanvas().addChild(this.nextSceneWindow);
 //		this.nextSceneWindow.rotateY(this.nextSceneWindow.getCenterPointGlobal(), 270, TransformSpace.GLOBAL);
 //		this.nextSceneWindow.setVisible(false);
-		anim.start();
-		
 		//TODO wihtout FBO copyPixels
 	}
 	
 	
-	/* (non-Javadoc)
-	 * @see org.mt4j.sceneManagement.AbstractScene#shutDown()
-	 */
 	@Override
-	public void shutDown() {
+	public void onLeave() {
 		finished = true;
 		this.lastScene = null;
 		this.nextScene = null;

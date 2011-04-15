@@ -21,16 +21,14 @@ import java.util.HashMap;
 
 import javax.swing.SwingUtilities;
 
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.apache.log4j.SimpleLayout;
-import org.mt4j.MTApplication;
+import org.mt4j.AbstractMTApplication;
 import org.mt4j.input.inputData.ActiveCursorPool;
 import org.mt4j.input.inputData.InputCursor;
 import org.mt4j.input.inputData.MTFingerInputEvt;
 import org.mt4j.input.inputData.MTWin7TouchInputEvt;
 import org.mt4j.util.MT4jSettings;
+import org.mt4j.util.logging.ILogger;
+import org.mt4j.util.logging.MTLoggerFactory;
 
 /**
  * Input source for native Windows 7 WM_TOUCH messages for single/multi-touch.
@@ -41,19 +39,16 @@ import org.mt4j.util.MT4jSettings;
  */
 public class Win7NativeTouchSource extends AbstractInputSource {
 	/** The Constant logger. */
-	private static final Logger logger = Logger.getLogger(Win7NativeTouchSource.class.getName());
+	private static final ILogger logger = MTLoggerFactory.getLogger(Win7NativeTouchSource.class.getName());
 	static{
-//		logger.setLevel(Level.ERROR);
-//		logger.setLevel(Level.DEBUG);
-		logger.setLevel(Level.INFO);
-		SimpleLayout l = new SimpleLayout();
-		ConsoleAppender ca = new ConsoleAppender(l);
-		logger.addAppender(ca);
+//		logger.setLevel(ILogger.ERROR);
+//		logger.setLevel(ILogger.DEBUG);
+		logger.setLevel(ILogger.INFO);
 	}
 	
 	static boolean loaded = false;
 	
-	private MTApplication app;
+	private AbstractMTApplication app;
 
 	private int sunAwtCanvasHandle;
 
@@ -100,7 +95,7 @@ public class Win7NativeTouchSource extends AbstractInputSource {
 	 *
 	 * @param mtApp the mt app
 	 */
-	public Win7NativeTouchSource(MTApplication mtApp) {
+	public Win7NativeTouchSource(AbstractMTApplication mtApp) {
 		super(mtApp);
 		this.app = mtApp;
 		this.success = false;
@@ -145,6 +140,15 @@ public class Win7NativeTouchSource extends AbstractInputSource {
 		
 		this.getNativeWindowHandles();
 		success = true;
+		
+		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+			public void run() {
+				if (isSuccessfullySetup()){
+					logger.debug("Cleaning up Win7 touch source..");
+					quit();
+				}
+			}
+		}));
 	}
 
 	
@@ -173,7 +177,7 @@ public class Win7NativeTouchSource extends AbstractInputSource {
 					
 					InputCursor c = new InputCursor();
 					long cursorID = c.getId();
-					MTWin7TouchInputEvt touchEvt = new MTWin7TouchInputEvt(this, wmTouchEvent.x, wmTouchEvent.y, wmTouchEvent.contactSizeX, wmTouchEvent.contactSizeY, MTFingerInputEvt.INPUT_DETECTED, c);
+					MTWin7TouchInputEvt touchEvt = new MTWin7TouchInputEvt(this, wmTouchEvent.x, wmTouchEvent.y, wmTouchEvent.contactSizeX, wmTouchEvent.contactSizeY, MTFingerInputEvt.INPUT_STARTED, c);
 					int touchID = wmTouchEvent.id;
 					ActiveCursorPool.getInstance().putActiveCursor(cursorID, c);
 					touchToCursorID.put(touchID, cursorID);

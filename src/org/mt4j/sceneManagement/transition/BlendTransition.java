@@ -17,15 +17,15 @@
  ***********************************************************************/
 package org.mt4j.sceneManagement.transition;
 
-import org.mt4j.MTApplication;
+import org.mt4j.AbstractMTApplication;
 import org.mt4j.components.visibleComponents.shapes.MTRectangle;
 import org.mt4j.components.visibleComponents.widgets.MTSceneTexture;
 import org.mt4j.sceneManagement.Iscene;
 import org.mt4j.util.MTColor;
-import org.mt4j.util.animation.Animation;
 import org.mt4j.util.animation.AnimationEvent;
+import org.mt4j.util.animation.IAnimation;
 import org.mt4j.util.animation.IAnimationListener;
-import org.mt4j.util.animation.MultiPurposeInterpolator;
+import org.mt4j.util.animation.ani.AniAnimation;
 
 import processing.core.PGraphics;
 
@@ -37,7 +37,7 @@ import processing.core.PGraphics;
 public class BlendTransition extends AbstractTransition {
 	
 	/** The app. */
-	private MTApplication app;
+	private AbstractMTApplication app;
 	
 	/** The finished. */
 	private boolean finished;
@@ -52,10 +52,10 @@ public class BlendTransition extends AbstractTransition {
 	private MTSceneTexture lastSceneWindow;
 	
 	/** The anim. */
-	private Animation anim;
+	private IAnimation anim;
 	
 	/** The duration. */
-	private long duration;
+	private int duration;
 	
 	/** The last scene rectangle. */
 	private MTRectangle lastSceneRectangle;
@@ -65,7 +65,7 @@ public class BlendTransition extends AbstractTransition {
 	 * 
 	 * @param mtApplication the mt application
 	 */
-	public BlendTransition(MTApplication mtApplication) {
+	public BlendTransition(AbstractMTApplication mtApplication) {
 		this(mtApplication, 2000);
 	}
 	
@@ -76,15 +76,17 @@ public class BlendTransition extends AbstractTransition {
 	 * @param mtApplication the mt application
 	 * @param duration the duration
 	 */
-	public BlendTransition(MTApplication mtApplication, long duration) {
+	public BlendTransition(AbstractMTApplication mtApplication, int duration) {
 		super(mtApplication, "Blend Transition");
 		this.app = mtApplication;
 		this.duration = duration;
 		this.finished = true;
 		
-		anim = new Animation("Blend animation ", new MultiPurposeInterpolator(255,0, this.duration, 0, 0.7f, 1) , this).addAnimationListener(new IAnimationListener(){
+//		anim = new Animation("Blend animation ", new MultiPurposeInterpolator(255,0, this.duration, 0, 0.7f, 1) , this);
+		anim = new AniAnimation(255,0, this.duration, AniAnimation.CIRC_OUT, this);
+		anim.addAnimationListener(new IAnimationListener(){
 			public void processAnimationEvent(AnimationEvent ae) {
-				float val = ae.getAnimation().getInterpolator().getCurrentValue();
+				float val = ae.getValue();
 				switch (ae.getId()) {
 				case AnimationEvent.ANIMATION_STARTED:
 					lastSceneRectangle.setVisible(true);
@@ -100,7 +102,7 @@ public class BlendTransition extends AbstractTransition {
 					break;
 				}
 			}});
-		anim.setResetOnFinish(true);
+//		((Animation)anim).setResetOnFinish(true);
 	}
 
 
@@ -139,7 +141,7 @@ public class BlendTransition extends AbstractTransition {
 		app.invokeLater(new Runnable() {
 			public void run() {
 				lastSceneWindow = new MTSceneTexture(app,0, 0, Math.round(app.width/2f), Math.round(app.height/2f), lastScene);
-				lastSceneRectangle = new MTRectangle(0,0, app.width, app.height, app);
+				lastSceneRectangle = new MTRectangle(app,0, 0, app.width, app.height);
 				
 				lastSceneRectangle.setGeometryInfo(lastSceneWindow.getGeometryInfo());
 				lastSceneRectangle.setTexture(lastSceneWindow.getTexture());
@@ -160,11 +162,7 @@ public class BlendTransition extends AbstractTransition {
 	}
 	
 	
-	/* (non-Javadoc)
-	 * @see org.mt4j.sceneManagement.AbstractScene#shutDown()
-	 */
-	@Override
-	public void shutDown() {
+	public void onLeave() {
 		finished = true;
 		this.lastScene = null;
 		this.nextScene = null;

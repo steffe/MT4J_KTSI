@@ -1,2 +1,2 @@
-FlickrApiKey=1e80d2aa5810c741ccc40aaae95f9420
-FlickrSecret=bfe2d28e4d7bd428
+FlickrApiKey=
+FlickrSecret=

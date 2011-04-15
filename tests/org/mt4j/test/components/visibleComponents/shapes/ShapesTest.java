@@ -1,10 +1,10 @@
 package org.mt4j.test.components.visibleComponents.shapes;
 
-import org.mt4j.MTApplication;
+import org.mt4j.AbstractMTApplication;
 import org.mt4j.components.MTCanvas;
 import org.mt4j.components.MTComponent;
 import org.mt4j.components.TransformSpace;
-import org.mt4j.components.visibleComponents.GeometryInfo;
+import org.mt4j.components.visibleComponents.shapes.GeometryInfo;
 import org.mt4j.components.visibleComponents.shapes.MTEllipse;
 import org.mt4j.components.visibleComponents.shapes.MTLine;
 import org.mt4j.components.visibleComponents.shapes.MTPolygon;
@@ -25,7 +25,7 @@ public class ShapesTest extends AbstractWindowTestcase {
 	private MTComponent parent;
 
 	@Override
-	public void inStartUp(MTApplication app) {
+	public void inStartUp(AbstractMTApplication app) {
 		//Add a scene to the mt application
 		this.scene = new DummyScene(app, "Dummy Scene");
 		app.addScene(scene);
@@ -47,24 +47,24 @@ public class ShapesTest extends AbstractWindowTestcase {
 			public void runMTTestCode() {
 				
 		        MTPolygon poly = new MTPolygon( 
+		        		getMTApplication(),
 		        		new Vertex[]{
-		        				new Vertex(0,0,100),
-		        				new Vertex(0,0,0),
-		        				new Vertex(0,100,0),
-		        				new Vertex(0,100,100),
-		        				new Vertex(0,0,100)
-		        		}
-		        		,getMTApplication());
+	        				new Vertex(0,0,100),
+	        				new Vertex(0,0,0),
+	        				new Vertex(0,100,0),
+	        				new Vertex(0,100,100),
+	        				new Vertex(0,0,100)
+	        		});
 		        getCanvas().addChild(poly);
 		        
 				MTLine line = new MTLine(getMTApplication(), new Vertex(30,30), new Vertex(150,110));
 				getCanvas().addChild(line);
 				
-				MTRectangle r1 = new MTRectangle(10,10, 200,100, getMTApplication());
+				MTRectangle r1 = new MTRectangle(getMTApplication(),10, 10,200, 100);
 				getCanvas().addChild(r1);
 				assertEquals(getCanvas().getChildren()[3], r1);
 				
-				MTRoundRectangle roundRect = new MTRoundRectangle(0,0,0, 160, 110, 30,30, getMTApplication());
+				MTRoundRectangle roundRect = new MTRoundRectangle(getMTApplication(),0,0, 0, 160, 110,30, 30);
 		        getCanvas().addChild(roundRect);
 		        
 				MTEllipse ellipse = new MTEllipse(getMTApplication(), new Vector3D(100,100,0), 160, 80);
@@ -94,7 +94,7 @@ public class ShapesTest extends AbstractWindowTestcase {
 		runTest(new TestRunnable() {
 			@Override
 			public void runMTTestCode() {
-				MTRectangle rect1 = new MTRectangle(150,0, 150,300, getMTApplication());
+				MTRectangle rect1 = new MTRectangle(getMTApplication(),150, 0,150, 300);
 				parent.addChild(rect1);
 				
 //				rect1.rotateZ(Vector3D.ZERO_VECTOR, 45, TransformSpace.LOCAL);
@@ -142,7 +142,7 @@ public class ShapesTest extends AbstractWindowTestcase {
 		runTest(new TestRunnable() {
 			@Override
 			public void runMTTestCode() {
-				MTRectangle rect1 = new MTRectangle(100, 100, 100, 200, 100, getMTApplication());
+				MTRectangle rect1 = new MTRectangle(getMTApplication(), 100, 100, 100, 200, 100);
 				parent.addChild(rect1);
 				
 				//Check untransformed and not added to a parent

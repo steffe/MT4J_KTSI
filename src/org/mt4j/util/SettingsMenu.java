@@ -194,7 +194,7 @@ public class SettingsMenu extends JFrame{
 		this.setAlwaysOnTop(true);
 		
 		//Center on screen
-        Point center = ge.getCenterPoint();
+//        Point center = ge.getCenterPoint();
         Rectangle bounds = ge.getMaximumWindowBounds();
 //        int w = Math.max(bounds.width/2, Math.min(this.getWidth(), bounds.width));
 //        int h = Math.max(bounds.height/2, Math.min(this.getHeight(), bounds.height));
@@ -221,8 +221,7 @@ public class SettingsMenu extends JFrame{
 		MT4jSettings.getInstance().display = Integer.parseInt(displayComboBox.getSelectedItem().toString());
 		
 		//Set Fullscreen mode
-		boolean fullscreen = fullScreenCheckBox.isSelected();
-		MT4jSettings.fullscreen = fullscreen;
+		MT4jSettings.fullscreen = fullScreenCheckBox.isSelected();
 		MT4jSettings.getInstance().fullscreenExclusive = fullScreenExclusiveCheckBox.isSelected();
 		
 		//Set screen dimensions
@@ -236,8 +235,7 @@ public class SettingsMenu extends JFrame{
 		MT4jSettings.getInstance().vSync = verticalSyncCheckbox.isSelected();
 
 		//Set Renderer
-		int renderer = (rendererComboBox.getSelectedItem().toString().startsWith("Open"))? MT4jSettings.OPENGL_MODE : MT4jSettings.P3D_MODE;
-		MT4jSettings.getInstance().renderer = renderer;
+		MT4jSettings.getInstance().renderer = (rendererComboBox.getSelectedItem().toString().startsWith("Open"))? MT4jSettings.OPENGL_MODE : MT4jSettings.P3D_MODE;
 		
 		//Set opengl multisampling value
 		MT4jSettings.getInstance().numSamples = Integer.parseInt(numSamplesComboBox.getSelectedItem().toString());
@@ -263,10 +261,6 @@ public class SettingsMenu extends JFrame{
 		// Launch processing PApplet main() function
 	    if (MT4jSettings.getInstance().isFullscreen()){
 	    	//Set screen size to screen dimensions if fullscreen and ignore custom sizes
-	    	Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-	    	MT4jSettings.getInstance().windowWidth = screenSize.width;
-	    	MT4jSettings.getInstance().windowHeight = screenSize.height;
-	    	
 	    	if (MT4jSettings.getInstance().isFullscreenExclusive()){
 	    		PApplet.main(new String[] {
 	    				displayString,
@@ -277,6 +271,9 @@ public class SettingsMenu extends JFrame{
 						   classToInstantiate
 	    		}); 
 	    	}else{
+	    		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		    	MT4jSettings.getInstance().windowWidth = screenSize.width;
+		    	MT4jSettings.getInstance().windowHeight = screenSize.height;
 	    		PApplet.main(new String[] {
 	    				displayString,
 						   "--present", 

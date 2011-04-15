@@ -37,7 +37,8 @@ import org.jbox2d.dynamics.joints.JointType;
 import org.jbox2d.dynamics.joints.MouseJoint;
 import org.jbox2d.dynamics.joints.MouseJointDef;
 import org.jbox2d.util.nonconvex.Polygon;
-import org.mt4j.MTApplication;
+import org.jbox2d.util.nonconvex.Triangle;
+import org.mt4j.AbstractMTApplication;
 import org.mt4j.components.MTComponent;
 import org.mt4j.input.inputProcessors.IGestureEventListener;
 import org.mt4j.input.inputProcessors.MTGestureEvent;
@@ -45,16 +46,14 @@ import org.mt4j.input.inputProcessors.componentProcessors.AbstractComponentProce
 import org.mt4j.input.inputProcessors.componentProcessors.dragProcessor.DragEvent;
 import org.mt4j.input.inputProcessors.componentProcessors.dragProcessor.DragProcessor;
 import org.mt4j.input.inputProcessors.componentProcessors.dragProcessor.MultipleDragProcessor;
-import org.mt4j.util.math.Tools3D;
+import org.mt4j.util.PlatformUtil;
 import org.mt4j.util.math.Vector3D;
 import org.mt4j.util.math.Vertex;
 import org.mt4j.util.opengl.GLMaterial;
 import org.mt4j.util.opengl.GluTrianglulator;
 
-import advanced.physics.physicsShapes.PhysicsRectangle;
-
-
 import processing.core.PApplet;
+import advanced.physics.physicsShapes.PhysicsRectangle;
 
 public class PhysicsHelper {
 	
@@ -112,7 +111,7 @@ public class PhysicsHelper {
 				public boolean processGestureEvent(MTGestureEvent ge) {
 					DragEvent de = (DragEvent)ge;
 					try{
-						MTComponent comp = (MTComponent)de.getTargetComponent();
+						MTComponent comp = (MTComponent)de.getTarget();
 						Body body = (Body)comp.getUserData("box2d");
 						MouseJoint mouseJoint;
 						Vector3D to = new Vector3D(de.getTo());
@@ -122,7 +121,7 @@ public class PhysicsHelper {
 						long cursorID =  de.getDragCursor().getId();
 
 						switch (de.getId()) {
-						case DragEvent.GESTURE_DETECTED:
+						case DragEvent.GESTURE_STARTED:
 							comp.sendToFront();
 							body.wakeUp();
 							mouseJoint = createDragJoint(theWorld, body, to.x, to.y);
@@ -173,12 +172,11 @@ public class PhysicsHelper {
 			
 			boolean hasDragProcessor = false;
 			AbstractComponentProcessor[] p = comp.getInputProcessors();
-			for (int i = 0; i < p.length; i++) {
-				AbstractComponentProcessor abstractComponentProcessor = p[i];
-				if (abstractComponentProcessor instanceof DragProcessor) {
-					hasDragProcessor = true;
-				}
-			}
+            for (AbstractComponentProcessor abstractComponentProcessor : p) {
+                if (abstractComponentProcessor instanceof DragProcessor) {
+                    hasDragProcessor = true;
+                }
+            }
 			if (!hasDragProcessor){
 				comp.registerInputProcessor(new DragProcessor(comp.getRenderer()));
 			}
@@ -190,13 +188,13 @@ public class PhysicsHelper {
 					DragEvent de = (DragEvent)ge;
 					Vector3D dir = PhysicsHelper.scaleDown(new Vector3D(de.getTranslationVect()), worldScale);
 					try{
-						MTComponent comp = (MTComponent)de.getTargetComponent();
+						MTComponent comp = (MTComponent)de.getTarget();
 						Body body = (Body)comp.getUserData("box2d");
 						body.setXForm(
 								new Vec2(body.getPosition().x + dir.x, body.getPosition().y + dir.y),
 								body.getAngle());
 						switch (de.getId()) {
-						case DragEvent.GESTURE_DETECTED:
+						case DragEvent.GESTURE_STARTED:
 							comp.sendToFront();
 							body.wakeUp();
 							break;
@@ -219,12 +217,11 @@ public class PhysicsHelper {
 	public static List<Vertex> triangulateEarClips(List<Vertex> vertices){
 		org.jbox2d.util.nonconvex.Triangle[] tri = getEarClipTriangles(vertices);
 		List<Vertex> tris = new ArrayList<Vertex>();
-		for (int i = 0; i < tri.length; i++) {
-			org.jbox2d.util.nonconvex.Triangle triangle = tri[i];
-			tris.add(new Vertex(triangle.x[0], triangle.y[0],0));
-			tris.add(new Vertex(triangle.x[1], triangle.y[1],0));
-			tris.add(new Vertex(triangle.x[2], triangle.y[2],0));
-		}
+        for (Triangle triangle : tri) {
+            tris.add(new Vertex(triangle.x[0], triangle.y[0], 0));
+            tris.add(new Vertex(triangle.x[1], triangle.y[1], 0));
+            tris.add(new Vertex(triangle.x[2], triangle.y[2], 0));
+        }
 		return tris;
 	}
 	
@@ -261,12 +258,11 @@ public class PhysicsHelper {
 	}
 	
 	
-	public static List<Vertex> triangulateGLU(MTApplication app, List<Vertex> vertices){
+	public static List<Vertex> triangulateGLU(AbstractMTApplication app, List<Vertex> vertices){
 		System.err.println("Trying glu triangulation..");
 		GluTrianglulator triangulator = new GluTrianglulator(app);
 		Vertex[] vertexArray = vertices.toArray(new Vertex[vertices.size()]);
-		List<Vertex> triVerts = triangulator.tesselate(vertexArray, GLU.GLU_TESS_WINDING_NONZERO);
-		return triVerts;
+		return triangulator.tesselate(vertexArray, GLU.GLU_TESS_WINDING_NONZERO);
 	}
 	
 	
@@ -305,7 +301,7 @@ public class PhysicsHelper {
 	
 	public static GLMaterial createDefaultGLMaterial(PApplet app){
 		//Set up a material
-		GLMaterial material = new GLMaterial(Tools3D.getGL(app));
+		GLMaterial material = new GLMaterial(PlatformUtil.getGL());
 		material.setAmbient(new float[]{ .2f, .2f, .2f, 1f });
 		material.setDiffuse(new float[]{ .8f, .8f, .8f, 1f } );
 		material.setEmission(new float[]{ .0f, .0f, .0f, 1f });

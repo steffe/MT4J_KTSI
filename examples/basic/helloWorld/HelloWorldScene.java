@@ -1,16 +1,16 @@
 package basic.helloWorld;
-import org.mt4j.MTApplication;
-import org.mt4j.components.visibleComponents.font.FontManager;
-import org.mt4j.components.visibleComponents.font.IFont;
+import org.mt4j.AbstractMTApplication;
 import org.mt4j.components.visibleComponents.widgets.MTTextArea;
 import org.mt4j.input.inputProcessors.globalProcessors.CursorTracer;
 import org.mt4j.sceneManagement.AbstractScene;
 import org.mt4j.util.MTColor;
+import org.mt4j.util.font.FontManager;
+import org.mt4j.util.font.IFont;
 import org.mt4j.util.math.Vector3D;
 
 public class HelloWorldScene extends AbstractScene {
 
-	public HelloWorldScene(MTApplication mtApplication, String name) {
+	public HelloWorldScene(AbstractMTApplication mtApplication, String name) {
 		super(mtApplication, name);
 		
 		MTColor white = new MTColor(255,255,255);
@@ -20,8 +20,7 @@ public class HelloWorldScene extends AbstractScene {
 		
 		IFont fontArial = FontManager.getInstance().createFont(mtApplication, "arial.ttf", 
 				50, 	//Font size
-				white,  //Font fill color
-				white);	//Font outline color
+				white);	//Font color
 		//Create a textfield
 		MTTextArea textField = new MTTextArea(mtApplication, fontArial); 
 		
@@ -34,8 +33,8 @@ public class HelloWorldScene extends AbstractScene {
 		//Add the textfield to our canvas
 		this.getCanvas().addChild(textField);
 	}
-	@Override
-	public void init() {}
-	@Override
-	public void shutDown() {}
+	
+	public void onEnter() {}
+	
+	public void onLeave() {}
 }

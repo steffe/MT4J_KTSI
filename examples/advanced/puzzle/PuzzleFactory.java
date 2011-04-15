@@ -1,22 +1,28 @@
 package advanced.puzzle;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
-import org.mt4j.MTApplication;
+import org.mt4j.AbstractMTApplication;
 import org.mt4j.components.MTComponent;
 import org.mt4j.components.TransformSpace;
 import org.mt4j.components.bounds.BoundsZPlaneRectangle;
+import org.mt4j.components.interfaces.IMTComponent3D;
 import org.mt4j.components.visibleComponents.shapes.AbstractShape;
 import org.mt4j.components.visibleComponents.shapes.MTComplexPolygon;
 import org.mt4j.components.visibleComponents.shapes.MTPolygon;
 import org.mt4j.input.gestureAction.InertiaDragAction;
+import org.mt4j.input.inputData.InputCursor;
+import org.mt4j.input.inputProcessors.IGestureEventListener;
+import org.mt4j.input.inputProcessors.MTGestureEvent;
 import org.mt4j.input.inputProcessors.componentProcessors.dragProcessor.DragProcessor;
-import org.mt4j.input.inputProcessors.componentProcessors.lassoProcessor.IdragClusterable;
+import org.mt4j.input.inputProcessors.componentProcessors.rotateProcessor.RotateEvent;
+import org.mt4j.input.inputProcessors.componentProcessors.rotateProcessor.RotateProcessor;
 import org.mt4j.input.inputProcessors.componentProcessors.scaleProcessor.ScaleProcessor;
 import org.mt4j.util.MT4jSettings;
 import org.mt4j.util.MTColor;
+import org.mt4j.util.math.Tools3D;
+import org.mt4j.util.math.ToolsGeometry;
 import org.mt4j.util.math.ToolsMath;
 import org.mt4j.util.math.Vector3D;
 import org.mt4j.util.math.Vertex;
@@ -55,10 +61,10 @@ public class PuzzleFactory {
 	private float horizontalTileCount;
 	private PApplet app;
 	private float verticalTileCount;
-	public static String svgPath =  "advanced"+MTApplication.separator+"puzzle"+MTApplication.separator+"data"+MTApplication.separator ;
+	public static String svgPath =  "advanced"+AbstractMTApplication.separator+"puzzle"+AbstractMTApplication.separator+"data"+AbstractMTApplication.separator ;
 	public static String svgname = "knobOutRight.svg";
 	
-	public PuzzleFactory(MTApplication app) {
+	public PuzzleFactory(AbstractMTApplication app) {
 		this.app = app;
 	}
 
@@ -242,18 +248,17 @@ public class PuzzleFactory {
 //					float upperLeftX = bounds.getVectorsLocal()[0].x  + j* tileWidth ;
 //					float upperLeftY = bounds.getVectorsLocal()[0].y  + i * tileHeight;
 					Vertex[] verts = tile.getVerticesLocal();
-					for (int n = 0; n < verts.length; n++) {
-						Vertex vertex = verts[n];
-//						vertex.setTexCoordU((vertex.x-upperLeftX )/width);
+                    for (Vertex vertex : verts) {
+                        //						vertex.setTexCoordU((vertex.x-upperLeftX )/width);
 //						vertex.setTexCoordV((vertex.y-upperLeftY)/height);
 //						vertex.setTexCoordU((vertex.x - upperLeftX  + (j * tileWidth)) / p.width);
 //						vertex.setTexCoordV((vertex.y - upperLeftY + (i * tileHeight)) / p.height);
-						
-						vertex.setTexCoordU((vertex.x  + (j * tileWidth)) / p.width);
-						vertex.setTexCoordV((vertex.y  + (i * tileHeight)) / p.height);
-						
-						//System.out.println("TexU:" + vertex.getTexCoordU() + " TexV:" + vertex.getTexCoordV());
-					}
+
+                        vertex.setTexCoordU((vertex.x + (j * tileWidth)) / p.width);
+                        vertex.setTexCoordV((vertex.y + (i * tileHeight)) / p.height);
+
+                        //System.out.println("TexU:" + vertex.getTexCoordU() + " TexV:" + vertex.getTexCoordV());
+                    }
 					tile.getGeometryInfo().updateTextureBuffer(tile.isUseVBOs());
 					
 					//Set the texture
@@ -277,14 +282,13 @@ public class PuzzleFactory {
 		if (currentI-1 < 0){
 			return TileSide.linear;
 		}
-		for (Iterator<AbstractShape> iterator = list.iterator(); iterator.hasNext();) {
-			AbstractShape tile = (AbstractShape) iterator.next();
-			int i = (Integer) tile.getUserData("i");
-			int j = (Integer) tile.getUserData("j");
-			if (i == currentI -1 && j == currentJ){
-				return (TileSide) tile.getUserData("bottom");
-			}
-		}
+        for (AbstractShape tile : list) {
+            int i = (Integer) tile.getUserData("i");
+            int j = (Integer) tile.getUserData("j");
+            if (i == currentI - 1 && j == currentJ) {
+                return (TileSide) tile.getUserData("bottom");
+            }
+        }
 		return TileSide.linear;
 	}
 	
@@ -292,14 +296,13 @@ public class PuzzleFactory {
 		if (currentJ-1 < 0){
 			return TileSide.linear;
 		}
-		for (Iterator<AbstractShape> iterator = list.iterator(); iterator.hasNext();) {
-			AbstractShape tile = (AbstractShape) iterator.next();
-			int i = (Integer) tile.getUserData("i");
-			int j = (Integer) tile.getUserData("j");
-			if (i == currentI && j == currentJ-1){
-				return (TileSide) tile.getUserData("right");
-			}
-		}
+        for (AbstractShape tile : list) {
+            int i = (Integer) tile.getUserData("i");
+            int j = (Integer) tile.getUserData("j");
+            if (i == currentI && j == currentJ - 1) {
+                return (TileSide) tile.getUserData("right");
+            }
+        }
 		return TileSide.linear;
 	}
 	
@@ -322,28 +325,88 @@ public class PuzzleFactory {
 	}
 	
 	
-	public MTComplexPolyClusterable getPolygon(PApplet app, TileSide top, TileSide right, TileSide bottom, TileSide left, float tileWidth, float tileHeight){
+	public MTComplexPolygon getPolygon(final PApplet app, TileSide top, TileSide right, TileSide bottom, TileSide left, float tileWidth, float tileHeight){
 		this.init(tileWidth, tileHeight);
 		Vertex[] v = getTile(top, right, bottom, left);
-		MTComplexPolyClusterable poly = new MTComplexPolyClusterable(app, v);
+		MTComplexPolygon poly = new MTComplexPolygon(app, v);
 		poly.removeAllGestureEventListeners(ScaleProcessor.class);
 		poly.addGestureListener(DragProcessor.class, new InertiaDragAction());
+		
+		//FIXME TEST
+		poly.removeAllGestureEventListeners(RotateProcessor.class);
+		poly.addGestureListener(RotateProcessor.class, new RotationListener(poly));
 		return poly;
 	}
 	
-	private class MTComplexPolyClusterable extends MTComplexPolygon implements IdragClusterable{
-		public MTComplexPolyClusterable(PApplet app, Vertex[] vertices) {
-			super(app, vertices);
-		}
-
-		public boolean isSelected() {
-			return false;
-		}
-
-		public void setSelected(boolean selected) {
+	
+	//FIXME TEST
+	private class RotationListener implements IGestureEventListener{
+		Vector3D startP1;
+		InputCursor oldC1;
+		InputCursor oldC2;
+		Vector3D planeNormal;
+		private Vector3D lastMiddle;
+		
+		public RotationListener(IMTComponent3D comp){
+			planeNormal = new Vector3D(0,0,1);
 		}
 		
+		public boolean processGestureEvent(MTGestureEvent ge) {
+			IMTComponent3D comp = ge.getTarget();
+			RotateEvent re = (RotateEvent)ge;
+			float deg = re.getRotationDegrees();
+			InputCursor c1 = re.getFirstCursor();
+			InputCursor c2 = re.getSecondCursor();
+			
+			switch (re.getId()) {
+			case RotateEvent.GESTURE_STARTED:{
+				oldC1 = c1;
+				oldC2 = c2;
+				startP1 = comp.getIntersectionGlobal(Tools3D.getCameraPickRay(app, comp, c1));
+				Vector3D i1 = ToolsGeometry.getRayPlaneIntersection(Tools3D.getCameraPickRay(app, comp, c1), planeNormal, startP1);
+				Vector3D i2 = ToolsGeometry.getRayPlaneIntersection(Tools3D.getCameraPickRay(app, comp, c2), planeNormal, startP1);
+				lastMiddle = i1.getAdded(i2.getSubtracted(i1).scaleLocal(0.5f));
+			}break;
+			case RotateEvent.GESTURE_UPDATED:
+				if (!oldC1.equals(c1) || !oldC2.equals(c2)){ //Because c1 and/or c2 can change if a finger with greater distance enters -> prevent jump
+					Vector3D i1 = ToolsGeometry.getRayPlaneIntersection(Tools3D.getCameraPickRay(app, comp, c1), planeNormal, startP1);
+					Vector3D i2 = ToolsGeometry.getRayPlaneIntersection(Tools3D.getCameraPickRay(app, comp, c2), planeNormal, startP1);
+					lastMiddle = i1.getAdded(i2.getSubtracted(i1).scaleLocal(0.5f));
+					oldC1 = c1;
+					oldC2 = c2;
+				}
+				
+				Vector3D i1 = ToolsGeometry.getRayPlaneIntersection(Tools3D.getCameraPickRay(app, comp, c1), planeNormal, startP1);
+				Vector3D i2 = ToolsGeometry.getRayPlaneIntersection(Tools3D.getCameraPickRay(app, comp, c2), planeNormal, startP1);
+				Vector3D middle = i1.getAdded(i2.getSubtracted(i1).scaleLocal(0.5f));
+				
+				Vector3D middleDiff = middle.getSubtracted(lastMiddle);
+				comp.rotateZGlobal(middle, deg);
+				comp.translateGlobal(middleDiff);
+				lastMiddle = middle;
+				break;
+			case RotateEvent.GESTURE_ENDED:
+				break;
+			default:
+				break;
+			}
+			return false;
+		}
 	}
+	
+//	private class MTComplexPolyClusterable extends MTComplexPolygon implements IdragClusterable{
+//		public MTComplexPolyClusterable(PApplet app, Vertex[] vertices) {
+//			super(app, vertices);
+//		}
+//
+//		public boolean isSelected() {
+//			return false;
+//		}
+//
+//		public void setSelected(boolean selected) {
+//		}
+//		
+//	}
 	
 	private Vertex[] getTile(TileSide top, TileSide right, TileSide bottom, TileSide left){
 		List<Vertex> list = new ArrayList<Vertex>();
@@ -414,10 +477,9 @@ public class PuzzleFactory {
 	
 	
 	private void addAll(Vertex[] vertices, List<Vertex> list){
-		for (int i = 0; i < vertices.length; i++) {
-			Vertex vertex = vertices[i];
-			list.add(vertex);
-		}
+        for (Vertex vertex : vertices) {
+            list.add(vertex);
+        }
 	}
 	
 	

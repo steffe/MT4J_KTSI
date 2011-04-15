@@ -17,21 +17,24 @@
  ***********************************************************************/
 package org.mt4j.components.visibleComponents.widgets;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import org.mt4j.components.MTComponent;
+import org.mt4j.components.StateChange;
+import org.mt4j.components.StateChangeEvent;
+import org.mt4j.components.StateChangeListener;
 import org.mt4j.components.TransformSpace;
 import org.mt4j.components.visibleComponents.shapes.AbstractShape;
 import org.mt4j.components.visibleComponents.shapes.MTPolygon;
 import org.mt4j.components.visibleComponents.shapes.MTRectangle;
 import org.mt4j.components.visibleComponents.widgets.buttons.MTSvgButton;
-import org.mt4j.input.inputProcessors.componentProcessors.lassoProcessor.IdragClusterable;
+import org.mt4j.input.inputProcessors.IGestureEventListener;
+import org.mt4j.input.inputProcessors.MTGestureEvent;
 import org.mt4j.input.inputProcessors.componentProcessors.tapProcessor.TapEvent;
+import org.mt4j.input.inputProcessors.componentProcessors.tapProcessor.TapProcessor;
 import org.mt4j.util.MT4jSettings;
 import org.mt4j.util.MTColor;
 import org.mt4j.util.animation.Animation;
 import org.mt4j.util.animation.AnimationEvent;
+import org.mt4j.util.animation.IAnimation;
 import org.mt4j.util.animation.IAnimationListener;
 import org.mt4j.util.animation.MultiPurposeInterpolator;
 import org.mt4j.util.math.Vector3D;
@@ -40,30 +43,38 @@ import processing.core.PApplet;
 import processing.core.PImage;
 
 /**
- * The Class MTImage. A widget which can be used to display a image texture surrounded
+ * The Class MTImage. A widget which can be used to display an image texture surrounded
  * by a frame.
  * The image itself is actually a child of this class, which acts as the frame.
  * 
  * @author Christopher Ruff
  */
-public class MTImage extends MTRectangle implements IdragClusterable{
-	
-	/** The selected. */
-	private boolean selected;
-
+public class MTImage extends MTRectangle {
 	
 	private MTRectangle image;
 	
+	private MTComponent closeButton;
+	
 	/**
 	 * Instantiates a new framed image.
-	 * 
+	 *
 	 * @param texture the texture
 	 * @param pApplet the applet
+	 * @deprecated constructor will be deleted! Please , use the constructor with the PApplet instance as the first parameter.
 	 */
 	public MTImage(PImage texture, PApplet pApplet) {
-		super(-7, -7, texture.width + 14, texture.height + 14, pApplet);
+		this(pApplet, texture);
+	}
+	
+	/**
+	 * Instantiates a new framed image.
+	 * @param pApplet the applet
+	 * @param texture the texture
+	 */
+	public MTImage(PApplet pApplet, PImage texture) {
+		super(pApplet, -7, -7, texture.width + 14, texture.height + 14);
 		
-		image = new MTRectangle(texture, pApplet);
+		image = new MTRectangle(pApplet, texture);
 		image.setStrokeColor(new MTColor(255,255,255,255));
 		image.setPickable(false);
 		this.addChild(image);
@@ -77,106 +88,45 @@ public class MTImage extends MTRectangle implements IdragClusterable{
 		return this.image;
 	}
 	
-//	/**
-//	 * Instantiates a new framed image.
-//	 * 
-//	 * @param texture the texture
-//	 * @param pApplet the applet
-//	 */
-//	public MTImage(PImage texture, PApplet pApplet) {
-//		super(texture, pApplet);
-//		
-//		int borderWidth = 7;
-//        Vertex[] outerFrame = new Vertex[5];
-//        outerFrame[0] = new Vertex(-borderWidth, -borderWidth,0, 255,255,255,255);
-//        outerFrame[1] = new Vertex(texture.width+borderWidth, -borderWidth, 0, 255,255,255,255);
-//        outerFrame[2] = new Vertex(texture.width+borderWidth, texture.height+borderWidth, 0, 255,255,255,255);
-//        outerFrame[3] = new Vertex(-borderWidth, texture.height+borderWidth, 0, 255,255,255,255);
-//        outerFrame[4] = new Vertex(-borderWidth, -borderWidth, 0, 255,255,255,255);
-//        
-//        Vertex[] innerFrame = new Vertex[5];
-//        innerFrame[0] = new Vertex(0, 0, 0, 255,255,255,255);
-//        innerFrame[1] = new Vertex(texture.width, 0, 0, 255,255,255,255);
-//        innerFrame[2] = new Vertex(texture.width, texture.height, 0, 255,255,255,255);
-//        innerFrame[3] = new Vertex(0, texture.height, 0, 255,255,255,255);
-//        innerFrame[4] = new Vertex(0, 0, 0, 255,255,255,255);
-//        
-//        ArrayList<Vertex[]> frame = new ArrayList<Vertex[]>();
-//        frame.add(innerFrame);
-//        frame.add(outerFrame);
-//        GluTrianglulator glutri = new GluTrianglulator(pApplet);
-//        List<Vertex> tris = glutri.tesselate(frame, GLU.GLU_TESS_WINDING_ODD);
-//        glutri.deleteTess();
-//        MTTriangleMesh m = new MTTriangleMesh(pApplet, new GeometryInfo(pApplet, tris.toArray(new Vertex[tris.size()])));
-//        m.setOutlineContours(frame);
-//        m.setDrawSmooth(true);
-////		MTRectangle m = new MTRectangle(-borderWidth,-borderWidth, texture.width + borderWidth, texture.height + borderWidth, pApplet);
-//        m.setUseDirectGL(true);
-//        
-//        m.setNoStroke(false);
-//        m.setStrokeWeight(1);
-//        m.setStrokeColor(new MTColor(255, 255, 255, 255));
-//        
-//        //If the frame is manipulated, manipulate the image instead
-//        m.removeAllGestureEventListeners(DragProcessor.class);
-//        m.removeAllGestureEventListeners(RotateProcessor.class);
-//        m.removeAllGestureEventListeners(ScaleProcessor.class);
-//        m.addGestureListener(DragProcessor.class, new DefaultDragAction(this));
-//        m.addGestureListener(RotateProcessor.class, new DefaultRotateAction(this));
-//        m.addGestureListener(ScaleProcessor.class, new DefaultScaleAction(this));
-//        
-//        this.addChild(m);
-//        
-//        this.setNoStroke(true);
-//        this.setStrokeWeight(1);
-//        this.setStrokeColor(new MTColor(255, 255, 255, 255));
-//        
-//        //FIXME if one finger is on frame and one on picture, they dont start a 2 finger gesture
-//        //FIXME if image in cluster and dragging frame, the cluster should be dragged but the image is
-//        
-//		//Draw this component and its children above 
-//		//everything previously drawn and avoid z-fighting
-//		this.setDepthBufferDisabled(true);
-//	}
 
-	
-	public boolean isSelected() {
-		return selected;
-	}
-
-	public void setSelected(boolean selected) {
-		this.selected = selected;
-	}
-
-	
 	/**
 	 * Sets the display close button.
 	 * 
 	 * @param dispClose the new display close button
 	 */
 	public void setDisplayCloseButton(boolean dispClose){
-		if (dispClose){
-			MTSvgButton keybCloseSvg = new MTSvgButton(MT4jSettings.getInstance().getDefaultSVGPath()
-					+ "keybClose.svg", this.getRenderer());
-			//Transform
-			keybCloseSvg.scale(0.5f, 0.5f, 1, new Vector3D(0,0,0));
-			keybCloseSvg.translate(new Vector3D(this.getWidthXY(TransformSpace.RELATIVE_TO_PARENT) - 45, 2,0));
-			keybCloseSvg.setBoundsPickingBehaviour(AbstractShape.BOUNDS_ONLY_CHECK);
-			keybCloseSvg.addActionListener(new CloseActionListener(new MTComponent[]{this, keybCloseSvg}) );
-//			pic.addChild(keybCloseSvg);
-			keybCloseSvg.setName("closeButton");
-			this.addChild(keybCloseSvg);
+		if (this.closeButton != null){
+			if (!dispClose){
+				//Remove svg button and destroy child display lists
+				MTComponent[] childs = this.getChildren();
+	            for (MTComponent component : childs) {
+	                if (component.getName().equals("closeButton")) {
+	                    MTSvgButton svgButton = (MTSvgButton) component;
+	                    svgButton.destroy();
+	                }
+	            }
+			}
 		}else{
-			//Remove svg button and destroy child display lists
-			MTComponent[] childs = this.getChildren();
-			for (int i = 0; i < childs.length; i++) {
-				MTComponent component = childs[i];
-				if (component.getName().equals("closeButton")) {
-					MTSvgButton svgButton = (MTSvgButton) component;
-					svgButton.destroy();
-				}
+			if (dispClose){
+				MTSvgButton keybCloseSvg = new MTSvgButton(this.getRenderer(), MT4jSettings.getInstance().getDefaultSVGPath()
+						+ "keybClose.svg");
+				keybCloseSvg.scale(0.5f, 0.5f, 1, new Vector3D(0,0,0));
+				keybCloseSvg.translate(new Vector3D(this.getWidthXY(TransformSpace.RELATIVE_TO_PARENT) - 45, 2,0));
+				keybCloseSvg.setBoundsPickingBehaviour(AbstractShape.BOUNDS_ONLY_CHECK);
+				keybCloseSvg.addGestureListener(TapProcessor.class, new CloseActionListener(new MTComponent[]{this, keybCloseSvg}) );
+				
+				keybCloseSvg.setName("closeButton");
+				this.addChild(keybCloseSvg);
+				this.closeButton = keybCloseSvg;
+				this.closeButton.addStateChangeListener(StateChange.COMPONENT_DESTROYED, new StateChangeListener() {
+					@Override
+					public void stateChanged(StateChangeEvent evt) {
+						closeButton = null;
+					}
+				});
 			}
 		}
+		
 	}
 	
 
@@ -187,7 +137,7 @@ public class MTImage extends MTRectangle implements IdragClusterable{
 	 * 
 	 * @author Cruff
 	 */
-	private class CloseActionListener implements ActionListener{
+	private class CloseActionListener implements IGestureEventListener{
 			/** The comps. */
 			public MTComponent[] comps;
 			
@@ -204,56 +154,6 @@ public class MTImage extends MTRectangle implements IdragClusterable{
 				this.comps = comps;
 			}
 
-			/* (non-Javadoc)
-			 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-			 */
-			public void actionPerformed(ActionEvent arg0) {
-				switch (arg0.getID()) {
-				case TapEvent.BUTTON_CLICKED:
-					//Get the first polygon type out of the array
-					for (int i = 0; i < comps.length; i++) { //TODO this is stupid.. redo this whole thing
-						MTComponent comp = comps[i];
-						if (comp instanceof MTPolygon) {
-							MTPolygon poly = (MTPolygon) comp;
-							if (referencePoly == null){//nur 1. occur zuweisen
-								referencePoly = poly;
-							}
-						}
-					}
-					float width = referencePoly.getWidthXY(TransformSpace.RELATIVE_TO_PARENT);
-
-					Animation closeAnim = new Animation("comp Fade", new MultiPurposeInterpolator(width, 1, 300, 0.5f, 0.8f, 1), referencePoly);
-					closeAnim.addAnimationListener(new IAnimationListener(){
-						public void processAnimationEvent(AnimationEvent ae) {
-							switch (ae.getId()) {
-							case AnimationEvent.ANIMATION_STARTED:
-							case AnimationEvent.ANIMATION_UPDATED:
-								float currentVal = ae.getAnimation().getInterpolator().getCurrentValue();
-								resize(referencePoly, comps[0], currentVal, currentVal);
-								break;
-							case AnimationEvent.ANIMATION_ENDED:
-								comps[0].setVisible(false);
-								for (int i = comps.length-1; i >0 ; i--) {
-									MTComponent currentComp =  comps[i];
-									//Call destroy which fires a destroy state change event
-									currentComp.destroy();
-									//System.out.println("destroyed: " + currentComp.getName());
-								}
-								destroy();
-								//System.out.println("destroyed: " + getName());
-								break;	
-							default:
-								destroy();
-								break;
-							}//switch
-						}//processanimation
-					});//new IAnimationListener
-					closeAnim.start(); 
-					break;
-				default:
-					break;
-				}//switch aeID
-			}
 			
 			/**
 			 * Resize.
@@ -289,6 +189,56 @@ public class MTImage extends MTRectangle implements IdragClusterable{
 					centerPoint = localObjCenter;
 				}
 				return centerPoint;
+			}
+
+			@Override
+			public boolean processGestureEvent(MTGestureEvent ge) {
+				TapEvent te = (TapEvent)ge;
+				switch (te.getTapID()) {
+				case TapEvent.TAPPED:
+					//Get the first polygon type out of the array
+                    for (MTComponent comp : comps) { //TODO this is stupid.. redo this whole thing
+                        if (comp instanceof MTPolygon) {
+                            MTPolygon poly = (MTPolygon) comp;
+                            if (referencePoly == null) {//nur 1. occur zuweisen
+                                referencePoly = poly;
+                            }
+                        }
+                    }
+					float width = referencePoly.getWidthXY(TransformSpace.RELATIVE_TO_PARENT);
+
+					IAnimation closeAnim = new Animation("comp Fade", new MultiPurposeInterpolator(width, 1, 300, 0.5f, 0.8f, 1), referencePoly);
+					closeAnim.addAnimationListener(new IAnimationListener(){
+						public void processAnimationEvent(AnimationEvent ae) {
+							switch (ae.getId()) {
+							case AnimationEvent.ANIMATION_STARTED:
+							case AnimationEvent.ANIMATION_UPDATED:
+								float currentVal = ae.getAnimation().getValue();
+								resize(referencePoly, comps[0], currentVal, currentVal);
+								break;
+							case AnimationEvent.ANIMATION_ENDED:
+								comps[0].setVisible(false);
+								for (int i = comps.length-1; i >0 ; i--) {
+									MTComponent currentComp =  comps[i];
+									//Call destroy which fires a destroy state change event
+									currentComp.destroy();
+									//System.out.println("destroyed: " + currentComp.getName());
+								}
+								destroy();
+								//System.out.println("destroyed: " + getName());
+								break;	
+							default:
+								destroy();
+								break;
+							}//switch
+						}//processanimation
+					});//new IAnimationListener
+					closeAnim.start(); 
+					break;
+				default:
+					break;
+				}//switch aeID
+				return false;
 			}
 	}//Class closebutton actionlistener
 	

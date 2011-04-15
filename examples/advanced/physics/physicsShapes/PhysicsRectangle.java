@@ -9,11 +9,11 @@ import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.World;
-import org.mt4j.MTApplication;
+import org.mt4j.AbstractMTApplication;
 import org.mt4j.components.MTComponent;
 import org.mt4j.components.bounds.BoundsArbitraryPlanarPolygon;
 import org.mt4j.components.bounds.IBoundingShape;
-import org.mt4j.components.visibleComponents.GeometryInfo;
+import org.mt4j.components.visibleComponents.shapes.GeometryInfo;
 import org.mt4j.components.visibleComponents.shapes.MTRectangle;
 import org.mt4j.input.inputProcessors.componentProcessors.rotateProcessor.RotateProcessor;
 import org.mt4j.input.inputProcessors.componentProcessors.scaleProcessor.ScaleProcessor;
@@ -48,7 +48,7 @@ public class PhysicsRectangle extends MTRectangle implements IPhysicsComponent{
 			float width, float height, PApplet applet,
 			World world, float density, float friction, float restitution, float scale
 	) {
-		super(0, 0, PhysicsHelper.scaleDown(width, scale), PhysicsHelper.scaleDown(height, scale), applet);
+		super(applet, 0, 0, PhysicsHelper.scaleDown(width, scale), PhysicsHelper.scaleDown(height, scale));
 		this.angle = 0;
 		this.drawBounds = false;
 		this.world = world;
@@ -99,7 +99,7 @@ public class PhysicsRectangle extends MTRectangle implements IPhysicsComponent{
 			Vertex[] physicsVertices,
 			World world, float density, float friction, float restitution, float scale
 	) {
-		super(texture, applet);
+		super(applet, texture);
 		this.angle = 0;
 		this.drawBounds = false;
 		this.world = world;
@@ -411,11 +411,10 @@ public class PhysicsRectangle extends MTRectangle implements IPhysicsComponent{
 				g.fill(100);
 				g.stroke(50);
 				g.beginShape();
-				for (int i = 0; i < boundVecs.length; i++) {
-					Vector3D v = boundVecs[i];
-//					app.vertex(v.x*scale, v.y*scale, v.z);
-					g.vertex(v.x, v.y, v.z);
-				}
+                for (Vector3D v : boundVecs) {
+                    //					app.vertex(v.x*scale, v.y*scale, v.z);
+                    g.vertex(v.x, v.y, v.z);
+                }
 				g.endShape();
 			}
 		}
@@ -432,7 +431,7 @@ public class PhysicsRectangle extends MTRectangle implements IPhysicsComponent{
 	}
 	
 	public void setCenterRotation(float angle){
-		float degreeAngle = MTApplication.degrees(angle);
+		float degreeAngle = AbstractMTApplication.degrees(angle);
 		float oldAngle = this.getAngle();
 		float diff = degreeAngle-oldAngle;
 		//System.out.println("Old angle: " + oldAngle + " new angle:" + degreeAngle + " diff->" +  diff);

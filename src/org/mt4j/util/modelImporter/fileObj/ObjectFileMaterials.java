@@ -60,18 +60,17 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.WeakHashMap;
 
-import javax.media.opengl.GL;
-
 import org.mt4j.components.visibleComponents.shapes.AbstractShape;
 import org.mt4j.util.MT4jSettings;
 import org.mt4j.util.math.Tools3D;
+import org.mt4j.util.opengl.GL10;
 import org.mt4j.util.opengl.GLMaterial;
 import org.mt4j.util.opengl.GLTexture;
-import org.mt4j.util.opengl.GLTextureSettings;
 import org.mt4j.util.opengl.GLTexture.EXPANSION_FILTER;
 import org.mt4j.util.opengl.GLTexture.SHRINKAGE_FILTER;
 import org.mt4j.util.opengl.GLTexture.TEXTURE_TARGET;
 import org.mt4j.util.opengl.GLTexture.WRAP_MODE;
+import org.mt4j.util.opengl.GLTextureSettings;
 
 import processing.core.PApplet;
 import processing.core.PImage;
@@ -117,7 +116,7 @@ class ObjectFileMaterials implements ImageObserver {
     
    
 
-    void assignMaterial(GL gl, String matName, AbstractShape shape) {
+    void assignMaterial(GL10 gl, String matName, AbstractShape shape) {
     	ObjectFileMaterial p = null;
 
     	if ((DEBUG & 1) != 0) 
@@ -198,7 +197,7 @@ class ObjectFileMaterials implements ImageObserver {
     	if (st.ttype == ObjectFileParser.TT_WORD) {
 
     		if (curName != null) materials.put(curName, cur);
-    		curName = new String(st.sval);
+    		curName = st.sval;
     		cur = new ObjectFileMaterial();
     	}
     	st.skipToNextLine();
@@ -305,7 +304,7 @@ class ObjectFileMaterials implements ImageObserver {
 
     	st.lowerCaseMode(true);
 
-    	if (tFile != "") {
+    	if (!tFile.equals("")) {
     		
     		PImage texture = null;
     		
@@ -505,7 +504,7 @@ class ObjectFileMaterials implements ImageObserver {
 
     	st.lowerCaseMode(true);
 
-    	if (tFile != "") {
+    	if (!tFile.equals("")) {
     		PImage alphaMap;
     		// Check for filename with no extension
     		if (tFile.lastIndexOf('.') != -1) {

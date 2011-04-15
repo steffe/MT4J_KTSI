@@ -1,16 +1,13 @@
 package advanced.flickrMT;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Properties;
 
-import org.mt4j.MTApplication;
+import org.mt4j.AbstractMTApplication;
 import org.mt4j.components.MTComponent;
 import org.mt4j.components.TransformSpace;
-import org.mt4j.components.visibleComponents.font.FontManager;
 import org.mt4j.components.visibleComponents.shapes.AbstractShape;
 import org.mt4j.components.visibleComponents.widgets.MTImage;
 import org.mt4j.components.visibleComponents.widgets.MTTextArea;
@@ -25,10 +22,13 @@ import org.mt4j.input.gestureAction.DefaultLassoAction;
 import org.mt4j.input.gestureAction.DefaultPanAction;
 import org.mt4j.input.gestureAction.DefaultZoomAction;
 import org.mt4j.input.gestureAction.InertiaDragAction;
+import org.mt4j.input.inputProcessors.IGestureEventListener;
+import org.mt4j.input.inputProcessors.MTGestureEvent;
 import org.mt4j.input.inputProcessors.componentProcessors.dragProcessor.DragProcessor;
 import org.mt4j.input.inputProcessors.componentProcessors.lassoProcessor.LassoProcessor;
 import org.mt4j.input.inputProcessors.componentProcessors.panProcessor.PanProcessorTwoFingers;
 import org.mt4j.input.inputProcessors.componentProcessors.tapProcessor.TapEvent;
+import org.mt4j.input.inputProcessors.componentProcessors.tapProcessor.TapProcessor;
 import org.mt4j.input.inputProcessors.componentProcessors.zoomProcessor.ZoomProcessor;
 import org.mt4j.input.inputProcessors.globalProcessors.CursorTracer;
 import org.mt4j.sceneManagement.AbstractScene;
@@ -36,6 +36,7 @@ import org.mt4j.sceneManagement.IPreDrawAction;
 import org.mt4j.util.MT4jSettings;
 import org.mt4j.util.MTColor;
 import org.mt4j.util.camera.MTCamera;
+import org.mt4j.util.font.FontManager;
 import org.mt4j.util.math.ToolsMath;
 import org.mt4j.util.math.Vector3D;
 
@@ -44,13 +45,13 @@ import processing.core.PImage;
 import com.aetrion.flickr.photos.SearchParameters;
 
 public class FlickrScene extends AbstractScene {
-	private MTApplication app;
+	private AbstractMTApplication app;
 	private MTProgressBar progressBar;
 	
 	private MTComponent pictureLayer;
 	private LassoProcessor lassoProcessor;
 	
-	public FlickrScene(MTApplication mtAppl, String name) {
+	public FlickrScene(AbstractMTApplication mtAppl, String name) {
 		super(mtAppl, name);
 		this.app = mtAppl;
 		
@@ -80,20 +81,14 @@ public class FlickrScene extends AbstractScene {
 		
 		MTComponent topLayer = new MTComponent(app, "top layer group", new MTCamera(app));
 		
-		//Load from file system
-//		PImage keyboardImg = app.loadImage(System.getProperty("user.dir")+File.separator + "examples"+  File.separator +"advanced"+ File.separator+ File.separator + "flickrMT"+ File.separator +  File.separator + "data"+ File.separator 
-////		+ "keyb2.png");
-//		+ "keyb128.png");
 		//Load from classpath
-		PImage keyboardImg = app.loadImage("advanced" + MTApplication.separator + "flickrMT"+ MTApplication.separator + "data"+ MTApplication.separator 
-//				+ "keyb2.png");
+		PImage keyboardImg = app.loadImage("advanced" + AbstractMTApplication.separator + "flickrMT"+ AbstractMTApplication.separator + "data"+ AbstractMTApplication.separator 
 				+ "keyb128.png");
 		
-		final MTImageButton keyboardButton = new MTImageButton(keyboardImg, app);
+		final MTImageButton keyboardButton = new MTImageButton(app, keyboardImg);
 		keyboardButton.setFillColor(new MTColor(255,255,255,200));
 		keyboardButton.setName("KeyboardButton");
 		keyboardButton.setNoStroke(true);
-//		keyboardButton.translateGlobal(new Vector3D(5,5,0));
 		keyboardButton.translateGlobal(new Vector3D(-2,app.height-keyboardButton.getWidthXY(TransformSpace.GLOBAL)+2,0));
 		topLayer.addChild(keyboardButton);
 
@@ -104,133 +99,135 @@ public class FlickrScene extends AbstractScene {
 		progressBar.setVisible(false);
 		topLayer.addChild(progressBar);
 		
-		keyboardButton.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent ae) {
-				switch (ae.getID()) {
-				case TapEvent.BUTTON_CLICKED:
+		keyboardButton.addGestureListener(TapProcessor.class, new IGestureEventListener() {
+			@Override
+			public boolean processGestureEvent(MTGestureEvent ge) {
+				TapEvent te = (TapEvent)ge;
+				switch (te.getTapID()) {
+				case TapEvent.TAPPED:
 					//Flickr Keyboard
 			        MTKeyboard keyb = new MTKeyboard(app);
 			        keyb.setFillColor(new MTColor(30, 30, 30, 210));
 			        keyb.setStrokeColor(new MTColor(0,0,0,255));
 			        
-			        final MTTextArea t = new MTTextArea(app, FontManager.getInstance().createFont(app, "arial.ttf", 50, 
-			        		new MTColor(0,0,0,255), //Fill color 
-							new MTColor(0,0,0,255))); //Stroke color
+			        final MTTextArea t = new MTTextArea(app, FontManager.getInstance().createFont(app, "arial.ttf", 50, MTColor.BLACK)); 
 			        t.setExpandDirection(ExpandDirection.UP);
 					t.setStrokeColor(new MTColor(0,0 , 0, 255));
 					t.setFillColor(new MTColor(205,200,177, 255));
 					t.unregisterAllInputProcessors();
 					t.setEnableCaret(true);
-					t.snapToKeyboard(keyb);
+//					t.snapToKeyboard(keyb);
+					keyb.snapToKeyboard(t);
 					keyb.addTextInputListener(t);
 			        
 			        //Flickr Button for the keyboard
-			        MTSvgButton flickrButton = new MTSvgButton( "advanced" + MTApplication.separator +  "flickrMT" + MTApplication.separator + "data" + MTApplication.separator
-							+ "Flickr_Logo.svg", app);
+			        MTSvgButton flickrButton = new MTSvgButton( app, "advanced" + AbstractMTApplication.separator +  "flickrMT" + AbstractMTApplication.separator + "data" + AbstractMTApplication.separator
+									+ "Flickr_Logo.svg");
 			        flickrButton.scale(0.4f, 0.4f, 1, new Vector3D(0,0,0), TransformSpace.LOCAL);
 			        flickrButton.translate(new Vector3D(0, 15,0));
 			        flickrButton.setBoundsPickingBehaviour(AbstractShape.BOUNDS_ONLY_CHECK);
 			        
 			        //Add actionlistener to flickr button
-			        flickrButton.addActionListener(new ActionListener() {
-						public void actionPerformed(ActionEvent arg0) {
-							if (arg0.getSource() instanceof MTComponent){
-								//MTBaseComponent clickedComp = (MTBaseComponent)arg0.getSource();
-								switch (arg0.getID()) {
-								case TapEvent.BUTTON_CLICKED:
-									//Get current search parameters
-							        SearchParameters sp = new SearchParameters();
-							        //sp.setSafeSearch("213on");
-							        /*
-							        DateFormat dateFormat = new SimpleDateFormat ("yyyy/MM/dd HH:mm:ss");
-							        java.util.Date date = new java.util.Date ();
-							        String dateStr = dateFormat.format (date);
-							        System.out.println("Date: " + dateStr);
-							        try{
-							        	Date date2 = dateFormat.parse (dateStr);
-							        	sp.setInterestingnessDate(date2);
-							        }catch(ParseException pe){
-							        	pe.printStackTrace();
-							        }
-							        */
-							        
-							        //sp.setMachineTags(new String[]{"geo:locality=\"san francisco\""});
-							        sp.setText(t.getText());
-							        //sp.setTags(new String[]{t.getText()});
-							        sp.setSort(SearchParameters.RELEVANCE);
-							        
-							        System.out.println("Flickr search for: \"" + t.getText() + "\"");
-							        
-							        //Load flickr api key from file
-							        String flickrApiKey = "";
-							        String flickrSecret = "";
-							        Properties properties = new Properties();
-							        try {
-							        	InputStream in = null;
-							        	try {
-							        		in = new FileInputStream( "examples" + MTApplication.separator + "advanced" + MTApplication.separator + "flickrMT" + MTApplication.separator + "data" + MTApplication.separator + "FlickrApiKey.txt");
+			        flickrButton.addGestureListener(TapProcessor.class, new IGestureEventListener() {
+						
+						@Override
+						public boolean processGestureEvent(MTGestureEvent ge) {
+							TapEvent te = (TapEvent)ge;
+							switch (te.getTapID()) {
+							case TapEvent.TAPPED:
+								//Get current search parameters
+						        SearchParameters sp = new SearchParameters();
+						        //sp.setSafeSearch("213on");
+						        /*
+						        DateFormat dateFormat = new SimpleDateFormat ("yyyy/MM/dd HH:mm:ss");
+						        java.util.Date date = new java.util.Date ();
+						        String dateStr = dateFormat.format (date);
+						        System.out.println("Date: " + dateStr);
+						        try{
+						        	Date date2 = dateFormat.parse (dateStr);
+						        	sp.setInterestingnessDate(date2);
+						        }catch(ParseException pe){
+						        	pe.printStackTrace();
+						        }
+						        */
+						        
+						        //sp.setMachineTags(new String[]{"geo:locality=\"san francisco\""});
+						        sp.setText(t.getText());
+						        //sp.setTags(new String[]{t.getText()});
+						        sp.setSort(SearchParameters.RELEVANCE);
+						        
+						        System.out.println("Flickr search for: \"" + t.getText() + "\"");
+						        
+						        //Load flickr api key from file
+						        String flickrApiKey = "";
+						        String flickrSecret = "";
+						        Properties properties = new Properties();
+						        try {
+						        	InputStream in = null;
+						        	try {
+						        		in = new FileInputStream( "examples" + AbstractMTApplication.separator + "advanced" + AbstractMTApplication.separator + "flickrMT" + AbstractMTApplication.separator + "data" + AbstractMTApplication.separator + "FlickrApiKey.txt");
+									} catch (Exception e) {
+										System.err.println(e.getLocalizedMessage());
+									}
+									
+						        	if (in == null){
+						        		try {
+						        			in = Thread.currentThread().getContextClassLoader().getResourceAsStream("advanced" + AbstractMTApplication.separator + "flickrMT" + AbstractMTApplication.separator + "data" + AbstractMTApplication.separator + "FlickrApiKey.txt");
 										} catch (Exception e) {
 											System.err.println(e.getLocalizedMessage());
 										}
-										
-							        	if (in == null){
-							        		try {
-							        			in = Thread.currentThread().getContextClassLoader().getResourceAsStream("advanced" + MTApplication.separator + "flickrMT" + MTApplication.separator + "data" + MTApplication.separator + "FlickrApiKey.txt");
-											} catch (Exception e) {
-												System.err.println(e.getLocalizedMessage());
-											}
-							        	}
-							        	properties.load(in);
+						        	}
+						        	properties.load(in);
 
-							        	flickrApiKey = properties.getProperty("FlickrApiKey", " ");
-							        	flickrSecret = properties.getProperty("FlickrSecret", " ");
-								    } catch (Exception e) {
-								    	System.err.println("Error while loading FlickrApiKey.txt file.");
-								    	e.printStackTrace();
-								    	
-								    }
-							        
-							        //Create flickr loader thread
-							        final FlickrMTFotoLoader flickrLoader = new FlickrMTFotoLoader(app, flickrApiKey, flickrSecret, sp, 300);
-							        flickrLoader.setFotoLoadCount(5);
-							        //Define action when loader thread finished
-							        flickrLoader.addProgressFinishedListener(new IMTEventListener(){
-										public void processMTEvent(MTEvent mtEvent) {
-											//Add the loaded fotos in the main drawing thread to
-											//avoid threading problems
-											registerPreDrawAction(new IPreDrawAction(){
-												public void processAction() {
-													MTImage[] fotos = flickrLoader.getMtFotos();
-													for (int i = 0; i < fotos.length; i++) {
-														MTImage card = fotos[i];
-														card.setUseDirectGL(true);
-														card.setDisplayCloseButton(true);
-														card.setPositionGlobal(new Vector3D(ToolsMath.getRandom(10, MT4jSettings.getInstance().getWindowWidth()-100), ToolsMath.getRandom(10, MT4jSettings.getInstance().getWindowHeight()-50),0 )  );
-														card.scale(0.6f, 0.6f, 0.6f, card.getCenterPointLocal(), TransformSpace.LOCAL);
-														card.addGestureListener(DragProcessor.class, new InertiaDragAction());
-														lassoProcessor.addClusterable(card); //make fotos lasso-able
-														pictureLayer.addChild(card);
-													}
-													progressBar.setVisible(false);
-												}
-												
-												public boolean isLoop() {
-													return false;
-												}
-											});
-										}
-							        });
-							        progressBar.setProgressInfoProvider(flickrLoader);
-							        progressBar.setVisible(true);
-							        //Run the thread
-							        flickrLoader.start();
-							        //Clear textarea
-							        t.clear();
-									break;
-								default:
-									break;
-								}
+						        	flickrApiKey = properties.getProperty("FlickrApiKey", " ");
+						        	flickrSecret = properties.getProperty("FlickrSecret", " ");
+							    } catch (Exception e) {
+							    	System.err.println("Error while loading FlickrApiKey.txt file.");
+							    	e.printStackTrace();
+							    	
+							    }
+						        
+						        //Create flickr loader thread
+						        final FlickrMTFotoLoader flickrLoader = new FlickrMTFotoLoader(app, flickrApiKey, flickrSecret, sp, 300);
+						        flickrLoader.setFotoLoadCount(5);
+						        //Define action when loader thread finished
+						        flickrLoader.addProgressFinishedListener(new IMTEventListener(){
+									public void processMTEvent(MTEvent mtEvent) {
+										//Add the loaded fotos in the main drawing thread to
+										//avoid threading problems
+										registerPreDrawAction(new IPreDrawAction(){
+											public void processAction() {
+												MTImage[] fotos = flickrLoader.getMtFotos();
+                                                for (MTImage card : fotos) {
+                                                    card.setUseDirectGL(true);
+                                                    card.setDisplayCloseButton(true);
+                                                    card.setPositionGlobal(new Vector3D(ToolsMath.getRandom(10, MT4jSettings.getInstance().getWindowWidth() - 100), ToolsMath.getRandom(10, MT4jSettings.getInstance().getWindowHeight() - 50), 0));
+                                                    card.scale(0.6f, 0.6f, 0.6f, card.getCenterPointLocal(), TransformSpace.LOCAL);
+                                                    card.addGestureListener(DragProcessor.class, new InertiaDragAction());
+                                                    lassoProcessor.addLassoable(card); //make fotos lasso-able
+                                                    pictureLayer.addChild(card);
+                                                }
+												progressBar.setVisible(false);
+											}
+											
+											public boolean isLoop() {
+												return false;
+											}
+										});
+									}
+						        });
+						        progressBar.setProgressInfoProvider(flickrLoader);
+						        progressBar.setVisible(true);
+						        //Run the thread
+						        flickrLoader.start();
+						        //Clear textarea
+						        t.clear();
+								break;
+							default:
+								break;
 							}
+								
+							return false;
 						}
 					});
 					keyb.addChild(flickrButton);
@@ -241,6 +238,7 @@ public class FlickrScene extends AbstractScene {
 				default:
 					break;
 				}
+				return true;
 			}
 		});
 		
@@ -249,14 +247,12 @@ public class FlickrScene extends AbstractScene {
 	}
 	
 	
-	@Override
-	public void init() {
-		app.registerKeyEvent(this);
+	public void onEnter() {
+		getMTApplication().registerKeyEvent(this);
 	}
-
-	@Override
-	public void shutDown() {
-		app.unregisterKeyEvent(this);
+	
+	public void onLeave() {	
+		getMTApplication().unregisterKeyEvent(this);
 	}
 	
 	/**

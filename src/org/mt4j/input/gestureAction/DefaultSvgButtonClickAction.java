@@ -49,9 +49,7 @@ public class DefaultSvgButtonClickAction extends DefaultButtonClickAction implem
 		super(DefaultSvgButtonClickAction.getLargestSvgComp(svgComp, null));
 		this.svgComp = svgComp;
 		this.width = this.getReferenceComp().getWidthXY(TransformSpace.RELATIVE_TO_PARENT);
-//		this.width = getCurrentUnscaledWidth();
 		this.widthObjSpace = this.getWidthVectorLocal();
-//		this.widthObjSpace  =  this.getReferenceComp().getWidthXYVectObjSpace();
 		this.centerObjSpace =  this.getReferenceComp().getCenterPointLocal();
 	}
 	
@@ -65,7 +63,6 @@ public class DefaultSvgButtonClickAction extends DefaultButtonClickAction implem
 		if (this.getReferenceComp().hasBounds()){
 			return this.getReferenceComp().getBounds().getWidthXYVectLocal();
 		}else{
-//			return new Vector3D(Vector3D.ZERO_VECTOR);
 			throw new RuntimeException("Couldnt extract the width vector from the svg shape: '" + svgComp.getName() + "'. We need a component or boundingshape that defines the method getWidthXYVectObjSpace()");
 		}
 	}
@@ -110,20 +107,13 @@ public class DefaultSvgButtonClickAction extends DefaultButtonClickAction implem
 	
 	
 	
-	/* (non-Javadoc)
-	 * @see com.jMT.input.gestureAction.DefaultButtonClickAction#getCompToResize()
-	 */
 	@Override
 	public MTComponent getCompToResize() {
 		return this.svgComp;
 	}
 	
-	/* (non-Javadoc)
-	 * @see com.jMT.input.gestureAction.DefaultButtonClickAction#getCurrentUnscaledWidth()
-	 */
 	@Override
 	public float getCurrentUnscaledWidth(){
-//		Vector3D v = this.getReferenceComp().getWidthXYVectObjSpace();
 		Vector3D v = getWidthVectorLocal();
 		
 		Matrix refCompLocalToWorld = new Matrix(this.getReferenceComp().getGlobalMatrix());
@@ -132,8 +122,6 @@ public class DefaultSvgButtonClickAction extends DefaultButtonClickAction implem
 		
 		//obj width vect to world space 
 		v.transform(refCompLocalToWorld);
-		
-		
 		
 		Matrix svgButtonAbsInv = new Matrix(this.getCompToResize().getGlobalInverseMatrix());
 		//TODO doch wieder localbase von svg dazutransformen?
@@ -148,9 +136,6 @@ public class DefaultSvgButtonClickAction extends DefaultButtonClickAction implem
 	}
 	
 	
-	/* (non-Javadoc)
-	 * @see com.jMT.input.gestureAction.DefaultButtonClickAction#resize(float, float)
-	 */
 	@Override
 	public void resize(float newWidth, float newHeight){ 
 		Matrix refCompLocalToWorld = new Matrix(this.getReferenceComp().getGlobalMatrix());
@@ -197,9 +182,9 @@ public class DefaultSvgButtonClickAction extends DefaultButtonClickAction implem
 //		this.getCompToResize().scale(newWidth, newWidth, 1, refCompCenter, TransformSpace.RELATIVE_TO_PARENT);
 		
 		//Svgbutton so scalen, dass reference comp auf unit width 1 gescaled wird
-		this.getCompToResize().scale(1/width, 1/width, 1, refCompCenter, TransformSpace.LOCAL);
+		this.getCompToResize().scale(newWidth* (1/width),  newWidth* (1/width), 1, refCompCenter, TransformSpace.LOCAL);
 		//Svgbutton so scalen, dass reference comp auf unit gew�nschte width gescaled wird
-		this.getCompToResize().scale(newWidth, newWidth, 1, refCompCenter, TransformSpace.LOCAL);
+//		this.getCompToResize().scale(newWidth, newWidth, 1, refCompCenter, TransformSpace.LOCAL);
 	}
 	
 	

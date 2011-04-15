@@ -1,36 +1,36 @@
 package basic.scenes;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-
-import org.mt4j.MTApplication;
+import org.mt4j.AbstractMTApplication;
 import org.mt4j.components.TransformSpace;
-import org.mt4j.components.visibleComponents.font.FontManager;
 import org.mt4j.components.visibleComponents.widgets.MTTextArea;
 import org.mt4j.components.visibleComponents.widgets.buttons.MTImageButton;
+import org.mt4j.input.inputProcessors.IGestureEventListener;
+import org.mt4j.input.inputProcessors.MTGestureEvent;
+import org.mt4j.input.inputProcessors.componentProcessors.flickProcessor.FlickEvent;
+import org.mt4j.input.inputProcessors.componentProcessors.flickProcessor.FlickProcessor;
 import org.mt4j.input.inputProcessors.componentProcessors.tapProcessor.TapEvent;
+import org.mt4j.input.inputProcessors.componentProcessors.tapProcessor.TapProcessor;
 import org.mt4j.input.inputProcessors.globalProcessors.CursorTracer;
 import org.mt4j.sceneManagement.AbstractScene;
 import org.mt4j.sceneManagement.Iscene;
 import org.mt4j.sceneManagement.transition.BlendTransition;
 import org.mt4j.sceneManagement.transition.FadeTransition;
-import org.mt4j.sceneManagement.transition.SlideTransition;
 import org.mt4j.util.MT4jSettings;
 import org.mt4j.util.MTColor;
+import org.mt4j.util.font.FontManager;
 import org.mt4j.util.math.Vector3D;
 import org.mt4j.util.opengl.GLFBO;
 
 import processing.core.PImage;
 
 public class Scene1 extends AbstractScene {
-	private MTApplication mtApp;
+	private AbstractMTApplication mtApp;
 	private Iscene scene2;
 	
 //	private String imagePath = System.getProperty("user.dir") + File.separator + "examples"+  File.separator +"basic"+  File.separator + "scenes" + File.separator + "data" + File.separator;
-	private String imagePath =  "basic"+  MTApplication.separator + "scenes" + MTApplication.separator + "data" + MTApplication.separator;
+	private String imagePath =  "basic"+  AbstractMTApplication.separator + "scenes" + AbstractMTApplication.separator + "data" + AbstractMTApplication.separator;
 	
-	public Scene1(MTApplication mtApplication, String name) {
+	public Scene1(AbstractMTApplication mtApplication, String name) {
 		super(mtApplication, name);
 		this.mtApp = mtApplication;
 		
@@ -41,7 +41,7 @@ public class Scene1 extends AbstractScene {
 		
 		//Create a textfield
 		MTTextArea textField = new MTTextArea(mtApplication, FontManager.getInstance().createFont(mtApp, "arial.ttf", 
-				50, new MTColor(255, 255, 255, 255), new MTColor(255, 255, 255, 255))); 
+				50, MTColor.WHITE)); 
 		textField.setNoFill(true);
 		textField.setNoStroke(true);
 		textField.setText("Scene 1");
@@ -50,14 +50,14 @@ public class Scene1 extends AbstractScene {
 		
 		//Button to get to the next scene
 		PImage arrow = mtApplication.loadImage(imagePath +	"arrowRight.png");
-		MTImageButton nextSceneButton = new MTImageButton(arrow, mtApplication);
+		MTImageButton nextSceneButton = new MTImageButton(mtApplication, arrow);
 		nextSceneButton.setNoStroke(true);
 		if (MT4jSettings.getInstance().isOpenGlMode())
 			nextSceneButton.setUseDirectGL(true);
-		nextSceneButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent ae) {
-				switch (ae.getID()) {
-				case TapEvent.BUTTON_CLICKED:
+		nextSceneButton.addGestureListener(TapProcessor.class, new IGestureEventListener() {
+			public boolean processGestureEvent(MTGestureEvent ge) {
+				TapEvent te = (TapEvent)ge;
+				if (te.isTapped()){
 					//Save the current scene on the scene stack before changing
 					mtApp.pushScene();
 					if (scene2 == null){
@@ -67,10 +67,8 @@ public class Scene1 extends AbstractScene {
 					}
 					//Do the scene change
 					mtApp.changeScene(scene2);
-					break;
-				default:
-					break;
 				}
+				return true;
 			}
 		});
 		getCanvas().addChild(nextSceneButton);
@@ -82,16 +80,42 @@ public class Scene1 extends AbstractScene {
 		else{
 			this.setTransition(new FadeTransition(mtApplication, 1700));
 		}
+		
+		//Register flick gesture with the canvas to change the scene
+		getCanvas().registerInputProcessor(new FlickProcessor());
+		getCanvas().addGestureListener(FlickProcessor.class, new IGestureEventListener() {
+			public boolean processGestureEvent(MTGestureEvent ge) {
+				FlickEvent e = (FlickEvent)ge;
+				if (e.getId() == MTGestureEvent.GESTURE_ENDED && e.isFlick()){
+					switch (e.getDirection()) {
+					case WEST:
+					case NORTH_WEST:
+					case SOUTH_WEST:
+						//Save the current scene on the scene stack before changing
+						mtApp.pushScene();
+						if (scene2 == null){
+							scene2 = new Scene2(mtApp, "Scene 2");
+							//Add the scene to the mt application
+							mtApp.addScene(scene2);
+						}
+						//Do the scene change
+						mtApp.changeScene(scene2);
+						break;
+					default:
+						break;
+					}
+				}
+				return false;
+			}
+		});
 	}
 	
 
-	@Override
-	public void init() {
+	public void onEnter() {
 		System.out.println("Entered scene: " +  this.getName());
 	}
-
-	@Override
-	public void shutDown() {
+	
+	public void onLeave() {	
 		System.out.println("Left scene: " +  this.getName());
 	}
 

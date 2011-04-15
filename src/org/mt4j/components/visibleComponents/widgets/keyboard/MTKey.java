@@ -19,22 +19,22 @@ package org.mt4j.components.visibleComponents.widgets.keyboard;
 
 import java.util.List;
 
-import javax.media.opengl.GL;
-
 import org.mt4j.components.TransformSpace;
 import org.mt4j.components.bounds.BoundsZPlaneRectangle;
 import org.mt4j.components.bounds.IBoundingShape;
-import org.mt4j.components.visibleComponents.GeometryInfo;
 import org.mt4j.components.visibleComponents.shapes.AbstractShape;
+import org.mt4j.components.visibleComponents.shapes.GeometryInfo;
 import org.mt4j.components.visibleComponents.shapes.MTPolygon;
 import org.mt4j.components.visibleComponents.shapes.mesh.MTTriangleMesh;
 import org.mt4j.util.MT4jSettings;
 import org.mt4j.util.MTColor;
+import org.mt4j.util.PlatformUtil;
 import org.mt4j.util.math.Vertex;
+import org.mt4j.util.opengl.GL10;
+import org.mt4j.util.opengl.GL11Plus;
 
 import processing.core.PApplet;
 import processing.core.PGraphics;
-import processing.opengl.PGraphicsOpenGL;
 
 /**
  * Key class used in the mt keyboard.
@@ -66,14 +66,13 @@ public class MTKey extends
 	
 	/**
 	 * Instantiates a new mT key.
-	 *
-	 * @param geom the geom
 	 * @param pApplet the applet
+	 * @param geom the geom
 	 * @param characterUnicodeToWrite the character unicode to write
 	 * @param characterUnicodeToWriteShifted the character unicode to write shifted
 	 */
 //	public MTKey(Vertex[] vertices, /*List<Vertex[]> contours,*/ PApplet pApplet,String characterUnicodeToWrite, String characterUnicodeToWriteShifted) {
-	public MTKey(GeometryInfo geom, /*List<Vertex[]> contours,*/ PApplet pApplet,String characterUnicodeToWrite, String characterUnicodeToWriteShifted) {
+	public MTKey(/*List<Vertex[]> contours,*/ PApplet pApplet, GeometryInfo geom,String characterUnicodeToWrite, String characterUnicodeToWriteShifted) {
 //		super(vertices, outLines, pApplet);
 		
 //		/*
@@ -114,6 +113,10 @@ public class MTKey extends
 //		}
 	}
 	
+	@Override
+	protected void setDefaultGestureActions() {
+//		super.setDefaultGestureActions();
+	}
 	
 	@Override
 	public void setOutlineContours(List<Vertex[]> contours) {
@@ -128,7 +131,7 @@ public class MTKey extends
 		buttonBackGround.setStrokeColor(new MTColor(210, 210, 210, 255));
 		buttonBackGround.setFillColor(new MTColor(220, 220, 220, 255));
 		//change drawmode to polygon, triangle fan doesent work (!?)
-		buttonBackGround.setFillDrawMode(GL.GL_POLYGON);
+//		buttonBackGround.setFillDrawMode(GL11.GL_POLYGON);
 //		buttonBackGround.scaleGlobal(0.95f, 0.95f, 1, buttonBackGround.getCenterPointGlobal());
 	}
 	
@@ -166,7 +169,7 @@ public class MTKey extends
 	
 	private class ButtonBackground extends MTPolygon{
 		public ButtonBackground(Vertex[] vertices, PApplet applet) {
-			super(vertices, applet);
+			super(applet, vertices);
 			/*
 			//Color the background
 			float[] minMax = Tools3D.getMinXYMaxXY(vertices);
@@ -237,12 +240,17 @@ public class MTKey extends
 	public void drawComponent(PGraphics g) {
 		if (this.isUseDirectGL()){
 			if (this.isUseDisplayList()){
-				GL gl=((PGraphicsOpenGL)this.getRenderer().g).beginGL();
+//				GL gl = Tools3D.beginGL(g);
+				GL10 gl = PlatformUtil.beginGL();
+				GL11Plus gl11Plus = PlatformUtil.getGL11Plus();
 				int[] pds = buttonBackGround.getGeometryInfo().getDisplayListIDs();
 				//Draw only filling of background polygon, without outer stroke
-				gl.glCallList(pds[0]);
+//				gl.glCallList(pds[0]);
+				gl11Plus.glCallList(pds[0]);
+				gl.glColor4f(this.getFillColor().getR(), this.getFillColor().getG(), this.getFillColor().getB(), this.getFillColor().getAlpha()); //needed when we use the displaylist of the key font, which be default doesent set its own fillcolor
 				super.drawComponent(gl); 
-				((PGraphicsOpenGL)this.getRenderer().g).endGL();
+//				Tools3D.endGL(g);
+				PlatformUtil.endGL();
 			}else{
 				buttonBackGround.drawComponent(g);
 				super.drawComponent(g); 
@@ -251,18 +259,6 @@ public class MTKey extends
 			buttonBackGround.drawComponent(g);
 			super.drawComponent(g); 
 		}
-		
-//		GL gl=((PGraphicsOpenGL)this.getRenderer().g).beginGL();
-//			if (isUseDisplayList()){
-//				int[] pds = buttonBackGround.getDisplayListIDs();
-//				//Draw only filling of background polygon, without outer stroke
-//				gl.glCallList(pds[0]);
-//			}else{
-//				buttonBackGround.drawComponent();
-//			}
-//			
-//			super.drawComponent(gl); 
-//		((PGraphicsOpenGL)this.getRenderer().g).endGL();
 	}
 	
 	

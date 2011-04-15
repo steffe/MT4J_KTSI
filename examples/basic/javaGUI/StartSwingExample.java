@@ -20,6 +20,7 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.UIManager;
 
+import org.mt4j.AbstractMTApplication;
 import org.mt4j.MTApplication;
 import org.mt4j.components.MTComponent;
 import org.mt4j.components.visibleComponents.shapes.MTEllipse;
@@ -34,6 +35,9 @@ import org.mt4j.util.math.Vector3D;
 
 
 public class StartSwingExample extends JFrame {
+	private static final long serialVersionUID = 1L;
+
+	//TODO init logging
 
 	public static void main(String[] args) {
 		try {
@@ -41,7 +45,8 @@ public class StartSwingExample extends JFrame {
         } catch (Exception e) {
         	e.printStackTrace();
         }
-		StartSwingExample swingFrame = new StartSwingExample();
+//		StartSwingExample swingFrame = 
+			new StartSwingExample();
 	}
 	
 	
@@ -54,7 +59,7 @@ public class StartSwingExample extends JFrame {
 		this.setLayout(new BorderLayout());
         
 		//Create our mt4j applet
-        final MTApplication instance = new TestMTApplication();
+        final AbstractMTApplication instance = new TestMTApplication();
         instance.frame = this; //Important for registering the Windows 7 Touch input
         instance.init();
         
@@ -68,12 +73,11 @@ public class StartSwingExample extends JFrame {
 					instance.invokeLater(new Runnable() {
 						public void run() {
 							MTComponent[] ch = instance.getCurrentScene().getCanvas().getChildren();
-							for (int i = 0; i < ch.length; i++) {
-								MTComponent mtComponent = ch[i];
-								if (!(mtComponent instanceof MTOverlayContainer)){
-									mtComponent.destroy();	
-								}
-							}
+                            for (MTComponent mtComponent : ch) {
+                                if (!(mtComponent instanceof MTOverlayContainer)) {
+                                    mtComponent.destroy();
+                                }
+                            }
 						}
 					});
 					
@@ -108,7 +112,7 @@ public class StartSwingExample extends JFrame {
 					//will be executed the next time the mt4j thread runs.
 					instance.invokeLater(new Runnable() {
 						public void run() {
-							MTRectangle r = new MTRectangle(0,0,ToolsMath.getRandom(50, 250),ToolsMath.getRandom(50, 250), instance);
+							MTRectangle r = new MTRectangle(instance,0,0,ToolsMath.getRandom(50, 250), ToolsMath.getRandom(50, 250));
 							r.setFillColor(new MTColor(ToolsMath.getRandom(50,255),ToolsMath.getRandom(50,255),ToolsMath.getRandom(50,255)));
 							r.addGestureListener(DragProcessor.class, new InertiaDragAction());
 							instance.getCurrentScene().getCanvas().addChild(r);
@@ -131,7 +135,7 @@ public class StartSwingExample extends JFrame {
 					instance.invokeLater(new Runnable() {
 						public void run() {
 							float arc = ToolsMath.getRandom(8, 25);
-							MTRoundRectangle r = new MTRoundRectangle(0,0,0, ToolsMath.getRandom(50, 250),ToolsMath.getRandom(50, 250), arc, arc, instance);
+							MTRoundRectangle r = new MTRoundRectangle(instance,0,0, 0,ToolsMath.getRandom(50, 250), ToolsMath.getRandom(50, 250), arc, arc);
 							r.setFillColor(new MTColor(ToolsMath.getRandom(50,255),ToolsMath.getRandom(50,255),ToolsMath.getRandom(50,255)));
 							r.addGestureListener(DragProcessor.class, new InertiaDragAction());
 							instance.getCurrentScene().getCanvas().addChild(r);
@@ -188,6 +192,8 @@ public class StartSwingExample extends JFrame {
 	
 	
 	private class TestMTApplication extends MTApplication{
+		private static final long serialVersionUID = 1L;
+
 		@Override
 		public void startUp() {
 			//This causeD the craetion of a new rendrer (-> new opengl context)
@@ -196,14 +202,16 @@ public class StartSwingExample extends JFrame {
 //			pack();
 //			setResizable(false);
 			
-			this.addScene(new TestScene(this, "test scene"));
+			this.addScene(new SwingIntegrationScene(this, "test scene"));
 		}
 	}
 	
 	
 	
 	public class SimpleAboutDialog extends JDialog {
-		  public SimpleAboutDialog(JFrame parent) {
+		private static final long serialVersionUID = 1L;
+
+		public SimpleAboutDialog(JFrame parent) {
 		    super(parent, "About", true);
 
 		    Box b = Box.createVerticalBox();

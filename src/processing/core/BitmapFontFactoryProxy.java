@@ -21,17 +21,16 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.apache.log4j.SimpleLayout;
-import org.mt4j.MTApplication;
-import org.mt4j.components.visibleComponents.font.BitmapFont;
+import org.mt4j.AbstractMTApplication;
 import org.mt4j.components.visibleComponents.font.BitmapFontCharacter;
-import org.mt4j.components.visibleComponents.font.IFont;
-import org.mt4j.components.visibleComponents.font.fontFactories.IFontFactory;
 import org.mt4j.util.MT4jSettings;
 import org.mt4j.util.MTColor;
+import org.mt4j.util.font.BitmapFont;
+import org.mt4j.util.font.IFont;
+import org.mt4j.util.font.fontFactories.IFontFactory;
+import org.mt4j.util.logging.ILogger;
+import org.mt4j.util.logging.MTLoggerFactory;
+import org.mt4j.util.math.ToolsMath;
 
 import processing.core.PFont.Glyph;
 
@@ -41,21 +40,37 @@ import processing.core.PFont.Glyph;
  */
 public class BitmapFontFactoryProxy implements IFontFactory {
 	/** The Constant logger. */
-	private static final Logger logger = Logger.getLogger(BitmapFontFactoryProxy.class.getName());
+	private static final ILogger logger;
+//	= MTLoggerFactory.getLogger(BitmapFontFactoryProxy.class.getName());
 	static{
-//		logger.setLevel(Level.ERROR);
-//		logger.setLevel(Level.WARN);
-		logger.setLevel(Level.DEBUG);
-		SimpleLayout l = new SimpleLayout();
-		ConsoleAppender ca = new ConsoleAppender(l);
-		logger.addAppender(ca);
+		logger = MTLoggerFactory.getLogger(BitmapFontFactoryProxy.class.getName());
+//		logger.setLevel(ILogger.ERROR);
+//		logger.setLevel(ILogger.WARN);
+		logger.setLevel(ILogger.DEBUG);
 	}
 	
-	public static String defaultCharacters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ√Ñ√ñ√úabcdefghijklmnopqrstuvwxyz√§√∂√º<>|,;.:-_#'+*!\"¬ß$%&/()=?¬¥{[]}\\@";
+	public static String defaultCharacters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ¡¿…»ÕÃ”“abcdefghijklmnopqrstuvwxyz·‡ÈËÌÏÛÚ<>|,;.:-_#'+*!\"ß$%&/()=?¥{[]}\\@";
 	
 //	static{
 //		FontManager.getInstance().registerFontFactory("", new BitmapFontFactory());
 	//	}
+	
+	public IFont getCopy(IFont font) {
+		if (font instanceof BitmapFont) {
+			BitmapFont bf = (BitmapFont) font;
+			BitmapFont copy = new BitmapFont((BitmapFontCharacter[]) bf.getCharacters(), bf.getDefaultHorizontalAdvX(), bf.getFontFamily(), bf.getFontMaxAscent(), bf.getFontMaxDescent(), bf.getUnitsPerEM(), bf.getOriginalFontSize(), bf.getFillColor(),  /*bf.getStrokeColor(),*/ bf.isAntiAliased(), bf.getFontFileName());
+			return copy;
+		}
+		return null;
+	}
+	
+	public IFont createFont(PApplet pa, String fontName, int fontSize, MTColor color) {
+		return this.createFont(pa, fontName, fontSize, color, color, true);
+	}
+
+	public IFont createFont(PApplet pa, String fontName, int fontSize, MTColor color, boolean antiAliased) {
+		return this.createFont(pa, fontName, fontSize, color, color, antiAliased);
+	}
 
 	/* (non-Javadoc)
 	 * @see org.mt4j.components.visibleComponents.font.fontFactories.IFontFactory#createFont(processing.core.PApplet, java.lang.String, int, org.mt4j.util.MTColor, org.mt4j.util.MTColor)
@@ -87,7 +102,7 @@ public class BitmapFontFactoryProxy implements IFontFactory {
 		} catch (FileNotFoundException e1) {
 			e1.printStackTrace();
 		}
-		List<BitmapFontCharacter> bitMapCharacters = this.createCharacters(pa, p5Font, defaultCharacters, fillColor, strokeColor);
+		List<BitmapFontCharacter> bitMapCharacters = this.createCharacters(pa, p5Font, defaultCharacters, fillColor /*, strokeColor*/);
 	
 		//font is null sometimes (vlw)
 		/*
@@ -133,7 +148,7 @@ public class BitmapFontFactoryProxy implements IFontFactory {
 		PImage dummy = new PImage(1,1);
 //		/*
 		//Manually add a newLine character to the font
-		BitmapFontCharacter newLine = new BitmapFontCharacter(dummy, pa, "\n", 0, 0, 0);
+		BitmapFontCharacter newLine = new BitmapFontCharacter(pa, dummy, "\n", 0, 0, 0);
 		newLine.setPickable(false);						    		
 		newLine.setVisible(false);
 		newLine.setNoFill(true);
@@ -148,10 +163,10 @@ public class BitmapFontFactoryProxy implements IFontFactory {
 //		int spaceIndex = p5Font.index('-');
 //		int spaceAdvancex = p5Font.width[spaceIndex];
 //		int spaceAdvancex = p5Font.getGlyph('-').width;
-		int spaceAdvancex = Math.round(((float) p5Font.width('i') * (float) fontSize));
+		int spaceAdvancex = Math.round((p5Font.width('i') * (float) fontSize));
 //		int spaceAdvancex = Math.round(pa.textWidth(' '));
 //		int spaceAdvancex = Math.round(p5Font.width(' ') * p5Font.size);
-		BitmapFontCharacter space = new BitmapFontCharacter(dummy, pa, " ", 0, 0, spaceAdvancex);
+		BitmapFontCharacter space = new BitmapFontCharacter(pa, dummy, " ", 0, 0, spaceAdvancex);
 		space.setPickable(false);						    		
 		space.setVisible(false);
 		space.setNoFill(true);
@@ -161,7 +176,7 @@ public class BitmapFontFactoryProxy implements IFontFactory {
 		
 		//Manually add a TAB character to the font
 		int defaultTabWidth = spaceAdvancex*4;
-		BitmapFontCharacter tab = new BitmapFontCharacter(dummy, pa, "\t", 0, 0, defaultTabWidth);
+		BitmapFontCharacter tab = new BitmapFontCharacter(pa, dummy, "\t", 0, 0, defaultTabWidth);
 		try {
 			int tabWidth = 4 * space.getHorizontalDist();
 			tab.setHorizontalDist(tabWidth);
@@ -183,8 +198,9 @@ public class BitmapFontFactoryProxy implements IFontFactory {
 		BitmapFontCharacter[] characters = bitMapCharacters.toArray(new BitmapFontCharacter[bitMapCharacters.size()]);
 		BitmapFont bitmapFont = new BitmapFont(characters, defaultHorizontalAdvX, fontFamily, fontMaxAscent, fontMaxDescent, unitsPerEm, originalFontSize, 
 				fillColor,
-				strokeColor,
-				antiAliased
+//				strokeColor,
+				antiAliased,
+				fontFileName
 		);
 		bitmapFont.setFontFileName(fontFileName);
 		return bitmapFont;
@@ -222,7 +238,7 @@ public class BitmapFontFactoryProxy implements IFontFactory {
 			//If not found try to load from the "/data" directory
 			if (p5Font == null){
 				int lastDirFileSeparator = fontFileName.lastIndexOf(java.io.File.separator);
-				int lastDirSeparator = fontFileName.lastIndexOf(MTApplication.separator);
+				int lastDirSeparator = fontFileName.lastIndexOf(AbstractMTApplication.separator);
 				if (lastDirFileSeparator != -1){
 					p5Font = pa.loadFont(fontFileName.substring(lastDirFileSeparator+1, fontFileName.length()));
 				}else if (lastDirSeparator != -1){
@@ -235,7 +251,7 @@ public class BitmapFontFactoryProxy implements IFontFactory {
 			//If not found try to load from the "/data" directory
 			if (p5Font == null){
 				int lastDirFileSeparator = fontFileName.lastIndexOf(java.io.File.separator);
-				int lastDirSeparator = fontFileName.lastIndexOf(MTApplication.separator);
+				int lastDirSeparator = fontFileName.lastIndexOf(AbstractMTApplication.separator);
 				if (lastDirFileSeparator != -1){
 					p5Font = pa.createFont(fontFileName.substring(lastDirFileSeparator+1, fontFileName.length()), fontSize, antiAliased); 
 				}else if (lastDirSeparator != -1){
@@ -248,7 +264,7 @@ public class BitmapFontFactoryProxy implements IFontFactory {
 		else{
 			//No file suffix -> Create font from a java/system font
 			int lastDirFileSeparator = fontFileName.lastIndexOf(java.io.File.separator);
-			int lastDirSeparator = fontFileName.lastIndexOf(MTApplication.separator);
+			int lastDirSeparator = fontFileName.lastIndexOf(AbstractMTApplication.separator);
 			if (lastDirFileSeparator != -1){
 				p5Font = pa.createFont(fontFileName.substring(lastDirFileSeparator+1, fontFileName.length()), fontSize, antiAliased); //Creats the font
 			}
@@ -261,7 +277,7 @@ public class BitmapFontFactoryProxy implements IFontFactory {
 		}
 		
 		if (p5Font == null){
-			throw new NullPointerException("Couldnt load the font: " + fontFileName);
+			throw new FileNotFoundException("Couldn't load the font: " + fontFileName);
 		}
 		return p5Font;
 	}
@@ -271,11 +287,11 @@ public class BitmapFontFactoryProxy implements IFontFactory {
 	public List<BitmapFontCharacter> getCharacters(PApplet pa, 
 			String chars,
 			MTColor fillColor, 
-			MTColor strokeColor,
+//			MTColor strokeColor,
 			String fontFileName, 
 			int fontSize
 	){
-		return this.getCharacters(pa, chars, fillColor, strokeColor, fontFileName, fontSize, true);
+		return this.getCharacters(pa, chars, fillColor, /*strokeColor,*/ fontFileName, fontSize, true);
 	}
 	
 	/**
@@ -293,7 +309,7 @@ public class BitmapFontFactoryProxy implements IFontFactory {
 	public List<BitmapFontCharacter> getCharacters(PApplet pa, 
 			String chars,
 			MTColor fillColor, 
-			MTColor strokeColor,
+//			MTColor strokeColor,
 			String fontFileName, 
 			int fontSize,
 			boolean antiAliased
@@ -304,11 +320,11 @@ public class BitmapFontFactoryProxy implements IFontFactory {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-		return createCharacters(pa, p5Font, chars, fillColor, strokeColor);
+		return createCharacters(pa, p5Font, chars, fillColor /*, strokeColor*/);
 	}
 	
 	
-	private List<BitmapFontCharacter> createCharacters(PApplet pa, PFont p5Font, String chars, MTColor fillColor, MTColor strokeColor){
+	private List<BitmapFontCharacter> createCharacters(PApplet pa, PFont p5Font, String chars, MTColor fillColor /*, MTColor strokeColor*/){
 		List<BitmapFontCharacter> bitMapCharacters = new ArrayList<BitmapFontCharacter>();
 		
 		for (int i = 0; i < chars.length(); i++) {
@@ -357,12 +373,12 @@ public class BitmapFontFactoryProxy implements IFontFactory {
 				//Shift character image data down and right in the image because of aliasing artifacts at the border
 				//we need to compensate for this when displaying the char
 				//FIXME this creates far to big images..but because of artefacts needed..?
-				int topShiftAmount = 4;
-				int leftShiftAmount = 4;
+				int topShiftAmount = 1;
+				int leftShiftAmount = 1;
 				
 //				PImage copy = new PImage(ToolsMath.nearestPowerOfTwo(charWidth + shiftAmount), ToolsMath.nearestPowerOfTwo(charHeight + shiftAmount), PImage.ARGB);
 //				
-				PImage copy = new PImage(nextPowerOfTwo(charImage.width + leftShiftAmount + 1), nextPowerOfTwo(charImage.height + topShiftAmount), PImage.ARGB);
+				PImage copy = new PImage(nextPowerOfTwo(charImage.width + leftShiftAmount + 1), nextPowerOfTwo(charImage.height + topShiftAmount +1), PImage.ARGB);
 //				PImage copy = new PImage(charImage.width + leftShiftAmount + 1, charImage.height + topShiftAmount, PImage.ARGB);
 				
 				copy.copy(charImage, 0, 0, charWidth, charHeight, leftShiftAmount, topShiftAmount, charWidth, charHeight);
@@ -390,8 +406,8 @@ public class BitmapFontFactoryProxy implements IFontFactory {
 //				}
 				
 				//Create bitmap font character
-				String StringChar = new Character(c).toString();
-				BitmapFontCharacter character = new BitmapFontCharacter(charImage, pa, StringChar, leftExtend, topOffset, widthDisplacement);
+				String StringChar = Character.toString(c);
+				BitmapFontCharacter character = new BitmapFontCharacter(pa, charImage, StringChar, leftExtend, topOffset, widthDisplacement);
 				character.setName(StringChar);
 				character.setFillColor(new MTColor(fillColor));
 				if (MT4jSettings.getInstance().isOpenGlMode()){
@@ -405,14 +421,10 @@ public class BitmapFontFactoryProxy implements IFontFactory {
 		}
 		return bitMapCharacters;
 	}
-	
+
 	private int nextPowerOfTwo(int val) {
-	      int ret = 1;
-	      while (ret < val) {
-	        ret <<= 1;
-	      }
-	      return ret;
-	    }
+		return ToolsMath.nextPowerOfTwo(val);
+	}
 
 //	
 //	  /**

@@ -17,24 +17,24 @@
  ***********************************************************************/
 package org.mt4j.components.visibleComponents.widgets;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import org.mt4j.MTApplication;
+import org.mt4j.AbstractMTApplication;
 import org.mt4j.components.StateChange;
 import org.mt4j.components.StateChangeEvent;
 import org.mt4j.components.StateChangeListener;
 import org.mt4j.components.TransformSpace;
 import org.mt4j.components.visibleComponents.shapes.MTRoundRectangle;
 import org.mt4j.components.visibleComponents.widgets.buttons.MTImageButton;
+import org.mt4j.input.inputProcessors.IGestureEventListener;
+import org.mt4j.input.inputProcessors.MTGestureEvent;
 import org.mt4j.input.inputProcessors.componentProcessors.tapProcessor.TapEvent;
+import org.mt4j.input.inputProcessors.componentProcessors.tapProcessor.TapProcessor;
 import org.mt4j.sceneManagement.Iscene;
 import org.mt4j.util.MT4jSettings;
 import org.mt4j.util.MTColor;
-import org.mt4j.util.animation.Animation;
 import org.mt4j.util.animation.AnimationEvent;
+import org.mt4j.util.animation.IAnimation;
 import org.mt4j.util.animation.IAnimationListener;
-import org.mt4j.util.animation.MultiPurposeInterpolator;
+import org.mt4j.util.animation.ani.AniAnimation;
 import org.mt4j.util.math.Vector3D;
 
 import processing.core.PImage;
@@ -64,29 +64,55 @@ extends MTRoundRectangle {
 	
 	/**
 	 * Instantiates a new mT scene window.
-	 * 
+	 *
 	 * @param scene the scene
 	 * @param borderWidth the border width
 	 * @param borderHeight the border height
 	 * @param applet the applet
+	 * @deprecated constructor will deleted! Please , use the constructor with the PApplet instance as the first parameter.
 	 */
-	public MTSceneWindow(final Iscene scene, float borderWidth, float borderHeight, MTApplication applet) {
-		this(scene, borderWidth, borderHeight, applet, Math.round(MT4jSettings.getInstance().getWindowWidth() * 0.6f), Math.round(MT4jSettings.getInstance().getWindowHeight() * 0.6f));
+	public MTSceneWindow(final Iscene scene, float borderWidth, float borderHeight, AbstractMTApplication applet) {
+		this(applet, scene, borderWidth, borderHeight);
 	}
 	
 	/**
 	 * Instantiates a new mT scene window.
-	 * 
+	 *
 	 * @param scene the scene
 	 * @param borderWidth the border width
 	 * @param borderHeight the border height
 	 * @param applet the applet
 	 * @param fboWidth the fbo width
 	 * @param fboHeight the fbo height
+	 * @deprecated constructor will deleted! Please , use the constructor with the PApplet instance as the first parameter.
 	 */
-	public MTSceneWindow(final Iscene scene, float borderWidth, float borderHeight, final MTApplication applet, int fboWidth, int fboHeight) {
+	public MTSceneWindow(final Iscene scene, float borderWidth, float borderHeight, final AbstractMTApplication applet, int fboWidth, int fboHeight) {
+		this(applet, scene, borderWidth, borderHeight, fboWidth, fboHeight);
+	}
+	
+	/**
+	 * Instantiates a new mT scene window.
+	 * @param applet the applet
+	 * @param scene the scene
+	 * @param borderWidth the border width
+	 * @param borderHeight the border height
+	 */
+	public MTSceneWindow(AbstractMTApplication applet, final Iscene scene, float borderWidth, float borderHeight) {
+		this(applet, scene, borderWidth, borderHeight, Math.round(MT4jSettings.getInstance().getWindowWidth() * 0.6f), Math.round(MT4jSettings.getInstance().getWindowHeight() * 0.6f));
+	}
+	
+	/**
+	 * Instantiates a new mT scene window.
+	 * @param applet the applet
+	 * @param scene the scene
+	 * @param borderWidth the border width
+	 * @param borderHeight the border height
+	 * @param fboWidth the fbo width
+	 * @param fboHeight the fbo height
+	 */
+	public MTSceneWindow(final AbstractMTApplication applet, final Iscene scene, float borderWidth, float borderHeight, int fboWidth, int fboHeight) {
 //		super(0-borderWidth, 0-borderHeight, applet.width+2*borderWidth, applet.height+2*borderHeight, applet);
-		super(0-borderWidth, 0-borderHeight, 0, MT4jSettings.getInstance().getWindowWidth()+2*borderWidth, MT4jSettings.getInstance().getWindowHeight()+2*borderHeight, 30, 30, applet);
+		super(applet, 0-borderWidth, 0-borderHeight, 0, MT4jSettings.getInstance().getWindowWidth()+2*borderWidth, MT4jSettings.getInstance().getWindowHeight()+2*borderHeight, 30, 30);
 		
 		this.setStrokeColor(new MTColor(0,0,0));
 		
@@ -124,17 +150,14 @@ extends MTRoundRectangle {
 		    "closeButton64.png"
 			);
 		}
-		MTImageButton closeButton = new MTImageButton(closeButtonImage, applet);
-		closeButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent r) {
-				switch (r.getID()) {
-				case TapEvent.BUTTON_CLICKED:
+		MTImageButton closeButton = new MTImageButton(applet, closeButtonImage);
+		closeButton.addGestureListener(TapProcessor.class, new IGestureEventListener() {
+			public boolean processGestureEvent(MTGestureEvent ge) {
+				TapEvent te = (TapEvent)ge;
+				if (te.isTapped()){
 					close();
-//					destroy();
-					break;
-				default:
-					break;
 				}
+				return true;
 			}
 		});
 		this.addChild(closeButton);
@@ -151,16 +174,14 @@ extends MTRoundRectangle {
 			"maximizeButton64.png"
 			);
 		}
-		MTImageButton maximizeButton = new MTImageButton(maximizeButtonImage, applet);
-		maximizeButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent r) {
-				switch (r.getID()) {
-				case TapEvent.BUTTON_CLICKED:
+		MTImageButton maximizeButton = new MTImageButton(applet, maximizeButtonImage);
+		maximizeButton.addGestureListener(TapProcessor.class, new IGestureEventListener() {
+			public boolean processGestureEvent(MTGestureEvent ge) {
+				TapEvent te = (TapEvent)ge;
+				if (te.isTapped()){
 					maximize();
-					break;
-				default:
-					break;
 				}
+				return true;
 			}
 		});
 		this.addChild(maximizeButton);
@@ -175,15 +196,17 @@ extends MTRoundRectangle {
 	
 	public void close(){
 		float width = this.getWidthXY(TransformSpace.RELATIVE_TO_PARENT);
-		Animation closeAnim = new Animation("Window Fade", new MultiPurposeInterpolator(width, 1, 350, 0.2f, 0.5f, 1), this);
+//		IAnimation closeAnim = new Animation("Window Fade", new MultiPurposeInterpolator(width, 1, 350, 0.2f, 0.5f, 1), this);
+		IAnimation closeAnim = new AniAnimation(width, 1, 350, AniAnimation.SINE_IN, this);
 		closeAnim.addAnimationListener(new IAnimationListener(){
 			public void processAnimationEvent(AnimationEvent ae) {
 //				float delta = ae.getAnimation().getInterpolator().getCurrentStepDelta();
 				switch (ae.getId()) {
 				case AnimationEvent.ANIMATION_STARTED:
 				case AnimationEvent.ANIMATION_UPDATED:
-					float currentVal = ae.getAnimation().getInterpolator().getCurrentValue();
+					float currentVal = ae.getAnimation().getValue();
 					setWidthXYRelativeToParent(currentVal);
+					rotateZ(getCenterPointRelativeToParent(), -ae.getDelta()*0.3f);
 					break;
 				case AnimationEvent.ANIMATION_ENDED:
 					setVisible(false);

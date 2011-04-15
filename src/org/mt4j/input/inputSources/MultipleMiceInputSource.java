@@ -18,10 +18,9 @@
 package org.mt4j.input.inputSources;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.WeakHashMap;
 
-import org.mt4j.MTApplication;
+import org.mt4j.AbstractMTApplication;
 import org.mt4j.components.MTCanvas;
 import org.mt4j.components.visibleComponents.shapes.MTEllipse;
 import org.mt4j.input.inputData.ActiveCursorPool;
@@ -61,7 +60,7 @@ public class MultipleMiceInputSource extends AbstractInputSource {
 	private int maxScreenH;
 
 	/** The mt app. */
-	private MTApplication mtApp;
+	private AbstractMTApplication mtApp;
 	
 	/** The default center cam. */
 	private Icamera defaultCenterCam;
@@ -74,7 +73,7 @@ public class MultipleMiceInputSource extends AbstractInputSource {
 	 * 
 	 * @param applet the applet
 	 */
-	public MultipleMiceInputSource(MTApplication applet) {
+	public MultipleMiceInputSource(AbstractMTApplication applet) {
 		super(applet);
 		
 		this.maxScreenW = MT4jSettings.getInstance().getWindowWidth();
@@ -229,7 +228,7 @@ public class MultipleMiceInputSource extends AbstractInputSource {
 	 * 
 	 * @param mtApp the new mT app
 	 */
-	public void setMTApp(MTApplication mtApp){
+	public void setMTApp(AbstractMTApplication mtApp){
 		this.mtApp = mtApp;
 //		this.currentCanvas = mtApp.getCurrentScene().getMainCanvas();
 
@@ -256,25 +255,24 @@ public class MultipleMiceInputSource extends AbstractInputSource {
 		
 		System.out.println("Removing multiple mice cursors from old and add to new canvas.");
 		Collection<MouseInfo> mouseInfos = deviceToMouseInfo.values();
-		for (Iterator<MouseInfo> iter = mouseInfos.iterator(); iter.hasNext();) {
-			MouseInfo mouseInfo = (MouseInfo) iter.next();
-			if (mouseInfo.ellipse != null){
-				float currentEllipseWidth = 6;
-				Vector3D v = new Vector3D(currentEllipseWidth,0,0);
-				v.transformDirectionVector(currentScene.getCanvas().getGlobalInverseMatrix());
-				float newEllipseWidth = currentEllipseWidth = v.length();
-				mouseInfo.ellipse.setWidthXYGlobal(newEllipseWidth*2);
-				try {
-					oldCanvas.removeChild(mouseInfo.ellipse);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}finally{
-					newCanvas.addChild(mouseInfo.ellipse);
-				}
+        for (MouseInfo mouseInfo : mouseInfos) {
+            if (mouseInfo.ellipse != null) {
+                float currentEllipseWidth = 6;
+                Vector3D v = new Vector3D(currentEllipseWidth, 0, 0);
+                v.transformDirectionVector(currentScene.getCanvas().getGlobalInverseMatrix());
+                float newEllipseWidth = currentEllipseWidth = v.length();
+                mouseInfo.ellipse.setWidthXYGlobal(newEllipseWidth * 2);
+                try {
+                    oldCanvas.removeChild(mouseInfo.ellipse);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    newCanvas.addChild(mouseInfo.ellipse);
+                }
 //				mouseInfo.ellipse.setCustomAndGlobalCam(currentScene.getSceneCam(), defaultCenterCam);
-				mouseInfo.ellipse.attachCamera(defaultCenterCam);
-			}
-		}
+                mouseInfo.ellipse.attachCamera(defaultCenterCam);
+            }
+        }
 	}
 	
 	/**
@@ -380,7 +378,7 @@ public class MultipleMiceInputSource extends AbstractInputSource {
 		}
 		
 		InputCursor m = new InputCursor();
-		MTFingerInputEvt touchEvt = new MTFingerInputEvt(this, mouseInfo.x, mouseInfo.y, MTFingerInputEvt.INPUT_DETECTED, m);
+		MTFingerInputEvt touchEvt = new MTFingerInputEvt(this, mouseInfo.x, mouseInfo.y, MTFingerInputEvt.INPUT_STARTED, m);
 //		m.addEvent(touchEvt);
 		
 //		long motionID = m.getId();
@@ -536,7 +534,7 @@ public class MultipleMiceInputSource extends AbstractInputSource {
 
 			MTFingerInputEvt te;
 			if (m.getCurrentEvent() != null)
-				te = new MTFingerInputEvt(this, m.getCurrentEvent().getPosX(), m.getCurrentEvent().getPosY(), MTFingerInputEvt.INPUT_ENDED, m);
+				te = new MTFingerInputEvt(this, m.getCurrentEvent().getX(), m.getCurrentEvent().getY(), MTFingerInputEvt.INPUT_ENDED, m);
 			else
 				te = new MTFingerInputEvt(this, 0,0, MTFingerInputEvt.INPUT_ENDED, m);
 

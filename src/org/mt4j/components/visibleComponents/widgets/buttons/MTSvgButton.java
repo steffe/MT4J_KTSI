@@ -18,10 +18,6 @@
 package org.mt4j.components.visibleComponents.widgets.buttons;
 
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-
 import org.mt4j.components.MTComponent;
 import org.mt4j.components.bounds.BoundsZPlaneRectangle;
 import org.mt4j.components.interfaces.IclickableButton;
@@ -32,9 +28,7 @@ import org.mt4j.input.gestureAction.DefaultSvgButtonClickAction;
 import org.mt4j.input.inputProcessors.componentProcessors.dragProcessor.DragProcessor;
 import org.mt4j.input.inputProcessors.componentProcessors.rotateProcessor.RotateProcessor;
 import org.mt4j.input.inputProcessors.componentProcessors.scaleProcessor.ScaleProcessor;
-import org.mt4j.input.inputProcessors.componentProcessors.tapProcessor.TapEvent;
 import org.mt4j.input.inputProcessors.componentProcessors.tapProcessor.TapProcessor;
-import org.mt4j.input.inputSources.IinputSourceListener;
 
 import processing.core.PApplet;
 
@@ -47,18 +41,17 @@ public class MTSvgButton extends MTSvg implements IclickableButton{
 	/** The selected. */
 	private boolean selected;
 	
-	/** The registered action listeners. */
-	private ArrayList<ActionListener> registeredActionListeners;
+//	/** The registered action listeners. */
+//	private ArrayList<ActionListener> registeredActionListeners;
 	
 	/**
 	 * Instantiates a new mT svg button.
-	 * 
-	 * @param fileString the file string
 	 * @param pa the pa
+	 * @param fileString the file string
 	 */
-	public MTSvgButton(String fileString, PApplet pa) {
+	public MTSvgButton(PApplet pa, String fileString) {
 		super(pa, fileString);
-		registeredActionListeners = new ArrayList<ActionListener>();
+//		registeredActionListeners = new ArrayList<ActionListener>();
 		
 		this.setSvgOptions(this, AbstractShape.BOUNDS_CHECK_THEN_GEOMETRY_CHECK );
 		
@@ -127,39 +120,39 @@ public class MTSvgButton extends MTSvg implements IclickableButton{
 	}
 	
 	
-	//TODO listener stuff in abstract superclass!
-
-	/**
-	 * Adds the action listener.
-	 * 
-	 * @param listener the listener
-	 */
-	public synchronized void addActionListener(ActionListener listener){
-		if (!registeredActionListeners.contains(listener)){
-			registeredActionListeners.add(listener);
-		}
-	}
-	
-	/**
-	 * Removes the action listener.
-	 * 
-	 * @param listener the listener
-	 */
-	public synchronized void removeActionListener(IinputSourceListener listener){
-		if (registeredActionListeners.contains(listener)){
-			registeredActionListeners.remove(listener);
-		}
-	}
-	
-	/**
-	 * Gets the action listeners.
-	 * 
-	 * @return the action listeners
-	 */
-	public synchronized ActionListener[] getActionListeners(){
-		return (ActionListener[])registeredActionListeners.toArray(new ActionListener[this.registeredActionListeners.size()]);
-	}
-	
+//	//TODO listener stuff in abstract superclass!
+//
+//	/**
+//	 * Adds the action listener.
+//	 * 
+//	 * @param listener the listener
+//	 */
+//	public synchronized void addActionListener(ActionListener listener){
+//		if (!registeredActionListeners.contains(listener)){
+//			registeredActionListeners.add(listener);
+//		}
+//	}
+//	
+//	/**
+//	 * Removes the action listener.
+//	 * 
+//	 * @param listener the listener
+//	 */
+//	public synchronized void removeActionListener(IinputSourceListener listener){
+//		if (registeredActionListeners.contains(listener)){
+//			registeredActionListeners.remove(listener);
+//		}
+//	}
+//	
+//	/**
+//	 * Gets the action listeners.
+//	 * 
+//	 * @return the action listeners
+//	 */
+//	public synchronized ActionListener[] getActionListeners(){
+//		return registeredActionListeners.toArray(new ActionListener[this.registeredActionListeners.size()]);
+//	}
+//	
 //	protected void fireActionPerformed() {
 //		ActionListener[] listeners = this.getActionListeners();
 //		synchronized(listeners) {
@@ -170,26 +163,23 @@ public class MTSvgButton extends MTSvg implements IclickableButton{
 //			}
 //		}
 //	}
-	
-
-	/**
-	 * fires an action event with a ClickEvent Id as its ID.
-	 * 
-	 * @param ce the ce
-	 */
-	public void fireActionPerformed(TapEvent ce) {
-		ActionListener[] listeners = this.getActionListeners();
-		synchronized(listeners) {
-			for (int i = 0; i < listeners.length; i++) {
-				ActionListener listener = (ActionListener)listeners[i];
-				listener.actionPerformed(new ActionEvent(this, ce.getTapID(),  "action performed on tangible button"));
-			}
-		}
-	}
+//	
+//
+//	/**
+//	 * fires an action event with a ClickEvent Id as its ID.
+//	 * 
+//	 * @param ce the ce
+//	 */
+//	public synchronized void fireActionPerformed(TapEvent ce) {
+//		ActionListener[] listeners = this.getActionListeners();
+//        for (ActionListener listener : listeners) {
+//            listener.actionPerformed(new ActionEvent(this, ce.getTapID(), "action performed on tangible button"));
+//        }
+//	}
 
 
 	/* (non-Javadoc)
-	 * @see com.jMT.components.interfaces.IclickableButton#setSelected(boolean)
+	 * @see org.mt4j.components.interfaces.IclickableButton#setSelected(boolean)
 	 */
 	public void setSelected(boolean selected) {
 		this.selected = selected;
@@ -197,7 +187,7 @@ public class MTSvgButton extends MTSvg implements IclickableButton{
 
 
 	/* (non-Javadoc)
-	 * @see com.jMT.components.interfaces.IclickableButton#isSelected()
+	 * @see org.mt4j.components.interfaces.IclickableButton#isSelected()
 	 */
 	public boolean isSelected() {
 		return this.selected;
@@ -209,13 +199,12 @@ public class MTSvgButton extends MTSvg implements IclickableButton{
 	 */
 	public void disableAndDeleteChildrenDisplayLists() {
 		MTComponent[] childs = this.getChildren();
-		for (int i = 0; i < childs.length; i++) {
-			MTComponent child = childs[i];
-			if (child instanceof MTPolygon) {
-				MTPolygon poly = (MTPolygon) child;
-				poly.disableAndDeleteDisplayLists();
-			}
-		}
+        for (MTComponent child : childs) {
+            if (child instanceof MTPolygon) {
+                MTPolygon poly = (MTPolygon) child;
+                poly.disableAndDeleteDisplayLists();
+            }
+        }
 	}
 
 }

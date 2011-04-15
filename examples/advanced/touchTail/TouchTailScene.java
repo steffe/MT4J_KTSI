@@ -2,7 +2,7 @@ package advanced.touchTail;
 
 import java.awt.event.KeyEvent;
 
-import org.mt4j.MTApplication;
+import org.mt4j.AbstractMTApplication;
 import org.mt4j.input.gestureAction.TapAndHoldVisualizer;
 import org.mt4j.input.inputProcessors.IGestureEventListener;
 import org.mt4j.input.inputProcessors.MTGestureEvent;
@@ -13,10 +13,10 @@ import org.mt4j.sceneManagement.AbstractScene;
 import org.mt4j.util.MTColor;
 
 public class TouchTailScene extends AbstractScene {
-	private MTApplication mtApp;
+	private AbstractMTApplication mtApp;
 	private TouchTailComponent tails;
 	
-	public TouchTailScene(MTApplication mtApplication, String name) {
+	public TouchTailScene(AbstractMTApplication mtApplication, String name) {
 		super(mtApplication, name);
 		this.mtApp = mtApplication;
 		this.setClearColor(new MTColor(140, 140, 110, 255));
@@ -63,14 +63,12 @@ public class TouchTailScene extends AbstractScene {
 		}
 	}
 	
-	@Override
-	public void init() {
-		mtApp.registerKeyEvent(this);
+	public void onEnter() {
+		getMTApplication().registerKeyEvent(this);
 	}
-
-	@Override
-	public void shutDown() {
-		mtApp.unregisterKeyEvent(this);
+	
+	public void onLeave() {	
+		getMTApplication().unregisterKeyEvent(this);
 	}
 
 }
