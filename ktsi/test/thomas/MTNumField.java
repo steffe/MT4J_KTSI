@@ -120,6 +120,7 @@ public class MTNumField extends MTRoundRectangle{
 					t.setFillColor(new MTColor(205,200,177, 255));
 					t.unregisterAllInputProcessors();
 					t.setEnableCaret(true);
+					// Zusätzliche Methode im MTTextArea erfoderlich, mit dem Objecttyp MTNumKeyboard
 					t.snapToKeyboard(n1);
 					
 					t.setText(textarea.getText());

@@ -89,6 +89,16 @@ public class MTTextField extends MTTextArea {
 		return this.getMaxLineWidth() + this.getScrollTextX();
 	}
 	
+	/**
+	 * Get the text width
+	 * 
+	 * @return float text width
+	 */
+	public float getTextWidth(){
+		return this.getMaxLineWidth();
+	}
 
+	
+	
 }
 	

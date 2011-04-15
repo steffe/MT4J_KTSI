@@ -1041,6 +1041,7 @@ public class MTTextArea extends MTRectangle implements IdragClusterable, ITextIn
 	 * 
 	 * @return the max line width
 	 */
+	
 	protected float getMaxLineWidth(){
 		float currentLineWidth = 2 * this.getInnerPaddingLeft() + caretWidth;
 		float maxWidth = currentLineWidth;
