@@ -1,28 +1,28 @@
 
 package test.thomas;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.util.List;
+import java.util.Arrays;
 
 import org.mt4j.MTApplication;
-import org.mt4j.components.TransformSpace;
-import org.mt4j.components.visibleComponents.font.FontManager;
-import org.mt4j.components.visibleComponents.font.IFont;
-import org.mt4j.components.visibleComponents.shapes.MTRectangle.PositionAnchor;
+import org.mt4j.components.StateChange;
+import org.mt4j.components.StateChangeEvent;
+import org.mt4j.components.StateChangeListener;
 import org.mt4j.components.visibleComponents.shapes.MTRoundRectangle;
+import org.mt4j.components.visibleComponents.widgets.MTSlider;
 import org.mt4j.components.visibleComponents.widgets.MTTextArea;
 import org.mt4j.components.visibleComponents.widgets.MTTextArea.ExpandDirection;
 import org.mt4j.components.visibleComponents.widgets.MTTextField;
-import org.mt4j.components.visibleComponents.widgets.buttons.MTImageButton;
-import org.mt4j.components.visibleComponents.widgets.buttons.MTSvgButton;
 import org.mt4j.input.inputProcessors.IGestureEventListener;
 import org.mt4j.input.inputProcessors.MTGestureEvent;
 import org.mt4j.input.inputProcessors.componentProcessors.tapProcessor.TapEvent;
 import org.mt4j.input.inputProcessors.componentProcessors.tapProcessor.TapProcessor;
 import org.mt4j.util.MTColor;
+import org.mt4j.util.font.IFont;
+import org.mt4j.util.font.IFontCharacter;
 import org.mt4j.util.math.Vector3D;
-
-import com.sun.xml.internal.ws.api.model.wsdl.WSDLBoundOperation.ANONYMOUS;
+import org.mt4jx.components.visibleComponents.widgets.MTForm;
+import org.mt4jx.components.visibleComponents.widgets.MTSuggestionTextArea;
 
 import processing.core.PImage;
 /**
@@ -37,7 +37,7 @@ import processing.core.PImage;
 public class MTNumField extends MTRoundRectangle{
 
 	MTRoundRectangle baseOb;
-	MTTextField textarea;
+	MTTextArea textarea;
 	
 	// Object size
 	int height;
@@ -45,9 +45,11 @@ public class MTNumField extends MTRoundRectangle{
 	int fontsize;
 	boolean edit;
 	PImage nullImage;
-	MTApplication app;
-	IFont iF;
-	boolean rightalign;
+	final MTApplication app;
+	private IFont iF;
+	public boolean rAlign;
+	private String dString;
+	private String fname;
 	
 	/**
 	 * Constructor MTNumField. Fix size (40, 200)
@@ -55,96 +57,83 @@ public class MTNumField extends MTRoundRectangle{
 	 * @param pApplet MTApplication
 	 * @param fontArialMini IFont
 	 * @param rightalign boolean
+	 * @param defaultString String
+	 * @param fieldname String
 	 */
 	
 	
-	public MTNumField(MTApplication pApplet, IFont fontArialMini, boolean rightalign) {
-		super(0,0,0,0,0,0,0,pApplet);
+	public MTNumField(MTApplication pApplet, IFont fontArialMini, boolean rightalign, String defaultString, String fieldname) {
+		super(pApplet,0,0,0,0,0,0,0);
 		app=pApplet;
 		iF=fontArialMini;
-		this.rightalign=rightalign;
+		this.rAlign=rightalign;
 		fontsize= iF.getOriginalFontSize();
+		dString = defaultString;
+		fname = fieldname;
 		
-		MTColor blue1 = new MTColor(51,102,204,180);
+		final MTColor blue1 = new MTColor(51,102,204,180);
 		height= 40;
 		width= 220;
 		
 		System.out.println("Font Size = " +fontsize);
 		
-		this.setName("Unnamed NumField");
+		this.setName(fname);
 		
-		baseOb = new MTRoundRectangle(0, 0, 0, width, height, 5, 5, pApplet);	
+		baseOb = new MTRoundRectangle(pApplet,0, 0, 0, width, height, 5, 5);	
 		baseOb.setFillColor(blue1);
 		baseOb.setStrokeColor(MTColor.BLACK);
 		
 
-		textarea = new MTTextField(0,(height-fontsize)/2,width,height, fontArialMini, pApplet);
+		textarea = new MTTextArea(pApplet, 0,(height-fontsize)/2,width,height, fontArialMini);
 		
 		textarea.setInnerPadding(0);
 		textarea.setInnerPaddingLeft(0);
 		textarea.setInnerPaddingTop(0);
-		textarea.setText(new String("1"));
+		textarea.setText(new String(dString));
 		textarea.setFillColor(new MTColor(0,0,0,0));
-		textarea.setStrokeColor(new MTColor(0,0,0,0));
 		textarea.setPickable(false);
+		textarea.setNoStroke(true);
 		
-		
-		// Definition der Aussrichtung des Text 
-		if(rightalign==true){
-			float text_width = textarea.getTextWidth();	
-			System.out.println("Text Breite: = " +text_width);
-			textarea.setInnerPaddingLeft(width-((int)text_width+5));
-			
-		}
-		else{
-			textarea.setInnerPaddingLeft(5);
-		}
-		
+		this.setAlign(rightalign);
 		
 		baseOb.registerInputProcessor(new TapProcessor(app, height, true, width));
 		baseOb.addGestureListener(TapProcessor.class, new IGestureEventListener() {
 			public boolean processGestureEvent(MTGestureEvent ge) {
 				TapEvent te = (TapEvent)ge;
 				if(te.isDoubleTap()){
-					MTNumKeyboard n1 = new MTNumKeyboard(app);
-					baseOb.addChild(n1);
+					MTNumKeyboard numkeyboard = new MTNumKeyboard(app);
+					numkeyboard.setFillColor(blue1);
+					baseOb.addChild(numkeyboard);
 					
 					System.out.println("Button Clicked");
 					System.out.println("Text width :"+ textarea.getTextWidth());
 					
 					
-					final MTTextArea t = new MTTextArea(app,iF);
+					final MTTextArea numtextArea = new MTTextArea(app,iF);
+					numtextArea.setExpandDirection(ExpandDirection.UP);
+					numtextArea.setStrokeColor(new MTColor(0,0 , 0, 255));
+					numtextArea.setFillColor(new MTColor(205,200,177, 255));
+					numtextArea.unregisterAllInputProcessors();
+					numtextArea.setEnableCaret(true);
 					
-			        t.setExpandDirection(ExpandDirection.UP);
-					t.setStrokeColor(new MTColor(0,0 , 0, 255));
-					t.setFillColor(new MTColor(205,200,177, 255));
-					t.unregisterAllInputProcessors();
-					t.setEnableCaret(true);
 					// Zusätzliche Methode im MTTextArea erfoderlich, mit dem Objecttyp MTNumKeyboard
-					t.snapToKeyboard(n1);
+					numkeyboard.snapToKeyboard(numtextArea);
 					
-					t.setText(textarea.getText());
-					n1.addTextInputListener(t);
-					
-					
-					// Close Button from Num Keybord  
-					n1.keybCloseSvg.addActionListener(new ActionListener() {
+					numtextArea.setText(textarea.getText());
+					numkeyboard.addTextInputListener(numtextArea);
+				
+				
+					numkeyboard.addStateChangeListener(StateChange.COMPONENT_DESTROYED, new StateChangeListener() {
 						
 						@Override
-						public void actionPerformed(ActionEvent close) {
-							switch(close.getID()){
-							case TapEvent.BUTTON_CLICKED:
-								System.out.println("Text Breite 1: = " +textarea.getTextWidth());
+						public void stateChanged(StateChangeEvent close) {
 								textarea.setInnerPaddingLeft(0);
-								textarea.setText(t.getText());
-								float f1 = textarea.getTextWidth();
-								System.out.println("Text Breite 2: = " +textarea.getTextWidth());
-								textarea.setInnerPaddingLeft(width-((int)f1+5));
-							break;
-							}
-							
+								textarea.setText(numtextArea.getText());
+								setAlign(rAlign);
+		
 						}
 					});
+						
 				}
 				
 				return false;
@@ -154,12 +143,19 @@ public class MTNumField extends MTRoundRectangle{
 		
 		// Add Object to base Object
 		baseOb.addChild(textarea);
-		
+
+		final String[] animals = { "sehr wichtig", "wichtig", "nötig","vorhanden", "unnötig", "nicht benötigt"};
+		final List<String> list = Arrays.asList( animals);
+		MTSuggestionTextArea sa = new MTSuggestionTextArea(app, width, list);
+		sa.setFontColor(MTColor.BLACK);
+		sa.setFillColor(blue1);
+		sa.setFont(iF);
+		sa.setNoStroke(true);
+
+		baseOb.addChild(sa);
 		
 		
 	}
-
-	
 	
 	public MTRoundRectangle getMyAttributBack(){
 	return baseOb;
@@ -183,28 +179,19 @@ public class MTNumField extends MTRoundRectangle{
 		
 	}
 	
-	/**
-	 * 
-	 * boolean = 0 => left
-	 * boolean = 1 => right
-	 * 
-	 * @param boolean align
-	 */
-	public void setTextAlign(boolean align){
-		float text_size = textarea.getTextWidth();
-		
-		System.out.println("Text width :"+ textarea.getTextWidth());
+	public void setAlign(boolean align){
 		
 		if(align==true){
-			textarea.setPositionRelativeToOther(baseOb,new Vector3D(0,0,0));
-			//textarea.updateComponent(100);
+			float text_width = textarea.getTextWidth();	
+			System.out.println("Text Breite: = " +text_width);
+			System.out.println("Verschiebsatz: = " +(width-((int)text_width+5)));
+			textarea.setInnerPaddingLeft((width-((int)text_width+5)));
 		}
 		else{
-		textarea.setPositionRelativeToOther(baseOb,new Vector3D((width/2)+5,height-fontsize/2,0));		
+			textarea.setInnerPaddingLeft(5);
 		}
 	}
+
 	
-	public float text_W(){
-		return textarea.getTextWidth();	
-	}
+	
 }

@@ -2,8 +2,6 @@
 
 import org.mt4j.MTApplication;
 import org.mt4j.components.TransformSpace;
-import org.mt4j.components.visibleComponents.font.FontManager;
-import org.mt4j.components.visibleComponents.font.IFont;
 import org.mt4j.components.visibleComponents.shapes.MTRectangle;
 import org.mt4j.components.visibleComponents.shapes.MTRoundRectangle;
 import org.mt4j.components.visibleComponents.widgets.MTTextArea;
@@ -12,9 +10,9 @@ import org.mt4j.components.visibleComponents.widgets.keyboard.MTKeyboard;
 import org.mt4j.input.inputProcessors.globalProcessors.CursorTracer;
 import org.mt4j.sceneManagement.AbstractScene;
 import org.mt4j.util.MTColor;
+import org.mt4j.util.font.FontManager;
+import org.mt4j.util.font.IFont;
 import org.mt4j.util.math.Vector3D;
-
-import com.sun.opengl.impl.packrect.Rect;
 
 import processing.core.PImage;
 
@@ -37,8 +35,7 @@ public class HelloWorldScene extends AbstractScene {
 		
 		IFont fontArial = FontManager.getInstance().createFont(mtApplication, "arial.ttf", 
 				30, 	//Font size
-				MTColor.BLACK,  //Font fill color
-				white);	//Font outline color
+				MTColor.BLACK);	//Font outline color
 		//Create a textfield
 		MTTextArea textField = new MTTextArea(mtApplication, fontArial); 
 		textField.setNoStroke(true);
@@ -51,7 +48,7 @@ public class HelloWorldScene extends AbstractScene {
 		textField.translate(new Vector3D(0,0,0));
 		
 		// Add Rectangle 
-		MTRectangle rect = new MTRectangle(0, 0, 0, 100, 100, mtApplication);
+		MTRectangle rect = new MTRectangle(mtApplication,0, 0, 0, 100, 100 );
 		rect.setPositionGlobal(new Vector3D(200,200));
 		rect.setFillColor(myColor);
 		rect.setNoFill(false);
@@ -60,7 +57,7 @@ public class HelloWorldScene extends AbstractScene {
 		rect.setPositionGlobal(new Vector3D(200,300));
 		
 		// Add Round Rectangle
-		MTRoundRectangle round_Rect = new MTRoundRectangle(0, 0, 0, 300, 200, 15, 15, mtApplication);
+		MTRoundRectangle round_Rect = new MTRoundRectangle(mtApplication,0, 0, 0, 300, 200, 15, 15 );
 		round_Rect.setPositionGlobal(new Vector3D(600,300));
 		round_Rect.setFillColor(new MTColor(12,12,12,34));
 		round_Rect.setStrokeWeight(32);
@@ -68,7 +65,7 @@ public class HelloWorldScene extends AbstractScene {
 		
 		// Button
 		PImage keyboardImg = mtApplication.loadImage("advanced" + MTApplication.separator + "flickrMT"+ MTApplication.separator + "data"+ MTApplication.separator + "keyb128.png");
-		final MTImageButton keyboardButton = new MTImageButton(keyboardImg, mtApplication);
+		final MTImageButton keyboardButton = new MTImageButton(mtApplication,keyboardImg);
 		keyboardButton.setSizeLocal(60,60);
 		keyboardButton.setFillColor(new MTColor(255,255,255,200));
 		keyboardButton.setName("KeyboardButton");

@@ -1,6 +1,5 @@
 package test.thomas;
 
-import test.thomas.HelloWorldScene;
 import org.mt4j.MTApplication;
 
 public class StartHelloWorld extends MTApplication {

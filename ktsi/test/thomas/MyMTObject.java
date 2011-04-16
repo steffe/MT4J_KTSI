@@ -6,22 +6,23 @@ import java.awt.event.ActionListener;
 import org.mt4j.MTApplication;
 import org.mt4j.components.MTComponent;
 import org.mt4j.components.TransformSpace;
-import org.mt4j.components.visibleComponents.font.FontManager;
-import org.mt4j.components.visibleComponents.font.IFont;
 import org.mt4j.components.visibleComponents.shapes.MTRectangle;
 import org.mt4j.components.visibleComponents.shapes.MTRoundRectangle;
-import org.mt4j.components.visibleComponents.widgets.MTSceneMenu;
 import org.mt4j.components.visibleComponents.widgets.MTTextArea;
 import org.mt4j.components.visibleComponents.widgets.MTTextArea.ExpandDirection;
 import org.mt4j.components.visibleComponents.widgets.MTTextField;
 import org.mt4j.components.visibleComponents.widgets.buttons.MTImageButton;
 import org.mt4j.components.visibleComponents.widgets.keyboard.MTKeyboard;
+import org.mt4j.input.inputProcessors.IGestureEventListener;
+import org.mt4j.input.inputProcessors.MTGestureEvent;
 import org.mt4j.input.inputProcessors.componentProcessors.tapProcessor.TapEvent;
+import org.mt4j.input.inputProcessors.componentProcessors.tapProcessor.TapProcessor;
 import org.mt4j.util.MTColor;
+import org.mt4j.util.font.FontManager;
+import org.mt4j.util.font.IFont;
 import org.mt4j.util.math.Vector3D;
 
 import processing.core.PImage;
-import java.util.Calendar;
 
 /**
  * 
@@ -59,7 +60,6 @@ public class MyMTObject extends MTComponent{
 		pApplet=pApplet_2;
 		this.id = id_2;
 		// TODO Auto-generated constructor stub
-		MTColor white = new MTColor(0,0,0);
 		MTColor speblue = new MTColor(51,102,255);
 		obSizeWidht = 300; // Grösse Min
 		obSizeHeight = 200; // Grösse Min
@@ -67,8 +67,8 @@ public class MyMTObject extends MTComponent{
 	
 		IFont fontArial = FontManager.getInstance().createFont(pApplet, "arial.ttf", 
 				15, 	//Font size
-				MTColor.BLACK,  //Font fill color
-				white);	//Font outline color
+				MTColor.BLACK);
+	
 		//Create a textfield
 		textField = new MTTextArea(pApplet, fontArial); 
 		textField.setNoStroke(true);
@@ -82,7 +82,7 @@ public class MyMTObject extends MTComponent{
 		
 		// Base Rect 
 		
-		baserect = new MTRoundRectangle(10,10,0,obSizeWidht-20,obSizeHeight-20,5,5,pApplet);
+		baserect = new MTRoundRectangle(pApplet, 10,10,0,obSizeWidht-20,obSizeHeight-20,5,5);
 		baserect.setNoStroke(true);
 		baserect.setStrokeColor(MTColor.GRAY);
 		baserect.setFillColor(MTColor.GRAY);
@@ -90,7 +90,7 @@ public class MyMTObject extends MTComponent{
 		
 		
 		// Add Round Rectangle
-		round_Rect = new MTRoundRectangle(0, 0, 0, obSizeWidht, obSizeHeight, 10, 10, pApplet);
+		round_Rect = new MTRoundRectangle(pApplet, 0, 0, 0, obSizeWidht, obSizeHeight, 10, 10);
 		round_Rect.setPositionGlobal(new Vector3D(600,300));
 		round_Rect.setFillColor(greypez);
 		round_Rect.setStrokeWeight(1);
@@ -102,7 +102,7 @@ public class MyMTObject extends MTComponent{
 		h = f5e.height;
 		w = f5e.width; 
 		zoomFac=3;
-		rect = new MTRectangle(0, 0, 0, w/zoomFac, h/zoomFac, pApplet);
+		rect = new MTRectangle(pApplet, 0, 0, 0, w/zoomFac, h/zoomFac);
 		//rect.setFillColor(new MTColor(1,1,1,0));
 		rect.setNoFill(false);
 		rect.setNoStroke(false);
@@ -116,10 +116,9 @@ public class MyMTObject extends MTComponent{
 		// Textfield for Input
 		fontArialMini = FontManager.getInstance().createFont(pApplet, "arial.ttf", 
 				20, 	//Font size
-				MTColor.BLACK,  //Font fill color
-				white);	//Font outline color
+				MTColor.BLACK);
 		
-		infobox = new MTTextArea(20,(obSizeHeight/numberAttribut)+10,obSizeWidht-40,(obSizeHeight/numberAttribut)-30, fontArialMini,pApplet); 
+		infobox = new MTTextArea(pApplet,20,(obSizeHeight/numberAttribut)+10,obSizeWidht-40,(obSizeHeight/numberAttribut)-30, fontArialMini); 
 		infobox.setNoStroke(false);
 		infobox.setNoFill(true);
 		infobox.setText("xx");
@@ -133,14 +132,14 @@ public class MyMTObject extends MTComponent{
 	
 		// Description Field (Infobox)
 	
-		desc_info = new MTTextField(0,0, 50, 20,fontArialMini, pApplet);
+		desc_info = new MTTextField(pApplet, 0,0, 50, 20,fontArialMini);
 		desc_info.setNoStroke(true);
 		desc_info.setNoFill(true);
 		desc_info.setText(infobox.getName());
 		
 		// Button for Rotate
 		PImage buttonImage = pApplet.loadImage("test" + MTApplication.separator + "thomas"+ MTApplication.separator + "image" + MTApplication.separator +  "buttonRotate.png");
-		buttonRotate = new MTImageButton(buttonImage, pApplet);
+		buttonRotate = new MTImageButton(pApplet, buttonImage);
 		buttonRotate.setSizeLocal(30,30);
 		buttonRotate.setFillColor(new MTColor(255,255,255,200));
 		buttonRotate.setName("KeyboardButton");
@@ -148,12 +147,14 @@ public class MyMTObject extends MTComponent{
 		//keyboardButton.translateGlobal(new Vector3D(-2,mtApplication.height-keyboardButton.getWidthXY(TransformSpace.GLOBAL)+2,0));
 		buttonRotate.setPositionGlobal(new Vector3D(20,obSizeHeight-20));
 		
-		buttonRotate.addActionListener(new ActionListener() {
+		buttonRotate.addGestureListener(TapProcessor.class, new IGestureEventListener() {
 			
-			public void actionPerformed(ActionEvent e) {
-				switch(e.getID())
+			@Override
+			public boolean processGestureEvent(MTGestureEvent ge) {
+				TapEvent te = (TapEvent)ge;
+				switch(te.getTapID())
 				{
-				case TapEvent.BUTTON_CLICKED:
+				case TapEvent.TAPPED:
 					round_Rect.rotateZ(new Vector3D(w/zoomFac,h/zoomFac,0), 180); // 516 x 316 
 					// rect.setSizeXYGlobal(120, 120); // Achtung auf Rückstellungen des Wertes
 					break;
@@ -162,23 +163,26 @@ public class MyMTObject extends MTComponent{
 				default:
 					break;
 				}
-				
+			return false;
 			}
 		});
 		
 		// Button for Keyboard 
 		PImage buttonKeyboardImage = pApplet.loadImage("test" + MTApplication.separator + "thomas"+ MTApplication.separator + "image" + MTApplication.separator + "keyb128.png");
-		buttonKeyboard= new MTImageButton(buttonKeyboardImage, pApplet);
+		buttonKeyboard= new MTImageButton(pApplet, buttonKeyboardImage);
 		buttonKeyboard.setSizeLocal(30, 30);
 		buttonKeyboard.setFillColor(new MTColor(255,255,255,200));
 		buttonKeyboard.setName("KeyboardImage");
 		buttonKeyboard.setNoStroke(true);
 		buttonKeyboard.setPositionGlobal(new Vector3D(obSizeWidht-20,obSizeHeight-20));
 		
-		buttonKeyboard.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent ke) {
-				switch(ke.getID()){
-					case TapEvent.BUTTON_CLICKED:
+		buttonKeyboard.addGestureListener(TapProcessor.class, new IGestureEventListener() {
+			
+			@Override
+			public boolean processGestureEvent(MTGestureEvent ge) {
+				TapEvent ke = (TapEvent)ge;
+				switch(ke.getTapID()){
+					case TapEvent.TAPPED:
 						// Add Keyboard
 						MTKeyboard keyb = new MTKeyboard(pApplet);
 						//keyb.setPositionGlobal(new Vector3D(400,400));
@@ -190,14 +194,13 @@ public class MyMTObject extends MTComponent{
 
 						
 				        final MTTextArea t = new MTTextArea(pApplet, FontManager.getInstance().createFont(pApplet, "arial.ttf", 50, 
-				        		new MTColor(0,0,0,255), //Fill color 
-								new MTColor(0,0,0,0))); //Stroke color
+				        		new MTColor(0,0,0,255))); //Stroke color
 				        t.setExpandDirection(ExpandDirection.UP);
 						t.setStrokeColor(new MTColor(0,0 , 0, 255));
 						t.setFillColor(new MTColor(205,200,177, 255));
 						t.unregisterAllInputProcessors();
 						t.setEnableCaret(true);
-						t.snapToKeyboard(keyb);
+						keyb.snapToKeyboard(t);
 						t.setText(infobox.getText());
 						keyb.addTextInputListener(t);
 						round_Rect.addChild(keyb);
@@ -210,7 +213,7 @@ public class MyMTObject extends MTComponent{
 						saveButton.setBoundsPickingBehaviour(AbstractShape.BOUNDS_ONLY_CHECK);
 						*/
 						PImage saveButtonImage = pApplet.loadImage("test" + MTApplication.separator + "thomas"+ MTApplication.separator + "image" + MTApplication.separator + "buttonSave.png");
-						final MTImageButton saveButton= new MTImageButton(saveButtonImage, pApplet);
+						final MTImageButton saveButton= new MTImageButton(pApplet, saveButtonImage);
 						saveButton.setSizeLocal(50,50);
 						saveButton.setFillColor(new MTColor(255,255,255,200));
 						saveButton.setName("saveButton");
@@ -218,21 +221,23 @@ public class MyMTObject extends MTComponent{
 						saveButton.setPositionGlobal(new Vector3D(25,25,0));
 						
 						// actionlistener for saveButton
-						saveButton.addActionListener(new ActionListener() {
-						
-							public void actionPerformed(ActionEvent save) {
-								if(save.getSource()instanceof MTComponent){ //ToDo: Why?? 
-									switch(save.getID()){
-									case TapEvent.BUTTON_CLICKED:
+						saveButton.addGestureListener(TapProcessor.class, new IGestureEventListener() {
+							
+							@Override
+							public boolean processGestureEvent(MTGestureEvent ge) {
+								TapEvent ke = (TapEvent)ge;
+								switch(ke.getTapID()){
+								case TapEvent.TAPPED:
 										infobox.setText(t.getText());
 										
 										break;
 									
 									}
-									
+								return false;	
 								}
+							
 							}
-						});
+						);
 						                                          
 						keyb.addChild(saveButton);
 						break;
@@ -240,31 +245,32 @@ public class MyMTObject extends MTComponent{
 						break;
 					
 				}
-				
+				return false;	
 				
 			}
 		});
 		
 		//Button Max/Min Modus
 		PImage buttonMaxMinImage = pApplet.loadImage("test" + MTApplication.separator + "thomas"+ MTApplication.separator + "image" + MTApplication.separator +  "buttonMaxMin.png");
-		buttonMaxMin= new MTImageButton(buttonMaxMinImage, pApplet);
+		buttonMaxMin= new MTImageButton(pApplet, buttonMaxMinImage);
 		buttonMaxMin.setSizeLocal(30, 30);
 		buttonMaxMin.setFillColor(new MTColor(255,255,255,200));
 		buttonMaxMin.setName("KeyboardImage");
 		buttonMaxMin.setNoStroke(true);
 		buttonMaxMin.setPositionGlobal(new Vector3D(obSizeWidht-20,20));
 
-		buttonMaxMin.addActionListener(new ActionListener() {
-			
+		buttonMaxMin.addGestureListener(TapProcessor.class, new IGestureEventListener() {
+		
 		float h= round_Rect.getHeightXY(TransformSpace.RELATIVE_TO_PARENT);
 		float w= round_Rect.getWidthXY(TransformSpace.RELATIVE_TO_PARENT);
 		MTColor cFill = new MTColor(round_Rect.getFillColor());
 		MTColor cRRFill= new MTColor(baserect.getFillColor());
 		
-			public void actionPerformed(ActionEvent mm) {
-				
-				switch (mm.getID()) {
-				case TapEvent.BUTTON_CLICKED:
+			@Override
+			public boolean processGestureEvent(MTGestureEvent ge) {
+				TapEvent ke = (TapEvent)ge;	
+				switch (ke.getTapID()) {
+				case TapEvent.TAPPED:
 
 				if(minmaxModus==0){
 					obSizeHeight = 400;
@@ -304,6 +310,7 @@ public class MyMTObject extends MTComponent{
 					break;
 				}
 				
+				return false;
 			}
 		});
 	
@@ -312,7 +319,7 @@ public class MyMTObject extends MTComponent{
 		//System.out.println("Widht = "+w);
 		//System.out.println("Height = " +h);
 		
-		MTNumField p1 = new MTNumField(pApplet,fontArialMini,true);
+		MTNumField p1 = new MTNumField(pApplet,fontArialMini,true,"1","TestFeld");
 		//p1.setTextAlign(true);
 		
 		// Add MTComponets to Canvas

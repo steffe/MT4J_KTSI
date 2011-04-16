@@ -7,7 +7,11 @@ import java.util.List;
 
 import org.mt4j.MTApplication;
 import org.mt4j.components.visibleComponents.widgets.buttons.MTImageButton;
+import org.mt4j.input.IMTInputEventListener;
+import org.mt4j.input.inputProcessors.IGestureEventListener;
+import org.mt4j.input.inputProcessors.MTGestureEvent;
 import org.mt4j.input.inputProcessors.componentProcessors.tapProcessor.TapEvent;
+import org.mt4j.input.inputProcessors.componentProcessors.tapProcessor.TapProcessor;
 import org.mt4j.input.inputProcessors.globalProcessors.CursorTracer;
 import org.mt4j.sceneManagement.AbstractScene;
 import org.mt4j.util.MTColor;
@@ -52,19 +56,20 @@ public class HelloWorldScene extends AbstractScene {
 		
 		//New Object
 		PImage buttonNewImage = mtApplication.loadImage("test" + MTApplication.separator + "thomas"+ MTApplication.separator + "image" + MTApplication.separator +  "buttonNew.png");
-		MTImageButton buttonNew= new MTImageButton(buttonNewImage, mtApplication);
+		MTImageButton buttonNew= new MTImageButton(mtApplication, buttonNewImage);
+
 		buttonNew.setSizeLocal(40, 40);
 		buttonNew.setFillColor(new MTColor(255,255,255,200));
 		buttonNew.setName("KeyboardImage");
 		buttonNew.setNoStroke(true);
 		buttonNew.setPositionGlobal(new Vector3D(20,20));
 		
-		buttonNew.addActionListener(new ActionListener() {
-			
-			
-			public void actionPerformed(ActionEvent e) {
-				switch(e.getID()){
-				case TapEvent.BUTTON_CLICKED:
+		buttonNew.addGestureListener(TapProcessor.class, new IGestureEventListener() {
+			@Override
+			public boolean processGestureEvent(MTGestureEvent ge) {
+				TapEvent te = (TapEvent)ge;
+				switch(te.getTapID()){
+				case TapEvent.TAPPED:
 					//MyMTObject t1 = new MyMTObject(mtApplication,1);
 					//getCanvas().addChild(t1.getMyObjectBack());
 					myobjectList.add( new MyMTObject(mtApplication,counter) );				
@@ -72,32 +77,36 @@ public class HelloWorldScene extends AbstractScene {
 					System.out.println("Zähler vor Add: " +counter);
 					counter++;
 					System.out.println("Zähler nach Add: " +counter);
-				break;
+					break;
 				
 				default:
 					break;
-				};
+				}
 				
 				
+				
+				
+			return false;
 			}
 		});
-		
-		
+	
 		//New Object
 		PImage buttonDELImage = mtApplication.loadImage("test" + MTApplication.separator + "thomas"+ MTApplication.separator + "image" + MTApplication.separator +  "buttonDel.png");
-		MTImageButton buttonDel= new MTImageButton(buttonDELImage, mtApplication);
+		MTImageButton buttonDel= new MTImageButton(mtApplication, buttonDELImage);
 		buttonDel.setSizeLocal(40, 40);
 		buttonDel.setFillColor(new MTColor(255,255,255,200));
 		buttonDel.setName("KeyboardImage");
 		buttonDel.setNoStroke(true);
 		buttonDel.setPositionGlobal(new Vector3D(mtAppl.getWidth()-20,20));
 		
-		buttonDel.addActionListener(new ActionListener() {
+		buttonDel.addGestureListener(TapProcessor.class, new IGestureEventListener() {
 			
-			
-			public void actionPerformed(ActionEvent e) {
-				switch(e.getID()){
-				case TapEvent.BUTTON_CLICKED:
+			@Override
+			public boolean processGestureEvent(MTGestureEvent ge) {
+				// TODO Auto-generated method stub
+				TapEvent te = (TapEvent)ge;
+				switch(te.getTapID()){
+				case TapEvent.TAPPED:
 					if(counter != 0){
 					
 					getCanvas().removeChild(myobjectList.get(counter-1).getMyObjectBack()); // Entfernen des Objekts auf dem Canvas
@@ -113,11 +122,12 @@ public class HelloWorldScene extends AbstractScene {
 				
 				default:
 					break;
-				};
-				
-				
+				}
+			return false;
 			}
 		});
+		
+		
 
 		// MTNumKeyboard kn1= new MTNumKeyboard(mtApplication);
 		// this.getCanvas().addChild(kn1);

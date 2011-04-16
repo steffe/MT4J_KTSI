@@ -4,6 +4,7 @@
 	<classpathentry kind="src" path="examples"/>
 	<classpathentry kind="src" path="tests"/>
 	<classpathentry kind="src" path="extensions"/>
+	<classpathentry kind="src" path="ktsi"/>
 	<classpathentry kind="lib" path="lib/GlulogicMT.jar"/>
 	<classpathentry kind="lib" path="lib/junit-4.8.2.jar"/>
 	<classpathentry kind="lib" path="lib/mri.jar"/>
