@@ -15,7 +15,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  ***********************************************************************/
-package test.thomas;
+package ch.mitoco.components.visibleComponents.widgets.keyboard;
 
 
 import java.awt.event.KeyEvent;

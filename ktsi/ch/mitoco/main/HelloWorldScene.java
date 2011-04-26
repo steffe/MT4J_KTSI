@@ -1,4 +1,4 @@
-package test.thomas;
+package ch.mitoco.main;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -20,6 +20,8 @@ import org.mt4j.util.font.FontManager;
 import org.mt4j.util.font.IFont;
 import org.mt4j.util.math.Vector3D;
 import org.mt4jx.components.visibleComponents.widgets.MTSuggestionTextArea;
+
+import ch.mitoco.components.visibleComponents.MyMTObject;
 
 import processing.core.PImage;
 
@@ -60,7 +62,7 @@ public class HelloWorldScene extends AbstractScene {
 		
 		
 		//New Object
-		PImage buttonNewImage = mtApplication.loadImage("test" + MTApplication.separator + "thomas"+ MTApplication.separator + "image" + MTApplication.separator +  "buttonNew.png");
+		PImage buttonNewImage = mtApplication.loadImage("ch" + MTApplication.separator + "mitoco"+ MTApplication.separator + "data" + MTApplication.separator +  "buttonNew.png");
 		MTImageButton buttonNew= new MTImageButton(mtApplication, buttonNewImage);
 
 		buttonNew.setSizeLocal(40, 40);
@@ -96,7 +98,7 @@ public class HelloWorldScene extends AbstractScene {
 		});
 	
 		//New Object
-		PImage buttonDELImage = mtApplication.loadImage("test" + MTApplication.separator + "thomas"+ MTApplication.separator + "image" + MTApplication.separator +  "buttonDel.png");
+		PImage buttonDELImage = mtApplication.loadImage("ch" + MTApplication.separator + "mitoco"+ MTApplication.separator + "data" + MTApplication.separator +  "buttonDel.png");
 		MTImageButton buttonDel= new MTImageButton(mtApplication, buttonDELImage);
 		buttonDel.setSizeLocal(40, 40);
 		buttonDel.setFillColor(new MTColor(255,255,255,200));

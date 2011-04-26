@@ -1,4 +1,4 @@
-package test.thomas;
+package ch.mitoco.components.visibleComponents;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -21,6 +21,9 @@ import org.mt4j.util.MTColor;
 import org.mt4j.util.font.FontManager;
 import org.mt4j.util.font.IFont;
 import org.mt4j.util.math.Vector3D;
+
+import ch.mitoco.components.visibleComponents.widgets.MTDropDownList;
+import ch.mitoco.components.visibleComponents.widgets.MTNumField;
 
 import processing.core.PImage;
 
@@ -108,7 +111,7 @@ public class MyMTObject extends MTComponent{
 
 		
 		// Button for Rotate
-		PImage buttonImage = pApplet.loadImage("test" + MTApplication.separator + "thomas"+ MTApplication.separator + "image" + MTApplication.separator +  "buttonRotate.png");
+		PImage buttonImage = pApplet.loadImage("ch" + MTApplication.separator + "mitoco"+ MTApplication.separator + "data" + MTApplication.separator +  "buttonRotate.png");
 		buttonRotate = new MTImageButton(pApplet, buttonImage);
 		buttonRotate.setSizeLocal(30,30);
 		buttonRotate.setFillColor(new MTColor(255,255,255,200));
@@ -141,7 +144,7 @@ public class MyMTObject extends MTComponent{
 		
 		
 		//Button Max/Min Modus
-		PImage buttonMaxMinImage = pApplet.loadImage("test" + MTApplication.separator + "thomas"+ MTApplication.separator + "image" + MTApplication.separator +  "buttonMaxMin.png");
+		PImage buttonMaxMinImage = pApplet.loadImage("ch" + MTApplication.separator + "mitoco"+ MTApplication.separator + "data" + MTApplication.separator +  "buttonMaxMin.png");
 		buttonMaxMin= new MTImageButton(pApplet, buttonMaxMinImage);
 		buttonMaxMin.setSizeLocal(30, 30);
 		buttonMaxMin.setFillColor(new MTColor(255,255,255,200));

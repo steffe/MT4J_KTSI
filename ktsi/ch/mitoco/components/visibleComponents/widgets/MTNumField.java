@@ -1,5 +1,5 @@
 
-package test.thomas;
+package ch.mitoco.components.visibleComponents.widgets;
 
 import java.util.List;
 import java.util.Arrays;
@@ -24,6 +24,8 @@ import org.mt4j.util.font.FontManager;
 import org.mt4j.util.font.IFont;
 import org.mt4j.util.font.IFontCharacter;
 import org.mt4j.util.math.Vector3D;
+
+import ch.mitoco.components.visibleComponents.widgets.keyboard.MTNumKeyboard;
 
 import com.sun.xml.internal.ws.api.model.ExceptionType;
 

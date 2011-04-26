@@ -1,5 +1,8 @@
 package basic.mtGestures;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.mt4j.AbstractMTApplication;
 import org.mt4j.components.MTComponent;
 import org.mt4j.components.TransformSpace;
@@ -40,6 +43,9 @@ import org.mt4j.util.MTColor;
 import org.mt4j.util.font.FontManager;
 import org.mt4j.util.font.IFont;
 import org.mt4j.util.math.Vector3D;
+import org.mt4jx.components.visibleComponents.widgets.MTSuggestionTextArea;
+
+import test.thomas.MTDropDownList;
 
 public class MTGesturesExampleScene extends AbstractScene {
 	private AbstractMTApplication app;
@@ -95,6 +101,8 @@ public class MTGesturesExampleScene extends AbstractScene {
 		dragOnly.addGestureListener(DragProcessor.class, new DefaultDragAction());
 		dragOnly.addGestureListener(DragProcessor.class, new InertiaDragAction()); //Add inertia to dragging
 		this.getCanvas().addChild(dragOnly);
+		
+	
 		
 		MTTextArea rotateOnly = new MTTextArea(mtApplication, font);
 		rotateOnly.setFillColor(textAreaColor);
@@ -329,8 +337,7 @@ public class MTGesturesExampleScene extends AbstractScene {
 		this.getCanvas().addChild(flick);
 		flick.setAnchor(PositionAnchor.UPPER_LEFT);
 		flick.setPositionGlobal(new Vector3D(1*horizontalPad, 7*verticalPad,0));
-		
-		
+			
 		//Add uni-stroke gesture example
 		MTTextArea strokeText = new MTTextArea(mtApplication, font);
 		strokeText.setFillColor(textAreaColor);

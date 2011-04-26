@@ -1,4 +1,4 @@
-
+package ch.mitoco.main;
 
 import org.mt4j.MTApplication;
 
