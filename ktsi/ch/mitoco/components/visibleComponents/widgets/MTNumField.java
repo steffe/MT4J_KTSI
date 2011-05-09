@@ -1,37 +1,31 @@
-
+/**
+ * Doc for Package.
+ */
 package ch.mitoco.components.visibleComponents.widgets;
 
-import java.util.List;
-import java.util.Arrays;
 
 import org.mt4j.AbstractMTApplication;
-import org.mt4j.MTApplication;
 import org.mt4j.components.StateChange;
 import org.mt4j.components.StateChangeEvent;
 import org.mt4j.components.StateChangeListener;
-import org.mt4j.components.visibleComponents.shapes.MTRectangle;
+import org.mt4j.components.TransformSpace;
 import org.mt4j.components.visibleComponents.shapes.MTRoundRectangle;
 import org.mt4j.components.visibleComponents.widgets.MTTextArea;
 import org.mt4j.components.visibleComponents.widgets.MTTextArea.ExpandDirection;
-import org.mt4j.input.inputData.InputCursor;
+import org.mt4j.input.gestureAction.DefaultDragAction;
 import org.mt4j.input.inputProcessors.IGestureEventListener;
 import org.mt4j.input.inputProcessors.MTGestureEvent;
+import org.mt4j.input.inputProcessors.componentProcessors.dragProcessor.DragProcessor;
+import org.mt4j.input.inputProcessors.componentProcessors.rotateProcessor.RotateProcessor;
+import org.mt4j.input.inputProcessors.componentProcessors.scaleProcessor.ScaleProcessor;
 import org.mt4j.input.inputProcessors.componentProcessors.tapProcessor.TapEvent;
 import org.mt4j.input.inputProcessors.componentProcessors.tapProcessor.TapProcessor;
-import org.mt4j.input.inputProcessors.globalProcessors.CursorTracer;
 import org.mt4j.util.MTColor;
-import org.mt4j.util.font.FontManager;
 import org.mt4j.util.font.IFont;
-import org.mt4j.util.font.IFontCharacter;
 import org.mt4j.util.math.Vector3D;
 
 import ch.mitoco.components.visibleComponents.widgets.keyboard.MTNumKeyboard;
 
-import com.sun.xml.internal.ws.api.model.ExceptionType;
-
-
-
-import processing.core.PImage;
 /**
  * MTNumField. Modified MTTextArea with MTNumKeyboard on double tap.
  * 
@@ -40,109 +34,127 @@ import processing.core.PImage;
  * 
  * @author tandrich 
  */
+// TODO Keyboard Farbe anpassen (MTDropDownList) -> erledigt
+// TODO Keyboard Standort anpassen -> erledigt
+// TODO Einheiten hinzufügen (CHF, EURO, meter, Zeit usw)
 
-public class MTNumField extends MTRoundRectangle{
+public class MTNumField extends MTRoundRectangle {
 
-	public MTTextArea textarea;
+	/** Main Textfield. */
+	private MTTextArea textarea;
 	
-	// Object size
-	int height;
-	int width;
-	int fontsize;
-	boolean edit;
-	PImage nullImage;
+	/** Attribut height. */
+	private int height;
+	
+	/** Attribut width. */
+	private int width;
+	
+	/** Fontsize from textarea. */
+	private int fontsize;
+
+	/** Textfield font.*/
 	private IFont iF;
-	public boolean rAlign;
+	
+	/** Set Align to right side.*/
+	private boolean rAlign;
+	
+	/** Default Textstring.*/
 	private String dString;
 	
-	/** Label Font*/
+	/** Label Font.*/
 	private String fname;
+		
+	/** The MTTextAre Numbers. */	
+	private MTTextArea numKeyText;
 	
-	/** The MTApplication. */
-	public AbstractMTApplication app;
-
-	
-	/** The MTTextAre Numbers */	
-	public MTTextArea numKeyText;
-	
-	/** The Numb Label */
+	/** The Numb Label. */
 	private MTTextArea label;
 	
-	/** Label Font*/
+	/** Label Font.*/
 	private IFont labelfont;
 	
+	/** Transparenz Color. */
+	 private MTColor trans = new MTColor(0, 0, 0, 10);
+	 
 	/**
 	 * Constructor MTNumField. 
 	 * 
-	 * @param pApplet MTApplication
+	 * @param app AbstractMTApplication
 	 * @param fontArialMini IFont
 	 * @param width int
-	 * @param hight int
+	 * @param height int
 	 * @param rightalign boolean
 	 * @param defaultString String
-	 * @param fieldname String
+	 * @param labeltext String
+	 * @param labelfont IFont
 	 */
 	
 	
-	public MTNumField(AbstractMTApplication app, IFont fontArialMini,int width, int height, boolean rightalign, String defaultString, String fieldname, IFont labelfont) {
-		super(app,0,0,0,0,0,5,5);
-		this.rAlign=rightalign;
+	public MTNumField(final AbstractMTApplication app, final IFont fontArialMini, final int width, final int height, final boolean rightalign, final String defaultString, final String labeltext, final IFont labelfont) {
+		super(app, 0, 0, 0, 0, 0, 5, 5);
+		this.rAlign = rightalign;
 		dString = defaultString;
-		fname = fieldname;
-		this.height= height;
-		this.width= width;
-		this.labelfont=labelfont;
+		fname = labeltext;
+		this.height = height;
+		this.width = width;
+		this.labelfont = labelfont;
 		this.setName(fname);
-		this.init(app, fontArialMini);
+		this.init(app, fontArialMini);	
 	}
 	
-	private void init(AbstractMTApplication app, IFont font){
-		final MTColor blue1 = new MTColor(51,102,204,180);
-		this.app =app;
-		this.iF=font;
+	/** Initial method.
+	 * 
+	 * @param app 
+	 * @param font   
+	 */
+	
+	private void init(final AbstractMTApplication app, final IFont font) {
+		final MTColor blue1 = new MTColor(51, 102, 204, 180);
+		this.iF = font;
 		final AbstractMTApplication app1 = app;
-		fontsize= iF.getOriginalFontSize();		
+		fontsize = iF.getOriginalFontSize();		
 		
 		this.setSizeLocal(width, height);
 		this.setFillColor(blue1);
 		this.setStrokeColor(MTColor.BLACK);
-	
-
-
-		textarea = new MTTextArea(app, 0,(height-fontsize)/2,width,height, font);
+		
+		textarea = new MTTextArea(app, 0, (height - fontsize) / 2, width, height, font);
 		
 		textarea.setInnerPadding(0);
 		textarea.setInnerPaddingLeft(0);
 		textarea.setInnerPaddingTop(0);
 		textarea.setText(new String(dString));
-		textarea.setFillColor(new MTColor(0,0,0,0));
-		textarea.setPickable(false);
+		textarea.setFillColor(new MTColor(0, 0, 0, 0));
 		textarea.setNoStroke(true);
-
+		//textarea.setPickable(false);
+	
+		
 		setAlign(rAlign);
-	/*
-		this.removeAllChildren();
-		this.removeAllGestureEventListeners();
-		this.unregisterAllInputProcessors();
-	 */
-		this.registerInputProcessor(new TapProcessor(app, 25, true, 350)); //height weid
-		this.addGestureListener(TapProcessor.class, new IGestureEventListener() {
-			public boolean processGestureEvent(MTGestureEvent ge) {
-				if(ge instanceof TapEvent){
+
+		textarea.setGestureAllowance(DragProcessor.class, false);
+		textarea.setGestureAllowance(RotateProcessor.class, false);
+		textarea.setGestureAllowance(ScaleProcessor.class, false);
+		
+		textarea.setGestureAllowance(TapProcessor.class, true);
+		textarea.registerInputProcessor(new TapProcessor(app, 25, true, 350)); //height weid
+		textarea.addGestureListener(TapProcessor.class, new IGestureEventListener() {
+			public boolean processGestureEvent(final MTGestureEvent ge) {
+				if (ge instanceof TapEvent) {
 				
-				TapEvent te = (TapEvent)ge;
+				TapEvent te = (TapEvent) ge;
 				System.out.println(te.getTapID() + " (" + te.getId() + ")");
 				
-				if(te.getTapID() == TapEvent.DOUBLE_TAPPED){
+				
+				if (te.getTapID() == TapEvent.DOUBLE_TAPPED) {
 					System.out.println("Button Clicked");
-					
+				
 					MTNumKeyboard numKeyboard = new MTNumKeyboard(app1);
-					numKeyboard.setFillColor(blue1);
+					numKeyboard.setFillColor(trans);
 					
-					numKeyText= new MTTextArea(app1,0,0,width,height,iF);
+					numKeyText = new MTTextArea(app1, 0, 0, width, height, iF);
 					numKeyText.setExpandDirection(ExpandDirection.UP);
-					numKeyText.setStrokeColor(new MTColor(0,0 , 0, 255));
-					numKeyText.setFillColor(new MTColor(205,200,177, 255));
+					numKeyboard.setNoStroke(true);
+					numKeyText.setFillColor(new MTColor(205, 200, 177, 255));
 					numKeyText.unregisterAllInputProcessors();
 					numKeyText.setEnableCaret(true);
 					
@@ -153,10 +165,12 @@ public class MTNumField extends MTRoundRectangle{
 					
 					addChild(numKeyboard);
 					
+					numKeyboard.setPositionRelativeToParent(new Vector3D(numKeyboard.getWidthXY(TransformSpace.LOCAL) / 2, numKeyboard.getWidthXY(TransformSpace.LOCAL) / 2 + 50));
+					
 					numKeyboard.addStateChangeListener(StateChange.COMPONENT_DESTROYED, new StateChangeListener() {
 						
 						@Override
-						public void stateChanged(StateChangeEvent evt) {
+						public void stateChanged(final StateChangeEvent evt) {
 							textarea.setInnerPaddingLeft(0);
 							textarea.setText(numKeyText.getText());
 							setAlign(rAlign);
@@ -171,9 +185,8 @@ public class MTNumField extends MTRoundRectangle{
 			}
 			
 			});
-
-	
-		label = new MTTextArea(app,0,-labelfont.getOriginalFontSize(),width,height,labelfont);
+		
+		label = new MTTextArea(app, 0, -labelfont.getOriginalFontSize(), width, height, labelfont);
 		label.setInnerPadding(0);
 		label.setNoFill(true);
 		label.setStrokeColor(MTColor.LIME);
@@ -193,38 +206,65 @@ public class MTNumField extends MTRoundRectangle{
 		
 	}
 	
-	
-	public void setEdited(){
-		
-	}
-	
 	/**
-	 * Set Attribut to min Modus
+	 * Set Attribut to min Modus.
 	 */
-	public void setMin(){
+	public final void setMin() {
 		label.setVisible(false);
 	}
 	
 	/**
-	 * Set Attribut to max Modus
+	 * Set Attribut to max Modus.
 	 */
-	public void setMax(){
+	public final void setMax() {
 		label.setVisible(true);
 	}
-	
-	public void setAlign(boolean align){
+
+	/** Set Textalign from textarea.
+	 * @param align (true=right)
+	 * */
+	public final void setAlign(final boolean align) {
 		
-		if(align==true){
-			float text_width = textarea.getTextWidth();	
-			System.out.println("Text Breite: = " +text_width);
-			System.out.println("Verschiebsatz: = " +(width-((int)text_width+5)));
-			textarea.setInnerPaddingLeft((width-((int)text_width+5)));
-		}
-		else{
+		if (align == true) {
+			float textwidth = textarea.getTextWidth();	
+			System.out.println("Text Breite: = " + textwidth);
+			System.out.println("Verschiebsatz: = " + (width - ((int) textwidth + 5)));
+			textarea.setInnerPaddingLeft((width - ((int) textwidth + 5)));
+		} else {
 			textarea.setInnerPaddingLeft(5);
 		}
 	}
-
 	
+	/** 
+	 * Set Label Text.
+	 * @param labeltext String
+	 */
+	public final void setLabel(final String labeltext) {
+		fname = labeltext;
+	}
+	
+	/** 
+	 * Get Label Text.
+	 * @return fname String
+	 */
+	public final String getLabel() {
+		return fname;
+	}
+
+	/** 
+	 * Set Value Text.
+	 * @param value String
+	 */
+	public final void setValue(final String value) {
+		dString = value;
+	}
+	
+	/** 
+	 *Get Value Text.
+	 *@return dString String 
+	 */
+	public final String getValue() {
+		return dString;
+	}
 	
 }
