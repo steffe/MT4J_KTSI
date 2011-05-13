@@ -96,7 +96,7 @@ public class MTKeyboard extends MTRoundRectangle implements IKeyListener {
 	public MTKeyboard(PApplet pApplet) {
 		super(pApplet,0,0, 0, 700, 245,30, 30);
 		this.pa = pApplet;
-		//Set drawing mode
+		// drawing mode
 		this.setDrawSmooth(true);
 		
 		this.setHardwareInputEnabled(true);

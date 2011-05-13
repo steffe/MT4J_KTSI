@@ -12,7 +12,7 @@ import org.mt4j.components.TransformSpace;
 import org.mt4j.components.visibleComponents.shapes.MTRoundRectangle;
 import org.mt4j.components.visibleComponents.widgets.MTTextArea;
 import org.mt4j.components.visibleComponents.widgets.MTTextArea.ExpandDirection;
-import org.mt4j.input.gestureAction.DefaultDragAction;
+import org.mt4j.components.visibleComponents.widgets.keyboard.MTTextKeyboard;
 import org.mt4j.input.inputProcessors.IGestureEventListener;
 import org.mt4j.input.inputProcessors.MTGestureEvent;
 import org.mt4j.input.inputProcessors.componentProcessors.dragProcessor.DragProcessor;
@@ -24,10 +24,8 @@ import org.mt4j.util.MTColor;
 import org.mt4j.util.font.IFont;
 import org.mt4j.util.math.Vector3D;
 
-import ch.mitoco.components.visibleComponents.widgets.keyboard.MTNumKeyboard;
-
 /**
- * MTNumField. Modified MTTextArea with MTNumKeyboard on double tap.
+ * MTNumField. Modified MTTextArea with MTTextKeyboard on tap.
  * 
  * 
  * MTTextArea Methode setInnerPaddingLeft() verursacht einen Fehler bei der andwendung von getTextWidght()
@@ -38,7 +36,7 @@ import ch.mitoco.components.visibleComponents.widgets.keyboard.MTNumKeyboard;
 // TODO Keyboard Standort anpassen -> erledigt
 // TODO Einheiten hinzufügen (CHF, EURO, meter, Zeit usw)
 
-public class MTNumField extends MTRoundRectangle {
+public class MTTextField extends MTRoundRectangle {
 
 	/** Main Textfield. */
 	private MTTextArea textarea;
@@ -90,7 +88,7 @@ public class MTNumField extends MTRoundRectangle {
 	 */
 	
 	
-	public MTNumField(final AbstractMTApplication app, final IFont fontArialMini, final int width, final int height, final boolean rightalign, final int defaultString, final String labeltext, final IFont labelfont) {
+	public MTTextField(final AbstractMTApplication app, final IFont fontArialMini, final int width, final int height, final boolean rightalign, final int defaultString, final String labeltext, final IFont labelfont) {
 		super(app, 0, 0, 0, 0, 0, 5, 5);
 		this.rAlign = rightalign;
 		doublevalue = defaultString;
@@ -151,32 +149,32 @@ public class MTNumField extends MTRoundRectangle {
 				if (te.getTapID() == TapEvent.TAPPED) {
 					System.out.println("Button Clicked");
 				
-					MTNumKeyboard numKeyboard = new MTNumKeyboard(app1);
-					numKeyboard.setFillColor(trans);
+					MTTextKeyboard textKeyboard = new MTTextKeyboard(app1);
+					textKeyboard.setFillColor(trans);
 					
 					numKeyText = new MTTextArea(app1, 0, 0, width, height, iF);
 					numKeyText.setExpandDirection(ExpandDirection.UP);
-					numKeyboard.setNoStroke(true);
+					textKeyboard.setNoStroke(true);
 					numKeyText.setFillColor(new MTColor(205, 200, 177, 255));
 					numKeyText.unregisterAllInputProcessors();
 					numKeyText.setEnableCaret(true);
 					
-					numKeyboard.snapToKeyboard(numKeyText);
+					textKeyboard.snapToKeyboard(numKeyText);
 					
 					numKeyText.setText(textarea.getText());
-					numKeyboard.addTextInputListener(numKeyText);
+					textKeyboard.addTextInputListener(numKeyText);
 					
-					addChild(numKeyboard);
+					addChild(textKeyboard);
 					
-					numKeyboard.setPositionRelativeToParent(new Vector3D(numKeyboard.getWidthXY(TransformSpace.LOCAL) / 2, numKeyboard.getWidthXY(TransformSpace.LOCAL) / 2 + 50));
+					textKeyboard.setPositionRelativeToParent(new Vector3D(textKeyboard.getWidthXY(TransformSpace.LOCAL) / 2, textKeyboard.getWidthXY(TransformSpace.LOCAL) / 2 + 50));
 					
-					numKeyboard.addStateChangeListener(StateChange.COMPONENT_DESTROYED, new StateChangeListener() {
+					textKeyboard.addStateChangeListener(StateChange.COMPONENT_DESTROYED, new StateChangeListener() {
 						
 						@Override
 						public void stateChanged(final StateChangeEvent evt) {
 							textarea.setInnerPaddingLeft(0);
 							textarea.setText(numKeyText.getText());
-							setUserData("FieldValue", numKeyText.getText());
+							setUserData("FieldValue", (numKeyText.getText()));
 							setAlign(rAlign);
 							
 							
@@ -252,7 +250,7 @@ public class MTNumField extends MTRoundRectangle {
 	 * @return fname String
 	 */
 	public final String getLabel() {
-		return fname;
+		return (String) this.getUserData("Label");
 	}
 
 	/** 

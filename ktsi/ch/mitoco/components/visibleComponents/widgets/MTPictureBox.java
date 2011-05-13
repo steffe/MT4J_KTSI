@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.mt4j.AbstractMTApplication;
+import org.mt4j.MTApplication;
+import org.mt4j.components.visibleComponents.shapes.MTRectangle;
 import org.mt4j.components.visibleComponents.shapes.MTRoundRectangle;
 import org.mt4j.components.visibleComponents.widgets.MTTextArea;
 import org.mt4j.input.gestureAction.DefaultDragAction;
@@ -14,8 +16,9 @@ import org.mt4j.input.inputProcessors.componentProcessors.scaleProcessor.ScalePr
 import org.mt4j.input.inputProcessors.componentProcessors.tapProcessor.TapProcessor;
 import org.mt4j.util.MTColor;
 import org.mt4j.util.font.IFont;
-import ch.mitoco.components.visibleComponents.MTSuggestionTextArea;
+import org.mt4jx.components.visibleComponents.widgets.MTSuggestionTextArea;
 
+import processing.core.PImage;
 /**
  * MTDropDownList provide a DropDownList with five import levels.
  * 
@@ -23,13 +26,10 @@ import ch.mitoco.components.visibleComponents.MTSuggestionTextArea;
  *
  */
 
-public class MTDropDownList extends MTRoundRectangle {
+public class MTPictureBox extends MTRoundRectangle {
 	
 	/** The MTApplication. */
 	private AbstractMTApplication app;
-	
-	/** The Font.  */
-	private IFont ifont;
 	
 	/** Width. */
 	private int width;
@@ -43,29 +43,22 @@ public class MTDropDownList extends MTRoundRectangle {
 	/** Standard Color. */
 	 private MTColor blue1 = new MTColor(51, 102, 204, 180);
 	
-	/** Transparenz Color. */
-	 private MTColor trans = new MTColor(0, 0, 0, 10);
-	
 	/** Textare Label.*/
 	private MTTextArea label;
 	
 	/** Label Font. */
 	private IFont labelfont;
 	
-	/** MTSugestionTextArea. */
-	private MTSuggestionTextArea sa;
+	/** Picture File Path.*/
+	private String filePath;
 	
-	/** Dropdown List String.*/
-	private String[] values;
-
-	/** */
-	private List<String> list;
+	/** Picture Box.*/
+	private MTRectangle pictureBox;
 	
 	/** 
-	 * Construtor MTDropDownList.
+	 * Construtor MTPictureBox.
 	 * 
 	 * @param app AbstractMTApplication
-	 * @param font Ifont
 	 * @param width int
 	 * @param height int
 	 * @param arc int 
@@ -73,42 +66,34 @@ public class MTDropDownList extends MTRoundRectangle {
 	 * @param labelfont IFont
 	 * 
 	 * */
-	public MTDropDownList(final AbstractMTApplication app, final IFont font, final int width, final int height, final String labelname, final IFont labelfont) {
+	public MTPictureBox(final AbstractMTApplication app, final int width, final int height, final int arc, final String labelname, final IFont labelfont) {
 		super(app, 0, 0, 0, width, height, 5, 5);
-		this.ifont = font;
 		this.width = width;
 		this.height = height;
 		this.fname = labelname;
 		this.labelfont = labelfont;
 		this.setFillColor(blue1);
-		this.setName(labelname);
 		this.setStrokeColor(MTColor.BLACK);
 		this.init(app);
-		
 	}
 	/** 
-	 * Init MTDropDown List.
+	 * Init MTPictureBox.
 	 * @param app2 AbststractMTApplication
 	 * */
-
 	private void init(final AbstractMTApplication app2) {		
 		
-		final String[] defaultText = { "sehr wichtig", "wichtig", "nötig", "vorhanden", "unnötig", "nicht benötigt"};
-		list = Arrays.asList(defaultText);
-		sa = new MTSuggestionTextArea(app2, width, list);
-		sa.setPickable(true);
-		sa.setFontColor(MTColor.BLACK);
-		sa.setFillColor(trans);
-		sa.setFont(ifont);
-		sa.setNoStroke(true);
-		sa.setWidthLocal(width);
+		pictureBox = new MTRectangle(app2, width - 5, height - 5);
+		PImage buttonNewImage = app2.loadImage("ch" + MTApplication.separator + "mitoco" + MTApplication.separator + "data" + MTApplication.separator +  "f5e2.png");
+				
+		pictureBox.setTexture(new PImage());
 		
 		
-		sa.setGestureAllowance(DragProcessor.class, false);
-		sa.setGestureAllowance(ScaleProcessor.class, false);
-		sa.setGestureAllowance(RotateProcessor.class, false);
-		sa.setGestureAllowance(TapProcessor.class, true);
-		this.addChild(sa);
+		
+		this.setGestureAllowance(DragProcessor.class, false);
+		this.setGestureAllowance(ScaleProcessor.class, false);
+		this.setGestureAllowance(RotateProcessor.class, false);
+		this.setGestureAllowance(TapProcessor.class, true);
+		//this.addChild(sa);
 		
 		label = new MTTextArea(app, 0, -labelfont.getOriginalFontSize(), width, height, labelfont);
 		label.setInnerPadding(0);
@@ -154,12 +139,12 @@ public class MTDropDownList extends MTRoundRectangle {
 	}
 
 	/** 
-	 * Set Value Text.
+	 * Set File Path Value.
 	 * @param value String[]
 	 */
-	public final void setValue(final String[] value) {
-		list.clear();
-		list = Arrays.asList(value);
+	public final void setValue(final String value) {
+		
+		filePath = value;
 	}
 	
 	/** 
@@ -167,8 +152,7 @@ public class MTDropDownList extends MTRoundRectangle {
 	 *@return dString String 
 	 */
 	public final String getValue() {
-		System.out.println("BLBLBA" + sa.getSelectedValue());
-		return sa.getSelectedValue();
+		return filePath;
 	}
 
 	

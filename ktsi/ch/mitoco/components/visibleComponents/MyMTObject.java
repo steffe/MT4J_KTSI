@@ -219,29 +219,31 @@ public class MyMTObject extends MTRoundRectangle {
 				MTColor.WHITE);
 		
 		// Testattribut 
-		p1 = new MTNumField(pApplet2, fontArialMini, 250, 30, true, "1111", "TestFeld", labelfont);
+		p1 = new MTNumField(pApplet2, fontArialMini, 250, 30, true, 1111, "TestFeld", labelfont);
 		p1.setPositionRelativeToParent(new Vector3D(this.getWidthXY(TransformSpace.LOCAL) / 2, 60));
 		p1.setPickable(false);
-		p1.setGestureAllowance(DragProcessor.class, true);
-		p1.addGestureListener(DragProcessor.class, defaultDragAction);
+
 			
-		d1 = new MTDropDownList(pApplet2, fontArial, 250, 30, 5, "Projekt Wichtigkeit", labelfont);
+		d1 = new MTDropDownList(pApplet2, fontArialMini, 250, 30, "Projekt Wichtigkeit", labelfont);
 		d1.setPositionRelativeToParent(new Vector3D(this.getWidthXY(TransformSpace.LOCAL) / 2, 100));
 		d1.setPickable(false);
-		d1.setGestureAllowance(DragProcessor.class, true);
-		d1.addGestureListener(DragProcessor.class, defaultDragAction);
-		
+
+	
 
 		// Add MTComponets to Canvas
 		// --------------------------------
+
+		baserect.addChild(textField); //Titeltext
+		baserect.addChild(d1);
+		baserect.addChild(p1);
+		
 		
 		this.addChild(baserect);
 		this.addChild(buttonRotate);
 		this.addChild(buttonMaxMin);
 		
-		baserect.addChild(d1);
-		baserect.addChild(p1);
-		baserect.addChild(textField); //Titeltext
+
+		
 	}
 	
 	/**
