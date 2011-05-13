@@ -7,17 +7,19 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 import org.mt4j.MTApplication;
-import org.mt4j.components.MTComponent;
 import org.mt4j.components.TransformSpace;
-import org.mt4j.components.visibleComponents.shapes.MTRectangle;
 import org.mt4j.components.visibleComponents.shapes.MTRoundRectangle;
 import org.mt4j.components.visibleComponents.widgets.MTTextArea;
-import org.mt4j.components.visibleComponents.widgets.MTTextArea.ExpandDirection;
-import org.mt4j.components.visibleComponents.widgets.MTTextField;
 import org.mt4j.components.visibleComponents.widgets.buttons.MTImageButton;
-import org.mt4j.components.visibleComponents.widgets.keyboard.MTKeyboard;
+import org.mt4j.input.gestureAction.DefaultDragAction;
+import org.mt4j.input.gestureAction.DefaultRotateAction;
+import org.mt4j.input.gestureAction.DefaultScaleAction;
+import org.mt4j.input.gestureAction.InertiaDragAction;
 import org.mt4j.input.inputProcessors.IGestureEventListener;
 import org.mt4j.input.inputProcessors.MTGestureEvent;
+import org.mt4j.input.inputProcessors.componentProcessors.dragProcessor.DragProcessor;
+import org.mt4j.input.inputProcessors.componentProcessors.rotateProcessor.RotateProcessor;
+import org.mt4j.input.inputProcessors.componentProcessors.scaleProcessor.ScaleProcessor;
 import org.mt4j.input.inputProcessors.componentProcessors.tapProcessor.TapEvent;
 import org.mt4j.input.inputProcessors.componentProcessors.tapProcessor.TapProcessor;
 import org.mt4j.util.MTColor;
@@ -26,8 +28,10 @@ import org.mt4j.util.font.IFont;
 import org.mt4j.util.math.Vector3D;
 
 import processing.core.PImage;
-import ch.mitoco.Attribut;
-import ch.mitoco.Attributs;
+import ch.mitoco.components.visibleComponents.widgets.MTDropDownList;
+import ch.mitoco.components.visibleComponents.widgets.MTNumField;
+import ch.mitoco.store.generated.Customer;
+import ch.mitoco.store.generated.PurchaseOrder;
 
 /**
  * 
@@ -36,156 +40,158 @@ import ch.mitoco.Attributs;
  * @author tandrich
  */
 
-public class MyMTObject extends MTComponent{
+public class MyMTObject extends MTRoundRectangle {
 
-	private MTRectangle rect;
+	
+	/** */
 	private MTApplication pApplet;
-	private MTRoundRectangle round_Rect;
+
+	/** */
+	private MTRoundRectangle roundRect;
+	
+	/** */
 	private MTRoundRectangle baserect;
-	private MTTextArea infobox;
+
+	/** */
 	private MTTextArea textField;
-	private int h;
-	private int w;
-	private int zoomFac;
-	private int obSizeWidht;
-	private int obSizeHeight;
-	private int numberAttribut;
+
+	/** Standard Object Width in Min Modus.*/
+	private int obSizeMinWidth;
+	
+	/** Standard Object Height in Min Modus. */
+	private int obSizeMinHeight;
+
+	/** Object Width in Max Modus. */
+	private int obSizeMaxWidth;
+	
+	/** Object Height in Max Modus. */
+	private int obSizeMaxHeight;
+	
+	/** */
 	private MTImageButton buttonMaxMin;
+	
+	/** */
 	private MTImageButton buttonRotate;
-	private MTImageButton buttonKeyboard;
+
+	/** */
 	private int minmaxModus;
-	private MTColor greypez = new MTColor(12,12,12,34);
-	private MTTextField desc_info;
+	
+	/** */
+	private MTColor greypez = new MTColor(12, 12, 12, 34);
+
+	/** */
 	private int id;
+	
+	/** */
 	private IFont fontArialMini;
 	
+	/** The default drag action. */
+	private DefaultDragAction defaultDragAction;
 	
-	public MyMTObject(MTApplication pApplet_2, int id_2)  {
-		super (pApplet_2);
-		pApplet=pApplet_2;
-		this.id = id_2;
-		// TODO Auto-generated constructor stub
-		//ObjStore at = new ObjStore();
-		try {
-		JAXBContext jc = JAXBContext.newInstance( "ktsi.ch.mitoco" );
-		Unmarshaller u = jc.createUnmarshaller();
-		for( int i=0; i<1; i++ ){
-			Attributs at = (Attributs)u.unmarshal(new File("AttributTemplates.xml"));
-		           	        System.out.println( "Attribut: " );
-	        
-	        // display the shipping address
-	        Attribut Attribut = at.getAttribut();
-	        displayAttribut( Attribut );
-	        
-	        // display the items
-	        //List <LineItem> items = po.getLineItem();
-	        //displayItems( items );
-	        //displayTotal( items );
-		}}
-		catch( JAXBException je ) {
-	        je.printStackTrace();
-	    }
+	/** Test Attribut. */
+	private MTNumField p1;
+
+	/** Test Attribut. */
+	private MTDropDownList d1;
+	
+	/** XML Customer. */
+	private Customer customer;
+	
+	/** Public BLBL MyObject.
+	 * 
+	 * @param pApplet2 MTApplication
+	 * @param objectID INT ObjectID  
+	 */
+	public MyMTObject(final MTApplication pApplet2, final int objectID) {
+		super(pApplet2, 0, 0, 0, 0, 0, 5, 5);
+	
+		pApplet = pApplet2;
+		this.id = objectID;
+		defaultDragAction 	= new DefaultDragAction();
 		
-		MTColor speblue = new MTColor(51,102,255);
-		obSizeWidht = 300; // Grösse Min
-		obSizeHeight = 200; // Grösse Min
-		numberAttribut =2; // Anzahl Attribute (Bild, Text) im Objekt vorhanden.
-	
+		
+		try {
+			JAXBContext jc = JAXBContext.newInstance( "ch.mitoco.store.generated" );
+			Unmarshaller u = jc.createUnmarshaller();
+			for( int i=0; i<1; i++ ){
+				PurchaseOrder at = (PurchaseOrder)u.unmarshal(new File("AttributTemplates1.xml"));
+			           	        System.out.println( "Attribut: " );
+		        
+		        //display the shipping address
+			    //int Attributs = at.getID();
+			     //      	     Attributs Attributs = at.getName();
+			    //System.out.println(Attributs);
+		        
+			    customer = at.getCustomer();
+			    
+	            display( customer );
+	            
+			    System.out.println(at);
+			    //display( Attributs );
+		        
+		        //display the items
+		        //List <LineItem> items = po.getLineItem();
+		        //displayItems( items );
+		        //displayTotal( items );
+			} 
+		}
+			catch (JAXBException je) {
+		        je.printStackTrace();
+		    }
+		
+		
+		// TODO Auto-generated constructor stub
+		MTColor speblue = new MTColor(51, 102, 255);
+		obSizeMinWidth = 300; // Grösse Min
+		obSizeMinHeight = 300; // Grösse Min
+		
+		obSizeMaxWidth = 300;
+		obSizeMaxHeight = 400;
+		
 		IFont fontArial = FontManager.getInstance().createFont(pApplet, "arial.ttf", 
 				15, 	//Font size
 				MTColor.BLACK);
+		
+		this.setSizeLocal(obSizeMinWidth, obSizeMinHeight);
+		this.setPositionGlobal(new Vector3D(600, 300));
+		this.setFillColor(greypez);
+		this.setStrokeWeight(1);
+		this.setStrokeColor(speblue);
 	
 		//Create a textfield
 		textField = new MTTextArea(pApplet, fontArial); 
 		textField.setNoStroke(true);
 		textField.setNoFill(true);
-		textField.setText("F5E Tiger"+" ID:"+id);
-		//Center the textfield on the screen
-		//textField.setPositionGlobal(new Vector3D(mtApplication.width/2f, mtApplication.height/2f));
-		//Add the textfield to our canvas
+		textField.setText("Object" + " ID:" + id);
 		textField.setPickable(false);
-		textField.translate(new Vector3D(5,5));
+		textField.translate(new Vector3D(5, 5));
 		
 		// Base Rect 
-		
-		baserect = new MTRoundRectangle(pApplet, 10,10,0,obSizeWidht-20,obSizeHeight-20,5,5);
+		baserect = new MTRoundRectangle(pApplet, 10, 10, 0, obSizeMinWidth - 20, obSizeMinHeight - 20, 5, 5);
 		baserect.setNoStroke(true);
 		baserect.setStrokeColor(MTColor.GRAY);
 		baserect.setFillColor(MTColor.GRAY);
 		baserect.setPickable(false);
 		
-		
-		// Add Round Rectangle
-		round_Rect = new MTRoundRectangle(pApplet, 0, 0, 0, obSizeWidht, obSizeHeight, 10, 10);
-		round_Rect.setPositionGlobal(new Vector3D(600,300));
-		round_Rect.setFillColor(greypez);
-		round_Rect.setStrokeWeight(1);
-		round_Rect.setStrokeColor(speblue);
-	
-		
-		// Show Image
-		PImage f5e = pApplet.loadImage("test" + MTApplication.separator + "thomas"+ MTApplication.separator + "image" + MTApplication.separator + "f5e2.png");
-		h = f5e.height;
-		w = f5e.width; 
-		zoomFac=3;
-		rect = new MTRectangle(pApplet, 0, 0, 0, w/zoomFac, h/zoomFac);
-		//rect.setFillColor(new MTColor(1,1,1,0));
-		rect.setNoFill(false);
-		rect.setNoStroke(false);
-		rect.setStrokeColor(MTColor.GRAY);
-		rect.setPositionGlobal(new Vector3D(150,100));
-		rect.setTexture(f5e);
-		rect.setPickable(false);
-		
-		//rect.rotateZ(new Vector3D(100,100),90); // Drehen eines Objekts		
-		
-		// Textfield for Input
-		fontArialMini = FontManager.getInstance().createFont(pApplet, "arial.ttf", 
-				20, 	//Font size
-				MTColor.BLACK);
-		
-		infobox = new MTTextArea(pApplet,20,(obSizeHeight/numberAttribut)+10,obSizeWidht-40,(obSizeHeight/numberAttribut)-30, fontArialMini); 
-		infobox.setNoStroke(false);
-		infobox.setNoFill(true);
-		infobox.setText("xx");
-		infobox.setPickable(false);
-		infobox.translate(new Vector3D(0,0,0));
-	//	infobox.setPositionGlobal(new Vector3D(200,20));
-		infobox.setStrokeWeight(1);
-		infobox.setStrokeColor(MTColor.BLACK);
-		infobox.setName("Inhalt");
-	//	infobox.setSizeLocal(50, 140);
-	
-		// Description Field (Infobox)
-	
-		desc_info = new MTTextField(pApplet, 0,0, 50, 20,fontArialMini);
-		desc_info.setNoStroke(true);
-		desc_info.setNoFill(true);
-		desc_info.setText(infobox.getName());
-		
 		// Button for Rotate
-		PImage buttonImage = pApplet.loadImage("test" + MTApplication.separator + "thomas"+ MTApplication.separator + "image" + MTApplication.separator +  "buttonRotate.png");
+		PImage buttonImage = pApplet.loadImage("ch" + MTApplication.separator + "mitoco" + MTApplication.separator + "data" + MTApplication.separator +  "buttonRotate.png");
 		buttonRotate = new MTImageButton(pApplet, buttonImage);
-		buttonRotate.setSizeLocal(30,30);
-		buttonRotate.setFillColor(new MTColor(255,255,255,200));
+		buttonRotate.setSizeLocal(30, 30);
+		buttonRotate.setFillColor(new MTColor(255, 255, 255, 200));
 		buttonRotate.setName("KeyboardButton");
 		buttonRotate.setNoStroke(true);
 		//keyboardButton.translateGlobal(new Vector3D(-2,mtApplication.height-keyboardButton.getWidthXY(TransformSpace.GLOBAL)+2,0));
-		buttonRotate.setPositionGlobal(new Vector3D(20,obSizeHeight-20));
+		buttonRotate.setPositionGlobal(new Vector3D(20, obSizeMinHeight - 20));
 		
 		buttonRotate.addGestureListener(TapProcessor.class, new IGestureEventListener() {
 			
 			@Override
-			public boolean processGestureEvent(MTGestureEvent ge) {
-				TapEvent te = (TapEvent)ge;
-				switch(te.getTapID())
-				{
+			public boolean processGestureEvent(final MTGestureEvent ge) {
+				TapEvent te = (TapEvent) ge;
+				switch(te.getTapID()) {
 				case TapEvent.TAPPED:
-					round_Rect.rotateZ(new Vector3D(w/zoomFac,h/zoomFac,0), 180); // 516 x 316 
-					// rect.setSizeXYGlobal(120, 120); // Achtung auf Rückstellungen des Wertes
-					break;
-				
-					
+					baserect.rotateZ(new Vector3D((baserect.getWidthXY(TransformSpace.LOCAL) / 2) + 10, (baserect.getHeightXY(TransformSpace.LOCAL) / 2) + 10), 180);
+					break;	
 				default:
 					break;
 				}
@@ -193,141 +199,44 @@ public class MyMTObject extends MTComponent{
 			}
 		});
 		
-		// Button for Keyboard 
-		PImage buttonKeyboardImage = pApplet.loadImage("test" + MTApplication.separator + "thomas"+ MTApplication.separator + "image" + MTApplication.separator + "keyb128.png");
-		buttonKeyboard= new MTImageButton(pApplet, buttonKeyboardImage);
-		buttonKeyboard.setSizeLocal(30, 30);
-		buttonKeyboard.setFillColor(new MTColor(255,255,255,200));
-		buttonKeyboard.setName("KeyboardImage");
-		buttonKeyboard.setNoStroke(true);
-		buttonKeyboard.setPositionGlobal(new Vector3D(obSizeWidht-20,obSizeHeight-20));
-		
-		buttonKeyboard.addGestureListener(TapProcessor.class, new IGestureEventListener() {
-			
-			@Override
-			public boolean processGestureEvent(MTGestureEvent ge) {
-				TapEvent ke = (TapEvent)ge;
-				switch(ke.getTapID()){
-					case TapEvent.TAPPED:
-						// Add Keyboard
-						MTKeyboard keyb = new MTKeyboard(pApplet);
-						//keyb.setPositionGlobal(new Vector3D(400,400));
-						//keyb.setSizeXYGlobal(400, 200);
-						keyb.setFillColor(new MTColor(30,30,30,210));
-						keyb.setStrokeColor(new MTColor(0,0,0,255));
-						keyb.setSizeXYGlobal(350, 200);
-						keyb.translate(new Vector3D(-50,50));
-
-						
-				        final MTTextArea t = new MTTextArea(pApplet, FontManager.getInstance().createFont(pApplet, "arial.ttf", 50, 
-				        		new MTColor(0,0,0,255))); //Stroke color
-				        t.setExpandDirection(ExpandDirection.UP);
-						t.setStrokeColor(new MTColor(0,0 , 0, 255));
-						t.setFillColor(new MTColor(205,200,177, 255));
-						t.unregisterAllInputProcessors();
-						t.setEnableCaret(true);
-						keyb.snapToKeyboard(t);
-						t.setText(infobox.getText());
-						keyb.addTextInputListener(t);
-						round_Rect.addChild(keyb);
-						
-						// Save Button, save text
-						/*
-						MTSvgButton saveButton = new MTSvgButton("test" + MTApplication.separator + "thomas"+ MTApplication.separator + "buttonSave.svg",mtApplication);
-						saveButton.scale(0.4f, 0.4f, 1, new Vector3D(0,0,0),TransformSpace.LOCAL);
-						saveButton.translate(new Vector3D(0,0,0));
-						saveButton.setBoundsPickingBehaviour(AbstractShape.BOUNDS_ONLY_CHECK);
-						*/
-						PImage saveButtonImage = pApplet.loadImage("test" + MTApplication.separator + "thomas"+ MTApplication.separator + "image" + MTApplication.separator + "buttonSave.png");
-						final MTImageButton saveButton= new MTImageButton(pApplet, saveButtonImage);
-						saveButton.setSizeLocal(50,50);
-						saveButton.setFillColor(new MTColor(255,255,255,200));
-						saveButton.setName("saveButton");
-						saveButton.setNoStroke(true);
-						saveButton.setPositionGlobal(new Vector3D(25,25,0));
-						
-						// actionlistener for saveButton
-						saveButton.addGestureListener(TapProcessor.class, new IGestureEventListener() {
-							
-							@Override
-							public boolean processGestureEvent(MTGestureEvent ge) {
-								TapEvent ke = (TapEvent)ge;
-								switch(ke.getTapID()){
-								case TapEvent.TAPPED:
-										infobox.setText(t.getText());
-										
-										break;
-									
-									}
-								return false;	
-								}
-							
-							}
-						);
-						                                          
-						keyb.addChild(saveButton);
-						break;
-					default:
-						break;
-					
-				}
-				return false;	
-				
-			}
-		});
-		
 		//Button Max/Min Modus
-		PImage buttonMaxMinImage = pApplet.loadImage("test" + MTApplication.separator + "thomas"+ MTApplication.separator + "image" + MTApplication.separator +  "buttonMaxMin.png");
-		buttonMaxMin= new MTImageButton(pApplet, buttonMaxMinImage);
+		PImage buttonMaxMinImage = pApplet.loadImage("ch" + MTApplication.separator + "mitoco" + MTApplication.separator + "data" + MTApplication.separator +  "buttonMaxMin.png");
+		buttonMaxMin = new MTImageButton(pApplet, buttonMaxMinImage);
 		buttonMaxMin.setSizeLocal(30, 30);
-		buttonMaxMin.setFillColor(new MTColor(255,255,255,200));
+		buttonMaxMin.setFillColor(new MTColor(255, 255, 255, 200));
 		buttonMaxMin.setName("KeyboardImage");
 		buttonMaxMin.setNoStroke(true);
-		buttonMaxMin.setPositionGlobal(new Vector3D(obSizeWidht-20,20));
-
+		buttonMaxMin.setPositionGlobal(new Vector3D(obSizeMinWidth - 20, 20));
+		
 		buttonMaxMin.addGestureListener(TapProcessor.class, new IGestureEventListener() {
-		
-		float h= round_Rect.getHeightXY(TransformSpace.RELATIVE_TO_PARENT);
-		float w= round_Rect.getWidthXY(TransformSpace.RELATIVE_TO_PARENT);
-		MTColor cFill = new MTColor(round_Rect.getFillColor());
-		MTColor cRRFill= new MTColor(baserect.getFillColor());
-		
+			
+			private float h = getHeightXY(TransformSpace.RELATIVE_TO_PARENT);
+			private float w = getWidthXY(TransformSpace.RELATIVE_TO_PARENT);
+			
 			@Override
-			public boolean processGestureEvent(MTGestureEvent ge) {
-				TapEvent ke = (TapEvent)ge;	
+			public boolean processGestureEvent(final MTGestureEvent ge) {
+				TapEvent ke = (TapEvent) ge;	
 				switch (ke.getTapID()) {
 				case TapEvent.TAPPED:
 
-				if(minmaxModus==0){
-					obSizeHeight = 400;
-					obSizeWidht = 300;
-					round_Rect.setSizeLocal(obSizeWidht, obSizeHeight);
-					round_Rect.setFillColor(cFill);
-					baserect.setSizeLocal(obSizeWidht-20, obSizeHeight-20);
-					baserect.setFillColor(cRRFill);
-					buttonKeyboard.translate(new Vector3D(obSizeWidht-w,obSizeHeight-h));
-					buttonMaxMin.translate(new Vector3D(obSizeWidht-w,0));
-					buttonRotate.translate(new Vector3D(0,obSizeHeight-h));
+				if (minmaxModus == 0) {
+					setSizeLocal(obSizeMaxWidth, obSizeMaxHeight);
+					baserect.setSizeLocal(obSizeMaxWidth - 20, obSizeMaxHeight - 20);
+					buttonMaxMin.translate(new Vector3D(obSizeMaxWidth - w, 0));
+					buttonRotate.translate(new Vector3D(0, obSizeMaxHeight - h));
 					
-					infobox.translate(new Vector3D(0,60)); 
-					desc_info.translate(new Vector3D(0,-25));
-					infobox.addChild(desc_info); // Text Beschrieb für Infobox wird der Box vererbt (einfachere Handhabung)
-					minmaxModus=1;
-					}
-				else{
-					round_Rect.setSizeLocal(w, h);
-					round_Rect.setFillColor(cFill);
-					baserect.setSizeLocal(w-20, h-20);
-					baserect.setFillColor(cRRFill);
-					buttonKeyboard.translate(new Vector3D(w-obSizeWidht,h-obSizeHeight));
-					buttonMaxMin.translate(new Vector3D(w-obSizeWidht,0));
-					buttonRotate.translate(new Vector3D(0,h-obSizeHeight));
+					d1.setMax();
+					p1.setMax();
+					minmaxModus = 1;
+				} else {
+					setSizeLocal(w, h);
+					baserect.setSizeLocal(w - 20, h - 20);
+					buttonMaxMin.translate(new Vector3D(w - obSizeMaxWidth, 0));
+					buttonRotate.translate(new Vector3D(0, h - obSizeMaxHeight));
 					
-					
-					infobox.translate(new Vector3D(0,-60));
-					desc_info.translate(new Vector3D(0,25));
-					infobox.removeChild(desc_info);
-					minmaxModus=0;
+					d1.setMin();
+					p1.setMin();
+					minmaxModus = 0;
 					
 					}
 					break;
@@ -339,56 +248,89 @@ public class MyMTObject extends MTComponent{
 				return false;
 			}
 		});
-	
-	
+
+		// Font for Textfield
+		fontArialMini = FontManager.getInstance().createFont(pApplet, "arial.ttf", 
+				14, 	//Font size
+				MTColor.BLACK);
+		// Font for Label
+		IFont labelfont = FontManager.getInstance().createFont(pApplet, "arial.ttf", 
+				14, 	//Font size
+				MTColor.WHITE);
+		Integer test = Integer.valueOf(customer.getName()).intValue();
+		// Testattribut 
+		p1 = new MTNumField(pApplet2, fontArialMini, 250, 30, true, test, "TestFeld", labelfont);
+		p1.setPositionRelativeToParent(new Vector3D(this.getWidthXY(TransformSpace.LOCAL) / 2, 60));
+		p1.setPickable(false);
+
+			
+		d1 = new MTDropDownList(pApplet2, fontArialMini, 250, 30, "Projekt Wichtigkeit", labelfont);
+		d1.setPositionRelativeToParent(new Vector3D(this.getWidthXY(TransformSpace.LOCAL) / 2, 100));
+		d1.setPickable(false);
 		
-		//System.out.println("Widht = "+w);
-		//System.out.println("Height = " +h);
-		
-		MTNumField p1 = new MTNumField(pApplet,fontArialMini,true,"1","TestFeld");
-		//p1.setTextAlign(true);
-		
+
 		// Add MTComponets to Canvas
 		// --------------------------------
-		round_Rect.addChild(baserect);
-		round_Rect.addChild(textField); //Titeltext
-		round_Rect.addChild(infobox); // Text mit Eingabebox
-		round_Rect.addChild(rect); // Bild 
-		round_Rect.addChild(buttonRotate);
-		round_Rect.addChild(buttonKeyboard);
-		round_Rect.addChild(buttonMaxMin);
-		round_Rect.addChild(p1.getMyAttributBack());
+		p1.setUserData("FieldValue", p1.getValue());
+		this.addChild(baserect);
+		this.addChild(buttonRotate);
+		this.addChild(buttonMaxMin);
 		
+		baserect.addChild(d1);
+		baserect.addChild(p1);
+		baserect.addChild(textField); //Titeltext
 	}
-	/**
-	 * Gibt das Basis-Object zurück. (Als MTRound Rectangle)
-	 * @return
-	 */
-	public MTRoundRectangle getMyObjectBack(){	
-	return round_Rect;
-	}
+	
 	/**
 	 * Setzen des Object Namens. String als Übergabe-Parameters.
-	 * @param titelname
+	 * @param titelname String
 	 */
-	public void setTitelName(String titelname){
+	public final void setTitelName(final String titelname) {
 	textField.setText(titelname);	
 	}
 	
 	/**
-	 * Zerstört das Objekt 
+	 * Zerstört das Objekt.
+	 * 
 	 */
-	public void destroyMyObject(){
-	round_Rect.destroy();
+	public final void destroyMyObject() {
+	roundRect.destroy();
 	}
 	
 	/**
-	 * Gibt die Object ID zurück
+	 * Get Object ID back.
+	 * @return id int
 	 */
-	public int getID(){
+	public final int getID() {
 	return id;
 	}
-	public static void displayAttribut( Attribut atr ) {
+
+	@Override
+	protected void setDefaultGestureActions() {
+//		super.setDefaultGestureActions();
+		
+		this.addGestureListener(DragProcessor.class, new InertiaDragAction());
+		
+		DragProcessor dp = new DragProcessor(getRenderer());
+//		dp.setLockPriority(0.5f);
+		registerInputProcessor(dp);
+		addGestureListener(DragProcessor.class, new DefaultDragAction());
+		dp.setBubbledEventsEnabled(true); //FIXME TEST
+		
+		RotateProcessor rp = new RotateProcessor(getRenderer());
+//		rp.setLockPriority(0.8f);
+		registerInputProcessor(rp);
+		addGestureListener(RotateProcessor.class, new DefaultRotateAction());
+		rp.setBubbledEventsEnabled(true);  //FIXME TEST
+		
+		ScaleProcessor sp = new ScaleProcessor(getRenderer());
+//		sp.setLockPriority(0.8f);
+		registerInputProcessor(sp);
+		addGestureListener(ScaleProcessor.class, new DefaultScaleAction());
+		sp.setBubbledEventsEnabled(true);  //FIXME TEST
+	}
+	
+	public static void display( final Customer atr ) {
 	    System.out.println( "\t" + atr.getName() );
 	    System.out.println( "\t" + atr.getAddress() + "\n"); 
 		}
@@ -415,5 +357,21 @@ public class MyMTObject extends MTComponent{
  *  Anstatt Scene wird ein MTMyObject (roundRect) übergeben. CloseButton zerstört das Object und Restore übernimmt die Funktion des MIN/Max 
  * 
  * 
+		this.removeAllChildren();
+		this.removeAllGestureEventListeners();
+		this.unregisterAllInputProcessors();
+		
+		this.removeAllGestureEventListeners(DragProcessor.class);
+		 this.addGestureListener(DragProcessor.class, defaultDragAction);
+		 
+		this.unregisterAllInputProcessors();
+		this.setGestureAllowance(DragProcessor.class, false);
+		this.setGestureAllowance(RotateProcessor.class, false);
+		this.setGestureAllowance(ScaleProcessor.class, false);
+		this.setGestureAllowance(TapProcessor.class, true);
+		
+		
+		textarea.unregisterAllInputProcessors();
+		textarea.setPickable(false);
  * 
 */
