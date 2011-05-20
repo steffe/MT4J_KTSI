@@ -1,0 +1,9 @@
+<ch.mitoco.model.ModelScence>
+  <id>1</id>
+  <mtobjects>
+    <ch.mitoco.model.ModelMtObjects>
+      <id>1</id>
+      <objectattributs/>
+    </ch.mitoco.model.ModelMtObjects>
+  </mtobjects>
+</ch.mitoco.model.ModelScence>

@@ -1,11 +1,5 @@
 package store;
 
-import java.io.File;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-
 import org.mt4j.MTApplication;
 import org.mt4j.components.TransformSpace;
 import org.mt4j.components.visibleComponents.shapes.MTRoundRectangle;
@@ -31,7 +25,6 @@ import processing.core.PImage;
 import ch.mitoco.components.visibleComponents.widgets.MTDropDownList;
 import ch.mitoco.components.visibleComponents.widgets.MTNumField;
 import ch.mitoco.store.generated.Customer;
-import ch.mitoco.store.generated.PurchaseOrder;
 
 /**
  * 
@@ -41,7 +34,6 @@ import ch.mitoco.store.generated.PurchaseOrder;
  */
 
 public class MyMTObject extends MTRoundRectangle {
-
 	
 	/** */
 	private MTApplication pApplet;
@@ -94,9 +86,6 @@ public class MyMTObject extends MTRoundRectangle {
 	/** Test Attribut. */
 	private MTDropDownList d1;
 	
-	/** XML Customer. */
-	private Customer customer;
-	
 	/** Public BLBL MyObject.
 	 * 
 	 * @param pApplet2 MTApplication
@@ -109,7 +98,7 @@ public class MyMTObject extends MTRoundRectangle {
 		this.id = objectID;
 		defaultDragAction 	= new DefaultDragAction();
 		
-		
+		/*
 		try {
 			JAXBContext jc = JAXBContext.newInstance( "ch.mitoco.store.generated" );
 			Unmarshaller u = jc.createUnmarshaller();
@@ -138,7 +127,7 @@ public class MyMTObject extends MTRoundRectangle {
 			catch (JAXBException je) {
 		        je.printStackTrace();
 		    }
-		
+		*/
 		
 		// TODO Auto-generated constructor stub
 		MTColor speblue = new MTColor(51, 102, 255);
@@ -257,9 +246,10 @@ public class MyMTObject extends MTRoundRectangle {
 		IFont labelfont = FontManager.getInstance().createFont(pApplet, "arial.ttf", 
 				14, 	//Font size
 				MTColor.WHITE);
-		Integer test = Integer.valueOf(customer.getName()).intValue();
+		//Integer test = Integer.valueOf(customer.getName()).intValue();
+		//readcustomer.getName();
 		// Testattribut 
-		p1 = new MTNumField(pApplet2, fontArialMini, 250, 30, true, test, "TestFeld", labelfont);
+		p1 = new MTNumField(pApplet2, fontArialMini, 250, 30, true, 1234, "TestFeld", labelfont);
 		p1.setPositionRelativeToParent(new Vector3D(this.getWidthXY(TransformSpace.LOCAL) / 2, 60));
 		p1.setPickable(false);
 
