@@ -1,5 +1,11 @@
 package ch.mitoco.components.visibleComponents;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.smartcardio.ATR;
+
 import org.mt4j.MTApplication;
 import org.mt4j.components.TransformSpace;
 import org.mt4j.components.visibleComponents.shapes.MTRoundRectangle;
@@ -21,8 +27,12 @@ import org.mt4j.util.font.FontManager;
 import org.mt4j.util.font.IFont;
 import org.mt4j.util.math.Vector3D;
 
+import ch.mitoco.components.visibleComponents.widgets.Attributes;
+import ch.mitoco.components.visibleComponents.widgets.Attributes;
 import ch.mitoco.components.visibleComponents.widgets.MTDropDownList;
 import ch.mitoco.components.visibleComponents.widgets.MTNumField;
+import ch.mitoco.components.visibleComponents.widgets.MTTextAttribut;
+import ch.mitoco.model.ModelMtObjects;
 
 import processing.core.PImage;
 
@@ -87,13 +97,20 @@ public class MyMTObject extends MTRoundRectangle {
 	/** Test Attribut. */
 	private MTDropDownList d1;
 	
+	/** Test Attribut. */
+	private Attributes a1;
+	
+	/** List with all Attributs.*/
+	private List<Attributes>myAttributs;
+	
 	
 	/** Public BLBL MyObject.
 	 * 
 	 * @param pApplet2 MTApplication
+	 * @param model ModelMTObjects
 	 * @param objectID INT ObjectID  
 	 */
-	public MyMTObject(final MTApplication pApplet2, final int objectID) {
+	public MyMTObject(final MTApplication pApplet2, final ModelMtObjects model, final int objectID) {
 		super(pApplet2, 0, 0, 0, 0, 0, 5, 5);
 	
 		pApplet = pApplet2;
@@ -184,9 +201,8 @@ public class MyMTObject extends MTRoundRectangle {
 					baserect.setSizeLocal(obSizeMaxWidth - 20, obSizeMaxHeight - 20);
 					buttonMaxMin.translate(new Vector3D(obSizeMaxWidth - w, 0));
 					buttonRotate.translate(new Vector3D(0, obSizeMaxHeight - h));
-					
-					d1.setMax();
-					p1.setMax();
+
+					setMax();
 					minmaxModus = 1;
 				} else {
 					setSizeLocal(w, h);
@@ -194,10 +210,8 @@ public class MyMTObject extends MTRoundRectangle {
 					buttonMaxMin.translate(new Vector3D(w - obSizeMaxWidth, 0));
 					buttonRotate.translate(new Vector3D(0, h - obSizeMaxHeight));
 					
-					d1.setMin();
-					p1.setMin();
+					setMin();
 					minmaxModus = 0;
-					
 					}
 					break;
 
@@ -218,25 +232,27 @@ public class MyMTObject extends MTRoundRectangle {
 				14, 	//Font size
 				MTColor.WHITE);
 		
+		// Crate ArrayList for Attributs
+		myAttributs = new ArrayList<Attributes>();
+		
+		myAttributs.add(new MTTextAttribut(pApplet2, fontArialMini, 250, 30, false, "ee2eee3ww fw3ewf", "TestFeld Text", labelfont));
+		myAttributs.get(0).setPositionRelativeToParent(new Vector3D(this.getWidthXY(TransformSpace.LOCAL) / 2, 140));
+		
 		// Testattribut 
-		p1 = new MTNumField(pApplet2, fontArialMini, 250, 30, true, 1111, "TestFeld", labelfont);
-		p1.setPositionRelativeToParent(new Vector3D(this.getWidthXY(TransformSpace.LOCAL) / 2, 60));
-		p1.setPickable(false);
+		myAttributs.add(new MTNumField(pApplet2, fontArialMini, 250, 30, true, 1111134.34, "TestFeld", labelfont));
+		myAttributs.get(1).setPositionRelativeToParent(new Vector3D(this.getWidthXY(TransformSpace.LOCAL) / 2, 60));
+		
+		myAttributs.add(new MTDropDownList(pApplet2, fontArialMini, 250, 30, "Projekt Wichtigkeit", labelfont));
+		myAttributs.get(2).setPositionRelativeToParent(new Vector3D(this.getWidthXY(TransformSpace.LOCAL) / 2, 100));
 
-			
-		d1 = new MTDropDownList(pApplet2, fontArialMini, 250, 30, "Projekt Wichtigkeit", labelfont);
-		d1.setPositionRelativeToParent(new Vector3D(this.getWidthXY(TransformSpace.LOCAL) / 2, 100));
-		d1.setPickable(false);
-
-	
 
 		// Add MTComponets to Canvas
 		// --------------------------------
 
 		baserect.addChild(textField); //Titeltext
-		baserect.addChild(d1);
-		baserect.addChild(p1);
 		
+		addToBaserect(); // Add all Attributes to the base Rect Object
+		setPickableAttributes();
 		
 		this.addChild(baserect);
 		this.addChild(buttonRotate);
@@ -245,6 +261,63 @@ public class MyMTObject extends MTRoundRectangle {
 
 		
 	}
+	
+	/**
+	 * Set Attributes Postition.
+	 * 
+	 */
+	private void setAttributPosition() {
+		int starty = 60;
+		int interval = 40;
+		
+		for (Attributes it : myAttributs) {
+			it.setPositionRelativeToParent(new Vector3D(this.getWidthXY(TransformSpace.LOCAL) / 2, starty));
+			starty =+ interval;
+		}
+		
+		
+	}
+	
+	
+	/**
+	 *  Set Pickable False for all Attributes.
+	 */
+	private void setPickableAttributes() {
+		for (Attributes it : myAttributs) {
+			it.setPickable(false);
+		}
+	}
+	
+	
+	/**
+	 * Add Attributs to baserect.
+	 */
+	private void addToBaserect() {
+		for (Attributes it : myAttributs) {
+			baserect.addChild(it);
+		}
+	}
+	
+	/**
+	 * Private setMax for all Attributes.
+	 */
+	private void setMax() {
+		for (Attributes it : myAttributs) {
+			it.setMax();
+		}
+			
+	}
+	
+	/**
+	 * Private setMin for all Attributes.
+	 */
+	private void setMin() {
+		for (Attributes it : myAttributs) {
+			it.setMin();
+		}
+			
+	}
+	
 	
 	/**
 	 * Setzen des Object Namens. String als Übergabe-Parameters.

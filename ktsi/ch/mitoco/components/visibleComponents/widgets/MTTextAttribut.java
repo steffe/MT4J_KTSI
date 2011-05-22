@@ -9,10 +9,11 @@ import org.mt4j.components.StateChange;
 import org.mt4j.components.StateChangeEvent;
 import org.mt4j.components.StateChangeListener;
 import org.mt4j.components.TransformSpace;
+import org.mt4j.components.visibleComponents.shapes.MTRectangle.PositionAnchor;
 import org.mt4j.components.visibleComponents.shapes.MTRoundRectangle;
 import org.mt4j.components.visibleComponents.widgets.MTTextArea;
 import org.mt4j.components.visibleComponents.widgets.MTTextArea.ExpandDirection;
-import org.mt4j.input.gestureAction.DefaultDragAction;
+import org.mt4j.components.visibleComponents.widgets.keyboard.MTTextKeyboard;
 import org.mt4j.input.inputProcessors.IGestureEventListener;
 import org.mt4j.input.inputProcessors.MTGestureEvent;
 import org.mt4j.input.inputProcessors.componentProcessors.dragProcessor.DragProcessor;
@@ -24,10 +25,10 @@ import org.mt4j.util.MTColor;
 import org.mt4j.util.font.IFont;
 import org.mt4j.util.math.Vector3D;
 
-import ch.mitoco.components.visibleComponents.widgets.keyboard.MTNumKeyboard;
+import com.sun.xml.internal.ws.api.model.wsdl.WSDLBoundOperation.ANONYMOUS;
 
 /**
- * MTNumField. Modified MTTextArea with MTNumKeyboard on double tap.
+ * MTNumField. Modified MTTextArea with MTTextKeyboard on tap.
  * 
  * 
  * MTTextArea Methode setInnerPaddingLeft() verursacht einen Fehler bei der andwendung von getTextWidght()
@@ -38,7 +39,7 @@ import ch.mitoco.components.visibleComponents.widgets.keyboard.MTNumKeyboard;
 // TODO Keyboard Standort anpassen -> erledigt
 // TODO Einheiten hinzufügen (CHF, EURO, meter, Zeit usw)
 
-public class MTNumField extends Attributes {
+public class MTTextAttribut extends Attributes{
 
 	/** Main Textfield. */
 	private MTTextArea textarea;
@@ -58,8 +59,8 @@ public class MTNumField extends Attributes {
 	/** Set Align to right side.*/
 	private boolean rAlign;
 	
-	/** Default double.*/
-	private double doublevalue;
+	/** Default String.*/
+	private String stringvalue;
 	
 	/** Label Font.*/
 	private String fname;
@@ -90,12 +91,13 @@ public class MTNumField extends Attributes {
 	 */
 	
 	
-	public MTNumField(final AbstractMTApplication app, final IFont fontArialMini, final int width, final int height, final boolean rightalign, final double defaultString, final String labeltext, final IFont labelfont) {
+	public MTTextAttribut(final AbstractMTApplication app, final IFont fontArialMini, final int width, final int height, final boolean rightalign, final String defaultString, final String labeltext, final IFont labelfont) {
+		//super(app, 0, 0, 0, 0, 0, 5, 5);
 		super(app);
 		this.rAlign = rightalign;
-		doublevalue = defaultString;
+		stringvalue = defaultString;
 		fname = labeltext;
-		this.setUserData("FieldValue", Double.toString(defaultString));
+		this.setUserData("FieldValue", defaultString);
 		this.setUserData("Label", labeltext);
 		
 		this.height = height;
@@ -126,15 +128,14 @@ public class MTNumField extends Attributes {
 		textarea.setInnerPadding(0);
 		textarea.setInnerPaddingLeft(0);
 		textarea.setInnerPaddingTop(0);
-		textarea.setText(Double.toString(doublevalue));
+		textarea.setText(stringvalue);
 		textarea.setFillColor(new MTColor(0, 0, 0, 0));
 		textarea.setNoStroke(true);
-		
 		//textarea.setPickable(false);
-	
 		
 		setAlign(rAlign);
 
+		
 		textarea.setGestureAllowance(DragProcessor.class, false);
 		textarea.setGestureAllowance(RotateProcessor.class, false);
 		textarea.setGestureAllowance(ScaleProcessor.class, false);
@@ -152,32 +153,31 @@ public class MTNumField extends Attributes {
 				if (te.getTapID() == TapEvent.TAPPED) {
 					System.out.println("Button Clicked");
 				
-					MTNumKeyboard numKeyboard = new MTNumKeyboard(app1);
-					numKeyboard.setFillColor(trans);
+					MTTextKeyboard textKeyboard = new MTTextKeyboard(app1);
+					textKeyboard.setFillColor(trans);
 					
 					numKeyText = new MTTextArea(app1, 0, 0, width, height, iF);
-					numKeyText.setExpandDirection(ExpandDirection.UP);
-					numKeyboard.setNoStroke(true);
+					textKeyboard.setNoStroke(true);
 					numKeyText.setFillColor(new MTColor(205, 200, 177, 255));
 					numKeyText.unregisterAllInputProcessors();
 					numKeyText.setEnableCaret(true);
 					
-					numKeyboard.snapToKeyboard(numKeyText);
+					textKeyboard.snapToKeyboard(numKeyText);
 					
 					numKeyText.setText(textarea.getText());
-					numKeyboard.addTextInputListener(numKeyText);
+					textKeyboard.addTextInputListener(numKeyText);
 					
-					addChild(numKeyboard);
+					addChild(textKeyboard);
 					
-					numKeyboard.setPositionRelativeToParent(new Vector3D(numKeyboard.getWidthXY(TransformSpace.LOCAL) / 2, numKeyboard.getWidthXY(TransformSpace.LOCAL) / 2 + 50));
+					//textKeyboard.setPositionRelativeToParent(new Vector3D(textKeyboard.getWidthXY(TransformSpace.LOCAL) / 2, textKeyboard.getWidthXY(TransformSpace.LOCAL) / 2 + 50));
 					
-					numKeyboard.addStateChangeListener(StateChange.COMPONENT_DESTROYED, new StateChangeListener() {
+					textKeyboard.addStateChangeListener(StateChange.COMPONENT_DESTROYED, new StateChangeListener() {
 						
 						@Override
 						public void stateChanged(final StateChangeEvent evt) {
 							textarea.setInnerPaddingLeft(0);
 							textarea.setText(numKeyText.getText());
-							setUserData("FieldValue", numKeyText.getText());
+							setUserData("FieldValue", (numKeyText.getText()));
 							setAlign(rAlign);
 							
 							
@@ -191,14 +191,16 @@ public class MTNumField extends Attributes {
 			
 			});
 		
+		
 		label = new MTTextArea(app, 0, -labelfont.getOriginalFontSize(), width, height, labelfont);
 		label.setInnerPadding(0);
 		label.setNoFill(true);
 		label.setStrokeColor(MTColor.LIME);
 		label.setNoStroke(true);
-		label.setText(fname);
+		label.setText((String) this.getUserData("Label"));
 		label.setPickable(false);
 		label.setVisible(false);
+		
 		
 		// Add Object to base Object
 		this.addChild(textarea);
@@ -213,7 +215,6 @@ public class MTNumField extends Attributes {
 	/**
 	 * Set Attribut to min Modus.
 	 */
-	@Override
 	public final void setMin() {
 		label.setVisible(false);
 	}
@@ -221,7 +222,6 @@ public class MTNumField extends Attributes {
 	/**
 	 * Set Attribut to max Modus.
 	 */
-	@Override
 	public final void setMax() {
 		label.setVisible(true);
 	}
@@ -235,7 +235,11 @@ public class MTNumField extends Attributes {
 			float textwidth = textarea.getTextWidth();	
 			System.out.println("Text Breite: = " + textwidth);
 			System.out.println("Verschiebsatz: = " + (width - ((int) textwidth + 5)));
-			textarea.setInnerPaddingLeft((width - ((int) textwidth + 5)));
+			
+			//textarea.setInnerPaddingLeft(200);
+			textarea.setInnerPaddingLeft((width - ((int) textwidth + 10)));
+			System.out.println("Linien: = " + textarea.getLineCount());
+			
 		} else {
 			textarea.setInnerPaddingLeft(5);
 		}
@@ -246,7 +250,7 @@ public class MTNumField extends Attributes {
 	 * @param labeltext String
 	 */
 	public final void setLabel(final String labeltext) {
-		fname = labeltext;
+		label.setText(labeltext);
 	}
 	
 	/** 
@@ -254,23 +258,23 @@ public class MTNumField extends Attributes {
 	 * @return fname String
 	 */
 	public final String getLabel() {
-		return fname;
+		return label.getText();
 	}
 
 	/** 
 	 * Set Value Text.
 	 * @param value Double
 	 */
-	public final void setValue(final double value) {
-		textarea.setText(Double.toString(value));
+	public final void setValue(final String value) {
+		textarea.setName(value);
 	}
 	
 	/** 
 	 *Get Value Text.
 	 *@return dString Double 
 	 */
-	public final double getValue() {
-		return Double.valueOf(textarea.getText()).doubleValue();
+	public final String getValue() {
+		return textarea.getText();
 	}
 	
 }

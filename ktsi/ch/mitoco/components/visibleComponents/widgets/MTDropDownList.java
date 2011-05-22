@@ -23,7 +23,7 @@ import ch.mitoco.components.visibleComponents.MTSuggestionTextArea;
  *
  */
 
-public class MTDropDownList extends MTRoundRectangle {
+public class MTDropDownList extends Attributes {
 	
 	/** The MTApplication. */
 	private AbstractMTApplication app;
@@ -74,12 +74,13 @@ public class MTDropDownList extends MTRoundRectangle {
 	 * 
 	 * */
 	public MTDropDownList(final AbstractMTApplication app, final IFont font, final int width, final int height, final String labelname, final IFont labelfont) {
-		super(app, 0, 0, 0, width, height, 5, 5);
+		super(app);
 		this.ifont = font;
 		this.width = width;
 		this.height = height;
 		this.fname = labelname;
 		this.labelfont = labelfont;
+		this.setSizeLocal(width, height);
 		this.setFillColor(blue1);
 		this.setName(labelname);
 		this.setStrokeColor(MTColor.BLACK);

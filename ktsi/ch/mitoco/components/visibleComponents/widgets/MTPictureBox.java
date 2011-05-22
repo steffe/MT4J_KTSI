@@ -26,7 +26,7 @@ import processing.core.PImage;
  *
  */
 
-public class MTPictureBox extends MTRoundRectangle {
+public class MTPictureBox extends Attributes {
 	
 	/** The MTApplication. */
 	private AbstractMTApplication app;
@@ -67,7 +67,7 @@ public class MTPictureBox extends MTRoundRectangle {
 	 * 
 	 * */
 	public MTPictureBox(final AbstractMTApplication app, final int width, final int height, final int arc, final String labelname, final IFont labelfont) {
-		super(app, 0, 0, 0, width, height, 5, 5);
+		super(app);
 		this.width = width;
 		this.height = height;
 		this.fname = labelname;
@@ -81,7 +81,7 @@ public class MTPictureBox extends MTRoundRectangle {
 	 * @param app2 AbststractMTApplication
 	 * */
 	private void init(final AbstractMTApplication app2) {		
-		
+		this.setSizeLocal(width, height);
 		pictureBox = new MTRectangle(app2, width - 5, height - 5);
 		PImage buttonNewImage = app2.loadImage("ch" + MTApplication.separator + "mitoco" + MTApplication.separator + "data" + MTApplication.separator +  "f5e2.png");
 				

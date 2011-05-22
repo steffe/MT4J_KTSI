@@ -172,8 +172,7 @@ public class HelloWorldScene extends AbstractScene {
 					MODELSCENCE = new ModelScence();
 					MODELSCENCE.setId(1);
 					ModelMtObjects blabla = new ModelMtObjects();
-					blabla.setId(1);
-					MODELSCENCE.getMtobjects().add(blabla);
+					
 					try {
 						xstream.toXML(MODELSCENCE,new FileOutputStream("xstream.xml"));
 					} catch (FileNotFoundException e) {
@@ -295,8 +294,8 @@ public class HelloWorldScene extends AbstractScene {
 						catch (JAXBException je) {
 					        je.printStackTrace();
 					    }*/
-					readxml.readfile("AttributTemplates1.xml");
-					readxml.getObject(1);
+					//readxml.readfile("AttributTemplates1.xml");
+					//readxml.getObject(1);
 					break;
 				
 				default:

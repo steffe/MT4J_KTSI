@@ -17,6 +17,7 @@ import org.mt4j.util.MTColor;
 import org.mt4j.util.math.Vector3D;
 
 import ch.mitoco.components.visibleComponents.MyMTObject;
+import ch.mitoco.model.ModelMtObjects;
 
 import processing.core.PImage;
 
@@ -45,6 +46,8 @@ public class HelloWorldScene extends AbstractScene {
 	/** Object Counter and Object ID. */
 	private int counter;
 	
+	/** **/
+	private ModelMtObjects datamodel;
 	
 	/** 
 	 * Hello Word Scene. 
@@ -81,7 +84,7 @@ public class HelloWorldScene extends AbstractScene {
 				case TapEvent.TAPPED:
 					//MyMTObject t1 = new MyMTObject(mtApplication,1);
 					//getCanvas().addChild(t1.getMyObjectBack());
-					myobjectList.add(new MyMTObject(mtApplication, counter));				
+					myobjectList.add(new MyMTObject(mtApplication,datamodel, counter));				
 					
 					getCanvas().addChild(myobjectList.get(counter));	
 					
