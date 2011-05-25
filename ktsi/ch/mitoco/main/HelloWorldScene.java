@@ -48,6 +48,9 @@ public class HelloWorldScene extends AbstractScene {
 	
 	/** **/
 	private ModelMtObjects datamodel;
+
+	/** */
+	private List<Integer> tempAttributs;
 	
 	/** 
 	 * Hello Word Scene. 
@@ -59,6 +62,12 @@ public class HelloWorldScene extends AbstractScene {
 		super(mtAppl, name);
 		this.mtApplication = mtAppl;
 		this.setClearColor(new MTColor(100, 100, 100, 255));
+		
+		// Temp DataModel
+		tempAttributs = new ArrayList<Integer>();
+		tempAttributs.add(1);
+		tempAttributs.add(0);
+		tempAttributs.add(2);
 		
 		//Show touches
 		this.registerGlobalInputProcessor(new CursorTracer(mtApplication, this));
@@ -84,7 +93,7 @@ public class HelloWorldScene extends AbstractScene {
 				case TapEvent.TAPPED:
 					//MyMTObject t1 = new MyMTObject(mtApplication,1);
 					//getCanvas().addChild(t1.getMyObjectBack());
-					myobjectList.add(new MyMTObject(mtApplication,datamodel, counter));				
+					myobjectList.add(new MyMTObject(mtApplication,datamodel, counter, tempAttributs));				
 					
 					getCanvas().addChild(myobjectList.get(counter));	
 					

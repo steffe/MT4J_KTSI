@@ -85,24 +85,24 @@ public class MyMTObject extends MTRoundRectangle {
 	/** */
 	private int id;
 	
-	/** */
+	/** Font for Content. */
 	private IFont fontArialMini;
+	
+	/** Font for Label. */
+	private IFont labelfont;
 	
 	/** The default drag action. */
 	private DefaultDragAction defaultDragAction;
 	
-	/** Test Attribut. */
-	private MTNumField p1;
 
-	/** Test Attribut. */
-	private MTDropDownList d1;
-	
-	/** Test Attribut. */
-	private Attributes a1;
-	
 	/** List with all Attributs.*/
 	private List<Attributes>myAttributs;
 	
+	/** Space Value for X definition. */
+	private int spaceglobal;
+	
+	/** List for Attributs. */
+	private List<Integer> attributslist;
 	
 	/** Public BLBL MyObject.
 	 * 
@@ -110,12 +110,14 @@ public class MyMTObject extends MTRoundRectangle {
 	 * @param model ModelMTObjects
 	 * @param objectID INT ObjectID  
 	 */
-	public MyMTObject(final MTApplication pApplet2, final ModelMtObjects model, final int objectID) {
+	public MyMTObject(final MTApplication pApplet2, final ModelMtObjects model, final int objectID, final List<Integer> attributesList) {
 		super(pApplet2, 0, 0, 0, 0, 0, 5, 5);
 	
 		pApplet = pApplet2;
 		this.id = objectID;
 		defaultDragAction 	= new DefaultDragAction();
+		
+		attributslist = attributesList;
 		
 		// TODO Auto-generated constructor stub
 		MTColor speblue = new MTColor(51, 102, 255);
@@ -228,29 +230,18 @@ public class MyMTObject extends MTRoundRectangle {
 				14, 	//Font size
 				MTColor.BLACK);
 		// Font for Label
-		IFont labelfont = FontManager.getInstance().createFont(pApplet, "arial.ttf", 
+		labelfont = FontManager.getInstance().createFont(pApplet, "arial.ttf", 
 				14, 	//Font size
 				MTColor.WHITE);
 		
 		// Crate ArrayList for Attributs
 		myAttributs = new ArrayList<Attributes>();
 		
-		myAttributs.add(new MTTextAttribut(pApplet2, fontArialMini, 250, 30, false, "ee2eee3ww fw3ewf", "TestFeld Text", labelfont));
-		myAttributs.get(0).setPositionRelativeToParent(new Vector3D(this.getWidthXY(TransformSpace.LOCAL) / 2, 140));
-		
-		// Testattribut 
-		myAttributs.add(new MTNumField(pApplet2, fontArialMini, 250, 30, true, 1111134.34, "TestFeld", labelfont));
-		myAttributs.get(1).setPositionRelativeToParent(new Vector3D(this.getWidthXY(TransformSpace.LOCAL) / 2, 60));
-		
-		myAttributs.add(new MTDropDownList(pApplet2, fontArialMini, 250, 30, "Projekt Wichtigkeit", labelfont));
-		myAttributs.get(2).setPositionRelativeToParent(new Vector3D(this.getWidthXY(TransformSpace.LOCAL) / 2, 100));
-
-
 		// Add MTComponets to Canvas
 		// --------------------------------
 
 		baserect.addChild(textField); //Titeltext
-		
+		createAttributes();
 		addToBaserect(); // Add all Attributes to the base Rect Object
 		setPickableAttributes();
 		
@@ -263,18 +254,41 @@ public class MyMTObject extends MTRoundRectangle {
 	}
 	
 	/**
-	 * Set Attributes Postition.
-	 * 
+	 *  Create Attributse.
 	 */
-	private void setAttributPosition() {
-		int starty = 60;
-		int interval = 40;
-		
-		for (Attributes it : myAttributs) {
-			it.setPositionRelativeToParent(new Vector3D(this.getWidthXY(TransformSpace.LOCAL) / 2, starty));
-			starty =+ interval;
+	private void createAttributes() {
+	int i = 0;
+	int x = 60;
+	int difx = 40;
+		for (Integer it : attributslist) {
+			switch(it) {
+			case(0):
+				System.out.println(i + "Attributs MTTextAttribut " + it);
+				
+				myAttributs.add(new MTTextAttribut(pApplet, fontArialMini, 250, 30, false, "ee2eee3ww fw3ewf", "TestFeld Text", labelfont));
+				myAttributs.get(i).setPositionRelativeToParent(new Vector3D(this.getWidthXY(TransformSpace.LOCAL) / 2, x));
+			
+				break;
+			case(1):	
+				System.out.println(i + "Attributs MTNumField " + it);
+			
+				myAttributs.add(new MTNumField(pApplet, fontArialMini, 250, 30, true, 1111134.34, "TestFeld", labelfont));
+				myAttributs.get(i).setPositionRelativeToParent(new Vector3D(this.getWidthXY(TransformSpace.LOCAL) / 2, x));
+			
+				break;
+			case(2):
+				System.out.println(i + "Attributs MTDropDown " + it);
+			
+				myAttributs.add(new MTDropDownList(pApplet, fontArialMini, 250, 30, "Projekt Wichtigkeit", labelfont));
+				myAttributs.get(i).setPositionRelativeToParent(new Vector3D(this.getWidthXY(TransformSpace.LOCAL) / 2, x));
+
+				break;
+			default:
+				break;
+			}
+		i++;
+		x += difx;
 		}
-		
 		
 	}
 	
