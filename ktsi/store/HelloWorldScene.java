@@ -2,6 +2,7 @@ package store;
 
 
 
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
@@ -19,7 +20,7 @@ import org.mt4j.util.MTColor;
 import org.mt4j.util.math.Vector3D;
 
 import processing.core.PImage;
-import ch.mitoco.model.ModelMtObjects;
+import ch.mitoco.components.visibleComponents.MyMTObject;
 import ch.mitoco.model.ModelScence;
 import ch.mitoco.store.generated.Customer;
 
@@ -54,6 +55,8 @@ public class HelloWorldScene extends AbstractScene {
 	/** XML Customer. */
 	public Customer readcustomer;
 	public static ModelScence MODELSCENCE;
+	public ModelScence test1;
+	
 	
 	/** 
 	 * Hello Word Scene. 
@@ -73,6 +76,12 @@ public class HelloWorldScene extends AbstractScene {
 		counter = 0;
 		myobjectList = new ArrayList<MyMTObject>();
 		
+		
+		//FileStream für xStream
+		//ModelScence test1 = new ModelScence();
+		
+		
+		
 		//New Object
 		PImage buttonNewImage = mtApplication.loadImage("ch" + MTApplication.separator + "mitoco" + MTApplication.separator + "data" + MTApplication.separator +  "buttonNew.png");
 		MTImageButton buttonNew = new MTImageButton(mtApplication, buttonNewImage);
@@ -91,7 +100,7 @@ public class HelloWorldScene extends AbstractScene {
 				case TapEvent.TAPPED:
 					//MyMTObject t1 = new MyMTObject(mtApplication,1);
 					//getCanvas().addChild(t1.getMyObjectBack());
-					myobjectList.add(new MyMTObject(mtApplication, counter));				
+					myobjectList.add(new MyMTObject(mtApplication, test1.getMtobjects().get(counter), counter));				
 					
 					getCanvas().addChild(myobjectList.get(counter));	
 					
@@ -167,73 +176,21 @@ public class HelloWorldScene extends AbstractScene {
 				TapEvent te = (TapEvent)ge;
 				switch(te.getTapID()){
 				case TapEvent.TAPPED:
-					XStream xstream = new XStream();
 					
-					MODELSCENCE = new ModelScence();
-					MODELSCENCE.setId(1);
-					ModelMtObjects blabla = new ModelMtObjects();
+					XStream xstreamSave = new XStream();
+					
+					ExampleXML  tralara = new ExampleXML();
+					tralara.getObject();
+					
 					
 					try {
-						xstream.toXML(MODELSCENCE,new FileOutputStream("xstream.xml"));
+						xstreamSave.toXML(tralara,new FileOutputStream("xstream1.xml"));
 					} catch (FileNotFoundException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					
-					/*
-					ObjectFactory objFactory = new ObjectFactory();
-					PurchaseOrder purchaseOrder = 
-						   (PurchaseOrder) objFactory.createPurchaseOrder();
-					Customer customer = objFactory.createCustomer();
-					*/
-					/**
-					 * Zusammenbauen der Objekte
-					 */
 					
-					/*
-					for (Int i = 0; i <= 3; i++) {
-						for (Int y = 0; y <= myobjectList.get(i).getChildCount(); y++) {
-							System.out.println(myobjectList.get(i).getChildByIndex(y).getName());
-							for (Int z = 0; z == myobjectList.get(i).getChildByIndex(y).getChildCount(); z++) {
-								System.out.println(myobjectList.get(i).getChildByIndex(y).getChildByIndex(z).getName());
-							}
-						}
-						
-					}*/
-					/*
-					 * To:Do Prüfung ob es die Childs für das Objekt gibt.
-					 */
-					/*
-					if (!myobjectList.isEmpty()) {
-					System.out.println(myobjectList.get(0).getChildByIndex(0).getChildByIndex(1).getUserData("FieldValue"));
-					customer.setName((myobjectList.get(0).getChildByIndex(0).getChildByIndex(1).getUserData("FieldValue")).toString());
-					purchaseOrder.setCustomer(customer);
-					*/
-					/**
-					 * Speichern des XML Fiels
-					 * 
-					 */
-					/*
-					try {
-						if (!purchaseOrder.equals(null)) {
-						
-						JAXBContext jaxbContext = JAXBContext.newInstance("ch.mitoco.store.generated");
-						
-						Marshaller marshaller = jaxbContext.createMarshaller();
-						marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,
-								   new Boolean(true));
-						marshaller.marshal(purchaseOrder,
-								   new FileOutputStream("AttributTemplates1.xml"));
-						}
-						
-					} catch (JAXBException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (FileNotFoundException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					}*/
 					break;
 				
 				default:
@@ -260,42 +217,24 @@ public class HelloWorldScene extends AbstractScene {
 			
 			@Override
 			public boolean processGestureEvent(final MTGestureEvent ge) {
+				
 				// TODO Auto-generated method stub
 				TapEvent te = (TapEvent) ge;
 				switch(te.getTapID()) {
 				case TapEvent.TAPPED:
-					/*
+					
+					XStream xstream = new XStream();
 					try {
-						JAXBContext jc = JAXBContext.newInstance( "ch.mitoco.store.generated" );
-						Unmarshaller u = jc.createUnmarshaller();
-						for( int i=0; i<1; i++ ){
-							PurchaseOrder at = (PurchaseOrder)u.unmarshal(new File("AttributTemplates1.xml"));
-						           	        System.out.println( "Attribut: " );
-					        
-					        //display the shipping address
-						    //int Attributs = at.getID();
-						     //      	     Attributs Attributs = at.getName();
-						    //System.out.println(Attributs);
-					        
-						    readcustomer = at.getCustomer();
-						    
-						    
-				            display( readcustomer );
-				            
-						    System.out.println(at);
-						    //display( Attributs );
-					        
-					        //display the items
-					        //List <LineItem> items = po.getLineItem();
-					        //displayItems( items );
-					        //displayTotal( items );
-						} 
+						test1 = (ModelScence) xstream.fromXML(new FileInputStream("xstream.xml"));
+					} catch (FileNotFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
-						catch (JAXBException je) {
-					        je.printStackTrace();
-					    }*/
-					//readxml.readfile("AttributTemplates1.xml");
-					//readxml.getObject(1);
+					
+					//MODELSCENCE.getMtobjects().get(1).getObjectattributs().get(1).getId();
+					//xstream.alias("ch.mitoco.model.ModelScence", test1.getClass());
+					System.out.println(test1.getMtobjects().get(0).getObjectattributs().get(0).getLable());
+										
 					break;
 				
 				default:

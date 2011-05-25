@@ -3,6 +3,42 @@
   <mtobjects>
     <ch.mitoco.model.ModelMtObjects>
       <id>1</id>
+      <objectcolor>
+        <name>undefined</name>
+        <r>12.0</r>
+        <g>12.0</g>
+        <b>12.0</b>
+        <alpha>34.0</alpha>
+        <writeProtected>false</writeProtected>
+      </objectcolor>
+      <objectattributs>
+        <ch.mitoco.model.ModelMtAttributs>
+          <id>2</id>
+          <attributcontent>
+            <ch.mitoco.model.ModelAttributContent>
+              <type>String</type>
+              <value>Stefan</value>
+            </ch.mitoco.model.ModelAttributContent>
+          </attributcontent>
+          <attcolor reference="../../../objectcolor"/>
+          <Lable>Name</Lable>
+          <minMax>false</minMax>
+          <textlenght>0</textlenght>
+        </ch.mitoco.model.ModelMtAttributs>
+      </objectattributs>
+      <objectposition>
+        <x>100.0</x>
+        <y>200.0</y>
+        <z>0.0</z>
+        <w>1.0</w>
+      </objectposition>
+    </ch.mitoco.model.ModelMtObjects>
+    <ch.mitoco.model.ModelMtObjects>
+      <id>2</id>
+      <objectattributs/>
+    </ch.mitoco.model.ModelMtObjects>
+    <ch.mitoco.model.ModelMtObjects>
+      <id>3</id>
       <objectattributs/>
     </ch.mitoco.model.ModelMtObjects>
   </mtobjects>

@@ -1,6 +1,17 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<purchase-order xmlns="http://ch/mitoco/store/generated">
-    <customer>
-        <name>456783</name>
-    </customer>
-</purchase-order>
+<ch.mitoco.model.ModelScence>
+  <id>1</id>
+  <mtobjects>
+    <ch.mitoco.model.ModelMtObjects>
+      <id>1</id>
+      <objectattributs/>
+    </ch.mitoco.model.ModelMtObjects>
+    <ch.mitoco.model.ModelMtObjects>
+      <id>2</id>
+      <objectattributs/>
+    </ch.mitoco.model.ModelMtObjects>
+    <ch.mitoco.model.ModelMtObjects>
+      <id>3</id>
+      <objectattributs/>
+    </ch.mitoco.model.ModelMtObjects>
+  </mtobjects>
+</ch.mitoco.model.ModelScence>
