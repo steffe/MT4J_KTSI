@@ -26,24 +26,37 @@ public class ExampleXML {
 		
 		MTColor greypez = new MTColor(12, 12, 12, 34);
 		objects1.setObjectcolor(greypez);
+		objects2.setObjectcolor(greypez);
 			
 		//objects1.setObjectfont(new IFont());
 		objects1.setObjectposition(new Vector3D(100, 200));
+		objects1.setObjectposition(new Vector3D(200, 200));
 		
 		ModelMtAttributs mtattr1 = new ModelMtAttributs();
+		ModelMtAttributs mtattr2 = new ModelMtAttributs();
 		mtattr1.setAttcolor(greypez);
 		mtattr1.setId(2);
 		mtattr1.setLable("Name");
+		
+		mtattr2.setAttcolor(greypez);
+		mtattr2.setId(2);
+		mtattr2.setLable("Name");
 		
 		ModelAttributContent attrbc1 = new ModelAttributContent();
 		attrbc1.setType("String");
 		attrbc1.setValue("Stefan");
 		mtattr1.getAttributcontent().add(attrbc1);
 		
-		ModelAttributContent attrb2 = new ModelAttributContent();
+		ModelAttributContent attrbc2 = new ModelAttributContent();
+		attrbc2.setType("String");
+		attrbc2.setValue("Roman");
+		mtattr2.getAttributcontent().add(attrbc2);
+		
 		ModelAttributContent attrb3 = new ModelAttributContent();
 		
 		objects1.getObjectattributs().add(mtattr1);
+		objects2.getObjectattributs().add(mtattr2);
+		
 		MODELSCENCE.getMtobjects().add(objects1);
 		MODELSCENCE.getMtobjects().add(objects2);
 		MODELSCENCE.getMtobjects().add(objects3);

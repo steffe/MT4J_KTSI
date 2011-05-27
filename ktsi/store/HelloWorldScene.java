@@ -2,10 +2,10 @@ package store;
 
 
 
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.mt4j.MTApplication;
@@ -20,7 +20,7 @@ import org.mt4j.util.MTColor;
 import org.mt4j.util.math.Vector3D;
 
 import processing.core.PImage;
-import ch.mitoco.components.visibleComponents.MyMTObject;
+import ch.mitoco.model.ModelMtObjects;
 import ch.mitoco.model.ModelScence;
 import ch.mitoco.store.generated.Customer;
 
@@ -52,10 +52,17 @@ public class HelloWorldScene extends AbstractScene {
 	/** Object Counter and Object ID. */
 	private int counter;
 	
+	/** **/
+	private ModelMtObjects datamodel;
+	
+	/** */
+	private List<Integer> tempAttributs;
+	
 	/** XML Customer. */
 	public Customer readcustomer;
 	public static ModelScence MODELSCENCE;
 	public ModelScence test1;
+	public loadXML LoadXML;
 	
 	
 	/** 
@@ -76,6 +83,11 @@ public class HelloWorldScene extends AbstractScene {
 		counter = 0;
 		myobjectList = new ArrayList<MyMTObject>();
 		
+		// Temp DataModel
+		tempAttributs = new ArrayList<Integer>();
+		tempAttributs.add(1);
+		tempAttributs.add(0);
+		tempAttributs.add(2);		
 		
 		//FileStream für xStream
 		//ModelScence test1 = new ModelScence();
@@ -100,8 +112,13 @@ public class HelloWorldScene extends AbstractScene {
 				case TapEvent.TAPPED:
 					//MyMTObject t1 = new MyMTObject(mtApplication,1);
 					//getCanvas().addChild(t1.getMyObjectBack());
-					myobjectList.add(new MyMTObject(mtApplication, test1.getMtobjects().get(counter), counter));				
-					
+					if(!LoadXML.DataModel.getMtobjects().isEmpty()){
+						myobjectList.add(new MyMTObject(mtApplication, LoadXML.DataModel.getMtobjects().get(counter), counter));				
+					}
+					else
+					{
+						myobjectList.add(new MyMTObject(mtApplication, LoadXML.DataModel.getMtobjects().get(0), counter));
+					}
 					getCanvas().addChild(myobjectList.get(counter));	
 					
 					//getCanvas().addChild(myobjectList.get(counter).getMyObjectBack());	
@@ -179,12 +196,17 @@ public class HelloWorldScene extends AbstractScene {
 					
 					XStream xstreamSave = new XStream();
 					
-					ExampleXML  tralara = new ExampleXML();
-					tralara.getObject();
+					//ExampleXML  tralara = new ExampleXML();
+					//tralara.getObject();
+					System.out.println(myobjectList.get(0).model.getObjectattributs().get(0).getAttributcontent().get(0).getValue());
+					//MODELSCENCE = new ModelScence();
+					//MODELSCENCE.setId(2);
+					//MODELSCENCE.getMtobjects().add(myobjectList.get(0).model);
 					
+						
 					
 					try {
-						xstreamSave.toXML(tralara,new FileOutputStream("xstream1.xml"));
+						xstreamSave.toXML(MODELSCENCE,new FileOutputStream("xstream3.xml"));
 					} catch (FileNotFoundException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -222,18 +244,22 @@ public class HelloWorldScene extends AbstractScene {
 				TapEvent te = (TapEvent) ge;
 				switch(te.getTapID()) {
 				case TapEvent.TAPPED:
-					
-					XStream xstream = new XStream();
+					LoadXML = new loadXML(mtAppl, "xstream.xml");
+					for (Iterator<MyMTObject> it = LoadXML.xmlmyobjectlist.iterator(); it.hasNext();) {
+					getCanvas().addChild(LoadXML.xmlmyobjectlist.get(it.next().getID()));	
+					}
+					//getCanvas().addChild(LoadXML.xmlmyobjectlist.get(1));
+					/*XStream xstream = new XStream();
 					try {
 						test1 = (ModelScence) xstream.fromXML(new FileInputStream("xstream.xml"));
 					} catch (FileNotFoundException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					
+					*/
 					//MODELSCENCE.getMtobjects().get(1).getObjectattributs().get(1).getId();
 					//xstream.alias("ch.mitoco.model.ModelScence", test1.getClass());
-					System.out.println(test1.getMtobjects().get(0).getObjectattributs().get(0).getLable());
+					//System.out.println(test1.getMtobjects().get(0).getObjectattributs().get(0).getLable());
 										
 					break;
 				

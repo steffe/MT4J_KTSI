@@ -5,65 +5,178 @@ import java.util.List;
 
 import org.mt4j.util.MTColor;
 
+/**
+ * 
+ * @author steffe
+ *
+ */
 public class ModelMtAttributs {
+	/**
+	 * 
+	 */
 	private int id;
+	/**
+	 * 
+	 */
 	private List<ModelAttributContent> attributcontent;
+	//attributdefinition
+	/**
+	 * 
+	 */
 	private MTColor attcolor;
+	/**
+	 * 
+	 */
 	private String Lable;
+	/**
+	 * 
+	 */
 	private boolean minMax;
+	/**
+	 * 
+	 */
 	private int textlenght;
+	/**
+	 * 
+	 */
+	private boolean direction;
+	/**
+	 * 
+	 */
+	private int zoom;
 	
-	public ModelMtAttributs(){
+	/**ModelMtAttributs Konstruktor.
+	 * Set the ArrayList for AttributContent and AttributDefinition
+	 */
+	public ModelMtAttributs() {
 		
 		attributcontent = new ArrayList<ModelAttributContent>();
 	}
-
-	public int getId() {
+	/**Returns the Numeric Identification of this Attribute.
+	 *  
+	 * @return int id
+	 */
+	public final int getId() {
 		return id;
 	}
-
-	public void setId(int id) {
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public final void setId(final int id) {
 		this.id = id;
 	}
-
-	public List<ModelAttributContent> getAttributcontent() {
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public final List<ModelAttributContent> getAttributcontent() {
 		return attributcontent;
 	}
-
-	public void setAttributcontent(List<ModelAttributContent> attributcontent) {
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public final void setAttributcontent(final List<ModelAttributContent> attributcontent) {
 		this.attributcontent = attributcontent;
 	}
-
-	public MTColor getAttcolor() {
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public final MTColor getAttcolor() {
 		return attcolor;
 	}
-
-	public void setAttcolor(MTColor attcolor) {
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public final void setAttcolor(final MTColor attcolor) {
 		this.attcolor = attcolor;
 	}
-
-	public String getLable() {
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public final String getLable() {
 		return Lable;
 	}
-
-	public void setLable(String lable) {
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public final void setLable(final String lable) {
 		Lable = lable;
 	}
 
-	public boolean isMinMax() {
+	/**
+	 * 
+	 * @return
+	 */
+	public final boolean isMinMax() {
 		return minMax;
 	}
-
-	public void setMinMax(boolean minMax) {
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public final void setMinMax(final boolean minMax) {
 		this.minMax = minMax;
 	}
-
-	public void setTextlenght(int textlenght) {
+	
+	/**
+	 * 
+	 * 
+	 */
+	public final void setTextlenght(final int textlenght) {
 		this.textlenght = textlenght;
 	}
-
-	public int getTextlenght() {
+	/**
+	 * 
+	 * @return
+	 */
+	public final int getTextlenght() {
 		return textlenght;
+	}
+
+	/**
+	 * 
+	 * @param direction
+	 */
+	public final void setDirection(final boolean direction) {
+		this.direction = direction;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public final boolean isDirection() {
+		return direction;
+	}
+	
+	/**
+	 * 
+	 * @param zoom
+	 */
+	public final void setZoom(final int zoom) {
+		this.zoom = zoom;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public final int getZoom() {
+		return zoom;
 	}
 
 }
