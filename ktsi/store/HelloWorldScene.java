@@ -2,8 +2,6 @@ package store;
 
 
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -62,7 +60,7 @@ public class HelloWorldScene extends AbstractScene {
 	public Customer readcustomer;
 	public static ModelScence MODELSCENCE;
 	public ModelScence test1;
-	public loadXML LoadXML;
+	public LoadXML LoadXML;
 	
 	
 	/** 
@@ -82,17 +80,7 @@ public class HelloWorldScene extends AbstractScene {
 		
 		counter = 0;
 		myobjectList = new ArrayList<MyMTObject>();
-		
-		// Temp DataModel
-		tempAttributs = new ArrayList<Integer>();
-		tempAttributs.add(1);
-		tempAttributs.add(0);
-		tempAttributs.add(2);		
-		
-		//FileStream für xStream
-		//ModelScence test1 = new ModelScence();
-		
-		
+			
 		
 		//New Object
 		PImage buttonNewImage = mtApplication.loadImage("ch" + MTApplication.separator + "mitoco" + MTApplication.separator + "data" + MTApplication.separator +  "buttonNew.png");
@@ -112,19 +100,18 @@ public class HelloWorldScene extends AbstractScene {
 				case TapEvent.TAPPED:
 					//MyMTObject t1 = new MyMTObject(mtApplication,1);
 					//getCanvas().addChild(t1.getMyObjectBack());
-					if(!LoadXML.DataModel.getMtobjects().isEmpty()){
-						myobjectList.add(new MyMTObject(mtApplication, LoadXML.DataModel.getMtobjects().get(counter), counter));				
-					}
-					else
-					{
-						myobjectList.add(new MyMTObject(mtApplication, LoadXML.DataModel.getMtobjects().get(0), counter));
-					}
+						System.out.println("Datenmodel leer");
+						ModelMtObjects objects1 = new ModelMtObjects();
+						ModelScence test1 = new ModelScence();
+						test1.getMtobjects().add(objects1);
+						myobjectList.add(new MyMTObject(mtApplication, test1.getMtobjects().get(0), counter));
+					
+					
 					getCanvas().addChild(myobjectList.get(counter));	
 					
 					//getCanvas().addChild(myobjectList.get(counter).getMyObjectBack());	
-					System.out.println("Zähler vor Add: " + counter);
 					counter++;
-					System.out.println("Zähler nach Add: " + counter);
+					
 					break;
 				
 				default:
@@ -163,7 +150,6 @@ public class HelloWorldScene extends AbstractScene {
 					//getCanvas().removeChild(myobjectList.get(counter-1).getMyObjectBack()); // Entfernen des Objekts auf dem Canvas
 					myobjectList.remove(counter - 1); // Remove Object from arryeList
 					
-					System.out.println("Zähler rem vor: " + counter);
 					counter--;
 					} else {
 					System.out.println("Kein Objeckt zum enfernen vorhanden " + counter);	
@@ -198,20 +184,22 @@ public class HelloWorldScene extends AbstractScene {
 					
 					//ExampleXML  tralara = new ExampleXML();
 					//tralara.getObject();
-					System.out.println(myobjectList.get(0).model.getObjectattributs().get(0).getAttributcontent().get(0).getValue());
+					//System.out.println(myobjectList.get(0).model.getObjectattributs().get(0).getAttributcontent().get(0).getValue());
 					//MODELSCENCE = new ModelScence();
 					//MODELSCENCE.setId(2);
 					//MODELSCENCE.getMtobjects().add(myobjectList.get(0).model);
-					
-						
-					
+					for (Iterator<MyMTObject> it = myobjectList.iterator(); it.hasNext();) {
+						MODELSCENCE.getMtobjects().add(it.next().model);
+					}
+					SaveXML save = new SaveXML("Test1.xml", MODELSCENCE);			
+					/*
 					try {
 						xstreamSave.toXML(MODELSCENCE,new FileOutputStream("xstream3.xml"));
 					} catch (FileNotFoundException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					
+					*/
 					
 					break;
 				
@@ -244,9 +232,9 @@ public class HelloWorldScene extends AbstractScene {
 				TapEvent te = (TapEvent) ge;
 				switch(te.getTapID()) {
 				case TapEvent.TAPPED:
-					LoadXML = new loadXML(mtAppl, "xstream.xml");
+					LoadXML = new LoadXML(mtAppl, "xstream.xml");
 					for (Iterator<MyMTObject> it = LoadXML.xmlmyobjectlist.iterator(); it.hasNext();) {
-					getCanvas().addChild(LoadXML.xmlmyobjectlist.get(it.next().getID()));	
+						getCanvas().addChild(LoadXML.xmlmyobjectlist.get(it.next().getID()));	
 					}
 					//getCanvas().addChild(LoadXML.xmlmyobjectlist.get(1));
 					/*XStream xstream = new XStream();
@@ -287,12 +275,4 @@ public class HelloWorldScene extends AbstractScene {
 		
 		
 	}
-	/**Soll mit einem .
-	 * display Methode
-	 * @param atr Customer
-	 */
-	public static void display(final Customer atr) {
-	    System.out.println("\t" + atr.getName());
-	    System.out.println("\t" + atr.getAddress() + "\n"); 
-		}
 }

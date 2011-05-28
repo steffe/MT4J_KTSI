@@ -9,10 +9,20 @@ import ch.mitoco.model.ModelMtObjects;
 import ch.mitoco.model.ModelScence;
 
 
-
+/**This Class will generate a ExampleXML File, serialized by xstream.
+ * 
+ * @author steffe
+ *
+ */
 public class ExampleXML {
+	/**a static Object of the Datamodel.
+	 * 
+	 */
 	public static ModelScence MODELSCENCE;
 	
+	/**Generation of the Datamodel for xml seralization.
+	 * 
+	 */
 	public ExampleXML() {
 		
 		MODELSCENCE = new ModelScence();
@@ -61,6 +71,10 @@ public class ExampleXML {
 		MODELSCENCE.getMtobjects().add(objects2);
 		MODELSCENCE.getMtobjects().add(objects3);
 	}
+	/** Getter Method to return the DataModel.
+	 * 
+	 * @return MODELSCENCE
+	 */
 	public final ModelScence getObject() {
 		
 		
