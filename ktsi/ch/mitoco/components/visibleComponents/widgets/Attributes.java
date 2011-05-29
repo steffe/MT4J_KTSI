@@ -1,7 +1,18 @@
 package ch.mitoco.components.visibleComponents.widgets;
 
 import org.mt4j.AbstractMTApplication;
+import org.mt4j.MTApplication;
 import org.mt4j.components.visibleComponents.shapes.MTRoundRectangle;
+import org.mt4j.components.visibleComponents.widgets.MTColorPicker;
+import org.mt4j.components.visibleComponents.widgets.buttons.MTImageButton;
+import org.mt4j.input.inputProcessors.IGestureEventListener;
+import org.mt4j.input.inputProcessors.MTGestureEvent;
+import org.mt4j.input.inputProcessors.componentProcessors.dragProcessor.DragProcessor;
+import org.mt4j.input.inputProcessors.componentProcessors.tapProcessor.TapEvent;
+import org.mt4j.input.inputProcessors.componentProcessors.tapProcessor.TapProcessor;
+import org.mt4j.util.math.Vector3D;
+
+import processing.core.PImage;
 
 /**
  * Abstract Attribut.
@@ -27,4 +38,6 @@ public abstract class Attributes extends MTRoundRectangle {
 	public void setMin() {
 		
 	}
+	
+	
 }
