@@ -13,7 +13,7 @@
       </objectcolor>
       <objectattributs>
         <ch.mitoco.model.ModelMtAttributs>
-          <id>2</id>
+          <id>0</id>
           <attributcontent>
             <ch.mitoco.model.ModelAttributContent>
               <type>String</type>

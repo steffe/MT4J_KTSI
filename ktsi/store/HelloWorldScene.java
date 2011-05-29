@@ -21,8 +21,6 @@ import processing.core.PImage;
 import ch.mitoco.model.ModelScence;
 import ch.mitoco.store.generated.Customer;
 
-import com.thoughtworks.xstream.XStream;
-
 
 /** Hello Word Scene. */
 
@@ -103,7 +101,17 @@ public class HelloWorldScene extends AbstractScene {
 				TapEvent te = (TapEvent) ge;
 				switch(te.getTapID()) {
 				case TapEvent.TAPPED:
+					/*
+					dataController.saveObjectXML();
+					dataController.loadObjectXML();
+					dataController.getObjectetyps();
+					
+					for (Iterator<ModelMtObjects> it = dataController.getObjectetyps().getObjecttyp().iterator(); it.hasNext();) {
+						System.out.println(it.next().getObjecttyp());
+					}
+					*/
 					dataController.createObject();
+					
 					getCanvas().addChild(dataController.getMyobjectList().get(counter));	
 					
 					//getCanvas().addChild(myobjectList.get(counter).getMyObjectBack());	
@@ -140,14 +148,9 @@ public class HelloWorldScene extends AbstractScene {
 				switch(te.getTapID()) {
 				case TapEvent.TAPPED:
 					if (counter != 0) {
-						
 						getCanvas().removeChild(myobjectList.get(counter - 1)); // Entfernen des Objekts auf dem Canvas
-						
-						
-					//getCanvas().removeChild(myobjectList.get(counter-1).getMyObjectBack()); // Entfernen des Objekts auf dem Canvas
-					myobjectList.remove(counter - 1); // Remove Object from arryeList
-					
-					counter--;
+						myobjectList.remove(counter - 1); // Remove Object from arryeList
+						counter--;
 					} else {
 					System.out.println("Kein Objeckt zum enfernen vorhanden " + counter);	
 					}
@@ -176,28 +179,7 @@ public class HelloWorldScene extends AbstractScene {
 				TapEvent te = (TapEvent)ge;
 				switch(te.getTapID()){
 				case TapEvent.TAPPED:
-					
-					XStream xstreamSave = new XStream();
-					
-					//ExampleXML  tralara = new ExampleXML();
-					//tralara.getObject();
-					//System.out.println(myobjectList.get(0).model.getObjectattributs().get(0).getAttributcontent().get(0).getValue());
-					//MODELSCENCE = new ModelScence();
-					//MODELSCENCE.setId(2);
-					//MODELSCENCE.getMtobjects().add(myobjectList.get(0).model);
-					for (Iterator<MyMTObject> it = dataController.getMyobjectList().iterator(); it.hasNext();) {
-						MODELSCENCE.getMtobjects().add(it.next().model);
-					}
-					SaveXML save = new SaveXML("Test1.xml", MODELSCENCE);			
-					/*
-					try {
-						xstreamSave.toXML(MODELSCENCE,new FileOutputStream("xstream3.xml"));
-					} catch (FileNotFoundException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					*/
-					
+					dataController.saveSceneXML();
 					break;
 				
 				default:
@@ -206,7 +188,6 @@ public class HelloWorldScene extends AbstractScene {
 			return false;
 			}
 		});
-		
 		
 		/**
 		 * Load Button Befehle
@@ -229,36 +210,18 @@ public class HelloWorldScene extends AbstractScene {
 				TapEvent te = (TapEvent) ge;
 				switch(te.getTapID()) {
 				case TapEvent.TAPPED:
-					//LoadXML = new LoadXML(mtAppl, "xstream.xml");
-					
 					if (!dataController.loadSceneXML()) {
-						
 						for (Iterator<MyMTObject> it = dataController.getMyobjectList().iterator(); it.hasNext();) {
 							getCanvas().removeChild(dataController.getMyobjectList().get(it.next().getID()));	
 						}
 						dataController.clearScene();
-						
 					}
 					else {
 						for (Iterator<MyMTObject> it = dataController.getMyobjectList().iterator(); it.hasNext();) {
 							getCanvas().addChild(dataController.getMyobjectList().get(it.next().getID()));	
 						}
+						counter = dataController.getObjectcounter();
 					}
-					
-					
-					//getCanvas().addChild(LoadXML.xmlmyobjectlist.get(1));
-					/*XStream xstream = new XStream();
-					try {
-						test1 = (ModelScence) xstream.fromXML(new FileInputStream("xstream.xml"));
-					} catch (FileNotFoundException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					*/
-					//MODELSCENCE.getMtobjects().get(1).getObjectattributs().get(1).getId();
-					//xstream.alias("ch.mitoco.model.ModelScence", test1.getClass());
-					//System.out.println(test1.getMtobjects().get(0).getObjectattributs().get(0).getLable());
-										
 					break;
 				
 				default:

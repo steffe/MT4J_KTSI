@@ -25,7 +25,7 @@ public class LoadXML {
 	 * 
 	 */
 	private ModelScence dataModel;
-	
+		
 	/**
 	 * 
 	 */
@@ -79,12 +79,12 @@ public class LoadXML {
 			e.printStackTrace();
 		}
 	}
+	
 	public ModelScence getDataModel() {
 		return dataModel;
 	}
 	public void setDataModel(ModelScence dataModel) {
 		this.dataModel = dataModel;
 	}
-	
 
 }
