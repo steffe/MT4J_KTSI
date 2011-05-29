@@ -19,7 +19,12 @@ public class ModelMtAttributs {
 	 * 
 	 */
 	private List<ModelAttributContent> attributcontent;
-	//attributdefinition
+	
+	/**
+	 * 
+	 */
+	private List<ModelAttributDefinition> attributdefinition;
+	
 	/**
 	 * 
 	 */
@@ -35,10 +40,7 @@ public class ModelMtAttributs {
 	/**
 	 * 
 	 */
-	private int textlenght;
-	/**
-	 * 
-	 */
+	
 	private boolean direction;
 	/**
 	 * 
@@ -51,6 +53,7 @@ public class ModelMtAttributs {
 	public ModelMtAttributs() {
 		
 		attributcontent = new ArrayList<ModelAttributContent>();
+		attributdefinition = new ArrayList<ModelAttributDefinition>();
 	}
 	/**Returns the Numeric Identification of this Attribute.
 	 *  
@@ -132,21 +135,6 @@ public class ModelMtAttributs {
 		this.minMax = minMax;
 	}
 	
-	/**
-	 * 
-	 * 
-	 */
-	public final void setTextlenght(final int textlenght) {
-		this.textlenght = textlenght;
-	}
-	/**
-	 * 
-	 * @return
-	 */
-	public final int getTextlenght() {
-		return textlenght;
-	}
-
 	/**
 	 * 
 	 * @param direction

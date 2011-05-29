@@ -18,7 +18,6 @@ import org.mt4j.util.MTColor;
 import org.mt4j.util.math.Vector3D;
 
 import processing.core.PImage;
-import ch.mitoco.model.ModelMtObjects;
 import ch.mitoco.model.ModelScence;
 import ch.mitoco.store.generated.Customer;
 
@@ -51,11 +50,11 @@ public class HelloWorldScene extends AbstractScene {
 	private int counter;
 	
 	/** **/
-	private ModelMtObjects datamodel;
+	public ModelScence dataModel;
 	
-	/** */
-	private List<Integer> tempAttributs;
+	private DataController dataController;
 	
+
 	/** XML Customer. */
 	public Customer readcustomer;
 	public static ModelScence MODELSCENCE;
@@ -74,6 +73,12 @@ public class HelloWorldScene extends AbstractScene {
 		
 		this.mtApplication = mtAppl;
 		this.setClearColor(new MTColor(100, 100, 100, 255));
+		
+		
+		dataController = new DataController(mtAppl);
+		dataController.createDataModel("Scenename");
+		dataController.createObjectList();
+		
 		
 		//Show touches
 		this.registerGlobalInputProcessor(new CursorTracer(mtApplication, this));
@@ -98,16 +103,8 @@ public class HelloWorldScene extends AbstractScene {
 				TapEvent te = (TapEvent) ge;
 				switch(te.getTapID()) {
 				case TapEvent.TAPPED:
-					//MyMTObject t1 = new MyMTObject(mtApplication,1);
-					//getCanvas().addChild(t1.getMyObjectBack());
-						System.out.println("Datenmodel leer");
-						ModelMtObjects objects1 = new ModelMtObjects();
-						ModelScence test1 = new ModelScence();
-						test1.getMtobjects().add(objects1);
-						myobjectList.add(new MyMTObject(mtApplication, test1.getMtobjects().get(0), counter));
-					
-					
-					getCanvas().addChild(myobjectList.get(counter));	
+					dataController.createObject();
+					getCanvas().addChild(dataController.getMyobjectList().get(counter));	
 					
 					//getCanvas().addChild(myobjectList.get(counter).getMyObjectBack());	
 					counter++;
@@ -143,7 +140,7 @@ public class HelloWorldScene extends AbstractScene {
 				switch(te.getTapID()) {
 				case TapEvent.TAPPED:
 					if (counter != 0) {
-					
+						
 						getCanvas().removeChild(myobjectList.get(counter - 1)); // Entfernen des Objekts auf dem Canvas
 						
 						
@@ -188,7 +185,7 @@ public class HelloWorldScene extends AbstractScene {
 					//MODELSCENCE = new ModelScence();
 					//MODELSCENCE.setId(2);
 					//MODELSCENCE.getMtobjects().add(myobjectList.get(0).model);
-					for (Iterator<MyMTObject> it = myobjectList.iterator(); it.hasNext();) {
+					for (Iterator<MyMTObject> it = dataController.getMyobjectList().iterator(); it.hasNext();) {
 						MODELSCENCE.getMtobjects().add(it.next().model);
 					}
 					SaveXML save = new SaveXML("Test1.xml", MODELSCENCE);			
@@ -232,10 +229,23 @@ public class HelloWorldScene extends AbstractScene {
 				TapEvent te = (TapEvent) ge;
 				switch(te.getTapID()) {
 				case TapEvent.TAPPED:
-					LoadXML = new LoadXML(mtAppl, "xstream.xml");
-					for (Iterator<MyMTObject> it = LoadXML.xmlmyobjectlist.iterator(); it.hasNext();) {
-						getCanvas().addChild(LoadXML.xmlmyobjectlist.get(it.next().getID()));	
+					//LoadXML = new LoadXML(mtAppl, "xstream.xml");
+					
+					if (!dataController.loadSceneXML()) {
+						
+						for (Iterator<MyMTObject> it = dataController.getMyobjectList().iterator(); it.hasNext();) {
+							getCanvas().removeChild(dataController.getMyobjectList().get(it.next().getID()));	
+						}
+						dataController.clearScene();
+						
 					}
+					else {
+						for (Iterator<MyMTObject> it = dataController.getMyobjectList().iterator(); it.hasNext();) {
+							getCanvas().addChild(dataController.getMyobjectList().get(it.next().getID()));	
+						}
+					}
+					
+					
 					//getCanvas().addChild(LoadXML.xmlmyobjectlist.get(1));
 					/*XStream xstream = new XStream();
 					try {

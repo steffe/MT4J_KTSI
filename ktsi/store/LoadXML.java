@@ -24,7 +24,7 @@ public class LoadXML {
 	/**
 	 * 
 	 */
-	public ModelScence DataModel;
+	private ModelScence dataModel;
 	
 	/**
 	 * 
@@ -52,14 +52,14 @@ public class LoadXML {
 		this.mtApplication = mtAppl;
 		XStream xstream = new XStream();
 		try {
-			DataModel = (ModelScence) xstream.fromXML(new FileInputStream(filename));
+			dataModel = (ModelScence) xstream.fromXML(new FileInputStream(filename));
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		int counter = 0;
 		xmlmyobjectlist = new ArrayList<MyMTObject>();
-		for (Iterator<ModelMtObjects> it = DataModel.getMtobjects().iterator(); it.hasNext();) {
+		for (Iterator<ModelMtObjects> it = dataModel.getMtobjects().iterator(); it.hasNext();) {
 			xmlmyobjectlist.add(new MyMTObject(mtApplication, it.next(), counter));
 			System.out.println("Object Gen:" + counter);
 			counter++;
@@ -73,11 +73,18 @@ public class LoadXML {
 	public LoadXML(final String filename) {
 		XStream xstream = new XStream();
 		try {
-			DataModel = (ModelScence) xstream.fromXML(new FileInputStream(filename));
+			dataModel = (ModelScence) xstream.fromXML(new FileInputStream(filename));
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
+	public ModelScence getDataModel() {
+		return dataModel;
+	}
+	public void setDataModel(ModelScence dataModel) {
+		this.dataModel = dataModel;
+	}
+	
 
 }

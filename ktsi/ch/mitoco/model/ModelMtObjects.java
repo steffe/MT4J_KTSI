@@ -10,9 +10,13 @@ import org.mt4j.util.math.Vector3D;
 public class ModelMtObjects {
 	private long id;
 	private MTColor objectcolor;
+	private MTColor objectlinecolor;
+	private MTColor objectFillcolor;
 	private IFont objectfont;
+	private IFont labelfont;
 	private List<ModelMtAttributs> objectattributs;
 	private Vector3D objectposition;
+	
 	
 	
 	public ModelMtObjects(){
@@ -50,6 +54,22 @@ public class ModelMtObjects {
 	}
 
 
+	/**
+	 * @param labelfont the labelfont to set
+	 */
+	public void setLabelfont(IFont labelfont) {
+		this.labelfont = labelfont;
+	}
+
+
+	/**
+	 * @return the labelfont
+	 */
+	public IFont getLabelfont() {
+		return labelfont;
+	}
+
+
 	public List<ModelMtAttributs> getObjectattributs() {
 		return objectattributs;
 	}
@@ -67,6 +87,38 @@ public class ModelMtObjects {
 
 	public Vector3D getObjectposition() {
 		return objectposition;
+	}
+
+
+	/**
+	 * @param objectlinecolor the objectlinecolor to set
+	 */
+	public void setObjectlinecolor(MTColor objectlinecolor) {
+		this.objectlinecolor = objectlinecolor;
+	}
+
+
+	/**
+	 * @return the objectlinecolor
+	 */
+	public MTColor getObjectlinecolor() {
+		return objectlinecolor;
+	}
+
+
+	/**
+	 * @param objectFillcolor the objectFillcolor to set
+	 */
+	public void setObjectFillcolor(MTColor objectFillcolor) {
+		this.objectFillcolor = objectFillcolor;
+	}
+
+
+	/**
+	 * @return the objectFillcolor
+	 */
+	public MTColor getObjectFillcolor() {
+		return objectFillcolor;
 	}
 
 }
