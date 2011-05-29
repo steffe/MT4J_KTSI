@@ -1,18 +1,19 @@
 /**
- * Doc for Package.
+ * Doc for Package ch.mitoco.components.visibleComponents.widgets;.
  */
 package ch.mitoco.components.visibleComponents.widgets;
 
 
+
 import org.mt4j.AbstractMTApplication;
+import org.mt4j.MTApplication;
 import org.mt4j.components.StateChange;
 import org.mt4j.components.StateChangeEvent;
 import org.mt4j.components.StateChangeListener;
 import org.mt4j.components.TransformSpace;
-import org.mt4j.components.visibleComponents.shapes.MTRectangle.PositionAnchor;
-import org.mt4j.components.visibleComponents.shapes.MTRoundRectangle;
+import org.mt4j.components.visibleComponents.widgets.MTColorPicker;
 import org.mt4j.components.visibleComponents.widgets.MTTextArea;
-import org.mt4j.components.visibleComponents.widgets.MTTextArea.ExpandDirection;
+import org.mt4j.components.visibleComponents.widgets.buttons.MTImageButton;
 import org.mt4j.components.visibleComponents.widgets.keyboard.MTTextKeyboard;
 import org.mt4j.input.inputProcessors.IGestureEventListener;
 import org.mt4j.input.inputProcessors.MTGestureEvent;
@@ -25,7 +26,10 @@ import org.mt4j.util.MTColor;
 import org.mt4j.util.font.IFont;
 import org.mt4j.util.math.Vector3D;
 
-import com.sun.xml.internal.ws.api.model.wsdl.WSDLBoundOperation.ANONYMOUS;
+import processing.core.PImage;
+
+import ch.mitoco.model.ModelAttributContent;
+import ch.mitoco.model.ModelMtAttributs;
 
 /**
  * MTNumField. Modified MTTextArea with MTTextKeyboard on tap.
@@ -39,7 +43,7 @@ import com.sun.xml.internal.ws.api.model.wsdl.WSDLBoundOperation.ANONYMOUS;
 // TODO Keyboard Standort anpassen -> erledigt
 // TODO Einheiten hinzufügen (CHF, EURO, meter, Zeit usw)
 
-public class MTTextAttribut extends Attributes{
+public class MTTextAttribut extends Attributes {
 
 	/** Main Textfield. */
 	private MTTextArea textarea;
@@ -55,10 +59,7 @@ public class MTTextAttribut extends Attributes{
 
 	/** Textfield font.*/
 	private IFont iF;
-	
-	/** Set Align to right side.*/
-	private boolean rAlign;
-	
+		
 	/** Default String.*/
 	private String stringvalue;
 	
@@ -74,37 +75,48 @@ public class MTTextAttribut extends Attributes{
 	/** Label Font.*/
 	private IFont labelfont;
 	
-	/** Transparenz Color. */
+	/** Transparenc Color for keyboard (fix). */
 	 private MTColor trans = new MTColor(0, 0, 0, 10);
+	 
+	 /** Default Color for Fill Rectangle. */
+	 private MTColor blue1 = new MTColor(51, 102, 204, 180);
+	 
+	/** Attribut Model Object. */
+	 private ModelMtAttributs model;
+	 
+	/** MTColorPicker. 	 */
+	 private MTColorPicker colorpicker;
+	 
+	 /** Abstract MT Application.*/
+	 private AbstractMTApplication app1;
+	 
+	 /** MTButton for ColorPicker. */
+	 private MTImageButton colPickButton;
 	 
 	/**
 	 * Constructor MTNumField. 
 	 * 
 	 * @param app AbstractMTApplication
+	 * @param model ModelMtAttributs
 	 * @param fontArialMini IFont
 	 * @param width int
 	 * @param height int
-	 * @param rightalign boolean
 	 * @param defaultString String
-	 * @param labeltext String
+	 * @param defaultlabeltext String
 	 * @param labelfont IFont
 	 */
-	
-	
-	public MTTextAttribut(final AbstractMTApplication app, final IFont fontArialMini, final int width, final int height, final boolean rightalign, final String defaultString, final String labeltext, final IFont labelfont) {
-		//super(app, 0, 0, 0, 0, 0, 5, 5);
+	public MTTextAttribut(final AbstractMTApplication app, ModelMtAttributs model, final IFont fontArialMini, final int width, final int height, final String defaultString, final String defaultlabeltext, final IFont labelfont) {
 		super(app);
-		this.rAlign = rightalign;
-		stringvalue = defaultString;
-		fname = labeltext;
-		this.setUserData("FieldValue", defaultString);
-		this.setUserData("Label", labeltext);
+		this.model = model;
 		
+		this.dataRead(defaultString, defaultlabeltext); // Read Data from Model
+	
 		this.height = height;
 		this.width = width;
 		this.labelfont = labelfont;
 		this.setName(fname);
-		this.init(app, fontArialMini);	
+		this.init(app, fontArialMini);
+		
 	}
 	
 	/** 
@@ -112,29 +124,21 @@ public class MTTextAttribut extends Attributes{
 	 * @param app AbstractMTApplication
 	 * @param font IFont
 	 */
-	
 	private void init(final AbstractMTApplication app, final IFont font) {
-		final MTColor blue1 = new MTColor(51, 102, 204, 180);
-		this.iF = font;
-		final AbstractMTApplication app1 = app;
-		fontsize = iF.getOriginalFontSize();		
 		
+		this.iF = font;
+		app1 = app;
+		fontsize = iF.getOriginalFontSize();		
 		this.setSizeLocal(width, height);
-		this.setFillColor(blue1);
 		this.setStrokeColor(MTColor.BLACK);
 		
 		textarea = new MTTextArea(app, 0, (height - fontsize) / 2, width, height, font);
-		
 		textarea.setInnerPadding(0);
 		textarea.setInnerPaddingLeft(0);
 		textarea.setInnerPaddingTop(0);
 		textarea.setText(stringvalue);
 		textarea.setFillColor(new MTColor(0, 0, 0, 0));
 		textarea.setNoStroke(true);
-		//textarea.setPickable(false);
-		
-		setAlign(rAlign);
-
 		
 		textarea.setGestureAllowance(DragProcessor.class, false);
 		textarea.setGestureAllowance(RotateProcessor.class, false);
@@ -158,6 +162,8 @@ public class MTTextAttribut extends Attributes{
 					
 					numKeyText = new MTTextArea(app1, 0, 0, width, height, iF);
 					textKeyboard.setNoStroke(true);
+					textKeyboard.setPositionRelativeToParent(new Vector3D(textKeyboard.getWidthXY(TransformSpace.LOCAL) / 2, (textKeyboard.getHeightXY(TransformSpace.LOCAL) / 2) + 50));
+					
 					numKeyText.setFillColor(new MTColor(205, 200, 177, 255));
 					numKeyText.unregisterAllInputProcessors();
 					numKeyText.setEnableCaret(true);
@@ -168,8 +174,7 @@ public class MTTextAttribut extends Attributes{
 					textKeyboard.addTextInputListener(numKeyText);
 					
 					addChild(textKeyboard);
-					
-					//textKeyboard.setPositionRelativeToParent(new Vector3D(textKeyboard.getWidthXY(TransformSpace.LOCAL) / 2, textKeyboard.getWidthXY(TransformSpace.LOCAL) / 2 + 50));
+					numKeyText.setPositionRelativeToParent(new Vector3D((width / 2), -10));
 					
 					textKeyboard.addStateChangeListener(StateChange.COMPONENT_DESTROYED, new StateChangeListener() {
 						
@@ -177,9 +182,7 @@ public class MTTextAttribut extends Attributes{
 						public void stateChanged(final StateChangeEvent evt) {
 							textarea.setInnerPaddingLeft(0);
 							textarea.setText(numKeyText.getText());
-							setUserData("FieldValue", (numKeyText.getText()));
-							setAlign(rAlign);
-							
+							dataWrite();
 							
 						}
 					}
@@ -197,19 +200,121 @@ public class MTTextAttribut extends Attributes{
 		label.setNoFill(true);
 		label.setStrokeColor(MTColor.LIME);
 		label.setNoStroke(true);
-		label.setText((String) this.getUserData("Label"));
+		label.setText(fname);
 		label.setPickable(false);
 		label.setVisible(false);
-		
+				
 		
 		// Add Object to base Object
 		this.addChild(textarea);
 		this.addChild(label);
-		
+		createColorPicker();
 		this.setVisible(true);
 		
 		
 		
+	}
+	
+	/** 
+	 * Read from datamodel and insert in the gui elements.
+	 *
+	 * @param defaultString String 
+	 * @param defaultlabeltext String
+	 */
+	private void dataRead(final String defaultString, final String defaultlabeltext) {
+		// Data transfer for value
+		if (model.getLable() == null) {
+			stringvalue = defaultString;
+		} else {
+			for (ModelAttributContent it : model.getAttributcontent()) {
+				if (it.getType().equalsIgnoreCase("String")) {
+					System.out.println(" Value zu Typ String " + it.getValue());
+					stringvalue = it.getValue();
+				} else {
+					System.out.println(" Value zu Typ String NICHT GEFUNDEN ");
+					stringvalue = defaultString;
+				}
+			}
+		}
+		
+		// Data transfer for labeltext
+		if (model.getLable() == null) {
+			fname = defaultlabeltext;
+		} else {
+			fname = model.getLable();
+		}
+		
+		// Color for Rectangle Fill Color
+		if (model.getAttcolor() == null) {
+			this.setFillColor(blue1);
+		} else {
+			this.setFillColor(model.getAttcolor());
+		}
+		
+	}
+	
+	/** 
+	 * Write data in Datamodel.
+	 */
+	private void dataWrite() {
+		for (ModelAttributContent it : model.getAttributcontent()) {
+			if (it.getType().equalsIgnoreCase("String")) {
+				it.setValue(textarea.getText());
+			} else {
+				//TODO Was ist zu tun wenn dieses Werte Paar noch nicht exitiert???
+			}
+		}
+		model.setAttcolor(getFillColor());
+	}
+	
+	/** 
+	 * Colorpicker.
+	 */
+	private void createColorPicker() {
+   
+        PImage colPick = app1.loadImage("ch" + MTApplication.separator + "mitoco" + MTApplication.separator + "data" + MTApplication.separator +  "colorcircletr.png");
+        colorpicker = new MTColorPicker(app1, 0, 0, colPick);
+        colorpicker.translate(new Vector3D(0, 0, 0));
+        colorpicker.setNoStroke(true);
+        colorpicker.addGestureListener(DragProcessor.class, new IGestureEventListener() {
+			public boolean processGestureEvent(final MTGestureEvent ge) {
+				if (ge.getId() == MTGestureEvent.GESTURE_ENDED) {
+					if (colorpicker.isVisible()) {
+						colorpicker.setVisible(false);
+					}
+				} else {
+					setFillColor(colorpicker.getSelectedColor());
+					dataWrite();
+				}
+				return false;
+			}
+		});
+        
+        PImage colPickIcon = app1.loadImage("ch" + MTApplication.separator + "mitoco" + MTApplication.separator + "data" + MTApplication.separator +  "ColorPickerIcon.png");
+        colPickButton = new MTImageButton(app1, colPickIcon);
+        colPickButton.translate(new Vector3D(width - height, 0, 0));
+        colPickButton.setNoStroke(true);
+        colPickButton.setSizeLocal(height, height);
+        colPickButton.sendToFront();
+        colPickButton.addGestureListener(TapProcessor.class, new IGestureEventListener() {
+			public boolean processGestureEvent(final MTGestureEvent ge) {
+				TapEvent te = (TapEvent) ge;
+				if (te.isTapped()) {
+					if (colorpicker.isVisible()) {
+						colorpicker.setVisible(false);
+					} else {
+						colorpicker.setVisible(true);
+						colorpicker.sendToFront();
+					}				
+				}
+				return true;
+			}
+        });
+        colorpicker.setVisible(false);
+	    colPickButton.setVisible(false);
+	
+        this.addChild(colPickButton);
+		this.addChild(colorpicker);
 	}
 	
 	/**
@@ -217,6 +322,7 @@ public class MTTextAttribut extends Attributes{
 	 */
 	public final void setMin() {
 		label.setVisible(false);
+		colPickButton.setVisible(false);
 	}
 	
 	/**
@@ -224,27 +330,9 @@ public class MTTextAttribut extends Attributes{
 	 */
 	public final void setMax() {
 		label.setVisible(true);
+		colPickButton.setVisible(true);
 	}
 
-	/** Set Textalign from textarea.
-	 * @param align (true=right)
-	 * */
-	public final void setAlign(final boolean align) {
-		
-		if (align == true) {
-			float textwidth = textarea.getTextWidth();	
-			System.out.println("Text Breite: = " + textwidth);
-			System.out.println("Verschiebsatz: = " + (width - ((int) textwidth + 5)));
-			
-			//textarea.setInnerPaddingLeft(200);
-			textarea.setInnerPaddingLeft((width - ((int) textwidth + 10)));
-			System.out.println("Linien: = " + textarea.getLineCount());
-			
-		} else {
-			textarea.setInnerPaddingLeft(5);
-		}
-	}
-	
 	/** 
 	 * Set Label Text.
 	 * @param labeltext String
@@ -276,5 +364,6 @@ public class MTTextAttribut extends Attributes{
 	public final String getValue() {
 		return textarea.getText();
 	}
+	
 	
 }

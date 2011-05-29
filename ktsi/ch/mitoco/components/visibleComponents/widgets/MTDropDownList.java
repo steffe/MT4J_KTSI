@@ -15,6 +15,7 @@ import org.mt4j.input.inputProcessors.componentProcessors.tapProcessor.TapProces
 import org.mt4j.util.MTColor;
 import org.mt4j.util.font.IFont;
 import ch.mitoco.components.visibleComponents.MTSuggestionTextArea;
+import ch.mitoco.model.ModelMtAttributs;
 
 /**
  * MTDropDownList provide a DropDownList with five import levels.
@@ -61,6 +62,9 @@ public class MTDropDownList extends Attributes {
 	/** */
 	private List<String> list;
 	
+	/** Attribut Model Object. */
+	 private ModelMtAttributs model;
+	
 	/** 
 	 * Construtor MTDropDownList.
 	 * 
@@ -73,13 +77,17 @@ public class MTDropDownList extends Attributes {
 	 * @param labelfont IFont
 	 * 
 	 * */
-	public MTDropDownList(final AbstractMTApplication app, final IFont font, final int width, final int height, final String labelname, final IFont labelfont) {
+	public MTDropDownList(final AbstractMTApplication app, ModelMtAttributs model ,final IFont font, final int width, final int height, final String labelname, final IFont labelfont) {
 		super(app);
 		this.ifont = font;
 		this.width = width;
 		this.height = height;
 		this.fname = labelname;
 		this.labelfont = labelfont;
+		this.model = model;
+		
+		System.out.println("Model from TextAttributs -> " + model);
+		
 		this.setSizeLocal(width, height);
 		this.setFillColor(blue1);
 		this.setName(labelname);

@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.smartcardio.ATR;
 
+import org.apache.batik.anim.SetAnimation;
 import org.mt4j.MTApplication;
 import org.mt4j.components.TransformSpace;
 import org.mt4j.components.visibleComponents.shapes.MTRoundRectangle;
@@ -32,6 +33,8 @@ import ch.mitoco.components.visibleComponents.widgets.Attributes;
 import ch.mitoco.components.visibleComponents.widgets.MTDropDownList;
 import ch.mitoco.components.visibleComponents.widgets.MTNumField;
 import ch.mitoco.components.visibleComponents.widgets.MTTextAttribut;
+import ch.mitoco.model.ModelAttributContent;
+import ch.mitoco.model.ModelMtAttributs;
 import ch.mitoco.model.ModelMtObjects;
 
 import processing.core.PImage;
@@ -70,14 +73,20 @@ public class MyMTObject extends MTRoundRectangle {
 	/** Object Height in Max Modus. */
 	private int obSizeMaxHeight;
 	
+	/** Object Size dif max to min. */
+	private int obDifSizeHeight;
+	
 	/** */
 	private MTImageButton buttonMaxMin;
 	
 	/** */
 	private MTImageButton buttonRotate;
 
-	/** */
+	/** Int for minmaxModus. */
 	private int minmaxModus;
+	
+	/** Boolean for Rotation. */
+	private boolean updownrotate;
 	
 	/** */
 	private MTColor greypez = new MTColor(12, 12, 12, 34);
@@ -95,48 +104,84 @@ public class MyMTObject extends MTRoundRectangle {
 	private DefaultDragAction defaultDragAction;
 	
 
-	/** List with all Attributs.*/
+	/** List with all Attributes.*/
 	private List<Attributes>myAttributs;
 	
 	/** Space Value for X definition. */
 	private int spaceglobal;
 	
-	/** List for Attributs. */
-	private List<Integer> attributslist;
+	/** List for Attributes. */	
+	private List<ModelMtAttributs> attributesmodel;
+	
+	/** Data Model for this object.*/
+	public ModelMtObjects objectmodel;
+	
+	/** Standard Font */
+	private IFont fontArial;
 	
 	/** Public BLBL MyObject.
 	 * 
 	 * @param pApplet2 MTApplication
 	 * @param model ModelMTObjects
 	 * @param objectID INT ObjectID  
+	 * 
+	 * Änderungen die Model noch nötig sind:
+	 * - Labelfont
+	 * - Normalerfont (vorhanden)
+	 * - Objekt grösse (Breite und Höhe)
+	 * - Stroke Color
+	 * - FIlecolor
 	 */
-	public MyMTObject(final MTApplication pApplet2, final ModelMtObjects model, final int objectID, final List<Integer> attributesList) {
+	public MyMTObject(final MTApplication pApplet2, final ModelMtObjects model, final int objectID) {
 		super(pApplet2, 0, 0, 0, 0, 0, 5, 5);
 	
 		pApplet = pApplet2;
 		this.id = objectID;
 		defaultDragAction 	= new DefaultDragAction();
 		
-		attributslist = attributesList;
+		// Data Model 
+		this.objectmodel = model;
+		attributesmodel = model.getObjectattributs();
+		
 		
 		// TODO Auto-generated constructor stub
 		MTColor speblue = new MTColor(51, 102, 255);
 		obSizeMinWidth = 300; // Grösse Min
 		obSizeMinHeight = 300; // Grösse Min
-		
 		obSizeMaxWidth = 300;
 		obSizeMaxHeight = 400;
+		
+		obDifSizeHeight = obSizeMaxHeight - obSizeMinHeight;
 		
 		IFont fontArial = FontManager.getInstance().createFont(pApplet, "arial.ttf", 
 				15, 	//Font size
 				MTColor.BLACK);
 		
 		this.setSizeLocal(obSizeMinWidth, obSizeMinHeight);
-		this.setPositionGlobal(new Vector3D(600, 300));
-		this.setFillColor(greypez);
 		this.setStrokeWeight(1);
 		this.setStrokeColor(speblue);
 	
+		// Model filled parameters
+		if (this.objectmodel.getObjectcolor() == null) {
+			this.setFillColor(greypez);
+		} else {
+		this.setFillColor(this.objectmodel.getObjectcolor());
+		}
+		
+		if (this.objectmodel.getObjectposition() == null) {
+			this.setPositionGlobal(new Vector3D(300, 300));
+		} else {
+			this.setPositionGlobal(this.objectmodel.getObjectposition());
+		}
+		
+		if (this.objectmodel.getObjectfont() == null) {
+			fontArial = FontManager.getInstance().createFont(pApplet, "arial.ttf", 
+					15, 	//Font size
+					MTColor.BLACK);
+		} else {
+			fontArial = this.objectmodel.getObjectfont();
+		}
+		
 		//Create a textfield
 		textField = new MTTextArea(pApplet, fontArial); 
 		textField.setNoStroke(true);
@@ -151,6 +196,7 @@ public class MyMTObject extends MTRoundRectangle {
 		baserect.setStrokeColor(MTColor.GRAY);
 		baserect.setFillColor(MTColor.GRAY);
 		baserect.setPickable(false);
+		
 		
 		// Button for Rotate
 		PImage buttonImage = pApplet.loadImage("ch" + MTApplication.separator + "mitoco" + MTApplication.separator + "data" + MTApplication.separator +  "buttonRotate.png");
@@ -170,6 +216,8 @@ public class MyMTObject extends MTRoundRectangle {
 				switch(te.getTapID()) {
 				case TapEvent.TAPPED:
 					baserect.rotateZ(new Vector3D((baserect.getWidthXY(TransformSpace.LOCAL) / 2) + 10, (baserect.getHeightXY(TransformSpace.LOCAL) / 2) + 10), 180);
+					updownrotate = !updownrotate;
+					printMTObjectModel(objectmodel);
 					break;	
 				default:
 					break;
@@ -199,8 +247,12 @@ public class MyMTObject extends MTRoundRectangle {
 				case TapEvent.TAPPED:
 
 				if (minmaxModus == 0) {
+					
 					setSizeLocal(obSizeMaxWidth, obSizeMaxHeight);
 					baserect.setSizeLocal(obSizeMaxWidth - 20, obSizeMaxHeight - 20);
+					if (updownrotate == true) {
+						baserect.translate(new Vector3D(0, obDifSizeHeight));
+					}	
 					buttonMaxMin.translate(new Vector3D(obSizeMaxWidth - w, 0));
 					buttonRotate.translate(new Vector3D(0, obSizeMaxHeight - h));
 
@@ -208,7 +260,12 @@ public class MyMTObject extends MTRoundRectangle {
 					minmaxModus = 1;
 				} else {
 					setSizeLocal(w, h);
+					
 					baserect.setSizeLocal(w - 20, h - 20);
+					if (updownrotate == true) {
+						baserect.translate(new Vector3D(0, -obDifSizeHeight));
+					}
+					
 					buttonMaxMin.translate(new Vector3D(w - obSizeMaxWidth, 0));
 					buttonRotate.translate(new Vector3D(0, h - obSizeMaxHeight));
 					
@@ -249,37 +306,35 @@ public class MyMTObject extends MTRoundRectangle {
 		this.addChild(buttonRotate);
 		this.addChild(buttonMaxMin);
 		
-
-		
 	}
 	
 	/**
-	 *  Create Attributse.
+	 *  Create Attributes.
 	 */
 	private void createAttributes() {
 	int i = 0;
 	int x = 60;
-	int difx = 40;
-		for (Integer it : attributslist) {
-			switch(it) {
+	int difx = 50;
+		for (ModelMtAttributs it : attributesmodel) {
+			switch(it.getId()) {
 			case(0):
 				System.out.println(i + "Attributs MTTextAttribut " + it);
 				
-				myAttributs.add(new MTTextAttribut(pApplet, fontArialMini, 250, 30, false, "ee2eee3ww fw3ewf", "TestFeld Text", labelfont));
+				myAttributs.add(new MTTextAttribut(pApplet, attributesmodel.get(i), fontArialMini, 250, 30, "ee2eee3ww fw3ewf", "TestFeld Text", labelfont));
 				myAttributs.get(i).setPositionRelativeToParent(new Vector3D(this.getWidthXY(TransformSpace.LOCAL) / 2, x));
 			
 				break;
 			case(1):	
 				System.out.println(i + "Attributs MTNumField " + it);
 			
-				myAttributs.add(new MTNumField(pApplet, fontArialMini, 250, 30, true, 1111134.34, "TestFeld", labelfont));
+				myAttributs.add(new MTNumField(pApplet, attributesmodel.get(i), fontArialMini, 250, 30, true, 1111134.34, "TestFeld", labelfont));
 				myAttributs.get(i).setPositionRelativeToParent(new Vector3D(this.getWidthXY(TransformSpace.LOCAL) / 2, x));
 			
 				break;
 			case(2):
 				System.out.println(i + "Attributs MTDropDown " + it);
 			
-				myAttributs.add(new MTDropDownList(pApplet, fontArialMini, 250, 30, "Projekt Wichtigkeit", labelfont));
+				myAttributs.add(new MTDropDownList(pApplet, attributesmodel.get(i), fontArialMini, 250, 30, "Projekt Wichtigkeit", labelfont));
 				myAttributs.get(i).setPositionRelativeToParent(new Vector3D(this.getWidthXY(TransformSpace.LOCAL) / 2, x));
 
 				break;
@@ -307,9 +362,11 @@ public class MyMTObject extends MTRoundRectangle {
 	 * Add Attributs to baserect.
 	 */
 	private void addToBaserect() {
-		for (Attributes it : myAttributs) {
-			baserect.addChild(it);
-		}
+		
+		for (int j = myAttributs.size() - 1; j >= 0; j--) {
+			  System.out.println("addChild " + j);
+			  baserect.addChild(myAttributs.get(j));
+			}
 	}
 	
 	/**
@@ -331,8 +388,7 @@ public class MyMTObject extends MTRoundRectangle {
 		}
 			
 	}
-	
-	
+		
 	/**
 	 * Setzen des Object Namens. String als Übergabe-Parameters.
 	 * @param titelname String
@@ -357,6 +413,36 @@ public class MyMTObject extends MTRoundRectangle {
 	return id;
 	}
 
+	/** 
+	 * Print the content from select Modelobject. 
+	 * 
+	 * @param obmodel ModelMtAttributs
+	 */
+	private void printMTObjectModel(final ModelMtObjects obmodel) {
+		
+		System.out.println("\n");
+		System.out.println("Object ID:       " + obmodel.getId());
+		System.out.println("Object Color:    " + obmodel.getObjectcolor());
+		System.out.println("Object Font:     " + obmodel.getObjectfont());
+		System.out.println("Object Position: " + obmodel.getObjectposition());
+		
+		for (ModelMtAttributs attribut : obmodel.getObjectattributs()) {
+			System.out.println("   Attribut ID:  " + attribut.getId());
+			System.out.println("   Color:      " + attribut.getAttcolor());
+			System.out.println("   Label:      " + attribut.getLable());
+			System.out.println("   Zoom:       " + attribut.getZoom());
+			int i = 0;
+			for (ModelAttributContent it : attribut.getAttributcontent()) {
+				System.out.println("              " + i + " Attr. Typ: " + it.getType());
+				System.out.println("              " + i + " Attr. Value: " + it.getValue());
+				i++;
+				
+			}
+		}
+		System.out.println("\n");
+	}
+	
+	
 	@Override
 	protected void setDefaultGestureActions() {
 //		super.setDefaultGestureActions();

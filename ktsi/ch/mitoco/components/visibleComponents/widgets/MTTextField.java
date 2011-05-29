@@ -24,6 +24,8 @@ import org.mt4j.util.MTColor;
 import org.mt4j.util.font.IFont;
 import org.mt4j.util.math.Vector3D;
 
+import ch.mitoco.model.ModelMtAttributs;
+
 /**
  * MTNumField. Modified MTTextArea with MTTextKeyboard on tap.
  * 
@@ -74,6 +76,9 @@ public class MTTextField extends MTRoundRectangle {
 	/** Transparenz Color. */
 	 private MTColor trans = new MTColor(0, 0, 0, 10);
 	 
+	/** Attribut Model Object. */
+	 private ModelMtAttributs model;
+	 
 	/**
 	 * Constructor MTNumField. 
 	 * 
@@ -88,13 +93,16 @@ public class MTTextField extends MTRoundRectangle {
 	 */
 	
 	
-	public MTTextField(final AbstractMTApplication app, final IFont fontArialMini, final int width, final int height, final boolean rightalign, final int defaultString, final String labeltext, final IFont labelfont) {
+	public MTTextField(final AbstractMTApplication app, ModelMtAttributs model , final IFont fontArialMini, final int width, final int height, final boolean rightalign, final int defaultString, final String labeltext, final IFont labelfont) {
 		super(app, 0, 0, 0, 0, 0, 5, 5);
 		this.rAlign = rightalign;
 		doublevalue = defaultString;
 		fname = labeltext;
 		this.setUserData("FieldValue", defaultString);
 		this.setUserData("Label", labeltext);
+		
+		this.model = model;
+		System.out.println("Model from TextAttributs -> " + model);
 		
 		this.height = height;
 		this.width = width;

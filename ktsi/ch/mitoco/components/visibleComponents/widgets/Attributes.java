@@ -18,10 +18,12 @@ public abstract class Attributes extends MTRoundRectangle {
 		super(app, 0, 0, 0, 0, 0, 5, 5);
 	}
 	
+	/** Method for all Attributs set Max. */
 	public void setMax() {
 		
 	}
 	
+	/** Method for all Attributs set Max. */
 	public void setMin() {
 		
 	}

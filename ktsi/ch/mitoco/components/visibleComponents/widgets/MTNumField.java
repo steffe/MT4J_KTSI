@@ -25,6 +25,7 @@ import org.mt4j.util.font.IFont;
 import org.mt4j.util.math.Vector3D;
 
 import ch.mitoco.components.visibleComponents.widgets.keyboard.MTNumKeyboard;
+import ch.mitoco.model.ModelMtAttributs;
 
 /**
  * MTNumField. Modified MTTextArea with MTNumKeyboard on double tap.
@@ -76,6 +77,9 @@ public class MTNumField extends Attributes {
 	/** Transparenz Color. */
 	 private MTColor trans = new MTColor(0, 0, 0, 10);
 	 
+	/** Attribut Model Object. */
+	 private ModelMtAttributs model;
+	 
 	/**
 	 * Constructor MTNumField. 
 	 * 
@@ -90,13 +94,17 @@ public class MTNumField extends Attributes {
 	 */
 	
 	
-	public MTNumField(final AbstractMTApplication app, final IFont fontArialMini, final int width, final int height, final boolean rightalign, final double defaultString, final String labeltext, final IFont labelfont) {
+	public MTNumField(final AbstractMTApplication app, ModelMtAttributs model, final IFont fontArialMini, final int width, final int height, final boolean rightalign, final double defaultString, final String labeltext, final IFont labelfont) {
 		super(app);
 		this.rAlign = rightalign;
 		doublevalue = defaultString;
 		fname = labeltext;
 		this.setUserData("FieldValue", Double.toString(defaultString));
 		this.setUserData("Label", labeltext);
+		
+		this.model = model;
+		System.out.println("Model from TextAttributs -> " + model);
+		
 		
 		this.height = height;
 		this.width = width;
