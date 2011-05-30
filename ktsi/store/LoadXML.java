@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.mt4j.MTApplication;
 
+import ch.mitoco.components.visibleComponents.MyMTObject;
 import ch.mitoco.model.ModelMtObjects;
 import ch.mitoco.model.ModelScence;
 

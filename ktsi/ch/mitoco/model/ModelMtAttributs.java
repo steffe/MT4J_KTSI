@@ -37,10 +37,10 @@ public class ModelMtAttributs {
 	 * 
 	 */
 	private boolean minMax;
+	
 	/**
 	 * 
 	 */
-	
 	private boolean direction;
 	/**
 	 * 
@@ -53,7 +53,7 @@ public class ModelMtAttributs {
 	public ModelMtAttributs() {
 		
 		attributcontent = new ArrayList<ModelAttributContent>();
-		attributdefinition = new ArrayList<ModelAttributDefinition>();
+		setAttributdefinition(new ArrayList<ModelAttributDefinition>());
 	}
 	/**Returns the Numeric Identification of this Attribute.
 	 *  
@@ -165,6 +165,18 @@ public class ModelMtAttributs {
 	 */
 	public final int getZoom() {
 		return zoom;
+	}
+	/**
+	 * @param attributdefinition the attributdefinition to set
+	 */
+	public void setAttributdefinition(List<ModelAttributDefinition> attributdefinition) {
+		this.attributdefinition = attributdefinition;
+	}
+	/**
+	 * @return the attributdefinition
+	 */
+	public List<ModelAttributDefinition> getAttributdefinition() {
+		return attributdefinition;
 	}
 
 }

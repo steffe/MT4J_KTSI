@@ -1,10 +1,16 @@
 package ch.mitoco.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ModelObjectTyps {
 	private List<ModelMtObjects> objecttyp;
 
+	
+	public ModelObjectTyps() {
+		objecttyp = new ArrayList<ModelMtObjects>();
+	}
+	
 	/**
 	 * @param objecttyp the objecttyp to set
 	 */

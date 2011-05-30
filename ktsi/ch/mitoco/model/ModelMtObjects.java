@@ -16,6 +16,8 @@ public class ModelMtObjects {
 	private IFont labelfont;
 	private List<ModelMtAttributs> objectattributs;
 	private Vector3D objectposition;
+	private int objecttyp;
+	private String objectlable;
 	
 	
 	
@@ -119,6 +121,22 @@ public class ModelMtObjects {
 	 */
 	public MTColor getObjectFillcolor() {
 		return objectFillcolor;
+	}
+
+
+	/**
+	 * @param objecttyp the objecttyp to set
+	 */
+	public void setObjecttyp(int objecttyp) {
+		this.objecttyp = objecttyp;
+	}
+
+
+	/**
+	 * @return the objecttyp
+	 */
+	public int getObjecttyp() {
+		return objecttyp;
 	}
 
 }

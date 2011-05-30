@@ -2,9 +2,7 @@ package store;
 
 
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 import org.mt4j.MTApplication;
 import org.mt4j.components.visibleComponents.widgets.buttons.MTImageButton;
@@ -18,8 +16,7 @@ import org.mt4j.util.MTColor;
 import org.mt4j.util.math.Vector3D;
 
 import processing.core.PImage;
-import ch.mitoco.model.ModelScence;
-import ch.mitoco.store.generated.Customer;
+import ch.mitoco.components.visibleComponents.MyMTObject;
 
 
 /** Hello Word Scene. */
@@ -42,22 +39,22 @@ public class HelloWorldScene extends AbstractScene {
 	private MTApplication mtApplication;
 		
 	/** List with all MyMTObject. */
-	private List<MyMTObject> myobjectList;
+	//private List<MyMTObject> myobjectList;
 	
 	/** Object Counter and Object ID. */
 	private int counter;
 	
 	/** **/
-	public ModelScence dataModel;
+	//public ModelScence dataModel;
 	
 	private DataController dataController;
 	
 
 	/** XML Customer. */
-	public Customer readcustomer;
-	public static ModelScence MODELSCENCE;
-	public ModelScence test1;
-	public LoadXML LoadXML;
+	//public Customer readcustomer;
+	//public static ModelScence MODELSCENCE;
+	//public ModelScence test1;
+	//public LoadXML LoadXML;
 	
 	
 	/** 
@@ -82,7 +79,7 @@ public class HelloWorldScene extends AbstractScene {
 		this.registerGlobalInputProcessor(new CursorTracer(mtApplication, this));
 		
 		counter = 0;
-		myobjectList = new ArrayList<MyMTObject>();
+		//myobjectList = new ArrayList<MyMTObject>();
 			
 		
 		//New Object
@@ -110,7 +107,7 @@ public class HelloWorldScene extends AbstractScene {
 						System.out.println(it.next().getObjecttyp());
 					}
 					*/
-					dataController.createObject();
+					dataController.createObject(0);
 					
 					getCanvas().addChild(dataController.getMyobjectList().get(counter));	
 					
@@ -148,9 +145,9 @@ public class HelloWorldScene extends AbstractScene {
 				switch(te.getTapID()) {
 				case TapEvent.TAPPED:
 					if (counter != 0) {
-						getCanvas().removeChild(myobjectList.get(counter - 1)); // Entfernen des Objekts auf dem Canvas
-						myobjectList.remove(counter - 1); // Remove Object from arryeList
-						counter--;
+						//getCanvas().removeChild(myobjectList.get(counter - 1)); // Entfernen des Objekts auf dem Canvas
+						//myobjectList.remove(counter - 1); // Remove Object from arryeList
+						//counter--;
 					} else {
 					System.out.println("Kein Objeckt zum enfernen vorhanden " + counter);	
 					}

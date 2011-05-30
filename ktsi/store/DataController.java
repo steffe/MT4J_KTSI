@@ -8,6 +8,7 @@ import java.util.Iterator;
 import org.mt4j.MTApplication;
 import org.mt4j.util.MTColor;
 
+import ch.mitoco.components.visibleComponents.MyMTObject;
 import ch.mitoco.model.ModelMtObjects;
 import ch.mitoco.model.ModelObjectTyps;
 import ch.mitoco.model.ModelScence;
@@ -34,10 +35,17 @@ public class DataController {
 		objectcounter = 0;
 	}
 	
-	public void createObject() {
+	public void createObject(int objecttype) {
 		ModelMtObjects object = new ModelMtObjects();
+		
+		for (Iterator<ModelMtObjects> it = getObjectetyps().getObjecttyp().iterator(); it.hasNext();) {
+			if (it.next().getObjecttyp() == objecttype) {
+				object = it.next();
+			}
+		}
 		object.setId(objectcounter);
 		dataModel.getMtobjects().add(object);
+		
 		myobjectList.add(new MyMTObject(mtApplication, dataModel.getMtobjects().get(objectcounter), objectcounter));
 		objectcounter++;
 	}
@@ -64,7 +72,7 @@ public class DataController {
 	
 	public ModelScence createDataModel(String scenename) {
 		dataModel = new ModelScence();
-		dataModel.setId(0);
+		dataModel.setId(1);
 		dataModel.setName(scenename);
 		return dataModel;
 	}
@@ -75,8 +83,8 @@ public class DataController {
 		if (objectcounter > 0) {
 			System.out.println("Grösser Null " + objectcounter);
 			//Objects are already drawn, you have to clean
-			return false; 
-		}
+			return false;
+			}
 		else {
 			dataModel = LoadXML.getDataModel();
 			for (Iterator<ModelMtObjects> it = dataModel.getMtobjects().iterator(); it.hasNext();) {
@@ -120,7 +128,7 @@ public class DataController {
 		test1.setObjectcolor(greypez);
 		//objectetyps.getObjecttyp().add(test1);
 		try {
-			xstreamSave.toXML(objectetyps, new FileOutputStream("objectlist.xml"));
+			xstreamSave.toXML(objectetyps, new FileOutputStream("objectlist1.xml"));
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -156,6 +164,14 @@ public class DataController {
 	 * @return the objectetyps
 	 */
 	public ModelObjectTyps getObjectetyps() {
+		objectetyps = new ModelObjectTyps();
+		
+		
+		
+		
+		//objectetyps.getObjecttyp().add(objects3);
+		//objectetyps.getObjecttyp().add(objects4);
+		loadObjectXML();		
 		return objectetyps;
 	}
 
