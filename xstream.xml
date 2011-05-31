@@ -6,8 +6,8 @@
       <objectcolor>
         <name>undefined</name>
         <r>12.0</r>
-        <g>12.0</g>
-        <b>12.0</b>
+        <g>182.0</g>
+        <b>102.0</b>
         <alpha>34.0</alpha>
         <writeProtected>false</writeProtected>
       </objectcolor>
@@ -20,7 +20,14 @@
               <value>Roman</value>
             </ch.mitoco.model.ModelAttributContent>
           </attributcontent>
-          <attcolor reference="../../../objectcolor"/>
+          	<attcolor>
+		        <name>undefined</name>
+		        <r>120.0</r>
+		        <g>182.0</g>
+		        <b>102.0</b>
+		        <alpha>34.0</alpha>
+		        <writeProtected>false</writeProtected>
+		     </attcolor>
           <Lable>Name</Lable>
           <minMax>false</minMax>
         </ch.mitoco.model.ModelMtAttributs>
@@ -35,6 +42,28 @@
           <attcolor reference="../../../objectcolor"/>
           <Lable>Vorname</Lable>
           <minMax>false</minMax>
+        </ch.mitoco.model.ModelMtAttributs>
+        <ch.mitoco.model.ModelMtAttributs>
+          <id>1</id>
+          <attributcontent>
+            <ch.mitoco.model.ModelAttributContent>
+              <type>Double</type>
+              <value>43532</value>
+            </ch.mitoco.model.ModelAttributContent>
+            <ch.mitoco.model.ModelAttributContent>
+              <type>Align</type>
+              <value>false</value>
+            </ch.mitoco.model.ModelAttributContent>
+          </attributcontent>
+          <attributdefinition>
+          	<ch.mitoco.model.ModelAttributDefinition>
+              <definition>Align</definition>
+              <value>true</value>
+            </ch.mitoco.model.ModelAttributDefinition>
+          </attributdefinition>
+          <attcolor reference="../../../objectcolor"/>
+          <Lable>Mein Alter</Lable>
+          <minMax>true</minMax>
         </ch.mitoco.model.ModelMtAttributs>
       </objectattributs>
       <objectposition>

@@ -5,13 +5,16 @@ package ch.mitoco.components.visibleComponents.widgets;
 
 
 import org.mt4j.AbstractMTApplication;
+import org.mt4j.MTApplication;
 import org.mt4j.components.StateChange;
 import org.mt4j.components.StateChangeEvent;
 import org.mt4j.components.StateChangeListener;
 import org.mt4j.components.TransformSpace;
 import org.mt4j.components.visibleComponents.shapes.MTRoundRectangle;
+import org.mt4j.components.visibleComponents.widgets.MTColorPicker;
 import org.mt4j.components.visibleComponents.widgets.MTTextArea;
 import org.mt4j.components.visibleComponents.widgets.MTTextArea.ExpandDirection;
+import org.mt4j.components.visibleComponents.widgets.buttons.MTImageButton;
 import org.mt4j.input.gestureAction.DefaultDragAction;
 import org.mt4j.input.inputProcessors.IGestureEventListener;
 import org.mt4j.input.inputProcessors.MTGestureEvent;
@@ -24,7 +27,10 @@ import org.mt4j.util.MTColor;
 import org.mt4j.util.font.IFont;
 import org.mt4j.util.math.Vector3D;
 
+import processing.core.PImage;
+
 import ch.mitoco.components.visibleComponents.widgets.keyboard.MTNumKeyboard;
+import ch.mitoco.model.ModelAttributContent;
 import ch.mitoco.model.ModelMtAttributs;
 
 /**
@@ -60,7 +66,7 @@ public class MTNumField extends Attributes {
 	private boolean rAlign;
 	
 	/** Default double.*/
-	private double doublevalue;
+	private String stringvalue;
 	
 	/** Label Font.*/
 	private String fname;
@@ -77,8 +83,21 @@ public class MTNumField extends Attributes {
 	/** Transparenz Color. */
 	 private MTColor trans = new MTColor(0, 0, 0, 10);
 	 
+	 /** Default Color for Fill Rectangle. */
+	 private MTColor blue1 = new MTColor(51, 102, 204, 180);
+	 
 	/** Attribut Model Object. */
 	 private ModelMtAttributs model;
+	 
+		/** MTColorPicker. 	 */
+	 private MTColorPicker colorpicker;
+	 
+
+	 /** MTButton for ColorPicker. */
+	 private MTImageButton colPickButton;
+	 
+	 /** Abstract MT Application.*/
+	 private AbstractMTApplication app1;
 	 
 	/**
 	 * Constructor MTNumField. 
@@ -94,22 +113,21 @@ public class MTNumField extends Attributes {
 	 */
 	
 	
-	public MTNumField(final AbstractMTApplication app, ModelMtAttributs model, final IFont fontArialMini, final int width, final int height, final boolean rightalign, final double defaultString, final String labeltext, final IFont labelfont) {
+	public MTNumField(final AbstractMTApplication app, ModelMtAttributs model, final IFont fontArialMini, final int width, final int height, final boolean rightalign, final String defaultString, final String labeltext, final IFont labelfont) {
 		super(app);
 		this.rAlign = rightalign;
-		doublevalue = defaultString;
+		stringvalue = defaultString;
 		fname = labeltext;
-		this.setUserData("FieldValue", Double.toString(defaultString));
-		this.setUserData("Label", labeltext);
 		
 		this.model = model;
 		System.out.println("Model from TextAttributs -> " + model);
 		
+		dataRead(defaultString, labeltext);
 		
 		this.height = height;
 		this.width = width;
 		this.labelfont = labelfont;
-		this.setName(fname);
+		//this.setName(fname);
 		this.init(app, fontArialMini);	
 	}
 	
@@ -120,9 +138,8 @@ public class MTNumField extends Attributes {
 	 */
 	
 	private void init(final AbstractMTApplication app, final IFont font) {
-		final MTColor blue1 = new MTColor(51, 102, 204, 180);
 		this.iF = font;
-		final AbstractMTApplication app1 = app;
+		app1 = app;
 		fontsize = iF.getOriginalFontSize();		
 		
 		this.setSizeLocal(width, height);
@@ -134,11 +151,11 @@ public class MTNumField extends Attributes {
 		textarea.setInnerPadding(0);
 		textarea.setInnerPaddingLeft(0);
 		textarea.setInnerPaddingTop(0);
-		textarea.setText(Double.toString(doublevalue));
+		textarea.setText(stringvalue);
 		textarea.setFillColor(new MTColor(0, 0, 0, 0));
 		textarea.setNoStroke(true);
 		
-		//textarea.setPickable(false);
+		textarea.setPickable(false);
 	
 		
 		setAlign(rAlign);
@@ -185,9 +202,8 @@ public class MTNumField extends Attributes {
 						public void stateChanged(final StateChangeEvent evt) {
 							textarea.setInnerPaddingLeft(0);
 							textarea.setText(numKeyText.getText());
-							setUserData("FieldValue", numKeyText.getText());
 							setAlign(rAlign);
-							
+							dataWrite();
 							
 						}
 					}
@@ -211,11 +227,134 @@ public class MTNumField extends Attributes {
 		// Add Object to base Object
 		this.addChild(textarea);
 		this.addChild(label);
-		
+		createColorPicker();
 		this.setVisible(true);
 		
 		
 		
+	}
+	
+	/** 
+	 * Read from datamodel and insert in the gui elements.
+	 *
+	 * @param defaultString String 
+	 * @param defaultlabeltext String
+	 */
+	private void dataRead(final String defaultDouble, final String defaultlabeltext) {
+		// Data transfer for value
+		if (model.getLable() == null) {
+			stringvalue = defaultDouble;
+			//Double.valueOf(textarea.getText()).doubleValue();
+		} else {
+			for (ModelAttributContent it : model.getAttributcontent()) {
+				if (it.getType().equalsIgnoreCase("Double")) {
+					System.out.println(" Value zu Typ String " + it.getValue());
+					stringvalue = it.getValue();
+					break;
+				} else {
+					System.out.println(" Value zu Typ String NICHT GEFUNDEN ");
+					stringvalue = defaultDouble;
+				}
+			}
+		}
+		
+		// Data transfer for Align
+		if (model.getLable() == null) {
+			rAlign = Boolean.parseBoolean(defaultDouble);
+		} else {
+			for (ModelAttributContent it : model.getAttributcontent()) {
+				if (it.getType().equalsIgnoreCase("Align")) {
+					System.out.println(" Value zu Typ Align " + it.getValue());
+					rAlign = Boolean.parseBoolean(it.getValue());
+					break;
+				} else {
+					System.out.println(" Value zu Typ Align NICHT GEFUNDEN ");
+					rAlign = Boolean.parseBoolean(defaultDouble);
+				}
+				
+			}
+		}
+		
+		
+		
+		// Data transfer for labeltext
+		if (model.getLable() == null) {
+			fname = defaultlabeltext;
+		} else {
+			fname = model.getLable();
+		}
+		
+		// Color for Rectangle Fill Color
+		if (model.getAttcolor() == null) {
+			this.setFillColor(blue1);
+		} else {
+			this.setFillColor(model.getAttcolor());
+		}
+		
+	}
+	
+	/** 
+	 * Write data in Datamodel.
+	 */
+	private void dataWrite() {
+		for (ModelAttributContent it : model.getAttributcontent()) {
+			if (it.getType().equalsIgnoreCase("Double")) {
+				it.setValue(textarea.getText());
+			} else {
+				//TODO Was ist zu tun wenn dieses Werte Paar noch nicht exitiert???
+			}
+		}
+		model.setAttcolor(getFillColor());
+	}
+	
+	/** 
+	 * Colorpicker.
+	 */
+	private void createColorPicker() {
+   
+        PImage colPick = app1.loadImage("ch" + MTApplication.separator + "mitoco" + MTApplication.separator + "data" + MTApplication.separator +  "colorcircletr.png");
+        colorpicker = new MTColorPicker(app1, 0, 0, colPick);
+        colorpicker.translate(new Vector3D(0, 0, 0));
+        colorpicker.setNoStroke(true);
+        colorpicker.addGestureListener(DragProcessor.class, new IGestureEventListener() {
+			public boolean processGestureEvent(final MTGestureEvent ge) {
+				if (ge.getId() == MTGestureEvent.GESTURE_ENDED) {
+					if (colorpicker.isVisible()) {
+						colorpicker.setVisible(false);
+					}
+				} else {
+					setFillColor(colorpicker.getSelectedColor());
+					dataWrite();
+				}
+				return false;
+			}
+		});
+        
+        PImage colPickIcon = app1.loadImage("ch" + MTApplication.separator + "mitoco" + MTApplication.separator + "data" + MTApplication.separator +  "ColorPickerIcon.png");
+        colPickButton = new MTImageButton(app1, colPickIcon);
+        colPickButton.translate(new Vector3D(width - height, 0, 0));
+        colPickButton.setNoStroke(true);
+        colPickButton.setSizeLocal(height, height);
+        colPickButton.sendToFront();
+        colPickButton.addGestureListener(TapProcessor.class, new IGestureEventListener() {
+			public boolean processGestureEvent(final MTGestureEvent ge) {
+				TapEvent te = (TapEvent) ge;
+				if (te.isTapped()) {
+					if (colorpicker.isVisible()) {
+						colorpicker.setVisible(false);
+					} else {
+						colorpicker.setVisible(true);
+						colorpicker.sendToFront();
+					}				
+				}
+				return true;
+			}
+        });
+        colorpicker.setVisible(false);
+	    colPickButton.setVisible(false);
+	
+        this.addChild(colPickButton);
+		this.addChild(colorpicker);
 	}
 	
 	/**
@@ -224,6 +363,7 @@ public class MTNumField extends Attributes {
 	@Override
 	public final void setMin() {
 		label.setVisible(false);
+		colPickButton.setVisible(false);
 	}
 	
 	/**
@@ -232,6 +372,7 @@ public class MTNumField extends Attributes {
 	@Override
 	public final void setMax() {
 		label.setVisible(true);
+		colPickButton.setVisible(true);
 	}
 
 	/** Set Textalign from textarea.

@@ -128,7 +128,7 @@ public class HelloWorldScene extends AbstractScene {
 				TapEvent te = (TapEvent) ge;
 				switch(te.getTapID()) {
 				case TapEvent.TAPPED:
-					dataController.createObject();
+					dataController.createObject(0);
 					getCanvas().addChild(dataController.getMyobjectList().get(counter));	
 					
 					//getCanvas().addChild(myobjectList.get(counter).getMyObjectBack());	

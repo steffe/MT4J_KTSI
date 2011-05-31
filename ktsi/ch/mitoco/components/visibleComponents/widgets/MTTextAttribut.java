@@ -230,6 +230,7 @@ public class MTTextAttribut extends Attributes {
 				if (it.getType().equalsIgnoreCase("String")) {
 					System.out.println(" Value zu Typ String " + it.getValue());
 					stringvalue = it.getValue();
+					break;
 				} else {
 					System.out.println(" Value zu Typ String NICHT GEFUNDEN ");
 					stringvalue = defaultString;
@@ -239,8 +240,10 @@ public class MTTextAttribut extends Attributes {
 		
 		// Data transfer for labeltext
 		if (model.getLable() == null) {
+			System.out.println("Set Default Label");
 			fname = defaultlabeltext;
 		} else {
+			System.out.println("Set Label "+ model.getLable());
 			fname = model.getLable();
 		}
 		
@@ -260,6 +263,7 @@ public class MTTextAttribut extends Attributes {
 		for (ModelAttributContent it : model.getAttributcontent()) {
 			if (it.getType().equalsIgnoreCase("String")) {
 				it.setValue(textarea.getText());
+				break;
 			} else {
 				//TODO Was ist zu tun wenn dieses Werte Paar noch nicht exitiert???
 			}

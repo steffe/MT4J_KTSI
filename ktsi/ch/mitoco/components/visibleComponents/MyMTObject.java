@@ -3,6 +3,7 @@ package ch.mitoco.components.visibleComponents;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 
 import javax.smartcardio.ATR;
 
@@ -26,6 +27,7 @@ import org.mt4j.input.inputProcessors.componentProcessors.tapProcessor.TapProces
 import org.mt4j.util.MTColor;
 import org.mt4j.util.font.FontManager;
 import org.mt4j.util.font.IFont;
+import org.mt4j.util.math.ToolsMath;
 import org.mt4j.util.math.Vector3D;
 
 import ch.mitoco.components.visibleComponents.widgets.Attributes;
@@ -34,6 +36,7 @@ import ch.mitoco.components.visibleComponents.widgets.MTDropDownList;
 import ch.mitoco.components.visibleComponents.widgets.MTNumField;
 import ch.mitoco.components.visibleComponents.widgets.MTTextAttribut;
 import ch.mitoco.model.ModelAttributContent;
+import ch.mitoco.model.ModelAttributDefinition;
 import ch.mitoco.model.ModelMtAttributs;
 import ch.mitoco.model.ModelMtObjects;
 
@@ -88,9 +91,12 @@ public class MyMTObject extends MTRoundRectangle {
 	/** Boolean for Rotation. */
 	private boolean updownrotate;
 	
-	/** */
+	/** Default Color for Border*/
 	private MTColor greypez = new MTColor(12, 12, 12, 34);
 
+	/** Default Color for stroke*/
+	private MTColor speblue = new MTColor(51, 102, 255);
+	
 	/** */
 	private int id;
 	
@@ -103,13 +109,12 @@ public class MyMTObject extends MTRoundRectangle {
 	/** The default drag action. */
 	private DefaultDragAction defaultDragAction;
 	
+	/** Space Value for X definition. */
+	private int spaceglobal;
 
 	/** List with all Attributes.*/
 	private List<Attributes>myAttributs;
-	
-	/** Space Value for X definition. */
-	private int spaceglobal;
-	
+		
 	/** List for Attributes. */	
 	private List<ModelMtAttributs> attributesmodel;
 	
@@ -118,7 +123,7 @@ public class MyMTObject extends MTRoundRectangle {
 	
 	/** Standard Font */
 	private IFont fontArial;
-	
+
 	/** Public BLBL MyObject.
 	 * 
 	 * @param pApplet2 MTApplication
@@ -134,7 +139,8 @@ public class MyMTObject extends MTRoundRectangle {
 	 */
 	public MyMTObject(final MTApplication pApplet2, final ModelMtObjects model, final int objectID) {
 		super(pApplet2, 0, 0, 0, 0, 0, 5, 5);
-	
+
+		
 		pApplet = pApplet2;
 		this.id = objectID;
 		defaultDragAction 	= new DefaultDragAction();
@@ -144,8 +150,9 @@ public class MyMTObject extends MTRoundRectangle {
 		attributesmodel = model.getObjectattributs();
 		
 		
+		
 		// TODO Auto-generated constructor stub
-		MTColor speblue = new MTColor(51, 102, 255);
+		
 		obSizeMinWidth = 300; // Grösse Min
 		obSizeMinHeight = 300; // Grösse Min
 		obSizeMaxWidth = 300;
@@ -153,34 +160,15 @@ public class MyMTObject extends MTRoundRectangle {
 		
 		obDifSizeHeight = obSizeMaxHeight - obSizeMinHeight;
 		
-		IFont fontArial = FontManager.getInstance().createFont(pApplet, "arial.ttf", 
+		fontArial = FontManager.getInstance().createFont(pApplet, "arial.ttf", 
 				15, 	//Font size
 				MTColor.BLACK);
 		
 		this.setSizeLocal(obSizeMinWidth, obSizeMinHeight);
 		this.setStrokeWeight(1);
-		this.setStrokeColor(speblue);
-	
-		// Model filled parameters
-		if (this.objectmodel.getObjectcolor() == null) {
-			this.setFillColor(greypez);
-		} else {
-		this.setFillColor(this.objectmodel.getObjectcolor());
-		}
+		//this.setStrokeColor(speblue);
 		
-		if (this.objectmodel.getObjectposition() == null) {
-			this.setPositionGlobal(new Vector3D(300, 300));
-		} else {
-			this.setPositionGlobal(this.objectmodel.getObjectposition());
-		}
 		
-		if (this.objectmodel.getObjectfont() == null) {
-			fontArial = FontManager.getInstance().createFont(pApplet, "arial.ttf", 
-					15, 	//Font size
-					MTColor.BLACK);
-		} else {
-			fontArial = this.objectmodel.getObjectfont();
-		}
 		
 		//Create a textfield
 		textField = new MTTextArea(pApplet, fontArial); 
@@ -193,10 +181,11 @@ public class MyMTObject extends MTRoundRectangle {
 		// Base Rect 
 		baserect = new MTRoundRectangle(pApplet, 10, 10, 0, obSizeMinWidth - 20, obSizeMinHeight - 20, 5, 5);
 		baserect.setNoStroke(true);
-		baserect.setStrokeColor(MTColor.GRAY);
-		baserect.setFillColor(MTColor.GRAY);
+		//baserect.setStrokeColor(MTColor.GRAY);
+		//baserect.setFillColor(MTColor.GRAY);
 		baserect.setPickable(false);
 		
+		readData();
 		
 		// Button for Rotate
 		PImage buttonImage = pApplet.loadImage("ch" + MTApplication.separator + "mitoco" + MTApplication.separator + "data" + MTApplication.separator +  "buttonRotate.png");
@@ -327,7 +316,7 @@ public class MyMTObject extends MTRoundRectangle {
 			case(1):	
 				System.out.println(i + "Attributs MTNumField " + it);
 			
-				myAttributs.add(new MTNumField(pApplet, attributesmodel.get(i), fontArialMini, 250, 30, true, 1111134.34, "TestFeld", labelfont));
+				myAttributs.add(new MTNumField(pApplet, attributesmodel.get(i), fontArialMini, 250, 30, true, "1111134.34", "TestFeld", labelfont));
 				myAttributs.get(i).setPositionRelativeToParent(new Vector3D(this.getWidthXY(TransformSpace.LOCAL) / 2, x));
 			
 				break;
@@ -388,7 +377,73 @@ public class MyMTObject extends MTRoundRectangle {
 		}
 			
 	}
+	
+	/**
+	 * Read Data from Object Model.
+	 */
+	private void readData() {		
 		
+		// Model filled color Border parameters
+		if (this.objectmodel.getObjectcolor() == null) {
+			this.setFillColor(greypez);
+		} else {
+		this.setFillColor(this.objectmodel.getObjectcolor());
+		}
+		
+		// Object linie color
+		if (this.objectmodel.getObjectlinecolor() == null) {
+			this.setFillColor(speblue);
+		} else {
+		this.setStrokeColor(this.objectmodel.getObjectlinecolor());
+		}
+		
+		// Base Backround Color
+		System.out.println("Fill Color");
+		if (this.objectmodel.getObjectFillcolor() == null) {
+			System.out.println("No Fill Color found");
+			baserect.setFillColor(MTColor.GRAY);
+			baserect.setStrokeColor(MTColor.GRAY);
+		} else {
+			System.out.println("Fill Color found");
+		baserect.setStrokeColor(this.objectmodel.getObjectFillcolor());
+		baserect.setFillColor(this.objectmodel.getObjectFillcolor());
+		}
+		
+		// Object Position
+		System.out.println("Position");
+		if (this.objectmodel.getObjectposition() == null) {
+			this.setPositionGlobal(new Vector3D(ToolsMath.nextRandomInt(140, 800), ToolsMath.nextRandomInt(140, 700)));
+		} else {
+			this.setPositionGlobal(this.objectmodel.getObjectposition());
+		}
+		
+		// Object Font
+		System.out.println("Font");
+		if (this.objectmodel.getObjectfont() == null) {
+			fontArial = FontManager.getInstance().createFont(pApplet, "arial.ttf", 
+					15, 	//Font size
+					MTColor.BLACK);
+		} else {
+			fontArial = this.objectmodel.getObjectfont();
+		}
+		
+		
+	}
+	
+	/** 
+	 * Write data in Datamodel.
+	 */
+	private void dataWrite() {
+		// Save Position
+		
+		// Save Color
+		
+		// Save Font (Not in use)
+	
+		// Save Directions
+		
+	}
+	
 	/**
 	 * Setzen des Object Namens. String als Übergabe-Parameters.
 	 * @param titelname String
@@ -435,9 +490,18 @@ public class MyMTObject extends MTRoundRectangle {
 			for (ModelAttributContent it : attribut.getAttributcontent()) {
 				System.out.println("              " + i + " Attr. Typ: " + it.getType());
 				System.out.println("              " + i + " Attr. Value: " + it.getValue());
-				i++;
-				
+				i++;	
 			}
+			
+			/*
+			it j = 0;
+			for (ModelAttributDefinition at : attribut.getAttributdefinition()) {
+				System.out.println("              " + j + " Attr. Definiton: " + at.getDefinition());
+				System.out.println("              " + j + " Attr. Value: " + at.getValue());
+				j++;	
+			}
+			*/
+			
 		}
 		System.out.println("\n");
 	}
