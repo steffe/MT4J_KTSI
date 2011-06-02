@@ -2,17 +2,32 @@ package store;
 
 
 
+import gov.pnnl.components.visibleComponents.widgets.radialMenu.MTRadialMenu;
+import gov.pnnl.components.visibleComponents.widgets.radialMenu.item.MTMenuItem;
+
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.mt4j.MTApplication;
 import org.mt4j.components.visibleComponents.widgets.buttons.MTImageButton;
+import org.mt4j.input.IMTInputEventListener;
+import org.mt4j.input.inputData.InputCursor;
+import org.mt4j.input.inputData.MTFingerInputEvt;
+import org.mt4j.input.inputData.MTInputEvent;
 import org.mt4j.input.inputProcessors.IGestureEventListener;
 import org.mt4j.input.inputProcessors.MTGestureEvent;
 import org.mt4j.input.inputProcessors.componentProcessors.tapProcessor.TapEvent;
 import org.mt4j.input.inputProcessors.componentProcessors.tapProcessor.TapProcessor;
+import org.mt4j.input.inputProcessors.componentProcessors.unistrokeProcessor.UnistrokeEvent;
+import org.mt4j.input.inputProcessors.componentProcessors.unistrokeProcessor.UnistrokeProcessor;
+import org.mt4j.input.inputProcessors.componentProcessors.unistrokeProcessor.UnistrokeUtils.Direction;
+import org.mt4j.input.inputProcessors.componentProcessors.unistrokeProcessor.UnistrokeUtils.UnistrokeGesture;
 import org.mt4j.input.inputProcessors.globalProcessors.CursorTracer;
 import org.mt4j.sceneManagement.AbstractScene;
 import org.mt4j.util.MTColor;
+import org.mt4j.util.font.FontManager;
+import org.mt4j.util.font.IFont;
 import org.mt4j.util.math.Vector3D;
 
 import processing.core.PImage;
@@ -57,6 +72,15 @@ public class HelloWorldScene extends AbstractScene {
 	//public LoadXML LoadXML;
 	
 	
+	/**RadialMenu.
+	 * 
+	 */
+	  private MTRadialMenu mtRadialMenu1;
+	  private MTRadialMenu mtRadialMenu2;
+	  boolean translate = true;
+	  
+	  private InputCursor ic;
+	  
 	/** 
 	 * Hello Word Scene. 
 	 * 
@@ -68,11 +92,172 @@ public class HelloWorldScene extends AbstractScene {
 		
 		this.mtApplication = mtAppl;
 		this.setClearColor(new MTColor(100, 100, 100, 255));
-		
+		this.registerGlobalInputProcessor(new CursorTracer(mtAppl, this));
 		
 		dataController = new DataController(mtAppl);
 		dataController.createDataModel("Scenename");
 		dataController.createObjectList();
+		
+		//StrokeListener
+		UnistrokeProcessor up = new UnistrokeProcessor(getMTApplication());
+		up.addTemplate(UnistrokeGesture.CIRCLE, Direction.CLOCKWISE);
+		up.addTemplate(UnistrokeGesture.CIRCLE, Direction.COUNTERCLOCKWISE);
+		up.addTemplate(UnistrokeGesture.V, Direction.CLOCKWISE);
+		
+		//InputEvents for RadialMenu
+		final IMTInputEventListener createObjectInput = new IMTInputEventListener() {
+		      @Override
+		      public boolean processInputEvent(final MTInputEvent inEvt) {
+		        // Most input events in MT4j are an instance of AbstractCursorInputEvt (mouse, multi-touch..)
+		        if (inEvt instanceof MTFingerInputEvt) {
+		          final MTFingerInputEvt cursorInputEvt = (MTFingerInputEvt) inEvt;
+		          switch (cursorInputEvt.getId()) {
+		            case TapEvent.GESTURE_STARTED:
+		            	dataController.createObject(0);
+		            	System.out.println("Object add Menu"+inEvt.getCurrentTarget().getName());
+		            	
+		            	getCanvas().addChild(dataController.getMyobjectList().get(counter));	
+						
+						//getCanvas().addChild(myobjectList.get(counter).getMyObjectBack());	
+						counter++;
+		              break;
+		            default:
+		              break;
+		          }
+		        } else {
+		          //LOG.warn("Some other event occured:" + inEvt);
+		        }
+
+		        return false;
+		      }
+		    };
+		    
+		    final IMTInputEventListener exitButtonInput = new IMTInputEventListener() {
+			      @Override
+			      public boolean processInputEvent(final MTInputEvent inEvt) {
+			        // Most input events in MT4j are an instance of AbstractCursorInputEvt (mouse, multi-touch..)
+			        if (inEvt instanceof MTFingerInputEvt) {
+			          final MTFingerInputEvt cursorInputEvt = (MTFingerInputEvt) inEvt;
+			          switch (cursorInputEvt.getId()) {
+			            case TapEvent.GESTURE_STARTED:
+			            	Runtime.getRuntime().exit(0);
+			              break;
+			            default:
+			              break;
+			          }
+			        } else {
+			          //LOG.warn("Some other event occured:" + inEvt);
+			        }
+
+			        return false;
+			      }
+			    };
+		
+		
+		getCanvas().registerInputProcessor(up);
+		getCanvas().addGestureListener(UnistrokeProcessor.class, new IGestureEventListener() {
+			public boolean processGestureEvent(final MTGestureEvent ge) {
+				UnistrokeEvent ue = (UnistrokeEvent) ge;
+				//final TapAndHoldEvent th = (TapAndHoldEvent) ge;
+				//final IMTComponent3D target = th.getTarget();
+				switch (ue.getId()) {
+				case UnistrokeEvent.GESTURE_STARTED:
+					getCanvas().addChild(ue.getVisualization());
+					//Beim ersten GESTURE_STARTED Event existiert das Objekt noch nicht, daher darf es auch nicht destroyed werden.
+					if (mtRadialMenu1 != null) {
+						mtRadialMenu1.destroy();
+					}
+					//System.out.println(ellipse);
+					//clearCanvas();
+					break;
+				case UnistrokeEvent.GESTURE_UPDATED:
+					break;
+				case UnistrokeEvent.GESTURE_ENDED:
+					UnistrokeGesture g = ue.getGesture();
+					System.out.println("Recognized gesture: " + g);
+					if (g.equals(UnistrokeGesture.V)) {
+						ic = ue.getCursor();
+						if ((HelloWorldScene.this.mtRadialMenu1 != null) && !HelloWorldScene.this.mtRadialMenu1.isVisible())
+			              {
+							HelloWorldScene.this.mtRadialMenu1.destroy();
+							HelloWorldScene.this.mtRadialMenu1 = null;
+			              }
+
+			              if (HelloWorldScene.this.mtRadialMenu1 == null)
+			              {
+			                // Build list of menu items
+			                final List<MTMenuItem> menuItems = new ArrayList<MTMenuItem>();
+
+			                final MTMenuItem menu1 = new MTMenuItem("New", null);
+			                final MTMenuItem subMenu11 = new MTMenuItem("Object 1", null);
+			                final MTMenuItem subMenu12 = new MTMenuItem("Object 2", null);
+			                menu1.addSubMenuItem(subMenu11);
+			                menu1.addSubMenuItem(subMenu12);
+			                subMenu11.addInputEventListener(createObjectInput);
+			                subMenu12.addInputEventListener(createObjectInput);
+			                menu1.addSubMenuItem(new MTMenuItem("Object 3", null));
+			                menu1.addSubMenuItem(new MTMenuItem("Object 4", null));
+
+			                final MTMenuItem subMenu5 = new MTMenuItem("View", null);
+			                subMenu5.addSubMenuItem(new MTMenuItem("All", null));
+			                subMenu5.addSubMenuItem(new MTMenuItem("New", null));
+			                subMenu5.addSubMenuItem(new MTMenuItem("Old", null));
+			                subMenu5.addSubMenuItem(new MTMenuItem("Color", null));
+			                subMenu5.addSubMenuItem(new MTMenuItem("Text", null));
+			                subMenu5.addSubMenuItem(new MTMenuItem("Special", null));
+
+			                menu1.addSubMenuItem(subMenu5);
+
+			                final MTMenuItem menu2 = new MTMenuItem("Action", null);
+			                final MTMenuItem subMenu2 = new MTMenuItem("File", null);
+			                subMenu2.addSubMenuItem(new MTMenuItem("Load", null));
+			                subMenu2.addSubMenuItem(new MTMenuItem("Save", null));
+			                subMenu2.addSubMenuItem(new MTMenuItem("Copy", null));
+			                subMenu2.addSubMenuItem(new MTMenuItem("Send", null));
+			                subMenu2.addSubMenuItem(new MTMenuItem("Sub-Sub-Menu 5", null));
+			                subMenu2.addSubMenuItem(new MTMenuItem("Sub-Sub-Menu 6", null));
+			                menu2.addSubMenuItem(subMenu2);
+			                menu2.addSubMenuItem(new MTMenuItem("Copy Objecet", null));
+			                menu2.addSubMenuItem(new MTMenuItem("Paste", null));
+			                menu2.addSubMenuItem(new MTMenuItem("Clear", null));
+			                menu2.addSubMenuItem(new MTMenuItem("Sub-Menu 5", null));
+			                menu2.addSubMenuItem(new MTMenuItem("Sub-Menu 6", null));
+
+			                
+			            
+
+			                
+
+			                final MTMenuItem menu3 = new MTMenuItem("Maximize", null);
+			                final MTMenuItem menu4 = new MTMenuItem("Minimize", null);
+			                final MTMenuItem menu5 = new MTMenuItem("Exit", null);
+			                menu5.addInputEventListener(exitButtonInput); 
+			             
+			                menuItems.add(menu1);
+			                menuItems.add(menu2);
+			                menuItems.add(menu3);
+			                menuItems.add(menu4);
+			                menuItems.add(menu5);
+			        
+
+			                // Create menu
+			                final Vector3D vector = new Vector3D(ic.getCurrentEvtPosX(), ic.getCurrentEvtPosY());
+
+			                final IFont font = FontManager.getInstance().createFont(mtApplication, "arial.ttf",
+			                    16, // Font size
+			                    new MTColor(255, 255, 255, 255), // Font fill color
+			                    true); // Anti-alias
+			                HelloWorldScene.this.mtRadialMenu1 = new MTRadialMenu(mtApplication, vector, font, 1f, menuItems);
+			                HelloWorldScene.this.getCanvas().addChild(HelloWorldScene.this.mtRadialMenu1);
+			              }
+					}
+					break;
+				default:
+					break;
+				}
+				return false;
+			}				
+		});
 		
 		
 		//Show touches
@@ -126,6 +311,7 @@ public class HelloWorldScene extends AbstractScene {
 			return false;
 			}
 		});
+		
 	
 		//New Object
 		PImage buttonDELImage = mtApplication.loadImage("ch" + MTApplication.separator + "mitoco" + MTApplication.separator + "data" + MTApplication.separator +  "buttonDel.png");
