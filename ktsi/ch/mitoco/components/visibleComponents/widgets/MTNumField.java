@@ -155,9 +155,6 @@ public class MTNumField extends Attributes {
 		textarea.setFillColor(new MTColor(0, 0, 0, 0));
 		textarea.setNoStroke(true);
 		
-		textarea.setPickable(false);
-	
-		
 		setAlign(rAlign);
 
 		textarea.setGestureAllowance(DragProcessor.class, false);
@@ -225,10 +222,11 @@ public class MTNumField extends Attributes {
 		label.setVisible(false);
 		
 		// Add Object to base Object
+		
 		this.addChild(textarea);
 		this.addChild(label);
-		createColorPicker();
 		this.setVisible(true);
+		createColorPicker();
 		
 		
 		

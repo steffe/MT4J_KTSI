@@ -53,7 +53,7 @@ public class ModelMtAttributs {
 	public ModelMtAttributs() {
 		
 		attributcontent = new ArrayList<ModelAttributContent>();
-		setAttributdefinition(new ArrayList<ModelAttributDefinition>());
+		attributdefinition = new ArrayList<ModelAttributDefinition>();
 	}
 	/**Returns the Numeric Identification of this Attribute.
 	 *  
