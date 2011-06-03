@@ -8,7 +8,6 @@ import gov.pnnl.components.visibleComponents.widgets.radialMenu.item.MTMenuItem;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.mt4j.MTApplication;
 import org.mt4j.components.visibleComponents.widgets.buttons.MTImageButton;
@@ -17,7 +16,6 @@ import org.mt4j.input.inputData.InputCursor;
 import org.mt4j.input.inputData.MTFingerInputEvt;
 import org.mt4j.input.inputData.MTInputEvent;
 import org.mt4j.input.inputProcessors.IGestureEventListener;
-import org.mt4j.input.inputProcessors.IInputProcessor;
 import org.mt4j.input.inputProcessors.MTGestureEvent;
 import org.mt4j.input.inputProcessors.componentProcessors.tapProcessor.TapEvent;
 import org.mt4j.input.inputProcessors.componentProcessors.tapProcessor.TapProcessor;
@@ -117,12 +115,14 @@ public class HelloWorldScene extends AbstractScene {
 		          switch (cursorInputEvt.getId()) {
 		            case TapEvent.GESTURE_STARTED:
 		            	
-		            	System.out.println("Object add Menu: "+inEvt.getCurrentTarget().getName());
-		            	
-		            	if (inEvt.getCurrentTarget().getName() == "Object 1"){
+		            	System.out.println("Object add Menu: \""+inEvt.getCurrentTarget().getName()+"\"");
+		            	System.out.println("Counter befor creation: "+ counter);
+		            	if (inEvt.getCurrentTarget().getName().equals("Object 1")){
 		            		dataController.createObject(0);
-		            	}else if (inEvt.getCurrentTarget().getName() == "Object 2"){
-		            		dataController.createObject(2);
+		            		System.out.println("Object1");
+		            	}else if (inEvt.getCurrentTarget().getName().equals("Object 2")){
+		            		dataController.createObject(1);
+		            		System.out.println("Object2");
 		            	}
 		            	getCanvas().addChild(dataController.getMyobjectList().get(counter));	
 						
@@ -202,13 +202,13 @@ public class HelloWorldScene extends AbstractScene {
 			                	final MTMenuItem subMenu11 = new MTMenuItem(it.next().getObjectdescription(), null);
 			                	//menu1.addSubMenuItem(new MTMenuItem(it.next().getObjectdescription(), null));
 			                	//final IMTInputEventListener createObjectInput = new IMTInputEventListener() {
-			                	menu1.addSubMenuItem(new MTMenuItem(it.next().getObjectdescription(), new ConcurrentHashMap<Class<? extends IInputProcessor>, IGestureEventListener>(){
+			                	//menu1.addSubMenuItem(new MTMenuItem(it.next().getObjectdescription(), new ConcurrentHashMap<Class<? extends IInputProcessor>, IGestureEventListener>(){
 			                			
-			                	}));
-			                	
-			                	
-			                	//subMenu11.addInputEventListener(createObjectInput);
-			                			}
+			                	//}));
+			                			                	
+			                	menu1.addSubMenuItem(subMenu11);
+			                	subMenu11.addInputEventListener(createObjectInput);
+			                	}
 			                
 			                
 			                //final MTMenuItem subMenu11 = new MTMenuItem("Object 1", null);
