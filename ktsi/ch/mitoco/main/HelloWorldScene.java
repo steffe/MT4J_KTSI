@@ -17,6 +17,7 @@ import org.mt4j.input.inputData.AbstractCursorInputEvt;
 import org.mt4j.input.inputData.MTInputEvent;
 import org.mt4j.input.inputProcessors.IGestureEventListener;
 import org.mt4j.input.inputProcessors.MTGestureEvent;
+import org.mt4j.input.inputProcessors.componentProcessors.lassoProcessor.LassoProcessor;
 import org.mt4j.input.inputProcessors.componentProcessors.panProcessor.PanProcessorTwoFingers;
 import org.mt4j.input.inputProcessors.componentProcessors.tapProcessor.TapEvent;
 import org.mt4j.input.inputProcessors.componentProcessors.tapProcessor.TapProcessor;
@@ -24,12 +25,14 @@ import org.mt4j.input.inputProcessors.componentProcessors.zoomProcessor.ZoomProc
 import org.mt4j.input.inputProcessors.globalProcessors.CursorTracer;
 import org.mt4j.sceneManagement.AbstractScene;
 import org.mt4j.util.MTColor;
+import org.mt4j.util.math.ToolsMath;
 import org.mt4j.util.math.Vector3D;
 import org.mt4j.util.math.Vertex;
 
 import com.thoughtworks.xstream.XStream;
 
 import ch.mitoco.components.visibleComponents.MyMTObject;
+import ch.mitoco.components.visibleComponents.objectlink.MTLinkController;
 import ch.mitoco.model.ModelMtObjects;
 import ch.mitoco.model.ModelScence;
 import ch.mitoco.store.generated.Customer;
@@ -76,6 +79,10 @@ public class HelloWorldScene extends AbstractScene {
 	/** Data Controller Object. */
 	private DataController dataController;
 	
+	
+	/** Linker Controller. */
+	private MTLinkController linker;
+	
 	/** XML Customer. */
 	public Customer readcustomer;
 	public static ModelScence MODELSCENCE;
@@ -99,6 +106,9 @@ public class HelloWorldScene extends AbstractScene {
 		dataController.createDataModel("Scenename");
 		dataController.createObjectList();
 		
+		LassoProcessor lassoProcessor = new LassoProcessor(mtAppl, getCanvas(), getSceneCam());
+		
+		linker = new MTLinkController(mtAppl, getCanvas(), dataController.getMyobjectList(), lassoProcessor);
 		
 		//Show touches
 		this.registerGlobalInputProcessor(new CursorTracer(mtApplication, this));
@@ -130,22 +140,17 @@ public class HelloWorldScene extends AbstractScene {
 				case TapEvent.TAPPED:
 					dataController.createObject(0);
 					getCanvas().addChild(dataController.getMyobjectList().get(counter));	
-					
+					dataController.getMyobjectList().get(counter).setPositionGlobal(new Vector3D(ToolsMath.nextRandomInt(140, 800), ToolsMath.nextRandomInt(140, 700)));
+					linker.setTapAndHoldListener(dataController.getMyobjectList().get(counter));
 					//getCanvas().addChild(myobjectList.get(counter).getMyObjectBack());	
 					counter++;
 					
-					if (myobjectList.size() > 0) {
-						eventObjectHandling();
-					}
 					break;
 				
 				default:
 					break;
 				}
-				
-				
-				
-				
+
 			return false;
 			}
 		});
@@ -158,6 +163,8 @@ public class HelloWorldScene extends AbstractScene {
 		buttonDel.setName("KeyboardImage");
 		buttonDel.setNoStroke(true);
 		buttonDel.setPositionGlobal(new Vector3D(mtAppl.getWidth() - 20, 20));
+		
+	
 		
 		buttonDel.addGestureListener(TapProcessor.class, new IGestureEventListener() {
 			
@@ -182,7 +189,8 @@ public class HelloWorldScene extends AbstractScene {
 					System.out.println("Kein Objeckt zum enfernen vorhanden " + counter);	
 					}
 				*/	
-					
+					linker.printSelectedList();
+					linker.storeValidPair();
 					break;
 				
 				default:
@@ -253,7 +261,7 @@ public class HelloWorldScene extends AbstractScene {
 						}
 						counter = dataController.getObjectcounter();
 					}
-						
+					linker.setTapAndHoldListener();
 					break;
 				
 				default:
@@ -262,7 +270,6 @@ public class HelloWorldScene extends AbstractScene {
 			return false;
 			}
 		});
-		
 		
 		
 		
@@ -276,69 +283,9 @@ public class HelloWorldScene extends AbstractScene {
 		this.getCanvas().addGestureListener(ZoomProcessor.class, new DefaultZoomAction());
 		this.getCanvas().registerInputProcessor(new PanProcessorTwoFingers(mtApplication));
 		this.getCanvas().addGestureListener(PanProcessorTwoFingers.class, new DefaultPanAction());
-		
-		
 
 	}
-	
-	/** Create object from the xml data.*/
-	private void createObject() {
-		// From XML Direct
-		// From new Button
-		
-		
-	}
-		
-	/** Position Dedection for MTObjects.*/
-	// TODO Postition Dedection
-	private void eventObjectHandling() {
-		
-		this.getCanvas().addInputListener(new IMTInputEventListener() {
-			
-			public boolean processInputEvent(MTInputEvent inEvt) {
-			
-				if (inEvt instanceof AbstractCursorInputEvt) {
-					AbstractCursorInputEvt cursorInputEvt = (AbstractCursorInputEvt) inEvt;
-					if (myobjectList.size() == 3) {
-						switch (cursorInputEvt.getId()) {
-						case AbstractCursorInputEvt.INPUT_STARTED:
-							drawLinie(myobjectList.get(0).getCenterPointGlobal(), myobjectList.get(1).getCenterPointGlobal());
-							break;
-						case AbstractCursorInputEvt.INPUT_UPDATED:
-							drawLinie(myobjectList.get(0).getCenterPointGlobal(), myobjectList.get(1).getCenterPointGlobal());
-							break;
-						case AbstractCursorInputEvt.INPUT_ENDED:
-							drawLinie(myobjectList.get(0).getCenterPointGlobal(), myobjectList.get(1).getCenterPointGlobal());
-							break;
-						default:
-							break;
-						}
-					} else {
-						l1.destroy();
-					}
-					
-				} else {
-					// handle other input events stuff
-				}
-				return false;
-			}
-		}
-		);
-		
-	}
-	/** Test Methode to draw a linie.
-	 *  @param input1 Vector3D 
-	 *  @param input2 Vector3D
-	 * */
-	private void drawLinie(Vector3D input1, Vector3D input2) {
-		System.out.println("Objekt Position Started " + input1);
-		
-		l1.setVertices(new Vertex[]{new Vertex(input1), new Vertex(input2)});
-		getCanvas().addChild(l1);
 
-	}
-	
-	
 	@Override
 	public void init() {
 		

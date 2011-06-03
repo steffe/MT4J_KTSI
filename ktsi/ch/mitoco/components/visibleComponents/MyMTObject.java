@@ -13,10 +13,13 @@ import org.mt4j.components.TransformSpace;
 import org.mt4j.components.visibleComponents.shapes.MTRoundRectangle;
 import org.mt4j.components.visibleComponents.widgets.MTTextArea;
 import org.mt4j.components.visibleComponents.widgets.buttons.MTImageButton;
+import org.mt4j.input.IMTInputEventListener;
 import org.mt4j.input.gestureAction.DefaultDragAction;
 import org.mt4j.input.gestureAction.DefaultRotateAction;
 import org.mt4j.input.gestureAction.DefaultScaleAction;
 import org.mt4j.input.gestureAction.InertiaDragAction;
+import org.mt4j.input.inputData.AbstractCursorInputEvt;
+import org.mt4j.input.inputData.MTInputEvent;
 import org.mt4j.input.inputProcessors.IGestureEventListener;
 import org.mt4j.input.inputProcessors.MTGestureEvent;
 import org.mt4j.input.inputProcessors.componentProcessors.dragProcessor.DragProcessor;
@@ -32,6 +35,7 @@ import org.mt4j.util.math.Vector3D;
 
 import ch.mitoco.components.visibleComponents.widgets.Attributes;
 import ch.mitoco.components.visibleComponents.widgets.Attributes;
+import ch.mitoco.components.visibleComponents.widgets.MTColorPickerGroup;
 import ch.mitoco.components.visibleComponents.widgets.MTDropDownList;
 import ch.mitoco.components.visibleComponents.widgets.MTNumField;
 import ch.mitoco.components.visibleComponents.widgets.MTTextAttribut;
@@ -91,10 +95,10 @@ public class MyMTObject extends MTRoundRectangle {
 	/** Boolean for Rotation. */
 	private boolean updownrotate;
 	
-	/** Default Color for Border*/
+	/** Default Color for Border. */
 	private MTColor greypez = new MTColor(12, 12, 12, 34);
 
-	/** Default Color for stroke*/
+	/** Default Color for stroke. */
 	private MTColor speblue = new MTColor(51, 102, 255);
 	
 	/** */
@@ -119,11 +123,20 @@ public class MyMTObject extends MTRoundRectangle {
 	private List<ModelMtAttributs> attributesmodel;
 	
 	/** Data Model for this object.*/
-	public ModelMtObjects objectmodel;
+	private ModelMtObjects objectmodel;
 	
-	/** Standard Font */
+	/** Standard Font. */
 	private IFont fontArial;
+	
+	/** Color Picker. */
+	private MTColorPickerGroup colorpicker;
 
+	/** Tagged Boolean.*/
+	private boolean tagged;
+	
+	/** before Tagged Stroke Color. */
+	private MTColor befortaggedColor;
+	
 	/** Public BLBL MyObject.
 	 * 
 	 * @param pApplet2 MTApplication
@@ -149,10 +162,6 @@ public class MyMTObject extends MTRoundRectangle {
 		this.objectmodel = model;
 		attributesmodel = model.getObjectattributs();
 		
-		
-		
-		// TODO Auto-generated constructor stub
-		
 		obSizeMinWidth = 300; // Grösse Min
 		obSizeMinHeight = 300; // Grösse Min
 		obSizeMaxWidth = 300;
@@ -160,15 +169,16 @@ public class MyMTObject extends MTRoundRectangle {
 		
 		obDifSizeHeight = obSizeMaxHeight - obSizeMinHeight;
 		
+
+		
 		fontArial = FontManager.getInstance().createFont(pApplet, "arial.ttf", 
 				15, 	//Font size
 				MTColor.BLACK);
 		
 		this.setSizeLocal(obSizeMinWidth, obSizeMinHeight);
 		this.setStrokeWeight(1);
+		this.setName("Object "+id);
 		//this.setStrokeColor(speblue);
-		
-		
 		
 		//Create a textfield
 		textField = new MTTextArea(pApplet, fontArial); 
@@ -207,6 +217,7 @@ public class MyMTObject extends MTRoundRectangle {
 					baserect.rotateZ(new Vector3D((baserect.getWidthXY(TransformSpace.LOCAL) / 2) + 10, (baserect.getHeightXY(TransformSpace.LOCAL) / 2) + 10), 180);
 					updownrotate = !updownrotate;
 					printMTObjectModel(objectmodel);
+					dataWrite();
 					break;	
 				default:
 					break;
@@ -234,7 +245,7 @@ public class MyMTObject extends MTRoundRectangle {
 				TapEvent ke = (TapEvent) ge;	
 				switch (ke.getTapID()) {
 				case TapEvent.TAPPED:
-
+					dataWrite();
 				if (minmaxModus == 0) {
 					
 					setSizeLocal(obSizeMaxWidth, obSizeMaxHeight);
@@ -271,6 +282,11 @@ public class MyMTObject extends MTRoundRectangle {
 			}
 		});
 
+		// ColorPicker
+		colorpicker = new MTColorPickerGroup(pApplet, this, baserect);
+		colorpicker.translate(new Vector3D(0, -35, 0));
+		colorpicker.setVisible(false);
+		
 		// Font for Textfield
 		fontArialMini = FontManager.getInstance().createFont(pApplet, "arial.ttf", 
 				14, 	//Font size
@@ -290,11 +306,11 @@ public class MyMTObject extends MTRoundRectangle {
 		createAttributes();
 		addToBaserect(); // Add all Attributes to the base Rect Object
 		setPickableAttributes();
-		
+		saveOnEvent();
 		this.addChild(baserect);
 		this.addChild(buttonRotate);
 		this.addChild(buttonMaxMin);
-		
+		this.addChild(colorpicker);
 	}
 	
 	/**
@@ -365,7 +381,7 @@ public class MyMTObject extends MTRoundRectangle {
 		for (Attributes it : myAttributs) {
 			it.setMax();
 		}
-			
+		colorpicker.setVisible(true);
 	}
 	
 	/**
@@ -375,11 +391,11 @@ public class MyMTObject extends MTRoundRectangle {
 		for (Attributes it : myAttributs) {
 			it.setMin();
 		}
-			
+		colorpicker.setVisible(false);
 	}
 	
 	/**
-	 * Read Data from Object Model.
+	 * Read data from object Model.
 	 */
 	private void readData() {		
 		
@@ -392,7 +408,7 @@ public class MyMTObject extends MTRoundRectangle {
 		
 		// Object linie color
 		if (this.objectmodel.getObjectlinecolor() == null) {
-			this.setFillColor(speblue);
+			this.setStrokeColor(speblue);
 		} else {
 		this.setStrokeColor(this.objectmodel.getObjectlinecolor());
 		}
@@ -409,7 +425,7 @@ public class MyMTObject extends MTRoundRectangle {
 		baserect.setFillColor(this.objectmodel.getObjectFillcolor());
 		}
 		
-		// Object Position
+		// Object Position with random when no position is stored
 		System.out.println("Position");
 		if (this.objectmodel.getObjectposition() == null) {
 			this.setPositionGlobal(new Vector3D(ToolsMath.nextRandomInt(140, 800), ToolsMath.nextRandomInt(140, 700)));
@@ -435,12 +451,51 @@ public class MyMTObject extends MTRoundRectangle {
 	 */
 	private void dataWrite() {
 		// Save Position
-		
+		this.objectmodel.setObjectposition(this.getCenterPointGlobal());
 		// Save Color
-		
+		this.objectmodel.setObjectcolor(this.getFillColor());
+		this.objectmodel.setObjectFillcolor(baserect.getFillColor());
+		this.objectmodel.setObjectlinecolor(this.getStrokeColor());
 		// Save Font (Not in use)
 	
 		// Save Directions
+		
+	}
+	
+	/** Position Dedection for MTObjects.*/
+	// TODO Postition Dedection
+	private void saveOnEvent() {
+		
+		this.addInputListener(new IMTInputEventListener() {
+			
+			public boolean processInputEvent(MTInputEvent inEvt) {
+			
+				if (inEvt instanceof AbstractCursorInputEvt) {
+					AbstractCursorInputEvt cursorInputEvt = (AbstractCursorInputEvt) inEvt;
+					
+						switch (cursorInputEvt.getId()) {
+						case AbstractCursorInputEvt.INPUT_STARTED:
+							
+							break;
+						case AbstractCursorInputEvt.INPUT_UPDATED:
+			
+							break;
+						case AbstractCursorInputEvt.INPUT_ENDED:
+							System.out.println("Write Data after change the position");
+							dataWrite();
+							break;
+						default:
+							break;
+						}
+					
+					
+				} else {
+					// handle other input events stuff
+				}
+				return false;
+			}
+		}
+		);
 		
 	}
 	
@@ -506,6 +561,45 @@ public class MyMTObject extends MTRoundRectangle {
 		System.out.println("\n");
 	}
 	
+	/** 
+	 * Set the Stroke Color for MyMTObject.
+	 * 
+	 * @param strokecolor MTColor
+	 * */ 
+	public void setTaggedColor(final MTColor strokecolor) {
+		System.out.println("SET Tagged COLOR STROKE!!!!!!!");
+		befortaggedColor = this.getStrokeColor();
+		this.setStrokeColor(strokecolor);
+		this.setStrokeWeight(3);
+	}
+	
+	/** 
+	 * Set the Stroke Color for MyMTObject.
+	 * 
+	 * */ 
+	public final void setNormalColor() {
+		System.out.println("SET Normal COLOR STROKE!!!!!!!");
+		this.setStrokeColor(befortaggedColor);
+		this.setStrokeWeight(1);
+	}
+	
+	/** 
+	 * Get the flag if the object tagged.
+	 * 
+	 * @return tagged boolean
+	 * */
+	public final boolean getTagFlag() {
+		return tagged;
+	}
+	
+	/** 
+	 * Set the Flag tag.
+	 * 
+	 * @param tag boolean
+	 * */
+	public final void setTagFlag(final boolean tag) {
+		tagged = tag;
+	}
 	
 	@Override
 	protected void setDefaultGestureActions() {
@@ -531,6 +625,8 @@ public class MyMTObject extends MTRoundRectangle {
 		addGestureListener(ScaleProcessor.class, new DefaultScaleAction());
 		sp.setBubbledEventsEnabled(true);  //FIXME TEST
 	}
+	
+
 	
 	
 }
