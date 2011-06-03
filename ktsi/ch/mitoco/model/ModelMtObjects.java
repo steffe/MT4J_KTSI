@@ -9,6 +9,7 @@ import org.mt4j.util.math.Vector3D;
 
 public class ModelMtObjects {
 	private long id;
+	private int objecttyp;
 	private MTColor objectcolor;
 	private MTColor objectlinecolor;
 	private MTColor objectFillcolor;
@@ -16,7 +17,6 @@ public class ModelMtObjects {
 	private IFont labelfont;
 	private List<ModelMtAttributs> objectattributs;
 	private Vector3D objectposition;
-	private int objecttyp;
 	private String objectlable;
 	
 	
@@ -137,6 +137,22 @@ public class ModelMtObjects {
 	 */
 	public int getObjecttyp() {
 		return objecttyp;
+	}
+
+
+	/**
+	 * @param objectlable the objectlable to set
+	 */
+	public void setObjectlable(String objectlable) {
+		this.objectlable = objectlable;
+	}
+
+
+	/**
+	 * @return the objectlable
+	 */
+	public String getObjectlable() {
+		return objectlable;
 	}
 
 }

@@ -8,6 +8,7 @@ import gov.pnnl.components.visibleComponents.widgets.radialMenu.item.MTMenuItem;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.mt4j.MTApplication;
 import org.mt4j.components.visibleComponents.widgets.buttons.MTImageButton;
@@ -16,6 +17,7 @@ import org.mt4j.input.inputData.InputCursor;
 import org.mt4j.input.inputData.MTFingerInputEvt;
 import org.mt4j.input.inputData.MTInputEvent;
 import org.mt4j.input.inputProcessors.IGestureEventListener;
+import org.mt4j.input.inputProcessors.IInputProcessor;
 import org.mt4j.input.inputProcessors.MTGestureEvent;
 import org.mt4j.input.inputProcessors.componentProcessors.tapProcessor.TapEvent;
 import org.mt4j.input.inputProcessors.componentProcessors.tapProcessor.TapProcessor;
@@ -32,6 +34,7 @@ import org.mt4j.util.math.Vector3D;
 
 import processing.core.PImage;
 import ch.mitoco.components.visibleComponents.MyMTObject;
+import ch.mitoco.model.ModelTypDescription;
 
 
 /** Hello Word Scene. */
@@ -76,7 +79,6 @@ public class HelloWorldScene extends AbstractScene {
 	 * 
 	 */
 	  private MTRadialMenu mtRadialMenu1;
-	  private MTRadialMenu mtRadialMenu2;
 	  boolean translate = true;
 	  
 	  private InputCursor ic;
@@ -93,6 +95,7 @@ public class HelloWorldScene extends AbstractScene {
 		this.mtApplication = mtAppl;
 		this.setClearColor(new MTColor(100, 100, 100, 255));
 		this.registerGlobalInputProcessor(new CursorTracer(mtAppl, this));
+		
 		
 		dataController = new DataController(mtAppl);
 		dataController.createDataModel("Scenename");
@@ -113,9 +116,14 @@ public class HelloWorldScene extends AbstractScene {
 		          final MTFingerInputEvt cursorInputEvt = (MTFingerInputEvt) inEvt;
 		          switch (cursorInputEvt.getId()) {
 		            case TapEvent.GESTURE_STARTED:
-		            	dataController.createObject(0);
-		            	System.out.println("Object add Menu"+inEvt.getCurrentTarget().getName());
 		            	
+		            	System.out.println("Object add Menu: "+inEvt.getCurrentTarget().getName());
+		            	
+		            	if (inEvt.getCurrentTarget().getName() == "Object 1"){
+		            		dataController.createObject(0);
+		            	}else if (inEvt.getCurrentTarget().getName() == "Object 2"){
+		            		dataController.createObject(2);
+		            	}
 		            	getCanvas().addChild(dataController.getMyobjectList().get(counter));	
 						
 						//getCanvas().addChild(myobjectList.get(counter).getMyObjectBack());	
@@ -177,26 +185,40 @@ public class HelloWorldScene extends AbstractScene {
 					System.out.println("Recognized gesture: " + g);
 					if (g.equals(UnistrokeGesture.V)) {
 						ic = ue.getCursor();
+						
 						if ((HelloWorldScene.this.mtRadialMenu1 != null) && !HelloWorldScene.this.mtRadialMenu1.isVisible())
 			              {
 							HelloWorldScene.this.mtRadialMenu1.destroy();
 							HelloWorldScene.this.mtRadialMenu1 = null;
 			              }
-
+						 
 			              if (HelloWorldScene.this.mtRadialMenu1 == null)
 			              {
 			                // Build list of menu items
 			                final List<MTMenuItem> menuItems = new ArrayList<MTMenuItem>();
-
 			                final MTMenuItem menu1 = new MTMenuItem("New", null);
-			                final MTMenuItem subMenu11 = new MTMenuItem("Object 1", null);
-			                final MTMenuItem subMenu12 = new MTMenuItem("Object 2", null);
-			                menu1.addSubMenuItem(subMenu11);
-			                menu1.addSubMenuItem(subMenu12);
-			                subMenu11.addInputEventListener(createObjectInput);
-			                subMenu12.addInputEventListener(createObjectInput);
-			                menu1.addSubMenuItem(new MTMenuItem("Object 3", null));
-			                menu1.addSubMenuItem(new MTMenuItem("Object 4", null));
+			                
+			                for (Iterator<ModelTypDescription> it =  dataController.getObjectetyps().getObjectdescription().iterator(); it.hasNext();) {
+			                	final MTMenuItem subMenu11 = new MTMenuItem(it.next().getObjectdescription(), null);
+			                	//menu1.addSubMenuItem(new MTMenuItem(it.next().getObjectdescription(), null));
+			                	//final IMTInputEventListener createObjectInput = new IMTInputEventListener() {
+			                	menu1.addSubMenuItem(new MTMenuItem(it.next().getObjectdescription(), new ConcurrentHashMap<Class<? extends IInputProcessor>, IGestureEventListener>(){
+			                			
+			                	}));
+			                	
+			                	
+			                	//subMenu11.addInputEventListener(createObjectInput);
+			                			}
+			                
+			                
+			                //final MTMenuItem subMenu11 = new MTMenuItem("Object 1", null);
+			                //final MTMenuItem subMenu12 = new MTMenuItem("Object 2", null);
+			                //menu1.addSubMenuItem(subMenu11);
+			                //menu1.addSubMenuItem(subMenu12);
+			                
+			                //subMenu12.addInputEventListener(createObjectInput);
+			                //menu1.addSubMenuItem(new MTMenuItem("Object 3", null));
+			                //menu1.addSubMenuItem(new MTMenuItem("Object 4", null));
 
 			                final MTMenuItem subMenu5 = new MTMenuItem("View", null);
 			                subMenu5.addSubMenuItem(new MTMenuItem("All", null));
@@ -283,8 +305,9 @@ public class HelloWorldScene extends AbstractScene {
 				TapEvent te = (TapEvent) ge;
 				switch(te.getTapID()) {
 				case TapEvent.TAPPED:
+					
+					//dataController.saveObjectXML();
 					/*
-					dataController.saveObjectXML();
 					dataController.loadObjectXML();
 					dataController.getObjectetyps();
 					
@@ -363,6 +386,7 @@ public class HelloWorldScene extends AbstractScene {
 				switch(te.getTapID()){
 				case TapEvent.TAPPED:
 					dataController.saveSceneXML();
+					mtAppl.saveFrame();
 					break;
 				
 				default:

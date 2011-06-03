@@ -81,57 +81,7 @@ public class ExampleXML {
 		return MODELSCENCE;
 	}
 
-	/*Objecttyp Liste
-	 * 
-	 * ModelMtObjects objects3 = new ModelMtObjects();
-		objects3.setId(1);
-		objects3.setObjecttyp(0);
-		MTColor greypez = new MTColor(12, 12, 12, 34);
-		objects3.setObjectcolor(greypez);
-		objects3.setObjectposition(new Vector3D(200, 200));
-		ModelMtAttributs mtattr2 = new ModelMtAttributs();
-		mtattr2.setAttcolor(greypez);
-		mtattr2.setId(0);
-		mtattr2.setLable("");
-		ModelAttributContent attrbc2 = new ModelAttributContent();
-		attrbc2.setType("String");
-		attrbc2.setValue("");
-		mtattr2.getAttributcontent().add(attrbc2);
-		ModelMtAttributs mtattr3 = new ModelMtAttributs();
-		mtattr3.setAttcolor(greypez);
-		mtattr3.setId(1);
-		mtattr3.setLable("");
-		ModelAttributContent attrbc3 = new ModelAttributContent();
-		attrbc3.setType("String");
-		attrbc3.setValue("");
-		mtattr3.getAttributcontent().add(attrbc3);
-		objects3.getObjectattributs().add(mtattr2);
 		
-		ModelMtObjects objects4 = new ModelMtObjects();
-		objects4.setId(0);
-		objects4.setObjecttyp(1);
-		MTColor blue = new MTColor(12, 60, 60, 34);
-		objects4.setObjectcolor(blue);
-		objects4.setObjectposition(new Vector3D(200, 200));
-		ModelMtAttributs mtattr5 = new ModelMtAttributs();
-		mtattr5.setAttcolor(greypez);
-		mtattr5.setId(2);
-		mtattr5.setLable("");
-		ModelAttributContent attrbc5 = new ModelAttributContent();
-		attrbc5.setType("String");
-		attrbc5.setValue("");
-		mtattr5.getAttributcontent().add(attrbc5);
-		ModelMtAttributs mtattr6 = new ModelMtAttributs();
-		mtattr6.setAttcolor(blue);
-		mtattr6.setId(0);
-		mtattr6.setLable("");
-		ModelAttributContent attrbc6 = new ModelAttributContent();
-		attrbc6.setType("String");
-		attrbc6.setValue("");
-		mtattr6.getAttributcontent().add(attrbc6);
-		objects4.getObjectattributs().add(mtattr2);
-	 * 
-	 */
 	
 	
 }

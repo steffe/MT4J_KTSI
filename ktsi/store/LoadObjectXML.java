@@ -13,7 +13,7 @@ public class LoadObjectXML {
 	public LoadObjectXML() {
 		XStream xstream = new XStream();
 		try {
-			setObjectModel(((ModelObjectTyps) xstream.fromXML(new FileInputStream("objectlist.xml"))));
+			setObjectModel(((ModelObjectTyps) xstream.fromXML(new FileInputStream("objectlist1.xml"))));
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
