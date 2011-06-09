@@ -238,10 +238,10 @@ public class MTNumField extends Attributes {
 	 * @param defaultString String 
 	 * @param defaultlabeltext String
 	 */
-	private void dataRead(final String defaultDouble, final String defaultlabeltext) {
+	private void dataRead(final String defaultString, final String defaultlabeltext) {
 		// Data transfer for value
-		if (model.getLable() == null) {
-			stringvalue = defaultDouble;
+		if (model.getAttributcontent() == null) {
+			stringvalue = defaultString;
 			//Double.valueOf(textarea.getText()).doubleValue();
 		} else {
 			for (ModelAttributContent it : model.getAttributcontent()) {
@@ -251,14 +251,14 @@ public class MTNumField extends Attributes {
 					break;
 				} else {
 					System.out.println(" Value zu Typ String NICHT GEFUNDEN ");
-					stringvalue = defaultDouble;
+					stringvalue = defaultString;
 				}
 			}
 		}
 		
 		// Data transfer for Align
-		if (model.getLable() == null) {
-			rAlign = Boolean.parseBoolean(defaultDouble);
+		if (model.getAttributcontent() == null) {
+			rAlign = Boolean.parseBoolean(defaultString);
 		} else {
 			for (ModelAttributContent it : model.getAttributcontent()) {
 				if (it.getType().equalsIgnoreCase("Align")) {
@@ -267,7 +267,7 @@ public class MTNumField extends Attributes {
 					break;
 				} else {
 					System.out.println(" Value zu Typ Align NICHT GEFUNDEN ");
-					rAlign = Boolean.parseBoolean(defaultDouble);
+					rAlign = Boolean.parseBoolean(defaultString);
 				}
 				
 			}
@@ -294,7 +294,7 @@ public class MTNumField extends Attributes {
 	/** 
 	 * Write data in Datamodel.
 	 */
-	private void dataWrite() {
+	public final void dataWrite() {
 		for (ModelAttributContent it : model.getAttributcontent()) {
 			if (it.getType().equalsIgnoreCase("Double")) {
 				it.setValue(textarea.getText());

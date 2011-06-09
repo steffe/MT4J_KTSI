@@ -12,6 +12,28 @@
         <writeProtected>false</writeProtected>
       </objectcolor>
       <objectattributs>
+      	 <ch.mitoco.model.ModelMtAttributs>
+          <id>1</id>
+          <attributcontent>
+            <ch.mitoco.model.ModelAttributContent>
+              <type>Double</type>
+              <value>43532</value>
+            </ch.mitoco.model.ModelAttributContent>
+            <ch.mitoco.model.ModelAttributContent>
+              <type>Align</type>
+              <value>false</value>
+            </ch.mitoco.model.ModelAttributContent>
+          </attributcontent>
+          <attributdefinition>
+          	<ch.mitoco.model.ModelAttributDefinition>
+              <definition>Align</definition>
+              <value>true</value>
+            </ch.mitoco.model.ModelAttributDefinition>
+          </attributdefinition>
+          <attcolor reference="../../../objectcolor"/>
+          <Lable>Mein Alter</Lable>
+          <minMax>true</minMax>
+        </ch.mitoco.model.ModelMtAttributs>
         <ch.mitoco.model.ModelMtAttributs>
           <id>0</id>
           <attributcontent>
@@ -35,35 +57,29 @@
           <id>2</id>
           <attributcontent>
             <ch.mitoco.model.ModelAttributContent>
-              <type>String</type>
-              <value>Stefan</value>
+              <type>ListContent</type>
+              <value>intergalaktisch</value>
+            </ch.mitoco.model.ModelAttributContent>
+            <ch.mitoco.model.ModelAttributContent>
+              <type>ListContent</type>
+              <value>okee</value>
+            </ch.mitoco.model.ModelAttributContent>
+            <ch.mitoco.model.ModelAttributContent>
+              <type>ListContent</type>
+              <value>vertretbar</value>
+            </ch.mitoco.model.ModelAttributContent>
+            <ch.mitoco.model.ModelAttributContent>
+              <type>ListContent</type>
+              <value>scheisse</value>
+            </ch.mitoco.model.ModelAttributContent>
+            <ch.mitoco.model.ModelAttributContent>
+              <type>DefaultValue</type>
+              <value>gehts noch</value>
             </ch.mitoco.model.ModelAttributContent>
           </attributcontent>
           <attcolor reference="../../../objectcolor"/>
-          <Lable>Vorname</Lable>
+          <Lable>Infogehalt von Blick</Lable>
           <minMax>false</minMax>
-        </ch.mitoco.model.ModelMtAttributs>
-        <ch.mitoco.model.ModelMtAttributs>
-          <id>1</id>
-          <attributcontent>
-            <ch.mitoco.model.ModelAttributContent>
-              <type>Double</type>
-              <value>43532</value>
-            </ch.mitoco.model.ModelAttributContent>
-            <ch.mitoco.model.ModelAttributContent>
-              <type>Align</type>
-              <value>false</value>
-            </ch.mitoco.model.ModelAttributContent>
-          </attributcontent>
-          <attributdefinition>
-          	<ch.mitoco.model.ModelAttributDefinition>
-              <definition>Align</definition>
-              <value>true</value>
-            </ch.mitoco.model.ModelAttributDefinition>
-          </attributdefinition>
-          <attcolor reference="../../../objectcolor"/>
-          <Lable>Mein Alter</Lable>
-          <minMax>true</minMax>
         </ch.mitoco.model.ModelMtAttributs>
       </objectattributs>
       <objectposition>
@@ -85,7 +101,7 @@
       </objectcolor>
       <objectattributs>
         <ch.mitoco.model.ModelMtAttributs>
-          <id>2</id>
+          <id>0</id>
           <attributcontent>
             <ch.mitoco.model.ModelAttributContent>
               <type>String</type>
@@ -94,6 +110,18 @@
           </attributcontent>
           <attcolor reference="../../../objectcolor"/>
           <Lable>Name</Lable>
+          <minMax>false</minMax>
+        </ch.mitoco.model.ModelMtAttributs>
+        <ch.mitoco.model.ModelMtAttributs>
+          <id>3</id>
+          <attributcontent>
+            <ch.mitoco.model.ModelAttributContent>
+              <type>Path</type>
+              <value>ch/mitoco/data/pictures/mig29.jpg</value>
+            </ch.mitoco.model.ModelAttributContent>
+          </attributcontent>
+          <attcolor reference="../../../objectcolor"/>
+          <Lable>Bild eines Flugzeugs</Lable>
           <minMax>false</minMax>
         </ch.mitoco.model.ModelMtAttributs>
       </objectattributs>

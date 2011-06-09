@@ -335,9 +335,17 @@ public class MTSuggestionTextArea extends MTTextArea {
 	 * @return String
 	 */
 	public final String getSelectedValue() {
-		
-		
-		return suggestionBox.getName();
+		return this.getText();
+	}
+	
+	/**
+	 * Set the Default Value for the MTSuggestionTextArea. 
+	 * It is possible to set a value outside the string list.
+	 * 
+	 * @param value String
+	 */
+	public final void setDefaultValue(final String value) {
+		this.setText(value);
 	}
 	
 	

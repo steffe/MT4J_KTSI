@@ -39,5 +39,12 @@ public abstract class Attributes extends MTRoundRectangle {
 		
 	}
 	
+	/**
+	 * Method for all Attributs dataWrite in the model.
+	 */
+	public void dataWrite() {
+		
+	}
+	
 	
 }

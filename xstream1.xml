@@ -23,6 +23,7 @@
           <attcolor reference="../../../objectcolor"/>
           <Lable>Name</Lable>
           <minMax>false</minMax>
+          <textlenght>0</textlenght>
         </ch.mitoco.model.ModelMtAttributs>
       </objectattributs>
       <objectposition>

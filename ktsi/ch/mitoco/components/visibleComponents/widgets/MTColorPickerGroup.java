@@ -132,7 +132,7 @@ public class MTColorPickerGroup extends MTComponent {
         strokelabel.setNoFill(true);
         strokelabel.setNoStroke(true);
         strokelabel.setPickable(false); 
-        strokelabel.translate(new Vector3D( 25, 15, 0));
+        strokelabel.translate(new Vector3D( 35, 25, 0));
         colorpickerStroke.addChild(strokelabel);
         
         
@@ -140,7 +140,7 @@ public class MTColorPickerGroup extends MTComponent {
         colPickButtonStroke = new MTImageButton(app1, colPickIcon);
         colPickButtonStroke.setNoStroke(true);
         colPickButtonStroke.translate(new Vector3D(100, 0, 0));
-        colPickButtonStroke.setSizeLocal(30, 30);
+        colPickButtonStroke.setSizeLocal(35, 35);
         colPickButtonStroke.sendToFront();
         colPickButtonStroke.addGestureListener(TapProcessor.class, new IGestureEventListener() {
 			public boolean processGestureEvent(final MTGestureEvent ge) {
@@ -182,15 +182,15 @@ public class MTColorPickerGroup extends MTComponent {
         backgroundlabel.setNoFill(true);
         backgroundlabel.setNoStroke(true);
         backgroundlabel.setPickable(false); 
-        backgroundlabel.translate(new Vector3D( 5, 15, 0));
+        backgroundlabel.translate(new Vector3D( 25, 25, 0));
         colorpickerBackground.addChild(backgroundlabel);
 	    
 	    
         PImage colPickIcon1 = app1.loadImage("ch" + MTApplication.separator + "mitoco" + MTApplication.separator + "data" + MTApplication.separator +  "ColorPickerIcon.png");
         colPickButtonBackground = new MTImageButton(app1, colPickIcon1);
         colPickButtonBackground.setNoStroke(true);
-        colPickButtonBackground.translate(new Vector3D(130, 0, 0));
-        colPickButtonBackground.setSizeLocal(30, 30);
+        colPickButtonBackground.translate(new Vector3D(140, 0, 0));
+        colPickButtonBackground.setSizeLocal(35, 35);
         colPickButtonBackground.sendToFront();
         colPickButtonBackground.addGestureListener(TapProcessor.class, new IGestureEventListener() {
 			public boolean processGestureEvent(final MTGestureEvent ge) {
@@ -212,7 +212,7 @@ public class MTColorPickerGroup extends MTComponent {
         
      // Colorpicker for the Background
 	    colorpickerBorder = new MTColorPicker(app1, 0, 0, colPick);
-	    colorpickerBorder.translate(new Vector3D(130, 30, 0));
+	    colorpickerBorder.translate(new Vector3D(150, 30, 0));
 	    colorpickerBorder.setNoStroke(true);
 	    colorpickerBorder.addGestureListener(DragProcessor.class, new IGestureEventListener() {
 			public boolean processGestureEvent(final MTGestureEvent ge) {
@@ -235,14 +235,14 @@ public class MTColorPickerGroup extends MTComponent {
         borderlabel.setNoFill(true);
         borderlabel.setNoStroke(true);
         borderlabel.setPickable(false); 
-        borderlabel.translate(new Vector3D( 35, 15, 0));
+        borderlabel.translate(new Vector3D( 35, 25, 0));
         colorpickerBorder.addChild(borderlabel);
         
         PImage colPickIcon2 = app1.loadImage("ch" + MTApplication.separator + "mitoco" + MTApplication.separator + "data" + MTApplication.separator +  "ColorPickerIcon.png");
         colPickButtonBorder = new MTImageButton(app1, colPickIcon2);
         colPickButtonBorder.setNoStroke(true);
-        colPickButtonBorder.translate(new Vector3D(160, 0, 0));
-        colPickButtonBorder.setSizeLocal(30, 30);
+        colPickButtonBorder.translate(new Vector3D(180, 0, 0));
+        colPickButtonBorder.setSizeLocal(35, 35);
         colPickButtonBorder.sendToFront();
         colPickButtonBorder.addGestureListener(TapProcessor.class, new IGestureEventListener() {
 			public boolean processGestureEvent(final MTGestureEvent ge) {
@@ -261,7 +261,7 @@ public class MTColorPickerGroup extends MTComponent {
         colorpickerBorder.setVisible(false);
         colPickButtonBorder.setVisible(true);
 	    
-        MTRoundRectangle base = new MTRoundRectangle(app1, 0, -2, 0, 200, 35, 5, 5);
+        MTRoundRectangle base = new MTRoundRectangle(app1, 0, -2, 0, 220, 35, 5, 5);
 	    base.setFillColor(trans);
         base.setPickable(false);
         base.setNoStroke(true);

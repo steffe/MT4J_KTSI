@@ -1,23 +1,32 @@
 package ch.mitoco.components.visibleComponents.objectlink;
 
+import java.awt.event.InputEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.batik.dom.events.EventListenerList;
 import org.mt4j.AbstractMTApplication;
 import org.mt4j.components.MTCanvas;
+import org.mt4j.components.interfaces.IMTComponent3D;
 import org.mt4j.input.IMTInputEventListener;
 import org.mt4j.input.gestureAction.DefaultLassoAction;
 import org.mt4j.input.gestureAction.TapAndHoldVisualizer;
 import org.mt4j.input.inputData.AbstractCursorInputEvt;
 import org.mt4j.input.inputData.MTInputEvent;
 import org.mt4j.input.inputProcessors.IGestureEventListener;
+import org.mt4j.input.inputProcessors.IInputProcessor;
 import org.mt4j.input.inputProcessors.MTGestureEvent;
+import org.mt4j.input.inputProcessors.componentProcessors.lassoProcessor.ILassoable;
+import org.mt4j.input.inputProcessors.componentProcessors.lassoProcessor.LassoEvent;
 import org.mt4j.input.inputProcessors.componentProcessors.lassoProcessor.LassoProcessor;
 import org.mt4j.input.inputProcessors.componentProcessors.tapAndHoldProcessor.TapAndHoldEvent;
 import org.mt4j.input.inputProcessors.componentProcessors.tapAndHoldProcessor.TapAndHoldProcessor;
+import org.mt4j.input.inputProcessors.componentProcessors.unistrokeProcessor.UnistrokeEvent;
+import org.mt4j.input.inputProcessors.componentProcessors.unistrokeProcessor.UnistrokeUtils.UnistrokeGesture;
 import org.mt4j.sceneManagement.AbstractScene;
 import org.mt4j.util.MTColor;
 import org.mt4j.util.camera.Icamera;
+import org.mt4j.util.math.Ray;
 import org.mt4j.util.math.Vector3D;
 import org.mt4j.util.math.Vertex;
 
@@ -26,6 +35,7 @@ import com.sun.org.apache.bcel.internal.generic.NEW;
 import ch.mitoco.components.visibleComponents.MyMTObject;
 import ch.mitoco.components.visibleComponents.widgets.Attributes;
 import processing.core.PApplet;
+import processing.core.PGraphics;
 
 /** the MTLinkController Class control the links between the MyMTObjects and the eventHandling. */
 
@@ -63,12 +73,11 @@ public class MTLinkController {
 	 * @param canvas
 	 * @param 
 	 * */
-	public MTLinkController(AbstractMTApplication pApplet, MTCanvas canvas, List<MyMTObject> myobjectList, LassoProcessor lassoProcessor) {
+	public MTLinkController(AbstractMTApplication pApplet, MTCanvas canvas, List<MyMTObject> myobjectList) {
 		this.pApplet = pApplet;
 		this.app = pApplet;
 		this.canvas = canvas;
 		this.myobjectList = myobjectList;
-		this.lassoProcessor = lassoProcessor;
 		
 		
 		linklist = new ArrayList<MTObjectLink>();
@@ -76,6 +85,8 @@ public class MTLinkController {
 		selectObjectID.add(new MTSelectStoreObject());
 		
 		validLinkPair = new ArrayList<MTSelectStoreObject>();
+		lassoProcessor = new LassoProcessor(app, canvas, canvas.getViewingCamera());
+		
 		init();
 	}
 
@@ -86,6 +97,10 @@ public class MTLinkController {
 		canvas.addChild(link);
 		
 		eventObjectHandling();
+		selectedLasso();
+		canvas.registerInputProcessor(lassoProcessor);
+		canvas.addGestureListener(LassoProcessor.class, new DefaultLassoAction(app, canvas.getClusterManager(), canvas));
+		
 	}
 	
 	/** Position Dedection for MTObjects.*/
@@ -101,7 +116,7 @@ public class MTLinkController {
 					if (myobjectList.size() == 3) {
 						switch (cursorInputEvt.getId()) {
 						case AbstractCursorInputEvt.INPUT_STARTED:
-							drawLinie(myobjectList.get(0).getCenterPointGlobal(), myobjectList.get(1).getCenterPointGlobal());
+							drawLinie(myobjectList.get(0).getCenterPointGlobal(), myobjectList.get(1).getCenterPointGlobal());	
 							break;
 						case AbstractCursorInputEvt.INPUT_UPDATED:
 							drawLinie(myobjectList.get(0).getCenterPointGlobal(), myobjectList.get(1).getCenterPointGlobal());
@@ -163,6 +178,7 @@ public class MTLinkController {
 		for (MyMTObject it : myobjectList) {
 			detectionObSelection(it);
 			detectionObSelectionLasso(it);
+			
 		}
 	}
 	
@@ -215,9 +231,7 @@ public class MTLinkController {
 	private void detectionObSelectionLasso(final MyMTObject obj) {
 		
 		lassoProcessor.addLassoable(obj);
-		canvas.registerInputProcessor(lassoProcessor);
-		canvas.addGestureListener(LassoProcessor.class, new DefaultLassoAction(app, canvas.getClusterManager(), canvas));
-		
+
 	}
 	
 	
@@ -320,6 +334,46 @@ public class MTLinkController {
 			System.out.println("VALID Opject Paar gepeichert " + itt.getEndObjectID() + ":" + itt.getStartObjectID() + " PAAR ist Valid; " + itt.isValid());
 		}
 		
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public final void selectedLasso() {
+		
+		
+		lassoProcessor.addGestureListener(new IGestureEventListener() {
+			
+			@Override
+			public boolean processGestureEvent(MTGestureEvent ge) {
+				// TODO Auto-generated method stub
+
+				LassoEvent th = (LassoEvent) ge;
+				switch (th.getId()) {
+				case LassoEvent.GESTURE_STARTED:
+					break;
+				case LassoEvent.GESTURE_UPDATED:
+					break;
+				case LassoEvent.GESTURE_ENDED:
+					System.out.println("Gesture wurde ausgeführt");
+					
+					
+						
+						for (MyMTObject it : myobjectList) {
+							if (it.isSelected() == true) {
+								System.out.println("@@@@@ Object ist gespeichert NR:" + it.getID());
+								
+							}
+						}
+					
+					break;
+				default:
+					break;
+				}
+			return false;
+			}
+		});		
 	}
 	
 	

@@ -14,6 +14,7 @@ import org.mt4j.components.visibleComponents.shapes.MTRoundRectangle;
 import org.mt4j.components.visibleComponents.widgets.MTTextArea;
 import org.mt4j.components.visibleComponents.widgets.buttons.MTImageButton;
 import org.mt4j.input.IMTInputEventListener;
+import org.mt4j.input.MTEvent;
 import org.mt4j.input.gestureAction.DefaultDragAction;
 import org.mt4j.input.gestureAction.DefaultRotateAction;
 import org.mt4j.input.gestureAction.DefaultScaleAction;
@@ -23,6 +24,7 @@ import org.mt4j.input.inputData.MTInputEvent;
 import org.mt4j.input.inputProcessors.IGestureEventListener;
 import org.mt4j.input.inputProcessors.MTGestureEvent;
 import org.mt4j.input.inputProcessors.componentProcessors.dragProcessor.DragProcessor;
+import org.mt4j.input.inputProcessors.componentProcessors.lassoProcessor.ILassoable;
 import org.mt4j.input.inputProcessors.componentProcessors.rotateProcessor.RotateProcessor;
 import org.mt4j.input.inputProcessors.componentProcessors.scaleProcessor.ScaleProcessor;
 import org.mt4j.input.inputProcessors.componentProcessors.tapProcessor.TapEvent;
@@ -32,12 +34,14 @@ import org.mt4j.util.font.FontManager;
 import org.mt4j.util.font.IFont;
 import org.mt4j.util.math.ToolsMath;
 import org.mt4j.util.math.Vector3D;
+import org.mt4jx.input.inputProcessors.componentProcessors.Group3DProcessorNew.IClusterEventListener;
 
 import ch.mitoco.components.visibleComponents.widgets.Attributes;
 import ch.mitoco.components.visibleComponents.widgets.Attributes;
 import ch.mitoco.components.visibleComponents.widgets.MTColorPickerGroup;
 import ch.mitoco.components.visibleComponents.widgets.MTDropDownList;
 import ch.mitoco.components.visibleComponents.widgets.MTNumField;
+import ch.mitoco.components.visibleComponents.widgets.MTPictureBox;
 import ch.mitoco.components.visibleComponents.widgets.MTTextAttribut;
 import ch.mitoco.model.ModelAttributContent;
 import ch.mitoco.model.ModelAttributDefinition;
@@ -53,19 +57,16 @@ import processing.core.PImage;
  * @author tandrich
  */
 
-public class MyMTObject extends MTRoundRectangle {
+public class MyMTObject extends MTRoundRectangle implements ILassoable {
 
 	
-	/** */
+	/** MTApplication. */
 	private MTApplication pApplet;
-
-	/** */
-	private MTRoundRectangle roundRect;
 	
-	/** */
+	/** Baserect is the base structur for all Attributs. */
 	private MTRoundRectangle baserect;
 
-	/** */
+	/** Object Label. */
 	private MTTextArea textField;
 
 	/** Standard Object Width in Min Modus.*/
@@ -83,10 +84,10 @@ public class MyMTObject extends MTRoundRectangle {
 	/** Object Size dif max to min. */
 	private int obDifSizeHeight;
 	
-	/** */
+	/** MTImageButton for Max/Min Modus. */
 	private MTImageButton buttonMaxMin;
 	
-	/** */
+	/** MTImageButton for Rotate Modus.*/
 	private MTImageButton buttonRotate;
 
 	/** Int for minmaxModus. */
@@ -101,7 +102,7 @@ public class MyMTObject extends MTRoundRectangle {
 	/** Default Color for stroke. */
 	private MTColor speblue = new MTColor(51, 102, 255);
 	
-	/** */
+	/** Object ID for identification and Objectlabel. */
 	private int id;
 	
 	/** Font for Content. */
@@ -110,12 +111,6 @@ public class MyMTObject extends MTRoundRectangle {
 	/** Font for Label. */
 	private IFont labelfont;
 	
-	/** The default drag action. */
-	private DefaultDragAction defaultDragAction;
-	
-	/** Space Value for X definition. */
-	private int spaceglobal;
-
 	/** List with all Attributes.*/
 	private List<Attributes>myAttributs;
 		
@@ -137,6 +132,10 @@ public class MyMTObject extends MTRoundRectangle {
 	/** before Tagged Stroke Color. */
 	private MTColor befortaggedColor;
 	
+	/** Clip selected. */
+	private boolean selected;
+	
+	
 	/** Public BLBL MyObject.
 	 * 
 	 * @param pApplet2 MTApplication
@@ -156,7 +155,7 @@ public class MyMTObject extends MTRoundRectangle {
 		
 		pApplet = pApplet2;
 		this.id = objectID;
-		defaultDragAction 	= new DefaultDragAction();
+		this.selected = false;
 		
 		// Data Model 
 		this.objectmodel = model;
@@ -306,7 +305,7 @@ public class MyMTObject extends MTRoundRectangle {
 		createAttributes();
 		addToBaserect(); // Add all Attributes to the base Rect Object
 		setPickableAttributes();
-		saveOnEvent();
+		saveOnEvent();		
 		this.addChild(baserect);
 		this.addChild(buttonRotate);
 		this.addChild(buttonMaxMin);
@@ -343,6 +342,17 @@ public class MyMTObject extends MTRoundRectangle {
 				myAttributs.get(i).setPositionRelativeToParent(new Vector3D(this.getWidthXY(TransformSpace.LOCAL) / 2, x));
 
 				break;
+				
+			case(3):
+				System.out.println(i + "Attributs MTPictureBox " + it);
+				
+				myAttributs.add(new MTPictureBox(pApplet, attributesmodel.get(i), 250, 100, "Picuture", labelfont));
+				myAttributs.get(i).setPositionRelativeToParent(new Vector3D(this.getWidthXY(TransformSpace.LOCAL) / 2, x + 40));
+
+
+
+			
+				break;
 			default:
 				break;
 			}
@@ -371,7 +381,7 @@ public class MyMTObject extends MTRoundRectangle {
 		for (int j = myAttributs.size() - 1; j >= 0; j--) {
 			  System.out.println("addChild " + j);
 			  baserect.addChild(myAttributs.get(j));
-			}
+			}		
 	}
 	
 	/**
@@ -483,6 +493,12 @@ public class MyMTObject extends MTRoundRectangle {
 						case AbstractCursorInputEvt.INPUT_ENDED:
 							System.out.println("Write Data after change the position");
 							dataWrite();
+							
+								for (Attributes it : myAttributs) {
+								it.dataWrite();
+								}
+							
+							
 							break;
 						default:
 							break;
@@ -512,7 +528,7 @@ public class MyMTObject extends MTRoundRectangle {
 	 * 
 	 */
 	public final void destroyMyObject() {
-	roundRect.destroy();
+	this.destroy();
 	}
 	
 	/**
@@ -601,6 +617,22 @@ public class MyMTObject extends MTRoundRectangle {
 		tagged = tag;
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.jMT.input.inputAnalyzers.clusterInputAnalyzer.IdragClusterable#isSelected()
+	 */
+	public boolean isSelected() {
+		return selected;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.jMT.input.inputAnalyzers.clusterInputAnalyzer.IdragClusterable#setSelected(boolean)
+	 */
+	public void setSelected(boolean selected) {
+		this.selected = selected;
+	}
+	
+	
+	
 	@Override
 	protected void setDefaultGestureActions() {
 //		super.setDefaultGestureActions();
@@ -625,9 +657,7 @@ public class MyMTObject extends MTRoundRectangle {
 		addGestureListener(ScaleProcessor.class, new DefaultScaleAction());
 		sp.setBubbledEventsEnabled(true);  //FIXME TEST
 	}
-	
-
-	
+	 
 	
 }
 /**

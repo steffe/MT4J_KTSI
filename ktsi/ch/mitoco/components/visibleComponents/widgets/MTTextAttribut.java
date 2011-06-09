@@ -223,7 +223,7 @@ public class MTTextAttribut extends Attributes {
 	 */
 	private void dataRead(final String defaultString, final String defaultlabeltext) {
 		// Data transfer for value
-		if (model.getLable() == null) {
+		if (model.getAttributcontent() == null) {
 			stringvalue = defaultString;
 		} else {
 			for (ModelAttributContent it : model.getAttributcontent()) {
@@ -259,7 +259,7 @@ public class MTTextAttribut extends Attributes {
 	/** 
 	 * Write data in Datamodel.
 	 */
-	private void dataWrite() {
+	public final void dataWrite() {
 		for (ModelAttributContent it : model.getAttributcontent()) {
 			if (it.getType().equalsIgnoreCase("String")) {
 				it.setValue(textarea.getText());
