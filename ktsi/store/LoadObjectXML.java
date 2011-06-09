@@ -7,9 +7,20 @@ import ch.mitoco.model.ModelObjectTyps;
 
 import com.thoughtworks.xstream.XStream;
 
+/**
+ * 
+ * @author steffe
+ *
+ */
 public class LoadObjectXML {
+	/**
+	 * 
+	 */
 	private ModelObjectTyps ObjectModel;
 	
+	/**
+	 * 
+	 */
 	public LoadObjectXML() {
 		XStream xstream = new XStream();
 		try {

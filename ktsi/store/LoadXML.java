@@ -22,7 +22,7 @@ import com.thoughtworks.xstream.XStream;
  */
 public class LoadXML {
 	
-	/**
+	/**stores the Scene Data.
 	 * 
 	 */
 	private ModelScence dataModel;
@@ -30,12 +30,7 @@ public class LoadXML {
 	/**
 	 * 
 	 */
-	public List<MyMTObject> xmlmyobjectlist;
-	
-	/**
-	 * 
-	 */
-	private List<Integer> tempAttributs;
+	private List<MyMTObject> xmlmyobjectlist;
 	
 	/**
 	 * 
@@ -71,6 +66,13 @@ public class LoadXML {
 			//System.out.println(DataModel.getMtobjects().get(0).getObjectattributs().get(0).getLable());
 		
 	}
+	
+	/**Loads the specified XML file.
+	 * 
+	 * loads the XML Content to the Scene dataModel
+	 * 
+	 * @param filename String
+	 */
 	public LoadXML(final String filename) {
 		XStream xstream = new XStream();
 		try {
@@ -80,10 +82,18 @@ public class LoadXML {
 			e.printStackTrace();
 		}
 	}
-	
+	/**Returns the Scene DataModel.
+	 * 
+	 * @return ModelScence
+	 */
 	public ModelScence getDataModel() {
 		return dataModel;
 	}
+	
+	/**For Store Data in the Scene DataModel.
+	 * 
+	 * @param dataModel ModelScence
+	 */
 	public void setDataModel(ModelScence dataModel) {
 		this.dataModel = dataModel;
 	}
