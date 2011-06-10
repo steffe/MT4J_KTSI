@@ -2,15 +2,7 @@ package ch.mitoco.input.gestures;
 
 import org.mt4j.AbstractMTApplication;
 import org.mt4j.components.MTComponent;
-import org.mt4j.components.TransformSpace;
-import org.mt4j.components.bounds.BoundsArbitraryPlanarPolygon;
-import org.mt4j.components.bounds.IBoundingShape;
-import org.mt4j.components.interfaces.IMTComponent3D;
-import org.mt4j.components.visibleComponents.shapes.AbstractShape;
 import org.mt4j.components.visibleComponents.shapes.MTEllipse;
-import org.mt4j.components.visibleComponents.shapes.MTRectangle;
-import org.mt4j.components.visibleComponents.shapes.MTRectangle.PositionAnchor;
-import org.mt4j.components.visibleComponents.widgets.MTTextArea;
 import org.mt4j.input.gestureAction.DefaultDragAction;
 import org.mt4j.input.inputData.InputCursor;
 import org.mt4j.input.inputProcessors.IGestureEventListener;
@@ -25,10 +17,6 @@ import org.mt4j.input.inputProcessors.componentProcessors.unistrokeProcessor.Uni
 import org.mt4j.input.inputProcessors.globalProcessors.CursorTracer;
 import org.mt4j.sceneManagement.AbstractScene;
 import org.mt4j.util.MTColor;
-import org.mt4j.util.camera.IFrustum;
-import org.mt4j.util.font.FontManager;
-import org.mt4j.util.font.IFont;
-import org.mt4j.util.math.Ray;
 import org.mt4j.util.math.Vector3D;
 
 public class MenuGesture extends AbstractScene {
@@ -37,6 +25,7 @@ public class MenuGesture extends AbstractScene {
 	private MTComponent dd;
 	boolean ie = false;
 	private InputCursor ic;
+	
 	
 	public MenuGesture(final AbstractMTApplication mtApplication, final String name) {
 		super(mtApplication, name);
@@ -78,6 +67,9 @@ public class MenuGesture extends AbstractScene {
 						//ellipse.setPositionGlobal(ic.getPosition());
 						//getCanvas().addChild(ellipse);
 						getCanvas().addChild(dd);
+						MTEllipse ellipse6 = new MTEllipse(app,new Vector3D(100, 10, 10), 0, 0);
+						getCanvas().addChild(ellipse6);
+						
 						//recogCircle();
 					}
 					break;
@@ -87,7 +79,6 @@ public class MenuGesture extends AbstractScene {
 				return false;
 			}				
 		});
-		
 	}
 	
 	private void clearAllGestures(final MTComponent comp) {
@@ -107,11 +98,14 @@ public class MenuGesture extends AbstractScene {
 		MTEllipse ellipse3 = new MTEllipse(app, new Vector3D(ic.getPosition()), 60, 40);
 		MTEllipse ellipse4 = new MTEllipse(app, new Vector3D(ic.getPosition()), 60, 40);
 		MTEllipse ellipse5 = new MTEllipse(app, new Vector3D(ic.getPosition()), 60, 40);
+		
 		//ellipse2.translate(new Vector3D(ic.getCurrentEvtPosY() + 100, ic.getCurrentEvtPosX() - 20, 0), TransformSpace.GLOBAL);
 		ellipse2.setPositionGlobal(new Vector3D(ic.getCurrentEvtPosX() - 20, ic.getCurrentEvtPosY() + 100, 0));
 		ellipse3.setPositionGlobal(new Vector3D(ic.getCurrentEvtPosX() + 70, ic.getCurrentEvtPosY() + 200, 0));
 		ellipse4.setPositionGlobal(new Vector3D(ic.getCurrentEvtPosX() + 170, ic.getCurrentEvtPosY() + 100, 0));
 		ellipse5.setPositionGlobal(new Vector3D(ic.getCurrentEvtPosX() + 140, ic.getCurrentEvtPosY(), 0));
+		ellipse5.setStrokeColor(MTColor.AQUA);
+		ellipse5.setFillColor(MTColor.GRAY);
 		
 		ellipse1.setPickable(true);
 		ellipse2.setPickable(true);
@@ -135,7 +129,7 @@ public class MenuGesture extends AbstractScene {
 		this.clearAllGestures(ellipse1);
 		ellipse1.registerInputProcessor(new TapProcessor(app));
 		ellipse1.addGestureListener(TapProcessor.class, new IGestureEventListener() {
-			public boolean processGestureEvent(MTGestureEvent ge) {
+			public boolean processGestureEvent(final MTGestureEvent ge) {
 				TapEvent te = (TapEvent) ge;
 				switch (te.getId()) {
 				case MTGestureEvent.GESTURE_STARTED:

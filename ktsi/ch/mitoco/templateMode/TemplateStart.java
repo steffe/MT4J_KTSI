@@ -1,14 +1,16 @@
-package ch.mitoco.input.gestures;
+package ch.mitoco.templateMode;
 
 import org.mt4j.MTApplication;
 
 import processing.core.PApplet;
 
-
-
-/** TestDatei um GesturesMenü aufzubauen. */
-
-public class RomanStart extends MTApplication {
+/** Startet die TemplateModi Scene.
+ * 
+ *  @author rfeigenwinter
+ *  @version 0.2
+ * 
+ */
+public class TemplateStart extends MTApplication {
 	/** Variabel die von MTApplication vorausgesetzt wird. */
 	private static final long serialVersionUID = 1L;
 	
@@ -22,6 +24,6 @@ public class RomanStart extends MTApplication {
 
 	@Override
 	public final void startUp() {
-		addScene(new MenuGesture(this, "Scene für Own MT-Gestures"));
+		addScene(new CreateScene(this, "Create your own MindMap Objects"));
 	}
 }
