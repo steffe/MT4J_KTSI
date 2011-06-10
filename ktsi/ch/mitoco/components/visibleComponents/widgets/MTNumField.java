@@ -36,7 +36,6 @@ import ch.mitoco.model.ModelMtAttributs;
 /**
  * MTNumField. Modified MTTextArea with MTNumKeyboard on double tap.
  * 
- * 
  * MTTextArea Methode setInnerPaddingLeft() verursacht einen Fehler bei der andwendung von getTextWidght()
  * 
  * @author tandrich 
@@ -89,10 +88,9 @@ public class MTNumField extends Attributes {
 	/** Attribut Model Object. */
 	 private ModelMtAttributs model;
 	 
-		/** MTColorPicker. 	 */
+	/** MTColorPicker. 	 */
 	 private MTColorPicker colorpicker;
 	 
-
 	 /** MTButton for ColorPicker. */
 	 private MTImageButton colPickButton;
 	 
@@ -127,7 +125,6 @@ public class MTNumField extends Attributes {
 		this.height = height;
 		this.width = width;
 		this.labelfont = labelfont;
-		//this.setName(fname);
 		this.init(app, fontArialMini);	
 	}
 	
@@ -272,8 +269,6 @@ public class MTNumField extends Attributes {
 				
 			}
 		}
-		
-		
 		
 		// Data transfer for labeltext
 		if (model.getLable() == null) {

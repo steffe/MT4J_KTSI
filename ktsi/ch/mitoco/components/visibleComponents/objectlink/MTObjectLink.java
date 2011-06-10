@@ -46,19 +46,35 @@ public class MTObjectLink extends MTLine {
 	public void setDescription(final String text) {
 		
 	}
-
+	
+	/**
+	 * 
+	 * @return
+	 */
 	public MyMTObject getStartObject() {
 		return startObject;
 	}
 
+	/**
+	 * 
+	 * @param startObject
+	 */
 	public void setStartObject(MyMTObject startObject) {
 		this.startObject = startObject;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public MyMTObject getEndObject() {
 		return endObject;
 	}
 
+	/**
+	 * 
+	 * @param endObject
+	 */
 	public void setEndObject(MyMTObject endObject) {
 		this.endObject = endObject;
 	}

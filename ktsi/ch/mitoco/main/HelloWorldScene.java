@@ -3,11 +3,9 @@ package ch.mitoco.main;
 
 import gov.pnnl.components.visibleComponents.widgets.radialMenu.MTRadialMenu;
 import gov.pnnl.components.visibleComponents.widgets.radialMenu.item.MTMenuItem;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 import org.mt4j.MTApplication;
 import org.mt4j.components.visibleComponents.shapes.MTLine;
 import org.mt4j.input.IMTInputEventListener;
@@ -32,11 +30,9 @@ import org.mt4j.util.font.FontManager;
 import org.mt4j.util.font.IFont;
 import org.mt4j.util.math.ToolsMath;
 import org.mt4j.util.math.Vector3D;
-
 import ch.mitoco.components.visibleComponents.MyMTObject;
 import ch.mitoco.components.visibleComponents.objectlink.MTLinkController;
 import ch.mitoco.dataController.DataController;
-import ch.mitoco.model.ModelScence;
 import ch.mitoco.model.ModelTypDescription;
 
 
@@ -59,34 +55,29 @@ public class HelloWorldScene extends AbstractScene {
 	/** MTApplication. */
 	private MTApplication mtApplication;
 		
-	/** List with all MyMTObject. */
-	private List<MyMTObject> myobjectList; //TODO: Löschen
-	
 	/** Object Counter and Object ID. */
 	private int counter;
 	
 	/** Line between Objects.*/
 	private MTLine l1;
-
-	/** Data Model for scene. **/ //TODO: ModelScence -> ModelScene
-	public ModelScence dataModel;
 	
 	/** Data Controller Object. */
 	private DataController dataController;
 	
-	/**RadialMenu.
-	* 
-	*/
+	/**RadialMenu.	*/
 	private MTRadialMenu mtRadialMenu1;
-	boolean translate = true;
+	
+	/**InputCursor for RadialMenu.	*/
 	private InputCursor ic;
 	
-	/** Linker Controller. */
-	private MTLinkController linker;
+	/** Test: Linker Controller. */
+	private MTLinkController linker; //TODO: Test
 	
 	
 	/** 
 	 * Hello Word Scene. 
+	 * 
+	 * Die Grundgesten werden erstellten und mit dem XMLController, RadialMenü und TextKlasse Linker verbunden.
 	 * 
 	 * @param mtAppl MTApplication 
 	 * @param name String
@@ -102,13 +93,13 @@ public class HelloWorldScene extends AbstractScene {
 		dataController.createObjectList();
 		
 		
-		linker = new MTLinkController(mtAppl, getCanvas(), dataController.getMyobjectList());
+		linker = new MTLinkController(mtAppl, getCanvas(), dataController.getMyobjectList()); //TODO: Test
 		
 		//Show touches
 		this.registerGlobalInputProcessor(new CursorTracer(mtApplication, this));
 		
+		// Counter for Objects
 		counter = 0;
-		myobjectList = new ArrayList<MyMTObject>();
 		
 		//Test for Linies betweens the objects
 		l1 = new MTLine(mtApplication, 0, 0, 0, 0);
@@ -152,13 +143,10 @@ public class HelloWorldScene extends AbstractScene {
 							HelloWorldScene.this.mtRadialMenu1 = null;
 			              }
 						 
-			              if (HelloWorldScene.this.mtRadialMenu1 == null)
-			              {
+			              if (HelloWorldScene.this.mtRadialMenu1 == null) {
 			                // Build list of menu items
 			              	buildRadialMenu();
-			              }
-			              else
-			              {
+			              } else {
 			            	  //Workaround, damit das Menü nach einemal daneben Klicken wieder gezeichnet werden kann.
 			            	  buildRadialMenu();
 			              }
@@ -172,28 +160,26 @@ public class HelloWorldScene extends AbstractScene {
 		});
 		
 		// Standard Default ZoomAction and Pan TwoFingers
-		
 		this.getCanvas().registerInputProcessor(new ZoomProcessor(mtApplication));
 		this.getCanvas().addGestureListener(ZoomProcessor.class, new DefaultZoomAction());
-		
 		this.getCanvas().registerInputProcessor(new PanProcessorTwoFingers(mtApplication));
 		this.getCanvas().addGestureListener(PanProcessorTwoFingers.class, new DefaultPanAction());
-		
-		
 	}
 
 	@Override
 	public void init() {
 		
-		
-	}
-	@Override
-	public void shutDown() {
-		
-		
 	}
 	
-public void buildRadialMenu() {
+	@Override
+	public void shutDown() {
+	
+	}
+
+	/**
+	 * Methode the build the RadialMenu.
+	 */
+	public void buildRadialMenu() {
 		
 		//InputEvents for RadialMenu
 		final IMTInputEventListener createObjectInput = new IMTInputEventListener() {
@@ -208,22 +194,22 @@ public void buildRadialMenu() {
 		            	/**
 		            	 * To-Do: Laden der Objettypen von XML
 		            	 */
-		            	System.out.println("Object add Menu: \""+inEvt.getCurrentTarget().getName()+"\"");
-		            	System.out.println("Counter befor creation: "+ counter);
-		            	if (inEvt.getCurrentTarget().getName().equals("Object 1")){
+		            	System.out.println("Object add Menu: \"" + inEvt.getCurrentTarget().getName() + "\"");
+		            	System.out.println("Counter befor creation: " + counter);
+		            	if (inEvt.getCurrentTarget().getName().equals("Object 1")) {
 		            		dataController.createObject(0);
 		            		dataController.getMyobjectList().get(counter).setPositionGlobal(new Vector3D(ToolsMath.nextRandomInt(140, 800), ToolsMath.nextRandomInt(140, 700)));
-							linker.setTapAndHoldListener(dataController.getMyobjectList().get(counter));
+							linker.setTapAndHoldListener(dataController.getMyobjectList().get(counter)); //TODO: Test
 		            		System.out.println("Object1");
-		            	}else if (inEvt.getCurrentTarget().getName().equals("Object 2")){
+		            	} else if (inEvt.getCurrentTarget().getName().equals("Object 2")) {
 		            		dataController.createObject(1);
 		            		dataController.getMyobjectList().get(counter).setPositionGlobal(new Vector3D(ToolsMath.nextRandomInt(140, 800), ToolsMath.nextRandomInt(140, 700)));
-							linker.setTapAndHoldListener(dataController.getMyobjectList().get(counter));
+							linker.setTapAndHoldListener(dataController.getMyobjectList().get(counter)); //TODO: Test
 		            		System.out.println("Object2");
-		            	}else if (inEvt.getCurrentTarget().getName().equals("Object 3")){
+		            	} else if (inEvt.getCurrentTarget().getName().equals("Object 3")) {
 		            		dataController.createObject(2);
 		            		dataController.getMyobjectList().get(counter).setPositionGlobal(new Vector3D(ToolsMath.nextRandomInt(140, 800), ToolsMath.nextRandomInt(140, 700)));
-							linker.setTapAndHoldListener(dataController.getMyobjectList().get(counter));
+							linker.setTapAndHoldListener(dataController.getMyobjectList().get(counter)); //TODO: Test
 		            		System.out.println("Object2");
 		            	}
 		            	getCanvas().addChild(dataController.getMyobjectList().get(counter));	
@@ -299,14 +285,13 @@ public void buildRadialMenu() {
 										getCanvas().removeChild(dataController.getMyobjectList().get(it.next().getID()));	
 									}
 									dataController.clearScene();
-									}
-								else {
+									} else {
 									for (Iterator<MyMTObject> it = dataController.getMyobjectList().iterator(); it.hasNext();) {
 										getCanvas().addChild(dataController.getMyobjectList().get(it.next().getID()));	
 									}
 									counter = dataController.getObjectcounter();
 								}
-				            	linker.setTapAndHoldListener();
+				            	linker.setTapAndHoldListener(); //TODO: Test
 								break;
 								
 				            default:

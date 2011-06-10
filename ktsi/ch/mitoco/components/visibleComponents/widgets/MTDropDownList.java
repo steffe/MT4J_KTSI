@@ -29,7 +29,7 @@ import ch.mitoco.model.ModelAttributContent;
 import ch.mitoco.model.ModelMtAttributs;
 
 /**
- * MTDropDownList provide a DropDownList with five import levels.
+ * MTDropDownList provide a DropDownList with five default import levels.
  * 
  * @author tandrich
  *
@@ -90,7 +90,6 @@ public class MTDropDownList extends Attributes {
 	 * @param font Ifont
 	 * @param width int
 	 * @param height int
-	 * @param arc int 
 	 * @param labelname String
 	 * @param labelfont IFont
 	 * 
@@ -153,7 +152,6 @@ public class MTDropDownList extends Attributes {
 	/** 
 	 * Read from datamodel and insert in the gui elements.
 	 *
-	 * @param defaultString String 
 	 * @param defaultlabeltext String
 	 */
 	private void dataRead(final String defaultlabeltext) {
@@ -185,7 +183,7 @@ public class MTDropDownList extends Attributes {
 			System.out.println("Set Default Label");
 			fname = defaultlabeltext;
 		} else {
-			System.out.println("Set Label "+ model.getLable());
+			System.out.println("Set Label " + model.getLable());
 			fname = model.getLable();
 		}
 		
@@ -198,10 +196,10 @@ public class MTDropDownList extends Attributes {
 		
 	}
 	
-	/** Load Default list when no date store in the model.
-	 * 
+	/**
+	 * Load Default list when no date store in the model.
 	 */
-	private final void loadDefaultList() {
+	private void loadDefaultList() {
 		final String[] defaultText = { "sehr wichtig", "wichtig", "nötig", "vorhanden", "unnötig", "nicht benötigt"};
 		list = Arrays.asList(defaultText);
 	}
@@ -226,8 +224,7 @@ public class MTDropDownList extends Attributes {
 				//TODO Was ist zu tun wenn dieses Werte Paar noch nicht exitiert???
 			}
 		}
-		
-		
+	
 		model.setAttcolor(getFillColor());
 	}
 	

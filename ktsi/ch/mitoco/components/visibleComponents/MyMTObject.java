@@ -136,18 +136,22 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable {
 	private boolean selected;
 	
 	
-	/** Public BLBL MyObject.
+	/** Constructor MyMTObject.
 	 * 
-	 * @param pApplet2 MTApplication
-	 * @param model ModelMTObjects
-	 * @param objectID INT ObjectID  
+	 * Im Konstruktor wird das Grundobjekt mit dem Bilderrahmen und den Grundfunktionen aufgebaut. 
+	 * 
 	 * 
 	 * Änderungen die Model noch nötig sind:
 	 * - Labelfont
 	 * - Normalerfont (vorhanden)
 	 * - Objekt grösse (Breite und Höhe)
-	 * - Stroke Color
-	 * - FIlecolor
+	 * - Konstruktion des Objekt in eine init Methode auslagern
+	 * 
+	 * 
+	 * @param pApplet2 MTApplication
+	 * @param model ModelMTObjects
+	 * @param objectID INT ObjectID  
+	 * 
 	 */
 	public MyMTObject(final MTApplication pApplet2, final ModelMtObjects model, final int objectID) {
 		super(pApplet2, 0, 0, 0, 0, 0, 5, 5);
@@ -167,9 +171,7 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable {
 		obSizeMaxHeight = 400;
 		
 		obDifSizeHeight = obSizeMaxHeight - obSizeMinHeight;
-		
-
-		
+	
 		fontArial = FontManager.getInstance().createFont(pApplet, "arial.ttf", 
 				15, 	//Font size
 				MTColor.BLACK);
@@ -177,8 +179,7 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable {
 		this.setSizeLocal(obSizeMinWidth, obSizeMinHeight);
 		this.setStrokeWeight(1);
 		this.setName("Object "+id);
-		//this.setStrokeColor(speblue);
-		
+				
 		//Create a textfield
 		textField = new MTTextArea(pApplet, fontArial); 
 		textField.setNoStroke(true);
@@ -190,8 +191,6 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable {
 		// Base Rect 
 		baserect = new MTRoundRectangle(pApplet, 10, 10, 0, obSizeMinWidth - 20, obSizeMinHeight - 20, 5, 5);
 		baserect.setNoStroke(true);
-		//baserect.setStrokeColor(MTColor.GRAY);
-		//baserect.setFillColor(MTColor.GRAY);
 		baserect.setPickable(false);
 		
 		readData();
@@ -249,7 +248,7 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable {
 					
 					setSizeLocal(obSizeMaxWidth, obSizeMaxHeight);
 					baserect.setSizeLocal(obSizeMaxWidth - 20, obSizeMaxHeight - 20);
-					if (updownrotate == true) {
+					if (updownrotate) {
 						baserect.translate(new Vector3D(0, obDifSizeHeight));
 					}	
 					buttonMaxMin.translate(new Vector3D(obSizeMaxWidth - w, 0));
@@ -261,7 +260,7 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable {
 					setSizeLocal(w, h);
 					
 					baserect.setSizeLocal(w - 20, h - 20);
-					if (updownrotate == true) {
+					if (updownrotate) {
 						baserect.translate(new Vector3D(0, -obDifSizeHeight));
 					}
 					
@@ -312,8 +311,22 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable {
 		this.addChild(colorpicker);
 	}
 	
-	/**
-	 *  Create Attributes.
+	/** Create attributes.
+	 * 
+	 * Anhanden der IDs die im attributesmodel gespeichert sind, wird das Objekt aufgebaut.
+	 * 
+	 * Gibt es weiter Attribute, muss die Case Anweisung um die gewünschte ID erweitern werden. 
+	 * Welche ID welches Attribut ist muss definiert werden und kann nicht einfach so geändert werden.
+	 * ID 0: 	MTTextAttribut
+	 * ID 1: 	MTNumField
+	 * ID 2: 	MTDropDown
+	 * ID 3: 	MTPictureBox
+	 * ID 4:    futur MTTextBox
+	 * ID 5:	futur MTPainter
+	 * ID 6:	futur MTBrowser
+	 * ID 7:	futur MTPDFReader
+	 * 
+	 * TODO: Interface bauen.
 	 */
 	private void createAttributes() {
 	int i = 0;
@@ -495,7 +508,7 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable {
 							dataWrite();
 							
 								for (Attributes it : myAttributs) {
-								it.dataWrite();
+								it.dataWrite(); // daten der Attribute werden geschrieben.
 								}
 							
 							
@@ -540,7 +553,7 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable {
 	}
 
 	/** 
-	 * Print the content from select Modelobject. 
+	 * Print the content from selected datamodel. 
 	 * 
 	 * @param obmodel ModelMtAttributs
 	 */
@@ -577,7 +590,7 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable {
 		System.out.println("\n");
 	}
 	
-	/** 
+	/** Testmethode für den LinkController. 
 	 * Set the Stroke Color for MyMTObject.
 	 * 
 	 * @param strokecolor MTColor
@@ -589,7 +602,7 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable {
 		this.setStrokeWeight(3);
 	}
 	
-	/** 
+	/** Testmethode für den LinkController. 
 	 * Set the Stroke Color for MyMTObject.
 	 * 
 	 * */ 
@@ -608,9 +621,9 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable {
 		return tagged;
 	}
 	
-	/** 
-	 * Set the Flag tag.
+	/** Testmethode für den LinkController. 
 	 * 
+	 * Set the Flag tag.
 	 * @param tag boolean
 	 * */
 	public final void setTagFlag(final boolean tag) {
@@ -632,7 +645,9 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable {
 	}
 	
 	
-	
+	/**
+	 * Setzt die DefaultGesture Action für das Objekt. Dies durch die Änderung in den Attributen.
+	 */
 	@Override
 	protected void setDefaultGestureActions() {
 //		super.setDefaultGestureActions();
@@ -643,58 +658,21 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable {
 //		dp.setLockPriority(0.5f);
 		registerInputProcessor(dp);
 		addGestureListener(DragProcessor.class, new DefaultDragAction());
-		dp.setBubbledEventsEnabled(true); //FIXME TEST
+		dp.setBubbledEventsEnabled(true); 
 		
 		RotateProcessor rp = new RotateProcessor(getRenderer());
 //		rp.setLockPriority(0.8f);
 		registerInputProcessor(rp);
 		addGestureListener(RotateProcessor.class, new DefaultRotateAction());
-		rp.setBubbledEventsEnabled(true);  //FIXME TEST
+		rp.setBubbledEventsEnabled(true);  
 		
 		ScaleProcessor sp = new ScaleProcessor(getRenderer());
 //		sp.setLockPriority(0.8f);
 		registerInputProcessor(sp);
 		addGestureListener(ScaleProcessor.class, new DefaultScaleAction());
-		sp.setBubbledEventsEnabled(true);  //FIXME TEST
+		sp.setBubbledEventsEnabled(true);  
 	}
 	 
 	
 }
-/**
- * Struktur des Objekts
- * ---------------------
- * Alle Attribute sind unter Objekte und beinhalte ihre spezifischen Eigenschaften. Müssen über eine XML Schnittstelle anbindbar sein
- * Max/Min Modus ??? 
- * 
- * Wie soll Anzahl Attribute und die Grösse des gesammt Objekt gehandhabt werden? 
- * 1 Fixe Max/Min Grösse -> Attribute Teilen sich den vorhanden Platz. Mehre Attribute -> weniger Platz!
- * 2.Attribute bekommen definierte Grösse zugeschrieben. Mehere Attribute ergeben ein grösser Objekt!
- * 
- * - Textarea (Textmenge grösser wie der vorgesehner Platz-> Abschneiden, Scrollbalgen, Schriftgrösse Anpassen)
- * - Bild (JPEG vorhanden)
- * - Zeichung (zum selber zeichnen)
- * - Textlinie
- * - Number, Data, Währung
- * 
- * Kontextmenü:
- *  Anstatt Scene wird ein MTMyObject (roundRect) übergeben. CloseButton zerstört das Object und Restore übernimmt die Funktion des MIN/Max 
- * 
- * 
-		this.removeAllChildren();
-		this.removeAllGestureEventListeners();
-		this.unregisterAllInputProcessors();
-		
-		this.removeAllGestureEventListeners(DragProcessor.class);
-		 this.addGestureListener(DragProcessor.class, defaultDragAction);
-		 
-		this.unregisterAllInputProcessors();
-		this.setGestureAllowance(DragProcessor.class, false);
-		this.setGestureAllowance(RotateProcessor.class, false);
-		this.setGestureAllowance(ScaleProcessor.class, false);
-		this.setGestureAllowance(TapProcessor.class, true);
-		
-		
-		textarea.unregisterAllInputProcessors();
-		textarea.setPickable(false);
- * 
-*/
+

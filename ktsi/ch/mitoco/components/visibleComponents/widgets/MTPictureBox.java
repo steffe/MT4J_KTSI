@@ -1,9 +1,5 @@
 package ch.mitoco.components.visibleComponents.widgets;
 
-
-import java.util.Arrays;
-import java.util.List;
-
 import org.mt4j.AbstractMTApplication;
 import org.mt4j.MTApplication;
 import org.mt4j.components.StateChange;
@@ -12,11 +8,10 @@ import org.mt4j.components.StateChangeListener;
 import org.mt4j.components.TransformSpace;
 import org.mt4j.components.visibleComponents.shapes.MTRectangle;
 import org.mt4j.components.visibleComponents.shapes.MTRectangle.PositionAnchor;
-import org.mt4j.components.visibleComponents.shapes.MTRoundRectangle;
+import org.mt4j.components.visibleComponents.widgets.MTColorPicker;
 import org.mt4j.components.visibleComponents.widgets.MTTextArea;
 import org.mt4j.components.visibleComponents.widgets.buttons.MTImageButton;
 import org.mt4j.components.visibleComponents.widgets.keyboard.MTTextKeyboard;
-import org.mt4j.input.gestureAction.DefaultDragAction;
 import org.mt4j.input.inputProcessors.IGestureEventListener;
 import org.mt4j.input.inputProcessors.MTGestureEvent;
 import org.mt4j.input.inputProcessors.componentProcessors.dragProcessor.DragProcessor;
@@ -27,13 +22,9 @@ import org.mt4j.input.inputProcessors.componentProcessors.tapProcessor.TapProces
 import org.mt4j.util.MTColor;
 import org.mt4j.util.font.IFont;
 import org.mt4j.util.math.Vector3D;
-import org.mt4jx.components.visibleComponents.widgets.MTSuggestionTextArea;
 
 import ch.mitoco.model.ModelAttributContent;
 import ch.mitoco.model.ModelMtAttributs;
-
-import com.sun.xml.internal.ws.api.model.wsdl.WSDLBoundOperation.ANONYMOUS;
-
 import processing.core.PImage;
 /**
  * MTDropDownList provide a DropDownList with five import levels.
@@ -100,19 +91,21 @@ public class MTPictureBox extends Attributes {
 	/** The MTTextAre Numbers. */	
 	private MTTextArea pathText;
 	
-	/** Transparenc Color for keyboard (fix). */
+	/** Transparency Color for keyboard (fix). */
 	 private MTColor trans = new MTColor(0, 0, 0, 10);
 	
-	 /** Boolean for new path*/
-	 private boolean loadnewPath;
+	/** MTColorPicker. 	 */
+	 private MTColorPicker colorpicker;
 	
+	 /** MTButton for ColorPicker. */
+	 private MTImageButton colPickButton;
+	 
 	/** 
 	 * Construtor MTPictureBox.
 	 * 
 	 * @param app AbstractMTApplication
 	 * @param width int
 	 * @param height int
-	 * @param arc int 
 	 * @param labelname String
 	 * @param labelfont IFont
 	 * 
@@ -126,13 +119,13 @@ public class MTPictureBox extends Attributes {
 		this.app = app;
 		this.model = model;
 		
-		dataRead(labelname);
+		dataRead(labelname); // Daten lesen
 		
 		this.init(app);
 	}
 	/** 
 	 * Init MTPictureBox.
-	 * @param app2 AbststractMTApplication
+	 * @param app AbststractMTApplication
 	 * */
 	private void init(final AbstractMTApplication app) {		
 		this.setSizeLocal(width, height);
@@ -140,8 +133,7 @@ public class MTPictureBox extends Attributes {
 		setPath("Default");
 		loadImage();
 		changePicture();
-		
-				
+	
 		label = new MTTextArea(app, 0, -labelfont.getOriginalFontSize(), width, height, labelfont);
 		label.setInnerPadding(0);
 		label.setNoFill(true);
@@ -154,18 +146,18 @@ public class MTPictureBox extends Attributes {
 		
 		this.addChild(label);
 		this.addChild(buttonRotate);
+		createColorPicker();
 	}
 	
 	/** Load Images for picturebox.
-	 * 
+	 * Methode ist verantwortlich für das erstellen und laden eines Bilds.
 	 */
 	public void loadImage() {
 
 		try {
 		image = app.loadImage(getPath());	
 		pictureBox = new MTRectangle(app, image);
-		}
-		catch(NullPointerException ex){
+		} catch(NullPointerException ex){
 			
 			System.out.println("Wrong Path or picture not exits: " + ex);
 			pictureBox = new MTRectangle(app, width, height);
@@ -198,7 +190,7 @@ public class MTPictureBox extends Attributes {
 		
 		pictureBox.setSizeLocal(picwidth / factor, picheight / factor);
 		pictureBox.setAnchor(PositionAnchor.CENTER);
-		System.out.println("Höhe " +pictureBox.getHeightXY(TransformSpace.LOCAL)+ " Breite " + pictureBox.getWidthXY(TransformSpace.LOCAL));
+		System.out.println("Höhe " + pictureBox.getHeightXY(TransformSpace.LOCAL) + " Breite " + pictureBox.getWidthXY(TransformSpace.LOCAL));
 		pictureBox.setPositionRelativeToParent(new Vector3D(width / 2, height / 2));
 		pictureBox.setPickable(true);
 		
@@ -243,6 +235,10 @@ public class MTPictureBox extends Attributes {
 	
 	/**
 	 * Methode to change the picture.
+	 * 
+	 * Über ein Button im Max-Modus besteht die Möglichkeit den Dateipfad des Bild zu änderung und diese zu laden.
+	 * 
+	 * TODO: Keyboard mit dem Pfad durch ein Dateibrowser ersetzten.
 	 */
 	private void changePicture() {
 		
@@ -296,9 +292,6 @@ public class MTPictureBox extends Attributes {
 						}
 					}
 					);
-					
-					
-					
 					break;	
 				default:
 					break;
@@ -306,12 +299,57 @@ public class MTPictureBox extends Attributes {
 			return false;
 			}
 		});
-		
-		
 		buttonRotate.setVisible(false);
-		
-		
-		
+	}
+	
+	/** 
+	 * Colorpicker.
+	 */
+	private void createColorPicker() {
+   
+        PImage colPick = app.loadImage("ch" + MTApplication.separator + "mitoco" + MTApplication.separator + "data" + MTApplication.separator +  "colorcircletr.png");
+        colorpicker = new MTColorPicker(app, 0, 0, colPick);
+        colorpicker.translate(new Vector3D(0, 0, 0));
+        colorpicker.setNoStroke(true);
+        colorpicker.addGestureListener(DragProcessor.class, new IGestureEventListener() {
+			public boolean processGestureEvent(final MTGestureEvent ge) {
+				if (ge.getId() == MTGestureEvent.GESTURE_ENDED) {
+					if (colorpicker.isVisible()) {
+						colorpicker.setVisible(false);
+					}
+				} else {
+					setFillColor(colorpicker.getSelectedColor());
+					dataWrite();
+				}
+				return false;
+			}
+		});
+        
+        PImage colPickIcon = app.loadImage("ch" + MTApplication.separator + "mitoco" + MTApplication.separator + "data" + MTApplication.separator +  "ColorPickerIcon.png");
+        colPickButton = new MTImageButton(app, colPickIcon);
+        colPickButton.translate(new Vector3D(width - 30, 0, 0));
+        colPickButton.setNoStroke(true);
+        colPickButton.setSizeLocal(30, 30);
+        colPickButton.sendToFront();
+        colPickButton.addGestureListener(TapProcessor.class, new IGestureEventListener() {
+			public boolean processGestureEvent(final MTGestureEvent ge) {
+				TapEvent te = (TapEvent) ge;
+				if (te.isTapped()) {
+					if (colorpicker.isVisible()) {
+						colorpicker.setVisible(false);
+					} else {
+						colorpicker.setVisible(true);
+						colorpicker.sendToFront();
+					}				
+				}
+				return true;
+			}
+        });
+        colorpicker.setVisible(false);
+	    colPickButton.setVisible(false);
+	
+        this.addChild(colPickButton);
+		this.addChild(colorpicker);
 	}
 	
 	/**
@@ -321,7 +359,6 @@ public class MTPictureBox extends Attributes {
 	private void setPath(final String path) {
 		if (path.equalsIgnoreCase("Default")) {
 			imagePath = "ch" + MTApplication.separator + "mitoco" + MTApplication.separator + "data" + MTApplication.separator + "pictures" + MTApplication.separator +  "f5e2.jpg";
-			loadnewPath = false;
 		} else {
 			imagePath = path;
 		}
@@ -338,6 +375,8 @@ public class MTPictureBox extends Attributes {
 	
 	/**
 	 * Read from datamodel and insert in the gui elements. 
+	 * 
+	 * Element "Path" für den Speicherort des Bildpfads
 	 * 
 	 * @param defaultlabeltext String
 	 */
@@ -384,7 +423,14 @@ public class MTPictureBox extends Attributes {
 	 * Write changed Date in the datamodel.
 	 */
 	public void dataWrite() {
-		
+		for (ModelAttributContent it : model.getAttributcontent()) {
+			if (it.getType().equalsIgnoreCase("Path")) {
+				it.setValue(getPath());
+			} else {
+				//TODO Was ist zu tun wenn dieses Werte Paar noch nicht exitiert???
+			}
+		}
+		model.setAttcolor(getFillColor());
 	}
 	
 	/**
@@ -392,6 +438,8 @@ public class MTPictureBox extends Attributes {
 	 */
 	public final void setMin() {
 		label.setVisible(false);
+		colPickButton.setVisible(false);
+		
 	}
 	
 	/**
@@ -399,6 +447,7 @@ public class MTPictureBox extends Attributes {
 	 */
 	public final void setMax() {
 		label.setVisible(true);
+		colPickButton.setVisible(true);
 	}
 	
 	/** 

@@ -71,9 +71,6 @@ public class MTColorPickerGroup extends MTComponent {
 	 /** Border Color. */
 	 private MTColor borderColor;
 	 
-	 /** List for ColorPickers.*/
-	 private List<MTColorPicker>colorPickers;
-	 
 	/** Transparenz Color. */
 	 private MTColor trans = new MTColor(0, 0, 0, 20);
 	 
@@ -84,6 +81,10 @@ public class MTColorPickerGroup extends MTComponent {
 	 private MTRoundRectangle baserect;
 	/**
 	 * Constructur.
+	 * 
+	 * Mit dem MTColorPickerGroup wird eine Gruppe von 3 ColorPicker für die 3 Fraben des Objekt bereitgestellt.
+	 * 
+	 * TODO: Aufbau dieser Klasse obtimieren. Dynamische erstellen der ColorPickers.
 	 * 
 	 * @param app
 	 * @param baserect 
@@ -102,7 +103,6 @@ public class MTColorPickerGroup extends MTComponent {
 	 */
 	private void init() {
 		
-		colorPickers = new ArrayList<MTColorPicker>();
 		System.out.println("ColorPickerGroup wird erstellt ");
 		
     	IFont fontArial = FontManager.getInstance().createFont(app1, "arial.ttf", 
@@ -132,7 +132,7 @@ public class MTColorPickerGroup extends MTComponent {
         strokelabel.setNoFill(true);
         strokelabel.setNoStroke(true);
         strokelabel.setPickable(false); 
-        strokelabel.translate(new Vector3D( 35, 25, 0));
+        strokelabel.translate(new Vector3D(35, 25, 0));
         colorpickerStroke.addChild(strokelabel);
         
         
@@ -288,15 +288,30 @@ public class MTColorPickerGroup extends MTComponent {
 		
 	}
 
-	public MTColor getStrokeColor() {
+	/**
+	 * Give selected strokecolor back.
+	 * 
+	 * @return MTColor strokeColor
+	 */
+	public final MTColor getStrokeColor() {
 		return strokeColor;
 	}
 
-	public MTColor getBackgroundColor() {
+	/**
+	 * Give selected backgroundcolor back.
+	 * 
+	 * @return MTColor backgroundColor
+	 */
+	public final MTColor getBackgroundColor() {
 		return backgroundColor;
 	}
 
-	public MTColor getBorderColor() {
+	/**
+	 * Give selected borderColor back.
+	 * 
+	 * @return MTColor borderColor
+	 */
+	public final MTColor getBorderColor() {
 		return borderColor;
 	}
 
