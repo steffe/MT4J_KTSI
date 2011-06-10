@@ -4,28 +4,22 @@ package ch.mitoco.main;
 import gov.pnnl.components.visibleComponents.widgets.radialMenu.MTRadialMenu;
 import gov.pnnl.components.visibleComponents.widgets.radialMenu.item.MTMenuItem;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import org.mt4j.MTApplication;
 import org.mt4j.components.visibleComponents.shapes.MTLine;
-import org.mt4j.components.visibleComponents.widgets.buttons.MTImageButton;
 import org.mt4j.input.IMTInputEventListener;
 import org.mt4j.input.gestureAction.DefaultPanAction;
 import org.mt4j.input.gestureAction.DefaultZoomAction;
-import org.mt4j.input.inputData.AbstractCursorInputEvt;
 import org.mt4j.input.inputData.InputCursor;
 import org.mt4j.input.inputData.MTFingerInputEvt;
 import org.mt4j.input.inputData.MTInputEvent;
 import org.mt4j.input.inputProcessors.IGestureEventListener;
 import org.mt4j.input.inputProcessors.MTGestureEvent;
-import org.mt4j.input.inputProcessors.componentProcessors.lassoProcessor.LassoProcessor;
 import org.mt4j.input.inputProcessors.componentProcessors.panProcessor.PanProcessorTwoFingers;
 import org.mt4j.input.inputProcessors.componentProcessors.tapProcessor.TapEvent;
-import org.mt4j.input.inputProcessors.componentProcessors.tapProcessor.TapProcessor;
 import org.mt4j.input.inputProcessors.componentProcessors.unistrokeProcessor.UnistrokeEvent;
 import org.mt4j.input.inputProcessors.componentProcessors.unistrokeProcessor.UnistrokeProcessor;
 import org.mt4j.input.inputProcessors.componentProcessors.unistrokeProcessor.UnistrokeUtils.Direction;
@@ -38,20 +32,12 @@ import org.mt4j.util.font.FontManager;
 import org.mt4j.util.font.IFont;
 import org.mt4j.util.math.ToolsMath;
 import org.mt4j.util.math.Vector3D;
-import org.mt4j.util.math.Vertex;
-
-import com.thoughtworks.xstream.XStream;
 
 import ch.mitoco.components.visibleComponents.MyMTObject;
 import ch.mitoco.components.visibleComponents.objectlink.MTLinkController;
-import ch.mitoco.components.visibleComponents.widgets.MTPictureBox;
-import ch.mitoco.model.ModelMtObjects;
+import ch.mitoco.dataController.DataController;
 import ch.mitoco.model.ModelScence;
 import ch.mitoco.model.ModelTypDescription;
-import ch.mitoco.store.generated.Customer;
-
-import processing.core.PImage;
-import store.DataController;
 
 
 /** Hello Word Scene. */
@@ -146,9 +132,9 @@ public class HelloWorldScene extends AbstractScene {
 				case UnistrokeEvent.GESTURE_STARTED:
 					getCanvas().addChild(ue.getVisualization());
 					//Beim ersten GESTURE_STARTED Event existiert das Objekt noch nicht, daher darf es auch nicht destroyed werden.
-					if (mtRadialMenu1 != null) {
-						mtRadialMenu1.destroy();
-					}
+					//if (mtRadialMenu1 != null) {
+					//	mtRadialMenu1.destroy();
+					//}
 					//System.out.println(ellipse);
 					//clearCanvas();
 					break;
@@ -169,7 +155,12 @@ public class HelloWorldScene extends AbstractScene {
 			              if (HelloWorldScene.this.mtRadialMenu1 == null)
 			              {
 			                // Build list of menu items
-			               buildRadialMenu();
+			              	buildRadialMenu();
+			              }
+			              else
+			              {
+			            	  //Workaround, damit das Menü nach einemal daneben Klicken wieder gezeichnet werden kann.
+			            	  buildRadialMenu();
 			              }
 					}
 					break;
@@ -339,22 +330,9 @@ public void buildRadialMenu() {
         	//menu1.addSubMenuItem(new MTMenuItem(it.next().getObjectdescription(), null));
         	//final IMTInputEventListener createObjectInput = new IMTInputEventListener() {
         	//menu1.addSubMenuItem(new MTMenuItem(it.next().getObjectdescription(), new ConcurrentHashMap<Class<? extends IInputProcessor>, IGestureEventListener>(){
-        			
-        	//}));
-        			                	
         	menu1.addSubMenuItem(subMenu11);
         	subMenu11.addInputEventListener(createObjectInput);
         	}
-        	
-        
-        //final MTMenuItem subMenu11 = new MTMenuItem("Object 1", null);
-        //final MTMenuItem subMenu12 = new MTMenuItem("Object 2", null);
-        //menu1.addSubMenuItem(subMenu11);
-        //menu1.addSubMenuItem(subMenu12);
-        
-        //subMenu12.addInputEventListener(createObjectInput);
-        //menu1.addSubMenuItem(new MTMenuItem("Object 3", null));
-        //menu1.addSubMenuItem(new MTMenuItem("Object 4", null));
 
         final MTMenuItem subMenu5 = new MTMenuItem("View", null);
         subMenu5.addSubMenuItem(new MTMenuItem("All", null));
@@ -368,8 +346,6 @@ public void buildRadialMenu() {
 
         final MTMenuItem menu2 = new MTMenuItem("Action", null);
         final MTMenuItem subMenu2 = new MTMenuItem("File", null);
-        //subMenu2.addSubMenuItem(new MTMenuItem("Load", null));
-        //subMenu2.addSubMenuItem(new MTMenuItem("Save", null));
         final MTMenuItem subMenu221 = new MTMenuItem("Load", null);
         final MTMenuItem subMenu222 = new MTMenuItem("Save", null);
         subMenu2.addSubMenuItem(subMenu221);
@@ -386,12 +362,6 @@ public void buildRadialMenu() {
         menu2.addSubMenuItem(new MTMenuItem("Clear", null));
         menu2.addSubMenuItem(new MTMenuItem("Sub-Menu 5", null));
         menu2.addSubMenuItem(new MTMenuItem("Sub-Menu 6", null));
-
-        
-    
-
-        
-
         final MTMenuItem menu3 = new MTMenuItem("Maximize", null);
         final MTMenuItem menu4 = new MTMenuItem("Minimize", null);
         final MTMenuItem menu5 = new MTMenuItem("Exit", null);
@@ -402,7 +372,6 @@ public void buildRadialMenu() {
         menuItems.add(menu3);
         menuItems.add(menu4);
         menuItems.add(menu5);
-
 
         // Create menu
         final Vector3D vector = new Vector3D(ic.getCurrentEvtPosX(), ic.getCurrentEvtPosY());

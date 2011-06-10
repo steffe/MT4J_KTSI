@@ -29,6 +29,7 @@ import org.mt4j.util.font.IFont;
 import org.mt4j.util.math.Vector3D;
 
 import ch.mitoco.components.visibleComponents.MyMTObject;
+import ch.mitoco.dataController.DataController;
 import ch.mitoco.model.ModelTypDescription;
 
 
@@ -74,10 +75,9 @@ public class HelloWorldScene extends AbstractScene {
 		
 		//StrokeListener
 		UnistrokeProcessor up = new UnistrokeProcessor(getMTApplication());
-		up.addTemplate(UnistrokeGesture.CIRCLE, Direction.CLOCKWISE);
-		up.addTemplate(UnistrokeGesture.CIRCLE, Direction.COUNTERCLOCKWISE);
+		//up.addTemplate(UnistrokeGesture.CIRCLE, Direction.CLOCKWISE);
+		//up.addTemplate(UnistrokeGesture.CIRCLE, Direction.COUNTERCLOCKWISE);
 		up.addTemplate(UnistrokeGesture.V, Direction.CLOCKWISE);
-			
 		getCanvas().registerInputProcessor(up);
 		getCanvas().addGestureListener(UnistrokeProcessor.class, new IGestureEventListener() {
 			public boolean processGestureEvent(final MTGestureEvent ge) {
@@ -88,9 +88,9 @@ public class HelloWorldScene extends AbstractScene {
 				case UnistrokeEvent.GESTURE_STARTED:
 					getCanvas().addChild(ue.getVisualization());
 					//Beim ersten GESTURE_STARTED Event existiert das Objekt noch nicht, daher darf es auch nicht destroyed werden.
-					if (mtRadialMenu1 != null) {
-						mtRadialMenu1.destroy();
-					}
+					//if (mtRadialMenu1 != null) {
+						//mtRadialMenu1.destroy();
+					//}
 					//System.out.println(ellipse);
 					//clearCanvas();
 					break;
@@ -104,6 +104,7 @@ public class HelloWorldScene extends AbstractScene {
 						
 						if ((HelloWorldScene.this.mtRadialMenu1 != null) && !HelloWorldScene.this.mtRadialMenu1.isVisible())
 			              {
+							System.out.println("Recognized gesture 2if: " + g);
 							HelloWorldScene.this.mtRadialMenu1.destroy();
 							HelloWorldScene.this.mtRadialMenu1 = null;
 			              }
@@ -112,6 +113,10 @@ public class HelloWorldScene extends AbstractScene {
 			              {
 			                // Build list of menu items
 			               buildRadialMenu();
+			              }
+			              else
+			              {
+			            	  buildRadialMenu();
 			              }
 					}
 					break;
@@ -275,9 +280,6 @@ public class HelloWorldScene extends AbstractScene {
         	menu1.addSubMenuItem(subMenu11);
         	subMenu11.addInputEventListener(createObjectInput);
         	}
-        	
-        
-        //final MTMenuItem subMenu11 = new MTMenuItem("Object 1", null);
         //final MTMenuItem subMenu12 = new MTMenuItem("Object 2", null);
         //menu1.addSubMenuItem(subMenu11);
         //menu1.addSubMenuItem(subMenu12);
@@ -314,14 +316,6 @@ public class HelloWorldScene extends AbstractScene {
         menu2.addSubMenuItem(new MTMenuItem("Copy Objecet", null));
         menu2.addSubMenuItem(new MTMenuItem("Paste", null));
         menu2.addSubMenuItem(new MTMenuItem("Clear", null));
-        menu2.addSubMenuItem(new MTMenuItem("Sub-Menu 5", null));
-        menu2.addSubMenuItem(new MTMenuItem("Sub-Menu 6", null));
-
-        
-    
-
-        
-
         final MTMenuItem menu3 = new MTMenuItem("Maximize", null);
         final MTMenuItem menu4 = new MTMenuItem("Minimize", null);
         final MTMenuItem menu5 = new MTMenuItem("Exit", null);
