@@ -9,6 +9,7 @@ import javax.smartcardio.ATR;
 
 import org.apache.batik.anim.SetAnimation;
 import org.mt4j.MTApplication;
+import org.mt4j.components.MTComponent;
 import org.mt4j.components.TransformSpace;
 import org.mt4j.components.visibleComponents.shapes.MTRoundRectangle;
 import org.mt4j.components.visibleComponents.widgets.MTTextArea;
@@ -23,6 +24,7 @@ import org.mt4j.input.inputData.AbstractCursorInputEvt;
 import org.mt4j.input.inputData.MTInputEvent;
 import org.mt4j.input.inputProcessors.IGestureEventListener;
 import org.mt4j.input.inputProcessors.MTGestureEvent;
+import org.mt4j.input.inputProcessors.componentProcessors.dragProcessor.DragEvent;
 import org.mt4j.input.inputProcessors.componentProcessors.dragProcessor.DragProcessor;
 import org.mt4j.input.inputProcessors.componentProcessors.lassoProcessor.ILassoable;
 import org.mt4j.input.inputProcessors.componentProcessors.rotateProcessor.RotateProcessor;
@@ -34,8 +36,11 @@ import org.mt4j.util.font.FontManager;
 import org.mt4j.util.font.IFont;
 import org.mt4j.util.math.ToolsMath;
 import org.mt4j.util.math.Vector3D;
+import org.mt4jx.input.gestureAction.dnd.DragAndDropAction;
+import org.mt4jx.input.gestureAction.dnd.DragAndDropTarget;
 import org.mt4jx.input.inputProcessors.componentProcessors.Group3DProcessorNew.IClusterEventListener;
 
+import ch.mitoco.components.visibleComponents.objectlink.MTLinkController;
 import ch.mitoco.components.visibleComponents.widgets.Attributes;
 import ch.mitoco.components.visibleComponents.widgets.Attributes;
 import ch.mitoco.components.visibleComponents.widgets.MTColorPickerGroup;
@@ -57,7 +62,7 @@ import processing.core.PImage;
  * @author tandrich
  */
 
-public class MyMTObject extends MTRoundRectangle implements ILassoable {
+public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndDropTarget {
 
 	
 	/** MTApplication. */
@@ -135,6 +140,12 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable {
 	/** Clip selected. */
 	private boolean selected;
 	
+	/** Test: Linker Controller. */
+	private MTLinkController linker; //TODO: Test
+	
+	
+	private ArrayList<MTComponent> droppedComponents = new ArrayList<MTComponent>();
+	
 	
 	/** Constructor MyMTObject.
 	 * 
@@ -153,13 +164,13 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable {
 	 * @param objectID INT ObjectID  
 	 * 
 	 */
-	public MyMTObject(final MTApplication pApplet2, final ModelMtObjects model, final int objectID) {
+	public MyMTObject(final MTApplication pApplet2, final ModelMtObjects model, final int objectID, MTLinkController linker) {
 		super(pApplet2, 0, 0, 0, 0, 0, 5, 5);
 
-		
-		pApplet = pApplet2;
+		this.pApplet = pApplet2;
 		this.id = objectID;
 		this.selected = false;
+		this.linker = linker;
 		
 		// Data Model 
 		this.objectmodel = model;
@@ -337,7 +348,7 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable {
 			case(0):
 				System.out.println(i + "Attributs MTTextAttribut " + it);
 				
-				myAttributs.add(new MTTextAttribut(pApplet, attributesmodel.get(i), fontArialMini, 250, 30, "ee2eee3ww fw3ewf", "TestFeld Text", labelfont));
+				myAttributs.add(new MTTextAttribut(pApplet, attributesmodel.get(i), fontArialMini, 250, 30, "Test", "TestFeld Text", labelfont));
 				myAttributs.get(i).setPositionRelativeToParent(new Vector3D(this.getWidthXY(TransformSpace.LOCAL) / 2, x));
 			
 				break;
@@ -504,7 +515,7 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable {
 			
 							break;
 						case AbstractCursorInputEvt.INPUT_ENDED:
-							System.out.println("Write Data after change the position");
+							//System.out.println("Write Data after change the position");
 							dataWrite();
 							
 								for (Attributes it : myAttributs) {
@@ -672,7 +683,51 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable {
 		addGestureListener(ScaleProcessor.class, new DefaultScaleAction());
 		sp.setBubbledEventsEnabled(true);  
 	}
-	 
+
+	public void writeOutput() {
+		String text = this.getName() + "\n";
+		for (int i = 0; i < this.droppedComponents.size(); i++) {
+			text+= "- " + droppedComponents.get(i).getName() + "\n";
+		}
+		System.out.println("Gefundene Componend: " + text);
+	}
+		
+	@Override
+	public void componentDropped(MTComponent droppedComponent, DragEvent de) {
+		if(!droppedComponents.contains(droppedComponent)){
+			this.droppedComponents.add(droppedComponent);
+		}
+
+		this.setStrokeColor(this.getFillColor());
+		System.out.println(this.getName() +": "+ droppedComponent.getName() + " dropped.");
+		this.writeOutput();
+		
+		
+	}
+
+	@Override
+	public void componentEntered(MTComponent enteredComponent) {
+		System.out.println(this.getName() +": "+ enteredComponent.getName() + " entered.");
+		this.setStrokeColor(new MTColor(255,0,0));
+		this.writeOutput();
+		
+	}
+
+	@Override
+	public void componentExited(MTComponent exitedComponent) {
+		this.droppedComponents.remove(exitedComponent);
+		this.setStrokeColor(this.getFillColor());
+		System.out.println(this.getName() +": "+ exitedComponent.getName() + " exited.");
+		this.writeOutput();
+		
+	}
+	
+	@Override
+	public boolean dndAccept(MTComponent component) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
 	
 }
 

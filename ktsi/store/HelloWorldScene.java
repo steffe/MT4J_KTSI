@@ -69,7 +69,7 @@ public class HelloWorldScene extends AbstractScene {
 		this.setClearColor(new MTColor(100, 100, 100, 255));
 		this.registerGlobalInputProcessor(new CursorTracer(mtAppl, this));
 		
-		dataController = new DataController(mtAppl);
+		dataController = new DataController(mtAppl, getCanvas());
 		dataController.createDataModel("Scenename");
 		dataController.createObjectList();
 		

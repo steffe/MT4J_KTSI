@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import org.mt4j.MTApplication;
 import org.mt4j.components.visibleComponents.shapes.MTLine;
+import org.mt4j.components.visibleComponents.shapes.MTPolygon;
 import org.mt4j.input.IMTInputEventListener;
 import org.mt4j.input.gestureAction.DefaultPanAction;
 import org.mt4j.input.gestureAction.DefaultZoomAction;
@@ -71,7 +72,7 @@ public class HelloWorldScene extends AbstractScene {
 	private InputCursor ic;
 	
 	/** Test: Linker Controller. */
-	private MTLinkController linker; //TODO: Test
+	//private MTLinkController linker; //TODO: Test
 	
 	
 	/** 
@@ -88,12 +89,14 @@ public class HelloWorldScene extends AbstractScene {
 		this.mtApplication = mtAppl;
 		this.setClearColor(new MTColor(100, 100, 100, 255));
 		
-		dataController = new DataController(mtAppl);
+		dataController = new DataController(mtAppl, getCanvas());
 		dataController.createDataModel("Scenename");
 		dataController.createObjectList();
 		
 		
-		linker = new MTLinkController(mtAppl, getCanvas(), dataController.getMyobjectList()); //TODO: Test
+		//linker = new MTLinkController(mtAppl, getCanvas(), dataController.getMyobjectList()); //TODO: Test
+		
+		
 		
 		//Show touches
 		this.registerGlobalInputProcessor(new CursorTracer(mtApplication, this));
@@ -122,6 +125,8 @@ public class HelloWorldScene extends AbstractScene {
 				switch (ue.getId()) {
 				case UnistrokeEvent.GESTURE_STARTED:
 					getCanvas().addChild(ue.getVisualization());
+					
+					
 					//Beim ersten GESTURE_STARTED Event existiert das Objekt noch nicht, daher darf es auch nicht destroyed werden.
 					//if (mtRadialMenu1 != null) {
 					//	mtRadialMenu1.destroy();
@@ -150,6 +155,7 @@ public class HelloWorldScene extends AbstractScene {
 			            	  //Workaround, damit das Menü nach einemal daneben Klicken wieder gezeichnet werden kann.
 			            	  buildRadialMenu();
 			              }
+					getCanvas().removeChild(ue.getVisualization());
 					}
 					break;
 				default:
@@ -199,17 +205,17 @@ public class HelloWorldScene extends AbstractScene {
 		            	if (inEvt.getCurrentTarget().getName().equals("Object 1")) {
 		            		dataController.createObject(0);
 		            		dataController.getMyobjectList().get(counter).setPositionGlobal(new Vector3D(ToolsMath.nextRandomInt(140, 800), ToolsMath.nextRandomInt(140, 700)));
-							linker.setTapAndHoldListener(dataController.getMyobjectList().get(counter)); //TODO: Test
+							//linker.setTapAndHoldListener(dataController.getMyobjectList().get(counter)); //TODO: Test
 		            		System.out.println("Object1");
 		            	} else if (inEvt.getCurrentTarget().getName().equals("Object 2")) {
 		            		dataController.createObject(1);
 		            		dataController.getMyobjectList().get(counter).setPositionGlobal(new Vector3D(ToolsMath.nextRandomInt(140, 800), ToolsMath.nextRandomInt(140, 700)));
-							linker.setTapAndHoldListener(dataController.getMyobjectList().get(counter)); //TODO: Test
+							//linker.setTapAndHoldListener(dataController.getMyobjectList().get(counter)); //TODO: Test
 		            		System.out.println("Object2");
 		            	} else if (inEvt.getCurrentTarget().getName().equals("Object 3")) {
 		            		dataController.createObject(2);
 		            		dataController.getMyobjectList().get(counter).setPositionGlobal(new Vector3D(ToolsMath.nextRandomInt(140, 800), ToolsMath.nextRandomInt(140, 700)));
-							linker.setTapAndHoldListener(dataController.getMyobjectList().get(counter)); //TODO: Test
+							//linker.setTapAndHoldListener(dataController.getMyobjectList().get(counter)); //TODO: Test
 		            		System.out.println("Object2");
 		            	}
 		            	getCanvas().addChild(dataController.getMyobjectList().get(counter));	
@@ -291,7 +297,7 @@ public class HelloWorldScene extends AbstractScene {
 									}
 									counter = dataController.getObjectcounter();
 								}
-				            	linker.setTapAndHoldListener(); //TODO: Test
+				            	//linker.setTapAndHoldListener(); //TODO: Test
 								break;
 								
 				            default:

@@ -319,7 +319,12 @@ public class MTSuggestionTextArea extends MTTextArea {
 					int line = (int) ((x.y - zero) / heightPerLine);
 	
 					if (currentSuggestions.size() > line) {
+						
+						try {
 						setText(currentSuggestions.get(line));
+						} catch (NullPointerException ex) {
+						setText("Error in MTSuggestionTextArea");
+						}
 					}
 	
 				}

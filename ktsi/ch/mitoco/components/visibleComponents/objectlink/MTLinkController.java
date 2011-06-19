@@ -7,6 +7,7 @@ import java.util.List;
 import org.apache.batik.dom.events.EventListenerList;
 import org.mt4j.AbstractMTApplication;
 import org.mt4j.components.MTCanvas;
+import org.mt4j.components.TransformSpace;
 import org.mt4j.components.interfaces.IMTComponent3D;
 import org.mt4j.input.IMTInputEventListener;
 import org.mt4j.input.gestureAction.DefaultLassoAction;
@@ -83,7 +84,7 @@ public class MTLinkController {
 		linklist = new ArrayList<MTObjectLink>();
 		selectObjectID = new ArrayList<MTSelectStoreObject>();
 		selectObjectID.add(new MTSelectStoreObject());
-		
+	
 		validLinkPair = new ArrayList<MTSelectStoreObject>();
 		lassoProcessor = new LassoProcessor(app, canvas, canvas.getViewingCamera());
 		
@@ -106,38 +107,43 @@ public class MTLinkController {
 	/** Position Dedection for MTObjects.*/
 	// TODO Postition Dedection
 	private void eventObjectHandling() {
-		
-		canvas.addInputListener(new IMTInputEventListener() {
-			
-			public boolean processInputEvent(MTInputEvent inEvt) {
-			
-				if (inEvt instanceof AbstractCursorInputEvt) {
-					AbstractCursorInputEvt cursorInputEvt = (AbstractCursorInputEvt) inEvt;
-					if (myobjectList.size() == 3) {
-						switch (cursorInputEvt.getId()) {
-						case AbstractCursorInputEvt.INPUT_STARTED:
-							drawLinie(myobjectList.get(0).getCenterPointGlobal(), myobjectList.get(1).getCenterPointGlobal());	
-							break;
-						case AbstractCursorInputEvt.INPUT_UPDATED:
-							drawLinie(myobjectList.get(0).getCenterPointGlobal(), myobjectList.get(1).getCenterPointGlobal());
-							break;
-						case AbstractCursorInputEvt.INPUT_ENDED:
-							drawLinie(myobjectList.get(0).getCenterPointGlobal(), myobjectList.get(1).getCenterPointGlobal());
-							break;
-						default:
-							break;
+		if (!(myobjectList == null)) {
+			canvas.addInputListener(new IMTInputEventListener() {
+				
+				public boolean processInputEvent(MTInputEvent inEvt) {
+				
+					if (inEvt instanceof AbstractCursorInputEvt) {
+						AbstractCursorInputEvt cursorInputEvt = (AbstractCursorInputEvt) inEvt;
+						if (myobjectList.size() == 3) {
+							switch (cursorInputEvt.getId()) {
+							case AbstractCursorInputEvt.INPUT_STARTED:
+								drawLinie(myobjectList.get(0).getCenterPointGlobal(), myobjectList.get(1).getCenterPointGlobal());	
+								break;
+							case AbstractCursorInputEvt.INPUT_UPDATED:
+								drawLinie(myobjectList.get(0).getCenterPointGlobal(), myobjectList.get(1).getCenterPointGlobal());
+								break;
+							case AbstractCursorInputEvt.INPUT_ENDED:
+								drawLinie(myobjectList.get(0).getCenterPointGlobal(), myobjectList.get(1).getCenterPointGlobal());
+								break;
+							default:
+								break;
+							}
+						} else {
+							link.destroy();
 						}
+						
 					} else {
-						link.destroy();
+						// handle other input events stuff
 					}
-					
-				} else {
-					// handle other input events stuff
+					return false;
 				}
-				return false;
 			}
+			);
+		} else {
+			System.out.println("MyMTObjekt Liste ist LEER" );
+			
 		}
-		);
+		
 		
 	}
 	/** Test Methode to draw a linie.
@@ -174,11 +180,11 @@ public class MTLinkController {
 	 * 
 	 */
 	//TODO Insert this in Model Controller when object Createt
+	@Deprecated
 	public final void setTapAndHoldListener() {
 		for (MyMTObject it : myobjectList) {
 			detectionObSelection(it);
-			detectionObSelectionLasso(it);
-			
+			detectionObSelectionLasso(it);			
 		}
 	}
 	
@@ -191,6 +197,9 @@ public class MTLinkController {
 	public final void setTapAndHoldListener(final MyMTObject obj) {
 		detectionObSelection(obj);
 		detectionObSelectionLasso(obj);
+		linklist.add(obj.getID(), new MTObjectLink(pApplet, new Vertex(obj.getCenterPointLocal()), new Vertex(new Vector3D(obj.getWidthXY(TransformSpace.LOCAL) /2, -30))));
+		obj.addChild(linklist.get(obj.getID()));
+		
 	}
 	
 	/** Object detection/selection with TapAndHold Processor.
@@ -359,13 +368,15 @@ public class MTLinkController {
 					System.out.println("Gesture wurde ausgeführt");
 					
 					
-						
-						for (MyMTObject it : myobjectList) {
-							if (it.isSelected() == true) {
-								System.out.println("@@@@@ Object ist gespeichert NR:" + it.getID());
-								
+						if (!(myobjectList == null)) {
+							for (MyMTObject it : myobjectList) {
+								if (it.isSelected() == true) {
+									System.out.println("@@@@@ Object ist gespeichert NR:" + it.getID());
+									
+								}
 							}
 						}
+						
 					
 					break;
 				default:

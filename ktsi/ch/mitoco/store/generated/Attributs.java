@@ -5,8 +5,7 @@
 // Generated on: 2011.04.29 at 01:35:01 PM MESZ 
 //
 
-
-package ch.mitoco.store.generated;
+package ch.mitoco.store.generated; 
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

@@ -67,9 +67,6 @@ public class MTDropDownList extends Attributes {
 	/** MTSugestionTextArea. */
 	private MTSuggestionTextArea sa;
 	
-	/** Dropdown List String.*/
-	private String[] values;
-
 	/** List for Strings. */
 	private List<String> list;
 	
@@ -81,8 +78,7 @@ public class MTDropDownList extends Attributes {
 	
 	 /** MTButton for ColorPicker. */
 	 private MTImageButton colPickButton;
-	 
-	 
+	  
 	/** 
 	 * Construtor MTDropDownList.
 	 * 
@@ -200,8 +196,10 @@ public class MTDropDownList extends Attributes {
 	 * Load Default list when no date store in the model.
 	 */
 	private void loadDefaultList() {
-		final String[] defaultText = { "sehr wichtig", "wichtig", "nötig", "vorhanden", "unnötig", "nicht benötigt"};
-		list = Arrays.asList(defaultText);
+		System.out.println("Default Liste wird geladen");
+		list.add(new String("Super"));
+		list.add(new String("Gut"));
+		list.add(new String("Schlecht"));
 	}
 	
 	/** 

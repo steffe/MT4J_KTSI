@@ -6,8 +6,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.mt4j.MTApplication;
+import org.mt4j.components.MTCanvas;
 
 import ch.mitoco.components.visibleComponents.MyMTObject;
+import ch.mitoco.components.visibleComponents.objectlink.MTLinkController;
 import ch.mitoco.model.ModelMtObjects;
 import ch.mitoco.model.ModelObjectTyps;
 import ch.mitoco.model.ModelScence;
@@ -61,13 +63,19 @@ public class DataController {
 	 */
 	private SaveXML save;
 	
+	/** Test: Linker Controller. */
+	private MTLinkController linker; //TODO: Test
+	
+
 	/**Daten Kontroller Konstruktor.
 	 * 
 	 * @param mtAppl MTApplication
 	 */
-	public DataController(final MTApplication mtAppl) {
+	public DataController(final MTApplication mtAppl, MTCanvas canvas) {
 		this.mtApplication = mtAppl;
 		objectcounter = 0;
+		linker = new MTLinkController(mtAppl, canvas , getMyobjectList()); //TODO: Test
+		
 	}
 	
 	/**Erstellt ein Objekt auf einer Scene
@@ -91,7 +99,9 @@ public class DataController {
 		object.setId(objectcounter);
 		dataModel.getMtobjects().add(object);
 		
-		myobjectList.add(new MyMTObject(mtApplication, dataModel.getMtobjects().get(objectcounter), objectcounter));
+		myobjectList.add(new MyMTObject(mtApplication, dataModel.getMtobjects().get(objectcounter), objectcounter, linker));
+		linker.setTapAndHoldListener(getMyobjectList().get(objectcounter)); //TODO: Test
+		
 		objectcounter++;
 		
 		//returnn created Object
@@ -144,8 +154,9 @@ public class DataController {
 		else {
 			dataModel = LoadXML.getDataModel();
 			for (Iterator<ModelMtObjects> it = dataModel.getMtobjects().iterator(); it.hasNext();) {
-				myobjectList.add(new MyMTObject(mtApplication, it.next(), objectcounter));
+				myobjectList.add(new MyMTObject(mtApplication, it.next(), objectcounter, linker));
 				System.out.println("Object Gen:" + objectcounter);
+				linker.setTapAndHoldListener(getMyobjectList().get(objectcounter)); //TODO: Test
 				objectcounter++;
 			}
 			return true;

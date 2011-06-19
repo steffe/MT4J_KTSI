@@ -58,7 +58,7 @@ public class LoadXML {
 		int counter = 0;
 		xmlmyobjectlist = new ArrayList<MyMTObject>();
 		for (Iterator<ModelMtObjects> it = dataModel.getMtobjects().iterator(); it.hasNext();) {
-			xmlmyobjectlist.add(new MyMTObject(mtApplication, it.next(), counter));
+		//	xmlmyobjectlist.add(new MyMTObject(mtApplication, it.next(), counter));
 			System.out.println("Object Gen:" + counter);
 			counter++;
 			

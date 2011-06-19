@@ -13,8 +13,12 @@ import org.mt4j.components.StateChangeListener;
 import org.mt4j.components.TransformSpace;
 import org.mt4j.components.visibleComponents.widgets.MTColorPicker;
 import org.mt4j.components.visibleComponents.widgets.MTTextArea;
+import org.mt4j.components.visibleComponents.widgets.MTTextArea.ExpandDirection;
 import org.mt4j.components.visibleComponents.widgets.buttons.MTImageButton;
 import org.mt4j.components.visibleComponents.widgets.keyboard.MTTextKeyboard;
+import org.mt4j.input.GestureEventSupport;
+import org.mt4j.input.IMTInputEventListener;
+import org.mt4j.input.inputData.MTInputEvent;
 import org.mt4j.input.inputProcessors.IGestureEventListener;
 import org.mt4j.input.inputProcessors.MTGestureEvent;
 import org.mt4j.input.inputProcessors.componentProcessors.dragProcessor.DragProcessor;
@@ -25,6 +29,8 @@ import org.mt4j.input.inputProcessors.componentProcessors.tapProcessor.TapProces
 import org.mt4j.util.MTColor;
 import org.mt4j.util.font.IFont;
 import org.mt4j.util.math.Vector3D;
+
+import com.sun.corba.se.spi.orbutil.fsm.Input;
 
 import processing.core.PImage;
 
@@ -134,7 +140,7 @@ public class MTTextAttribut extends Attributes {
 		
 		textarea = new MTTextArea(app, 0, (height - fontsize) / 2, width, height, font);
 		textarea.setInnerPadding(0);
-		textarea.setInnerPaddingLeft(0);
+		textarea.setInnerPaddingLeft(3);
 		textarea.setInnerPaddingTop(0);
 		textarea.setText(stringvalue);
 		textarea.setFillColor(new MTColor(0, 0, 0, 0));
@@ -168,25 +174,43 @@ public class MTTextAttribut extends Attributes {
 					numKeyText.unregisterAllInputProcessors();
 					numKeyText.setEnableCaret(true);
 					
-					textKeyboard.snapToKeyboard(numKeyText);
+					//textKeyboard.snapToKeyboard(numKeyText);
+					//numKeyText.setText(textarea.getText());
+					//textKeyboard.addTextInputListener(numKeyText);
 					
-					numKeyText.setText(textarea.getText());
-					textKeyboard.addTextInputListener(numKeyText);
+
+					textKeyboard.addTextInputListener(textarea);
 					
 					addChild(textKeyboard);
-					numKeyText.setPositionRelativeToParent(new Vector3D((width / 2), -10));
+					//numKeyText.setPositionRelativeToParent(new Vector3D((width / 2), -10));
+					
 					
 					textKeyboard.addStateChangeListener(StateChange.COMPONENT_DESTROYED, new StateChangeListener() {
 						
 						@Override
 						public void stateChanged(final StateChangeEvent evt) {
-							textarea.setInnerPaddingLeft(0);
-							textarea.setText(numKeyText.getText());
+							
+							//textarea.setText(numKeyText.getText());
 							dataWrite();
 							
 						}
 					}
 					);
+					
+					
+					textKeyboard.addInputListener(new IMTInputEventListener() {
+						
+						@Override
+						public boolean processInputEvent(MTInputEvent inEvt) {
+							if (inEvt instanceof MTInputEvent) {
+								System.out.println(" TextBreite " + textarea.getTextWidth());
+								//textarea.setText(numKeyText.getText());
+							}
+							return false;
+						}
+					});
+					
+					
 				}
 				}	
 				return false;
@@ -243,7 +267,7 @@ public class MTTextAttribut extends Attributes {
 			System.out.println("Set Default Label");
 			fname = defaultlabeltext;
 		} else {
-			System.out.println("Set Label "+ model.getLable());
+			System.out.println("Set Label " + model.getLable());
 			fname = model.getLable();
 		}
 		

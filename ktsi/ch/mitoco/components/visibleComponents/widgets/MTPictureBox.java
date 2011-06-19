@@ -157,7 +157,7 @@ public class MTPictureBox extends Attributes {
 		try {
 		image = app.loadImage(getPath());	
 		pictureBox = new MTRectangle(app, image);
-		} catch(NullPointerException ex){
+		} catch (NullPointerException ex) {
 			
 			System.out.println("Wrong Path or picture not exits: " + ex);
 			pictureBox = new MTRectangle(app, width, height);
