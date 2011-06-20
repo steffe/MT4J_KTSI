@@ -3,12 +3,13 @@ package ch.mitoco.main;
 
 import gov.pnnl.components.visibleComponents.widgets.radialMenu.MTRadialMenu;
 import gov.pnnl.components.visibleComponents.widgets.radialMenu.item.MTMenuItem;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
 import org.mt4j.MTApplication;
 import org.mt4j.components.visibleComponents.shapes.MTLine;
-import org.mt4j.components.visibleComponents.shapes.MTPolygon;
 import org.mt4j.input.IMTInputEventListener;
 import org.mt4j.input.gestureAction.DefaultPanAction;
 import org.mt4j.input.gestureAction.DefaultZoomAction;
@@ -31,8 +32,8 @@ import org.mt4j.util.font.FontManager;
 import org.mt4j.util.font.IFont;
 import org.mt4j.util.math.ToolsMath;
 import org.mt4j.util.math.Vector3D;
+
 import ch.mitoco.components.visibleComponents.MyMTObject;
-import ch.mitoco.components.visibleComponents.objectlink.MTLinkController;
 import ch.mitoco.dataController.DataController;
 import ch.mitoco.model.ModelTypDescription;
 
@@ -92,7 +93,7 @@ public class HelloWorldScene extends AbstractScene {
 		dataController = new DataController(mtAppl, getCanvas());
 		dataController.createDataModel("Scenename");
 		dataController.createObjectList();
-		
+	
 		
 		//linker = new MTLinkController(mtAppl, getCanvas(), dataController.getMyobjectList()); //TODO: Test
 		
@@ -200,13 +201,35 @@ public class HelloWorldScene extends AbstractScene {
 		            	/**
 		            	 * To-Do: Laden der Objettypen von XML
 		            	 */
-		            	System.out.println("Object add Menu: \"" + inEvt.getCurrentTarget().getName() + "\"");
+		            	//System.out.println("Object add Menu: \"" + inEvt.getCurrentTarget().getName() + "\"");
 		            	System.out.println("Counter befor creation: " + counter);
+		            	
+		            
+		            	
+		            	 	for (ModelTypDescription it2 : dataController.getObjectetyps().getObjectdescription()) {
+		            	 		
+		            	 		System.out.println("Objecttyp Desc: " + it2.getObjectdescription());
+			            		System.out.println("Objecttyp Data: " + it2.getObjectypeid());
+			            		System.out.println("Objecttyp Menu: " + inEvt.getCurrentTarget().getName());
+			            		
+			            		
+			            		if (inEvt.getCurrentTarget().getName().equals(it2.getObjectdescription())){
+			            			dataController.createObject(it2.getObjectypeid());
+				            		dataController.getMyobjectList().get(counter).setPositionGlobal(new Vector3D(ToolsMath.nextRandomInt(140, 800), ToolsMath.nextRandomInt(140, 700)));
+				            		System.out.println("Objekttyp gefunden");
+				            		break;
+			            		}
+
+		            	 	}
+		            	 	
+		            	
+		            	/*	
 		            	if (inEvt.getCurrentTarget().getName().equals("Object 1")) {
 		            		dataController.createObject(0);
 		            		dataController.getMyobjectList().get(counter).setPositionGlobal(new Vector3D(ToolsMath.nextRandomInt(140, 800), ToolsMath.nextRandomInt(140, 700)));
 							//linker.setTapAndHoldListener(dataController.getMyobjectList().get(counter)); //TODO: Test
 		            		System.out.println("Object1");
+		            		
 		            	} else if (inEvt.getCurrentTarget().getName().equals("Object 2")) {
 		            		dataController.createObject(1);
 		            		dataController.getMyobjectList().get(counter).setPositionGlobal(new Vector3D(ToolsMath.nextRandomInt(140, 800), ToolsMath.nextRandomInt(140, 700)));
@@ -218,6 +241,7 @@ public class HelloWorldScene extends AbstractScene {
 							//linker.setTapAndHoldListener(dataController.getMyobjectList().get(counter)); //TODO: Test
 		            		System.out.println("Object2");
 		            	}
+		            	*/
 		            	getCanvas().addChild(dataController.getMyobjectList().get(counter));	
 		            	
 						//getCanvas().addChild(myobjectList.get(counter).getMyObjectBack());	

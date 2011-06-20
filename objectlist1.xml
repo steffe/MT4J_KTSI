@@ -63,7 +63,7 @@
       </objectcolor>
       <objectattributs>
         <ch.mitoco.model.ModelMtAttributs>
-          <id>2</id>
+          <id>0</id>
           <attributcontent>
             <ch.mitoco.model.ModelAttributContent>
               <type>String</type>
@@ -176,7 +176,7 @@
       <objectdescription>Object 2</objectdescription>
     </ch.mitoco.model.ModelTypDescription>
     <ch.mitoco.model.ModelTypDescription>
-      <objectypeid>3</objectypeid>
+      <objectypeid>2</objectypeid>
       <objectdescription>Object 3</objectdescription>
     </ch.mitoco.model.ModelTypDescription>
   </objectdescription>
