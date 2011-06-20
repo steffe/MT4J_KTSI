@@ -3,6 +3,7 @@ package ch.mitoco.dataController;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 
+import ch.mitoco.model.ModelFunctionList;
 import ch.mitoco.model.ModelObjectTyps;
 import ch.mitoco.model.ModelScence;
 
@@ -19,6 +20,11 @@ import com.thoughtworks.xstream.XStream;
 public class SaveXML {
 	private ModelScence saveModel;
 	private ModelObjectTyps saveObjectModel;
+	
+	/**Datenmodel für SceneListe
+	 * 
+	 */
+	private ModelFunctionList saveSceneListe;
 	
 	/**Konstruktor SaveXML
 	 * 
@@ -40,6 +46,28 @@ public class SaveXML {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	/**Konstruktor für SceneListe Speichern
+	 * 
+	 * @param filename
+	 * @param saveSceneListe
+	 */
+	public SaveXML(final String filename, final ModelFunctionList saveSceneListe) {
+		this.saveSceneListe = saveSceneListe;
+		XStream xstreamSave = new XStream();
+			
+			//myobjectList.get(0).model.getObjectattributs().get(0).getAttributcontent().get(0).getValue()
+			//dataModel.getMtobjects().add();
+			
+		try {
+			xstreamSave.toXML(saveSceneListe, new FileOutputStream(filename));
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	
 		
 	}
 

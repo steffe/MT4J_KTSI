@@ -35,12 +35,13 @@ import org.mt4j.util.math.Vector3D;
 
 import ch.mitoco.components.visibleComponents.MyMTObject;
 import ch.mitoco.dataController.DataController;
+import ch.mitoco.model.ModelSceneList;
 import ch.mitoco.model.ModelTypDescription;
 
 
 /** Hello Word Scene. */
 
-public class HelloWorldScene extends AbstractScene {
+public class MitocoScene extends AbstractScene {
 
 
 	
@@ -75,6 +76,8 @@ public class HelloWorldScene extends AbstractScene {
 	/** Test: Linker Controller. */
 	//private MTLinkController linker; //TODO: Test
 	
+	/** Spezifische ScenenDaten	 */
+	private ModelSceneList sceneData;
 	
 	/** 
 	 * Hello Word Scene. 
@@ -84,14 +87,15 @@ public class HelloWorldScene extends AbstractScene {
 	 * @param mtAppl MTApplication 
 	 * @param name String
 	 */
-	public HelloWorldScene(final MTApplication mtAppl, final String name) {
+	public MitocoScene(final MTApplication mtAppl, final String name, final ModelSceneList SceneData) {
 		super(mtAppl, name);
 		
 		this.mtApplication = mtAppl;
 		this.setClearColor(new MTColor(100, 100, 100, 255));
+		this.sceneData = SceneData;
 		
 		dataController = new DataController(mtAppl, getCanvas());
-		dataController.createDataModel("Scenename");
+		dataController.createDataModel(sceneData.getScenename());
 		dataController.createObjectList();
 	
 		
@@ -143,13 +147,13 @@ public class HelloWorldScene extends AbstractScene {
 					if (g.equals(UnistrokeGesture.V)) {
 						ic = ue.getCursor();
 						
-						if ((HelloWorldScene.this.mtRadialMenu1 != null) && !HelloWorldScene.this.mtRadialMenu1.isVisible())
+						if ((MitocoScene.this.mtRadialMenu1 != null) && !MitocoScene.this.mtRadialMenu1.isVisible())
 			              {
-							HelloWorldScene.this.mtRadialMenu1.destroy();
-							HelloWorldScene.this.mtRadialMenu1 = null;
+							MitocoScene.this.mtRadialMenu1.destroy();
+							MitocoScene.this.mtRadialMenu1 = null;
 			              }
 						 
-			              if (HelloWorldScene.this.mtRadialMenu1 == null) {
+			              if (MitocoScene.this.mtRadialMenu1 == null) {
 			                // Build list of menu items
 			              	buildRadialMenu();
 			              } else {
@@ -208,9 +212,9 @@ public class HelloWorldScene extends AbstractScene {
 		            	
 		            	 	for (ModelTypDescription it2 : dataController.getObjectetyps().getObjectdescription()) {
 		            	 		
-		            	 		System.out.println("Objecttyp Desc: " + it2.getObjectdescription());
-			            		System.out.println("Objecttyp Data: " + it2.getObjectypeid());
-			            		System.out.println("Objecttyp Menu: " + inEvt.getCurrentTarget().getName());
+		            	 		//System.out.println("Objecttyp Desc: " + it2.getObjectdescription());
+			            		//System.out.println("Objecttyp Data: " + it2.getObjectypeid());
+			            		//System.out.println("Objecttyp Menu: " + inEvt.getCurrentTarget().getName());
 			            		
 			            		
 			            		if (inEvt.getCurrentTarget().getName().equals(it2.getObjectdescription())){
@@ -289,7 +293,7 @@ public class HelloWorldScene extends AbstractScene {
 			          switch (cursorInputEvt.getId()) {
 			            case TapEvent.GESTURE_STARTED:
 			            	dataController.saveSceneXML();
-							HelloWorldScene.this.mtApplication.saveFrame();
+							MitocoScene.this.mtApplication.saveFrame();
 			              break;
 			            default:
 			              break;

@@ -89,12 +89,18 @@ public class DataController {
 	public void createObject(int objecttype) {
 		ModelMtObjects object = new ModelMtObjects();
 		
-		for (Iterator<ModelMtObjects> it = getObjectetyps().getObjecttyp().iterator(); it.hasNext();) {
-			if (it.next().getObjecttyp() == objecttype) {
-				object = it.next();
+		
+		for(ModelMtObjects it : getObjectetyps().getObjecttyp()){
+		//for (Iterator<ModelMtObjects> it = getObjectetyps().getObjecttyp().iterator(); it.hasNext();) {
+			System.out.println("DataController Objekttyp: " + objecttype);
+			System.out.println("DataController Objekttyp: " + it.getObjecttyp());
+			
+			if (it.getObjecttyp() == objecttype) {
 				
+				object = it;
+				break;				
 			}
-			break;
+			
 		}
 		object.setId(objectcounter);
 		dataModel.getMtobjects().add(object);
@@ -144,7 +150,32 @@ public class DataController {
 	 * @return
 	 */
 	public Boolean loadSceneXML() {
-		LoadXML = new LoadXML("xstream.xml");
+		LoadXML = new LoadXML("xstream.xml", "scenedata");
+			
+		if (objectcounter > 0) {
+			System.out.println("Grösser Null " + objectcounter);
+			//Objects are already drawn, you have to clean
+			return false;
+			}
+		else {
+			dataModel = LoadXML.getDataModel();
+			for (Iterator<ModelMtObjects> it = dataModel.getMtobjects().iterator(); it.hasNext();) {
+				myobjectList.add(new MyMTObject(mtApplication, it.next(), objectcounter, linker));
+				System.out.println("Object Gen:" + objectcounter);
+				linker.setTapAndHoldListener(getMyobjectList().get(objectcounter)); //TODO: Test
+				objectcounter++;
+			}
+			return true;
+		}
+		
+	}
+	/**Load SceneListeXML
+	 * 
+	 * 
+	 * @return
+	 */
+	public Boolean loadSceneListeXML() {
+		LoadXML = new LoadXML("xstream.xml", "sceneliste");
 			
 		if (objectcounter > 0) {
 			System.out.println("Grösser Null " + objectcounter);
@@ -189,9 +220,6 @@ public class DataController {
 		
 		loadObjectXML = new LoadObjectXML();
 		this.objectetyps = loadObjectXML.getObjectModel();
-		
-		
-		
 	}
 	
 	/**Saves the objectstyps in a XML.
@@ -243,7 +271,8 @@ public class DataController {
 	 */
 	public ModelObjectTyps getObjectetyps() {
 		objectetyps = new ModelObjectTyps();
-		loadObjectXML();		
+		loadObjectXML();
+		objectetyps = loadObjectXML.getObjectModel();
 		return objectetyps;
 	}
 

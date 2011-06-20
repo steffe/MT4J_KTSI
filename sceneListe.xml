@@ -1,0 +1,29 @@
+<ch.mitoco.model.ModelFunctionList>
+  <sceneliste>
+    <ch.mitoco.model.ModelSceneList>
+      <id>0</id>
+      <scenename>Golf</scenename>
+      <description>Golf Scoreboard</description>
+      <picturepath>Heidelberg.jpg</picturepath>
+      <sceneobjekte>
+        <ch.mitoco.model.ModelTypDescription>
+          <objectypeid>0</objectypeid>
+          <objectdescription>Player erstellen</objectdescription>
+        </ch.mitoco.model.ModelTypDescription>
+        <ch.mitoco.model.ModelTypDescription>
+          <objectypeid>1</objectypeid>
+          <objectdescription>Scorecard erstellen</objectdescription>
+        </ch.mitoco.model.ModelTypDescription>
+      </sceneobjekte>
+      <showAll>false</showAll>
+    </ch.mitoco.model.ModelSceneList>
+    <ch.mitoco.model.ModelSceneList>
+      <id>0</id>
+      <scenename>Mindmanager</scenename>
+      <description>Mindmanager</description>
+      <picturepath>Chrysanthemum.jpg</picturepath>
+      <sceneobjekte/>
+      <showAll>true</showAll>
+    </ch.mitoco.model.ModelSceneList>
+  </sceneliste>
+</ch.mitoco.model.ModelFunctionList>

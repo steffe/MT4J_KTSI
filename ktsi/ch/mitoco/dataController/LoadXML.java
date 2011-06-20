@@ -9,6 +9,7 @@ import java.util.List;
 import org.mt4j.MTApplication;
 
 import ch.mitoco.components.visibleComponents.MyMTObject;
+import ch.mitoco.model.ModelFunctionList;
 import ch.mitoco.model.ModelMtObjects;
 import ch.mitoco.model.ModelScence;
 
@@ -28,6 +29,11 @@ public class LoadXML {
 	 * 
 	 */
 	private ModelScence dataModel;
+	
+	/**Datenmodel für SceneListe
+	 * 
+	 */
+	private ModelFunctionList sceneListe;
 		
 	/**
 	 * 
@@ -46,6 +52,7 @@ public class LoadXML {
 	 * @param mtAppl MTApplication
 	 * @param filename String
 	 */
+	@Deprecated
 	public LoadXML(final MTApplication mtAppl, final String filename) {
 		this.mtApplication = mtAppl;
 		XStream xstream = new XStream();
@@ -74,15 +81,38 @@ public class LoadXML {
 	 * loads the XML Content to the Scene dataModel
 	 * 
 	 * @param filename String
-	 */
-	public LoadXML(final String filename) {
+	 * @param typ String
+	 *
+	 *
+	 *	 */
+	public LoadXML(final String filename, final String typ) {
 		XStream xstream = new XStream();
-		try {
-			dataModel = (ModelScence) xstream.fromXML(new FileInputStream(filename));
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		
+		if (typ.equals("objekttyp")){
+			
 		}
+		else if (typ.equals("scenedata")){
+			try {
+				dataModel = (ModelScence) xstream.fromXML(new FileInputStream(filename));
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}			
+		}
+		else if (typ.equals("sceneliste")){
+			try {
+				setSceneListe((ModelFunctionList) xstream.fromXML(new FileInputStream(filename)));
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		else{
+			
+		}
+		
+		
+	
 	}
 	/**Returns the Scene DataModel.
 	 * 
@@ -98,6 +128,20 @@ public class LoadXML {
 	 */
 	public void setDataModel(ModelScence dataModel) {
 		this.dataModel = dataModel;
+	}
+
+	/**
+	 * @param sceneListe the sceneListe to set
+	 */
+	public void setSceneListe(ModelFunctionList sceneListe) {
+		this.sceneListe = sceneListe;
+	}
+
+	/**
+	 * @return the sceneListe
+	 */
+	public ModelFunctionList getSceneListe() {
+		return sceneListe;
 	}
 
 }
