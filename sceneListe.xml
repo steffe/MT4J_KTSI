@@ -21,7 +21,7 @@
       <id>0</id>
       <scenename>Mindmanager</scenename>
       <description>Mindmanager</description>
-      <picturepath>Chrysanthemum.jpg</picturepath>
+      <picturepath>mindmap2.jpg</picturepath>
       <sceneobjekte/>
       <showAll>true</showAll>
     </ch.mitoco.model.ModelSceneList>

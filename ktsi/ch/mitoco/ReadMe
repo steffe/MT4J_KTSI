@@ -1,0 +1,20 @@
+ReadmMe für die MindTouchCollaboration Applikation
+
+/** Create attributes.
+	 * 
+	 * Anhanden der IDs die im attributesmodel gespeichert sind, wird das Objekt aufgebaut.
+	 * 
+	 * Gibt es weiter Attribute, muss die Case Anweisung um die gewünschte ID erweitern werden. 
+	 * Welche ID welches Attribut ist muss definiert werden und kann nicht einfach so geändert werden.
+	 * ID 0: 	MTTextAttribut
+	 * ID 1: 	MTNumField
+	 * ID 2: 	MTDropDown
+	 * ID 3: 	MTPictureBox
+	 * ID 4:    futur MTTextBox
+	 * ID 5:	futur MTPainter
+	 * ID 6:	futur MTBrowser
+	 * ID 7:	futur MTPDFReader
+	 * ID 8:	MtListAttributs
+	 *
+	 * TODO: Interface bauen.
+	 */

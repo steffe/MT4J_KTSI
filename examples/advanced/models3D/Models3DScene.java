@@ -83,6 +83,7 @@ public class Models3DScene extends AbstractScene {
 		//Load the meshes with the ModelImporterFactory (A file can contain more than 1 mesh)
 		//Loads 3ds model
 		MTTriangleMesh[] meshes = ModelImporterFactory.loadModel(mtApplication, modelsPath + "jazz_Obj" + AbstractMTApplication.separator + "honda_jazz.obj", 180, true, false );
+		//MTTriangleMesh[] meshes = ModelImporterFactory.loadModel(mtApplication, modelsPath + "mini_obj.obj", 180, true, false );
 		
 		//Get the biggest mesh in the group to use as a reference for setting the position/scale
 		final MTTriangleMesh biggestMesh = this.getBiggestMesh(meshes);

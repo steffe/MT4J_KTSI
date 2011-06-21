@@ -86,6 +86,13 @@ public class MitocoScene extends AbstractScene {
 	/** Spezifische ScenenDaten	 */
 	private ModelSceneList sceneData;
 	
+	
+	/** Test Objektausrichtung */
+	private float endxGestureVector;
+	private float startxGestureVector;
+	private float endyGestureVector;
+	private float startyGestureVector;
+	
 	/** 
 	 * Hello Word Scene. 
 	 * 
@@ -137,6 +144,7 @@ public class MitocoScene extends AbstractScene {
 				switch (ue.getId()) {
 				case UnistrokeEvent.GESTURE_STARTED:
 					getCanvas().addChild(ue.getVisualization());
+				
 					
 					
 					//Beim ersten GESTURE_STARTED Event existiert das Objekt noch nicht, daher darf es auch nicht destroyed werden.
@@ -154,12 +162,15 @@ public class MitocoScene extends AbstractScene {
 					if (g.equals(UnistrokeGesture.V)) {
 						ic = ue.getCursor();
 						
+						startyGestureVector = ic.getStartPosY();
+						startxGestureVector = ic.getStartPosX();
+						endyGestureVector = ic.getCurrentEvtPosY();
+						endxGestureVector = ic.getCurrentEvtPosX();
 						if ((MitocoScene.this.mtRadialMenu1 != null) && !MitocoScene.this.mtRadialMenu1.isVisible())
 			              {
 							MitocoScene.this.mtRadialMenu1.destroy();
 							MitocoScene.this.mtRadialMenu1 = null;
 			              }
-						 
 			              if (MitocoScene.this.mtRadialMenu1 == null) {
 			                // Build list of menu items
 			              	buildRadialMenu();
@@ -467,12 +478,28 @@ public class MitocoScene extends AbstractScene {
 
         // Create menu
         final Vector3D vector = new Vector3D(ic.getCurrentEvtPosX(), ic.getCurrentEvtPosY());
-
+        
         final IFont font = FontManager.getInstance().createFont(mtApplication, "arial.ttf",
             16, // Font size
             new MTColor(255, 255, 255, 255), // Font fill color
             true); // Anti-alias
         this.mtRadialMenu1 = new MTRadialMenu(mtApplication, vector, font, 1f, menuItems);
+        if (startxGestureVector < endxGestureVector) {
+        	this.mtRadialMenu1.rotateZ(mtRadialMenu1.getCenterPointLocal(), 0);
+        } else if (startyGestureVector < endyGestureVector) {
+        	this.mtRadialMenu1.rotateZ(mtRadialMenu1.getCenterPointLocal(), 90);
+        } else if (startxGestureVector > endxGestureVector) {
+        	this.mtRadialMenu1.rotateZ(mtRadialMenu1.getCenterPointLocal(), 180);
+        } else if (startyGestureVector > endyGestureVector) {
+        	this.mtRadialMenu1.rotateZ(mtRadialMenu1.getCenterPointLocal(), 270);
+        }
+        System.out.println("start x " + startxGestureVector);
+        System.out.println("start y " + startyGestureVector);
+        System.out.println("end x " + endxGestureVector);
+        System.out.println("end y " + endyGestureVector);
+        
+        
+        //AnimationUtil.rotate2D(mtRectangle, 720);
         this.getCanvas().addChild(mtRadialMenu1);
       }
 	

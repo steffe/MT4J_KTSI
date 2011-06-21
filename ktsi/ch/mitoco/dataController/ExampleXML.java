@@ -210,6 +210,43 @@ public class ExampleXML {
 		
 		return MODELSCENCE;
 	}
+	
+	/*
+	//Functionsliste
+	//erste Scene
+	ModelSceneList golfscene = new ModelSceneList();
+	golfscene.setScenename("Golf");
+	golfscene.setDescription("Golf Scoreboard");
+	golfscene.setId(0);
+	golfscene.setPicturepath("Heidelberg.jpg");
+	
+	ModelTypDescription golftyps1 = new ModelTypDescription();
+	ModelTypDescription golftyps2 = new ModelTypDescription();
+	golftyps1.setObjectypeid(0);
+	golftyps1.setObjectdescription("Player erstellen");
+	golftyps2.setObjectypeid(1);
+	golftyps2.setObjectdescription("Scorecard erstellen");
+
+	golfscene.getSceneobjekte().add(golftyps1);
+	golfscene.getSceneobjekte().add(golftyps2);
+	
+	//zweite Scene
+	ModelSceneList mitoco = new ModelSceneList();
+	mitoco.setScenename("MiToCo");
+	mitoco.setDescription("Mindmanager");
+	mitoco.setId(0);
+	mitoco.setPicturepath("Chrysanthemum.jpg");
+	mitoco.setShowAll(true);
+
+
+	
+	
+	modelfunctionList.getSceneliste().add(golfscene);
+	modelfunctionList.getSceneliste().add(mitoco);
+	
+	
+	SaveXML test = new SaveXML("sceneListe.xml", modelfunctionList);
+	*/
 
 		
 	

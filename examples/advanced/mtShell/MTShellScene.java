@@ -433,6 +433,7 @@ public class MTShellScene extends AbstractScene {
 		
 		list.addListElement(cell);
 		addTapProcessor(cell, sceneToCreate);
+		
 //		*/
 		
 		/*

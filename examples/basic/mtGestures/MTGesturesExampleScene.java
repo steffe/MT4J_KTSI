@@ -1,8 +1,5 @@
 package basic.mtGestures;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.mt4j.AbstractMTApplication;
 import org.mt4j.components.MTComponent;
 import org.mt4j.components.TransformSpace;
@@ -43,9 +40,6 @@ import org.mt4j.util.MTColor;
 import org.mt4j.util.font.FontManager;
 import org.mt4j.util.font.IFont;
 import org.mt4j.util.math.Vector3D;
-import org.mt4jx.components.visibleComponents.widgets.MTSuggestionTextArea;
-
-import test.thomas.MTDropDownList;
 
 public class MTGesturesExampleScene extends AbstractScene {
 	private AbstractMTApplication app;
@@ -242,7 +236,7 @@ public class MTGesturesExampleScene extends AbstractScene {
 		tapAndHoldOnly.setStrokeColor(textAreaColor);
 		tapAndHoldOnly.setText("Tap&Hold me!  ---");
 		this.clearAllGestures(tapAndHoldOnly);
-		tapAndHoldOnly.registerInputProcessor(new TapAndHoldProcessor(app, 2000));
+		tapAndHoldOnly.registerInputProcessor(new TapAndHoldProcessor(app, 200));
 		tapAndHoldOnly.addGestureListener(TapAndHoldProcessor.class, new TapAndHoldVisualizer(app, getCanvas()));
 		tapAndHoldOnly.addGestureListener(TapAndHoldProcessor.class, new IGestureEventListener() {
 			public boolean processGestureEvent(MTGestureEvent ge) {

@@ -30,6 +30,7 @@ public class StartMitocoMain extends MTApplication {
 	public void startUp() {
 		sceneData = new ModelSceneList();
 		sceneData.setScenename("MiToCo");
+		sceneData.setShowAll(true);
 		addScene(new MitocoScene(this, "Hello World Scene", sceneData));
 	}
 }

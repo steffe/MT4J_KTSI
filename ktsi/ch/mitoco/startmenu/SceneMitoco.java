@@ -56,7 +56,6 @@ public class SceneMitoco extends AbstractScene{
 	
 	/** The app. */
 	private MTApplication app;
-	
 	/** The has fbo. */
 	private boolean hasFBO;
 	/** The switch directly to scene. */
@@ -89,6 +88,9 @@ public class SceneMitoco extends AbstractScene{
 	/** ModelFunctionListe */
 	private ModelFunctionList modelfunctionList;
 	
+	/** Wert für die anzahl der Plazuhalter Icons */
+	private int emptyPlaceHolder;
+	
 	/**
 	 * 
 	 * @param mtApplication
@@ -105,81 +107,82 @@ public class SceneMitoco extends AbstractScene{
 		this.switchDirectlyToScene = !this.hasFBO || switchDirectlyToScene;
 		
 		this.registerGlobalInputProcessor(new CursorTracer(app, this));
-		this.setClearColor(new MTColor(0,0,0,255));
+		this.setClearColor(new MTColor(0, 0, 0, 255));
+		
+		//Instanzieren des Datenmodels für die FunktionsListe
+		modelfunctionList = new ModelFunctionList();
+		LoadXML scenelist = new LoadXML("sceneListe.xml", "sceneliste");
+		modelfunctionList = scenelist.getSceneListe();
+		
 		
 		
 		preferredIconWidth = 256;
 		preferredIconHeight = 192;
 		gapBetweenIconAndReflection = 9;
 		displayHeightOfReflection = preferredIconHeight * 0.6f;
+		
+		System.out.println("app.width " + app.width);
+		System.out.println("app.anzahl Funk " + scenelist.getSceneListe().getSceneliste().size());
+		System.out.println("app.width durch Icon" + app.width / preferredIconWidth);
+		
+		if(app.width / preferredIconWidth>=scenelist.getSceneListe().getSceneliste().size()){
+			emptyPlaceHolder = ((app.width / preferredIconWidth) - scenelist.getSceneListe().getSceneliste().size()-1);
+			System.out.println("Placeholder" + emptyPlaceHolder);
+		}
+		else {
+			emptyPlaceHolder = 0;
+		}
+		
+		
+		
 		//CREATE LIST
 		listWidth = preferredIconHeight + displayHeightOfReflection + gapBetweenIconAndReflection;
 //		listHeight = app.width - 50;
 		listHeight = app.width;
-		list = new MTList(mtApplication,0, 0, listWidth, listHeight, 40);
-		list.setFillColor(new MTColor(150,150,150,200));
+		list = new MTList(mtApplication, 0, 0, listWidth, listHeight, 40);
+		list.setFillColor(new MTColor(150, 150, 150, 200));
 		list.setNoFill(true);
 		list.setNoStroke(true);
 		
 		font = FontManager.getInstance().createFont(app, "SansSerif", 18, MTColor.WHITE);
 		
 		//Only for Performance Reader, this way, the fonts are loaded to the cache.
-		FontManager.getInstance().createFont(mtApplication, "arial.ttf",
-	            16, // Font size
-	            new MTColor(255, 255, 255, 255), // Font fill color
-	            true);
-		FontManager.getInstance().createFont(mtApplication, "arial.ttf", 
-				15, 	//Font size
-				MTColor.BLACK);
-		FontManager.getInstance().createFont(mtApplication, "arial.ttf", 
-				14, 	//Font size
-				MTColor.BLACK);
-		FontManager.getInstance().createFont(mtApplication, "arial.ttf", 
-				14, 	//Font size
-				MTColor.WHITE);
+		FontManager.getInstance().createFont(mtApplication, "arial.ttf", 16, new MTColor(255, 255, 255, 255), true);
+		FontManager.getInstance().createFont(mtApplication, "arial.ttf", 16, new MTColor(255, 255, 255, 255), false);
+		FontManager.getInstance().createFont(mtApplication, "arial.ttf", 15, MTColor.BLACK);
+		FontManager.getInstance().createFont(mtApplication, "arial.ttf", 14, MTColor.BLACK);
+		FontManager.getInstance().createFont(mtApplication, "keys.svg", 30, new MTColor(0, 0, 0, 255)); 
+		FontManager.getInstance().createFont(mtApplication, "SansSerif", 16, MTColor.WHITE, false);
+		//FontManager.getInstance().createFont(mtApplication, "SansSerif", 14, MTColor.WHITE, false);
+		//FontManager.getInstance().createFont(mtApplication, "SansSerif.Bold", 15, MTColor.WHITE);
+		//FontManager.getInstance().createFont(mtApplication, "SansSerif", 18, MTColor.WHITE);
+		final MTColor w = new MTColor(255, 255, 255, 255);
+		FontManager.getInstance().createFont(mtApplication, "SansSerif", 16, w);
+		//FontManager.getInstance().createFont(mtApplication,"SansSerif.bold", 16,w);
+		//FontManager.getInstance().createFont(mtApplication,"SansSerif.italic", 16,w);
+		//FontManager.getInstance().createFont(mtApplication,"SansSerif.bolditalic", 16,w);
+		//FontManager.getInstance().createFont(mtApplication,"SansSerif", 16,w);
+		MTColor white = new MTColor(255, 255, 255);
+		FontManager.getInstance().createFont(mtApplication, "arial.ttf", 50, white);
+		FontManager.getInstance().createFont(mtApplication, "arial.ttf", 35, white);
+		FontManager.getInstance().createFont(mtApplication, "arial.ttf", 24, new MTColor(0, 0, 0));
+		
+		
+		
 	
-		
-		modelfunctionList = new ModelFunctionList();
-		LoadXML scenelist = new LoadXML("sceneListe.xml", "sceneliste");
-		modelfunctionList = scenelist.getSceneListe();
-		
-		/*
-		//erste Scene
-		ModelSceneList golfscene = new ModelSceneList();
-		golfscene.setScenename("Golf");
-		golfscene.setDescription("Golf Scoreboard");
-		golfscene.setId(0);
-		golfscene.setPicturepath("Heidelberg.jpg");
-		
-		ModelTypDescription golftyps1 = new ModelTypDescription();
-		ModelTypDescription golftyps2 = new ModelTypDescription();
-		golftyps1.setObjectypeid(0);
-		golftyps1.setObjectdescription("Player erstellen");
-		golftyps2.setObjectypeid(1);
-		golftyps2.setObjectdescription("Scorecard erstellen");
-	
-		golfscene.getSceneobjekte().add(golftyps1);
-		golfscene.getSceneobjekte().add(golftyps2);
-		
-		//zweite Scene
-		ModelSceneList mitoco = new ModelSceneList();
-		mitoco.setScenename("MiToCo");
-		mitoco.setDescription("Mindmanager");
-		mitoco.setId(0);
-		mitoco.setPicturepath("Chrysanthemum.jpg");
-		mitoco.setShowAll(true);
 
-
-		
-		
-		modelfunctionList.getSceneliste().add(golfscene);
-		modelfunctionList.getSceneliste().add(mitoco);
-		
-		
-		SaveXML test = new SaveXML("sceneListe.xml", modelfunctionList);
-		*/
 		//for (ModelTypDescription it2 : dataController.getObjectetyps().getObjectdescription()) {
-		for(final ModelSceneList it : modelfunctionList.getSceneliste()){
+		for (int i = 0; i < emptyPlaceHolder; i++) {
+			this.addScene(new ICreateScene() {
+				public Iscene getNewScene() {
+					return new MitocoScene(app, "", modelfunctionList.getSceneliste().get(0));
+				}
+				public String getTitle() {
+					return "";
+				}
+			}, app.loadImage("ch" + MTApplication.separator + "mitoco" + MTApplication.separator + "data" + MTApplication.separator +  "SceneListeTrans.png"));
+		}
+		for (final ModelSceneList it : modelfunctionList.getSceneliste()) {
 			this.addScene(new ICreateScene() {
 				public Iscene getNewScene() {
 					return new MitocoScene(app, it.getScenename(), it);
@@ -191,7 +194,17 @@ public class SceneMitoco extends AbstractScene{
 			
 			getCanvas().addChild(list);
 		}
-		
+
+		for (int i = 0; i < emptyPlaceHolder; i++) {
+			this.addScene(new ICreateScene() {
+				public Iscene getNewScene() {
+					return new MitocoScene(app, "", modelfunctionList.getSceneliste().get(0));
+				}
+				public String getTitle() {
+					return "";
+				}
+			}, app.loadImage("ch" + MTApplication.separator + "mitoco" + MTApplication.separator + "data" + MTApplication.separator +  "SceneListeTrans.png"));
+		}
 		
 		
 		list.rotateZ(list.getCenterPointLocal(), -90, TransformSpace.LOCAL);
@@ -269,14 +282,14 @@ public class SceneMitoco extends AbstractScene{
 		PImage reflection = this.getReflection(getMTApplication(), icon);
 		
 		float border = 1;
-		float bothBorders = 2*border;
+		float bothBorders = 2 * border;
 		float topShift = 30;
 		float reflectionDistanceFromImage = topShift + gapBetweenIconAndReflection; //Gap width between image and reflection
 		
 		float listCellWidth = listWidth;		
 		float realListCellWidth = listCellWidth - bothBorders;
 //		float listCellHeight = preferredIconWidth - border;
-		float listCellHeight = preferredIconWidth ;
+		float listCellHeight = preferredIconWidth;
 		
 		MTListCell cell = new MTListCell(app ,  realListCellWidth, listCellHeight);
 		cell.setNoFill(true);
@@ -293,9 +306,9 @@ public class SceneMitoco extends AbstractScene{
 		};
 		MTPolygon p = new MTPolygon(getMTApplication(), vertices);
 		p.setTexture(icon);
-//		p.setNoStroke(true);
+		p.setNoStroke(true);
 //		p.setStrokeColor(new MTColor(150,150,150, 255));
-		p.setStrokeColor(new MTColor(80,80,80, 255));
+		p.setStrokeColor(new MTColor(80, 80, 80, 255));
 		
 		Vertex[] verticesRef = new Vertex[]{
 				new Vertex(listCellWidth - icon.height - reflectionDistanceFromImage, 				 					border,	0, 	0,0),
@@ -357,12 +370,6 @@ public class SceneMitoco extends AbstractScene{
 			    float alpha = pa.alpha(col);
 			    
 			    int reflectImageIndex = (image.height-y-1) * image.width+x;
-			    
-			    //TOD clamp 0-255, map 0-255, 255- y*y * x
-//			    copyOfImage.pixels[reflectImageIndex] = pa.color(currR , currG , currB , Math.round(y*0.8));
-//			    copyOfImage.pixels[reflectImageIndex] = pa.color(currR , currG , currB , Math.round(y * (0.005f*y) * 0.5));
-//			    copyOfImage.pixels[reflectImageIndex] = pa.color(currR , currG , currB , Math.round(Tools3D.clamp(255 - y*y , 0, 255)));
-//			    copyOfImage.pixels[reflectImageIndex] = pa.color(currR , currG , currB , Math.round(y*y*y * (0.00003f) - 20)); //WORKS
 			    if (alpha <= 0.0f){
 			    	copyOfImage.pixels[reflectImageIndex] = pa.color(currR , currG , currB , 0.0f); 
 			    }else{
