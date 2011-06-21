@@ -1,14 +1,19 @@
 package ch.mitoco.components.visibleComponents.widgets;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.mt4j.AbstractMTApplication;
 import org.mt4j.MTApplication;
+import org.mt4j.components.StateChange;
+import org.mt4j.components.StateChangeEvent;
+import org.mt4j.components.StateChangeListener;
 import org.mt4j.components.TransformSpace;
 import org.mt4j.components.visibleComponents.widgets.MTColorPicker;
 import org.mt4j.components.visibleComponents.widgets.MTList;
 import org.mt4j.components.visibleComponents.widgets.MTListCell;
 import org.mt4j.components.visibleComponents.widgets.MTTextArea;
+import org.mt4j.components.visibleComponents.widgets.MTTextArea.ExpandDirection;
 import org.mt4j.components.visibleComponents.widgets.buttons.MTImageButton;
 import org.mt4j.input.inputProcessors.IGestureEventListener;
 import org.mt4j.input.inputProcessors.MTGestureEvent;
@@ -16,25 +21,24 @@ import org.mt4j.input.inputProcessors.componentProcessors.dragProcessor.DragProc
 import org.mt4j.input.inputProcessors.componentProcessors.tapProcessor.TapEvent;
 import org.mt4j.input.inputProcessors.componentProcessors.tapProcessor.TapProcessor;
 import org.mt4j.util.MTColor;
+import org.mt4j.util.font.FontManager;
 import org.mt4j.util.font.IFont;
 import org.mt4j.util.math.Vector3D;
 
 import processing.core.PImage;
+import ch.mitoco.components.visibleComponents.widgets.keyboard.MTNumKeyboard;
 import ch.mitoco.model.ModelAttributContent;
 import ch.mitoco.model.ModelMtAttributs;
 
 
 /**MtList Attribut.
  * MTList FieldAttribut, kann eine Liste mit verschiedenem Inhalt anzeigen und Scrollen.
- * @author steffe
+ * @author rfeigenwinter
  *
  */
-public class MTListAttribut extends Attributes{
+public class MTListAttribut extends Attributes {
 	/** Main Textfield. */
 	private MTTextArea textarea;
-	
-	/** ListElement. */
-	private MTList Listelement;
 	
 	/** Attribut height. */
 	private int height;
@@ -47,12 +51,6 @@ public class MTListAttribut extends Attributes{
 
 	/** Textfield font.*/
 	private IFont iF;
-	
-	/** Set Align to right side.*/
-	private boolean rAlign;
-	
-	/** Default double.*/
-	private String stringvalue;
 	
 	/** Label Font.*/
 	private String fname;
@@ -83,22 +81,31 @@ public class MTListAttribut extends Attributes{
 	 
 	 /** Abstract MT Application.*/
 	 private AbstractMTApplication app1;
+	 
+	private IFont fontArialMini;
+	private ArrayList<MTTextArea> al;
+	private HashMap<String, MTTextArea> hm;
+	private int i;
+
 
 	 
-	 public MTListAttribut(final AbstractMTApplication app, ModelMtAttributs model, final IFont fontArialMini, final int width, final int height, final boolean rightalign, final String defaultString, final String labeltext, final IFont labelfont) {
+	 //public MTListAttribut(final AbstractMTApplication app, ModelMtAttributs model, final IFont fontArialMini, final int width, final int height, final String labeltext, final IFont labelfont) {
+	 public MTListAttribut(final AbstractMTApplication app, final IFont fontArialMini, final int width, final int height, final String labelname, final IFont labelfont) {
 			super(app);
-			this.rAlign = rightalign;
-			stringvalue = defaultString;
-			fname = labeltext;
+			//this.rAlign = rightalign;
+			//stringvalue = defaultString;
+			//fname = labeltext;
 			
 			this.model = model;
+			this.fname = labelname;
+			this.labelfont = labelfont;
 			System.out.println("Model from TextAttributs -> " + model);
 			
-			dataRead(defaultString, labeltext);
+			//dataRead(defaultString, labeltext);
 			
+			this.setName(labelname);
 			this.height = height;
 			this.width = width;
-			this.labelfont = labelfont;
 			this.init(app, fontArialMini);	
 		}
 	 
@@ -110,22 +117,6 @@ public class MTListAttribut extends Attributes{
 			this.setSizeLocal(width, height);
 			this.setFillColor(blue1);
 			this.setStrokeColor(MTColor.BLACK);
-			setAlign(rAlign);
-			textarea.setText("Test2");
-			ArrayList<MTTextArea> listaImagenes = new ArrayList<MTTextArea>();
-			listaImagenes.add(textarea);
-			listaImagenes.add(textarea);
-			listaImagenes.add(textarea);
-			listaImagenes.add(textarea); 
-
-			MTList lista = new MTList(app1, app1.width - 220,app1.height - 503, app1.width - 800, app1.height - 269);
-			
-
-			for (int i = 0; i < listaImagenes.size(); i++) {
-			  MTListCell cell = new MTListCell(app1, listaImagenes.get(i).getWidthXY(TransformSpace.LOCAL), listaImagenes.get(i).getHeightXY(TransformSpace.LOCAL));
-			  cell.addChild(listaImagenes.get(i));
-			  lista.addListElement(cell);
-			} 
 			
 			label = new MTTextArea(app, 0, -labelfont.getOriginalFontSize(), width, height, labelfont);
 			label.setInnerPadding(0);
@@ -135,87 +126,118 @@ public class MTListAttribut extends Attributes{
 			label.setText(fname);
 			label.setPickable(false);
 			label.setVisible(false);
+						
+			MTColor col = new MTColor(MTColor.BLACK);
 			
-			// Add Object to base Object
+			//18 MTTextAreas bauen für die verschiedenen Löcher
+			al = new ArrayList<MTTextArea>();
+			al.add(new MTTextArea(app));
+			al.add(new MTTextArea(app));
+			al.add(new MTTextArea(app));
+			al.add(new MTTextArea(app));
+			al.add(new MTTextArea(app));
+			for (MTTextArea a : al) {
+				a.setFontColor(new MTColor(MTColor.BLACK));
+				a.setText("0");
+				a.setNoFill(true);
+				a.setNoStroke(true);
+			}
 			
-			//this.addChild(textarea);
+			/*
+			hm = new HashMap<String, MTTextArea>();
+			hm.put("Loch 1: ", new MTTextArea(app));
+			hm.put("Loch 2: ", new MTTextArea(app));
+			for (String a : hm.keySet()) {
+				hm.get(a).setFontColor(new MTColor(MTColor.BLACK));
+				hm.get(a).setText("0");
+			}
+			*/
+			fontArialMini = FontManager.getInstance().createFont(app, "arial.ttf", 
+					14, 	//Font size
+					MTColor.BLACK);
+			
+			MTList lista = new MTList(app, 0, 0, width, height, 5);
+			lista.setNoFill(true);
+			lista.setNoStroke(true);
+			//lista.addGestureListener(DragProcessor.class, new InertiaDragAction());
+			
+			//6x hm durch al ersetzen je nach dem
+			for (i = 0; i < al.size(); i++) {
+			//for (i = 0; i < hm.size(); i++) {
+				
+				MTListCell cell = new MTListCell(app, al.get(i).getWidthXY(TransformSpace.LOCAL) + 100, al.get(i).getHeightXY(TransformSpace.LOCAL));
+				//cell.setPositionRelativeToParent(new Vector3D(50, 50));
+				cell.setPositionGlobal(new Vector3D(50, 50));
+				cell.setNoFill(true);
+				//cell.setPositionRelativeToParent(new Vector3D(this.getWidthXY(TransformSpace.LOCAL) / 2, x + 200));
+				//MTListCell cell = new MTListCell(app, hm.get(i).getWidthXY(TransformSpace.LOCAL), hm.get(i).getHeightXY(TransformSpace.LOCAL));
+				cell.registerInputProcessor(new TapProcessor(app, 15));
+				cell.setName(Integer.toString(i));
+				cell.addGestureListener(TapProcessor.class, new IGestureEventListener() {
+					public boolean processGestureEvent(final MTGestureEvent ge) {
+						if (ge instanceof TapEvent) {
+							TapEvent te = (TapEvent) ge;
+							System.out.println(te.getTapID() + " (" + te.getId() + ")");
+							if (te.getTapID() == TapEvent.TAPPED) {
+								System.out.println("Button Clicked");
+								
+								//Bevor wir einen neuen Wert schreiben löschen wir den bestehenden Inhalt
+								al.get(Integer.valueOf(ge.getCurrentTarget().getName())).clear();
+						
+								MTNumKeyboard textKeyboard = new MTNumKeyboard(app);
+							
+								numKeyText = new MTTextArea(app, 0, 0, 300, 50, fontArialMini);
+								numKeyText.setExpandDirection(ExpandDirection.UP);
+								textKeyboard.setNoStroke(true);
+								numKeyText.setFillColor(new MTColor(205, 200, 177, 255));
+								numKeyText.unregisterAllInputProcessors();
+								numKeyText.setEnableCaret(true);
+							
+								textKeyboard.snapToKeyboard(numKeyText);
+							
+								/* Try and Catch Example (catch ist interessant)
+								try {
+									//System.out.println("Out: " + list.get(ge.getCurrentTarget().getID()).getText());
+									System.out.println(list.get(Integer.valueOf(ge.getCurrentTarget().getName())).getText());
+								
+								} catch (IndexOutOfBoundsException ioobe){
+									System.err.println("Fehler!!");
+								}
+								 */
+							
+								numKeyText.setText(al.get(Integer.valueOf(ge.getCurrentTarget().getName())).getText());
+								//numKeyText.setText(hm.get(Integer.valueOf(ge.getCurrentTarget().getName())).getText());
+								textKeyboard.addTextInputListener(numKeyText);
+							
+								addChild(textKeyboard);
+							
+								textKeyboard.setPositionRelativeToParent(new Vector3D(textKeyboard.getWidthXY(TransformSpace.LOCAL) / 2, textKeyboard.getWidthXY(TransformSpace.LOCAL) / 2 + 50));
+							
+								textKeyboard.addStateChangeListener(StateChange.COMPONENT_DESTROYED, new StateChangeListener() {
+									@Override
+									public void stateChanged(final StateChangeEvent evt) {
+										al.get(Integer.valueOf(ge.getCurrentTarget().getName())).setText(numKeyText.getText());
+										//hm.get(Integer.valueOf(ge.getCurrentTarget().getName())).setText(numKeyText.getText());
+									}
+								});
+							}
+						}	
+						return false;
+					}
+				});
+				cell.addChild(al.get(i));
+				//cell.addChild(hm.get(i));
+				lista.addListElement(cell);
+			}
 			this.addChild(label);
+			this.addChild(lista);
+			
 			this.setVisible(true);
 			createColorPicker();
 			
 		}
 		
 		
-		/** 
-		 * Read from datamodel and insert in the gui elements.
-		 *
-		 * @param defaultString String 
-		 * @param defaultlabeltext String
-		 */
-		private void dataRead(final String defaultString, final String defaultlabeltext) {
-			// Data transfer for value
-			if (model.getAttributcontent() == null) {
-				stringvalue = defaultString;
-				//Double.valueOf(textarea.getText()).doubleValue();
-			} else {
-				for (ModelAttributContent it : model.getAttributcontent()) {
-					if (it.getType().equalsIgnoreCase("Double")) {
-						System.out.println(" Value zu Typ String " + it.getValue());
-						stringvalue = it.getValue();
-						break;
-					} else {
-						System.out.println(" Value zu Typ String NICHT GEFUNDEN ");
-						stringvalue = defaultString;
-					}
-				}
-			}
-			
-			// Data transfer for Align
-			if (model.getAttributcontent() == null) {
-				rAlign = Boolean.parseBoolean(defaultString);
-			} else {
-				for (ModelAttributContent it : model.getAttributcontent()) {
-					if (it.getType().equalsIgnoreCase("Align")) {
-						System.out.println(" Value zu Typ Align " + it.getValue());
-						rAlign = Boolean.parseBoolean(it.getValue());
-						break;
-					} else {
-						System.out.println(" Value zu Typ Align NICHT GEFUNDEN ");
-						rAlign = Boolean.parseBoolean(defaultString);
-					}
-					
-				}
-			}
-			
-			// Data transfer for labeltext
-			if (model.getLable() == null) {
-				fname = defaultlabeltext;
-			} else {
-				fname = model.getLable();
-			}
-			
-			// Color for Rectangle Fill Color
-			if (model.getAttcolor() == null) {
-				this.setFillColor(blue1);
-			} else {
-				this.setFillColor(model.getAttcolor());
-			}
-			
-		}
-		
-		/** 
-		 * Write data in Datamodel.
-		 */
-		public final void dataWrite() {
-			for (ModelAttributContent it : model.getAttributcontent()) {
-				if (it.getType().equalsIgnoreCase("Double")) {
-					it.setValue(textarea.getText());
-				} else {
-					//TODO Was ist zu tun wenn dieses Werte Paar noch nicht exitiert???
-				}
-			}
-			model.setAttcolor(getFillColor());
-		}
 		
 		/** 
 		 * Colorpicker.
@@ -242,9 +264,9 @@ public class MTListAttribut extends Attributes{
 	        
 	        PImage colPickIcon = app1.loadImage("ch" + MTApplication.separator + "mitoco" + MTApplication.separator + "data" + MTApplication.separator +  "ColorPickerIcon.png");
 	        colPickButton = new MTImageButton(app1, colPickIcon);
-	        colPickButton.translate(new Vector3D(width - height, 0, 0));
+	        colPickButton.translate(new Vector3D(width - 30, 0, 0));
 	        colPickButton.setNoStroke(true);
-	        colPickButton.setSizeLocal(height, height);
+	        colPickButton.setSizeLocal(30, 30);
 	        colPickButton.sendToFront();
 	        colPickButton.addGestureListener(TapProcessor.class, new IGestureEventListener() {
 				public boolean processGestureEvent(final MTGestureEvent ge) {
@@ -284,37 +306,8 @@ public class MTListAttribut extends Attributes{
 			label.setVisible(true);
 			colPickButton.setVisible(true);
 		}
+		
 
-		/** Set Textalign from textarea.
-		 * @param align (true=right)
-		 * */
-		public final void setAlign(final boolean align) {
-			
-			if (align == true) {
-				float textwidth = textarea.getTextWidth();	
-				System.out.println("Text Breite: = " + textwidth);
-				System.out.println("Verschiebsatz: = " + (width - ((int) textwidth + 5)));
-				textarea.setInnerPaddingLeft((width - ((int) textwidth + 5)));
-			} else {
-				textarea.setInnerPaddingLeft(5);
-			}
-		}
-		
-		/** 
-		 * Set Label Text.
-		 * @param labeltext String
-		 */
-		public final void setLabel(final String labeltext) {
-			fname = labeltext;
-		}
-		
-		/** 
-		 * Get Label Text.
-		 * @return fname String
-		 */
-		public final String getLabel() {
-			return fname;
-		}
 
 		/** 
 		 * Set Value Text.
