@@ -122,6 +122,23 @@ public class SceneMitoco extends AbstractScene{
 		list.setNoStroke(true);
 		
 		font = FontManager.getInstance().createFont(app, "SansSerif", 18, MTColor.WHITE);
+		
+		//Only for Performance Reader, this way, the fonts are loaded to the cache.
+		FontManager.getInstance().createFont(mtApplication, "arial.ttf",
+	            16, // Font size
+	            new MTColor(255, 255, 255, 255), // Font fill color
+	            true);
+		FontManager.getInstance().createFont(mtApplication, "arial.ttf", 
+				15, 	//Font size
+				MTColor.BLACK);
+		FontManager.getInstance().createFont(mtApplication, "arial.ttf", 
+				14, 	//Font size
+				MTColor.BLACK);
+		FontManager.getInstance().createFont(mtApplication, "arial.ttf", 
+				14, 	//Font size
+				MTColor.WHITE);
+	
+		
 		modelfunctionList = new ModelFunctionList();
 		LoadXML scenelist = new LoadXML("sceneListe.xml", "sceneliste");
 		modelfunctionList = scenelist.getSceneListe();
@@ -264,6 +281,7 @@ public class SceneMitoco extends AbstractScene{
 		MTListCell cell = new MTListCell(app ,  realListCellWidth, listCellHeight);
 		cell.setNoFill(true);
 		cell.setNoStroke(true);
+		cell.rotateY(cell.getCenterPointLocal(), 45);
 		
 //		/*
 		Vertex[] vertices = new Vertex[]{

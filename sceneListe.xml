@@ -4,15 +4,15 @@
       <id>0</id>
       <scenename>Golf</scenename>
       <description>Golf Scoreboard</description>
-      <picturepath>Heidelberg.jpg</picturepath>
+      <picturepath>golf.jpg</picturepath>
       <sceneobjekte>
         <ch.mitoco.model.ModelTypDescription>
           <objectypeid>0</objectypeid>
-          <objectdescription>Player erstellen</objectdescription>
+          <objectdescription>Player</objectdescription>
         </ch.mitoco.model.ModelTypDescription>
         <ch.mitoco.model.ModelTypDescription>
           <objectypeid>1</objectypeid>
-          <objectdescription>Scorecard erstellen</objectdescription>
+          <objectdescription>Scorcard</objectdescription>
         </ch.mitoco.model.ModelTypDescription>
       </sceneobjekte>
       <showAll>false</showAll>

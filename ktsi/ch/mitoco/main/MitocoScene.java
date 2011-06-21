@@ -9,7 +9,9 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.mt4j.MTApplication;
+import org.mt4j.components.TransformSpace;
 import org.mt4j.components.visibleComponents.shapes.MTLine;
+import org.mt4j.components.visibleComponents.shapes.MTPolygon;
 import org.mt4j.input.IMTInputEventListener;
 import org.mt4j.input.gestureAction.DefaultPanAction;
 import org.mt4j.input.gestureAction.DefaultZoomAction;
@@ -28,10 +30,15 @@ import org.mt4j.input.inputProcessors.componentProcessors.zoomProcessor.ZoomProc
 import org.mt4j.input.inputProcessors.globalProcessors.CursorTracer;
 import org.mt4j.sceneManagement.AbstractScene;
 import org.mt4j.util.MTColor;
+import org.mt4j.util.animation.AnimationEvent;
+import org.mt4j.util.animation.IAnimation;
+import org.mt4j.util.animation.IAnimationListener;
+import org.mt4j.util.animation.ani.AniAnimation;
 import org.mt4j.util.font.FontManager;
 import org.mt4j.util.font.IFont;
 import org.mt4j.util.math.ToolsMath;
 import org.mt4j.util.math.Vector3D;
+import org.mt4jx.util.animation.AnimationUtil;
 
 import ch.mitoco.components.visibleComponents.MyMTObject;
 import ch.mitoco.dataController.DataController;
@@ -203,13 +210,10 @@ public class MitocoScene extends AbstractScene {
 		            case TapEvent.GESTURE_STARTED:
 		            	
 		            	/**
-		            	 * To-Do: Laden der Objettypen von XML
+		            	 * To-Do: Laden der Objettypen von XML (Solved)
 		            	 */
 		            	//System.out.println("Object add Menu: \"" + inEvt.getCurrentTarget().getName() + "\"");
 		            	System.out.println("Counter befor creation: " + counter);
-		            	
-		            
-		            	
 		            	 	for (ModelTypDescription it2 : dataController.getObjectetyps().getObjectdescription()) {
 		            	 		
 		            	 		//System.out.println("Objecttyp Desc: " + it2.getObjectdescription());
@@ -225,27 +229,6 @@ public class MitocoScene extends AbstractScene {
 			            		}
 
 		            	 	}
-		            	 	
-		            	
-		            	/*	
-		            	if (inEvt.getCurrentTarget().getName().equals("Object 1")) {
-		            		dataController.createObject(0);
-		            		dataController.getMyobjectList().get(counter).setPositionGlobal(new Vector3D(ToolsMath.nextRandomInt(140, 800), ToolsMath.nextRandomInt(140, 700)));
-							//linker.setTapAndHoldListener(dataController.getMyobjectList().get(counter)); //TODO: Test
-		            		System.out.println("Object1");
-		            		
-		            	} else if (inEvt.getCurrentTarget().getName().equals("Object 2")) {
-		            		dataController.createObject(1);
-		            		dataController.getMyobjectList().get(counter).setPositionGlobal(new Vector3D(ToolsMath.nextRandomInt(140, 800), ToolsMath.nextRandomInt(140, 700)));
-							//linker.setTapAndHoldListener(dataController.getMyobjectList().get(counter)); //TODO: Test
-		            		System.out.println("Object2");
-		            	} else if (inEvt.getCurrentTarget().getName().equals("Object 3")) {
-		            		dataController.createObject(2);
-		            		dataController.getMyobjectList().get(counter).setPositionGlobal(new Vector3D(ToolsMath.nextRandomInt(140, 800), ToolsMath.nextRandomInt(140, 700)));
-							//linker.setTapAndHoldListener(dataController.getMyobjectList().get(counter)); //TODO: Test
-		            		System.out.println("Object2");
-		            	}
-		            	*/
 		            	getCanvas().addChild(dataController.getMyobjectList().get(counter));	
 		            	
 						//getCanvas().addChild(myobjectList.get(counter).getMyObjectBack());	
@@ -337,22 +320,110 @@ public class MitocoScene extends AbstractScene {
 
 				        return false;
 				      }
-				    }; 
+				    };
+				    
+				    final IMTInputEventListener showInputListener = new IMTInputEventListener() {
+				        @Override
+				        public boolean processInputEvent(final MTInputEvent inEvt) {
+				          // Most input events in MT4j are an instance of AbstractCursorInputEvt (mouse, multi-touch..)
+				          if (inEvt instanceof MTFingerInputEvt) {
+				            final MTFingerInputEvt cursorInputEvt = (MTFingerInputEvt) inEvt;
+				            switch (cursorInputEvt.getId()) {
+				              case TapEvent.GESTURE_STARTED:
+				                AnimationUtil.scaleIn(dataController.getMyobjectList().get(0));
+				                break;
+				              default:
+				                break;
+				            }
+				          } else {
+				            //LOG.warn("Some other event occured:" + inEvt);
+				          }
+
+				          return false;
+				        }
+				      };
+				      
+				      final IMTInputEventListener hide2InputListener = new IMTInputEventListener() {
+					        @Override
+					        public boolean processInputEvent(final MTInputEvent inEvt) {
+					          // Most input events in MT4j are an instance of AbstractCursorInputEvt (mouse, multi-touch..)
+					          if (inEvt instanceof MTFingerInputEvt) {
+					            final MTFingerInputEvt cursorInputEvt = (MTFingerInputEvt) inEvt;
+					            switch (cursorInputEvt.getId()) {
+					              case TapEvent.GESTURE_STARTED:
+					            	  for (MyMTObject it : dataController.getMyobjectList()) {
+					            		  if (it.getTagFlag()) {
+					            			  AnimationUtil.scaleOut(it, false); 
+					            		  }
+					            		  
+					            	  }
+					               
+					                break;
+					              default:
+					                break;
+					            }
+					          } else {
+					            //LOG.warn("Some other event occured:" + inEvt);
+					          }
+
+					          return false;
+					        }
+					      };
+				      
+				      
+				      final IMTInputEventListener hideInputListener = new IMTInputEventListener() {
+				          @Override
+				          public boolean processInputEvent(final MTInputEvent inEvt) {
+				            // Most input events in MT4j are an instance of AbstractCursorInputEvt (mouse, multi-touch..)
+				            if (inEvt instanceof MTFingerInputEvt) {
+				              final MTFingerInputEvt cursorInputEvt = (MTFingerInputEvt) inEvt;
+				              switch (cursorInputEvt.getId()) {
+				                case TapEvent.GESTURE_STARTED:
+				                	hideObjects(dataController.getMyobjectList().get(0));
+				                   break;
+				                 default:
+				                      break;
+				                  }
+				                } else {
+				                  //LOG.warn("Some other event occured:" + inEvt);
+				                }
+				                return false;
+				              }
+				        };
+				    
+				    
+				    
 		
 		
 		// Build list of menu items
         final List<MTMenuItem> menuItems = new ArrayList<MTMenuItem>();
         final MTMenuItem menu1 = new MTMenuItem("New", null);
         
-        for (Iterator<ModelTypDescription> it =  dataController.getObjectetyps().getObjectdescription().iterator(); it.hasNext();) {
-        	final MTMenuItem subMenu11 = new MTMenuItem(it.next().getObjectdescription(), null);
-        	//menu1.addSubMenuItem(new MTMenuItem(it.next().getObjectdescription(), null));
-        	//final IMTInputEventListener createObjectInput = new IMTInputEventListener() {
-        	//menu1.addSubMenuItem(new MTMenuItem(it.next().getObjectdescription(), new ConcurrentHashMap<Class<? extends IInputProcessor>, IGestureEventListener>(){
-        	menu1.addSubMenuItem(subMenu11);
-        	subMenu11.addInputEventListener(createObjectInput);
+        if (sceneData.getShowAll()) {
+        	for (Iterator<ModelTypDescription> it =  dataController.getObjectetyps().getObjectdescription().iterator(); it.hasNext();) {
+        		final MTMenuItem subMenu11 = new MTMenuItem(it.next().getObjectdescription(), null);
+        		//menu1.addSubMenuItem(new MTMenuItem(it.next().getObjectdescription(), null));
+        		//final IMTInputEventListener createObjectInput = new IMTInputEventListener() {
+        		//menu1.addSubMenuItem(new MTMenuItem(it.next().getObjectdescription(), new ConcurrentHashMap<Class<? extends IInputProcessor>, IGestureEventListener>(){
+        		menu1.addSubMenuItem(subMenu11);
+        		subMenu11.addInputEventListener(createObjectInput);
         	}
-
+        	} else        {
+        	//for(ModelTypDescription it : dataController.getObjectetyps().getObjectdescription()){
+        	for (ModelTypDescription it : sceneData.getSceneobjekte()) {
+        		//if(sceneData.getSceneobjekte().get(index)){
+        			final MTMenuItem subMenu11 = new MTMenuItem(it.getObjectdescription(), null);
+            		//menu1.addSubMenuItem(new MTMenuItem(it.next().getObjectdescription(), null));
+            		//final IMTInputEventListener createObjectInput = new IMTInputEventListener() {
+            		//menu1.addSubMenuItem(new MTMenuItem(it.next().getObjectdescription(), new ConcurrentHashMap<Class<? extends IInputProcessor>, IGestureEventListener>(){
+            		
+        			menu1.addSubMenuItem(subMenu11);
+            		subMenu11.addInputEventListener(createObjectInput);
+        		//}
+        		
+        	}
+        	
+        }
         final MTMenuItem subMenu5 = new MTMenuItem("View", null);
         subMenu5.addSubMenuItem(new MTMenuItem("All", null));
         subMenu5.addSubMenuItem(new MTMenuItem("New", null));
@@ -379,10 +450,12 @@ public class MitocoScene extends AbstractScene {
         menu2.addSubMenuItem(new MTMenuItem("Copy Objecet", null));
         menu2.addSubMenuItem(new MTMenuItem("Paste", null));
         menu2.addSubMenuItem(new MTMenuItem("Clear", null));
-        menu2.addSubMenuItem(new MTMenuItem("Sub-Menu 5", null));
-        menu2.addSubMenuItem(new MTMenuItem("Sub-Menu 6", null));
         final MTMenuItem menu3 = new MTMenuItem("Maximize", null);
         final MTMenuItem menu4 = new MTMenuItem("Minimize", null);
+        
+        menu4.addInputEventListener(hide2InputListener);
+        menu3.addInputEventListener(showInputListener);
+                
         final MTMenuItem menu5 = new MTMenuItem("Exit", null);
         menu5.addInputEventListener(exitButtonInput); 
      
@@ -402,4 +475,30 @@ public class MitocoScene extends AbstractScene {
         this.mtRadialMenu1 = new MTRadialMenu(mtApplication, vector, font, 1f, menuItems);
         this.getCanvas().addChild(mtRadialMenu1);
       }
+	
+	/**Ausblenden von aktivierten Objekten
+	 * 
+	 * @param as
+	 */
+	  private static void hideObjects(final MTPolygon as) {
+		    final float width = as.getWidthXY(TransformSpace.RELATIVE_TO_PARENT);
+		    final IAnimation closeAnim = new AniAnimation(1, width, 5000, AniAnimation.BOUNCE_IN, as);
+
+		    closeAnim.addAnimationListener(new IAnimationListener() {
+		      @Override
+		      public void processAnimationEvent(final AnimationEvent ae) {
+		        switch (ae.getId()) {
+		          case AnimationEvent.ANIMATION_UPDATED:
+		            final float currentVal = ae.getValue();
+		            as.setWidthXYRelativeToParent(currentVal);
+		            break;
+		          default:
+		            break;
+		        }// switch
+		      }// processanimation
+		    });
+
+		    closeAnim.start();
+		  }
+	
 }

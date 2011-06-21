@@ -64,6 +64,7 @@
         <z>0.0</z>
         <w>1.0</w>
       </objectposition>
+      <objectlable>Player</objectlable>
     </ch.mitoco.model.ModelMtObjects>
     <ch.mitoco.model.ModelMtObjects>
       <id>1</id>
@@ -114,6 +115,7 @@
         <z>0.0</z>
         <w>1.0</w>
       </objectposition>
+      <objectlable>Scorecard</objectlable>
     </ch.mitoco.model.ModelMtObjects>
     <ch.mitoco.model.ModelMtObjects>
       <id>0</id>
@@ -149,6 +151,172 @@
         <z>0.0</z>
         <w>1.0</w>
       </objectposition>
+      <objectlable>Auswertung</objectlable>
+    </ch.mitoco.model.ModelMtObjects>
+        <ch.mitoco.model.ModelMtObjects>
+      <id>0</id>
+      <objecttyp>3</objecttyp>
+      <objectcolor>
+        <name>undefined</name>
+        <r>12.0</r>
+        <g>12.0</g>
+        <b>12.0</b>
+        <alpha>34.0</alpha>
+        <writeProtected>false</writeProtected>
+      </objectcolor>
+      <objectattributs>
+        <ch.mitoco.model.ModelMtAttributs>
+          <id>0</id>
+          <attributcontent>
+            <ch.mitoco.model.ModelAttributContent>
+              <type>String</type>
+              <value></value>
+            </ch.mitoco.model.ModelAttributContent>
+          </attributcontent>
+          <attributdefinition/>
+          <attcolor reference="../../../objectcolor"/>
+          <Lable></Lable>
+          <minMax>false</minMax>
+          <direction>false</direction>
+          <zoom>0</zoom>
+        </ch.mitoco.model.ModelMtAttributs>
+        <ch.mitoco.model.ModelMtAttributs>
+          <id>1</id>
+          <attributcontent>
+            <ch.mitoco.model.ModelAttributContent>
+              <type>String</type>
+              <value></value>
+            </ch.mitoco.model.ModelAttributContent>
+          </attributcontent>
+          <attributdefinition/>
+          <attcolor reference="../../../objectcolor"/>
+          <Lable></Lable>
+          <minMax>false</minMax>
+          <direction>false</direction>
+          <zoom>0</zoom>
+        </ch.mitoco.model.ModelMtAttributs>
+      </objectattributs>
+      <objectposition>
+        <x>200.0</x>
+        <y>200.0</y>
+        <z>0.0</z>
+        <w>1.0</w>
+      </objectposition>
+    </ch.mitoco.model.ModelMtObjects>
+    <ch.mitoco.model.ModelMtObjects>
+      <id>0</id>
+      <objecttyp>4</objecttyp>
+      <objectcolor>
+        <name>undefined</name>
+        <r>12.0</r>
+        <g>60.0</g>
+        <b>60.0</b>
+        <alpha>34.0</alpha>
+        <writeProtected>false</writeProtected>
+      </objectcolor>
+      <objectattributs>
+        <ch.mitoco.model.ModelMtAttributs>
+          <id>0</id>
+          <attributcontent>
+            <ch.mitoco.model.ModelAttributContent>
+              <type>String</type>
+              <value></value>
+            </ch.mitoco.model.ModelAttributContent>
+          </attributcontent>
+          <attributdefinition/>
+          <attcolor reference="../../../../ch.mitoco.model.ModelMtObjects/objectcolor"/>
+          <Lable></Lable>
+          <minMax>false</minMax>
+          <direction>false</direction>
+          <zoom>0</zoom>
+        </ch.mitoco.model.ModelMtAttributs>
+        <ch.mitoco.model.ModelMtAttributs>
+          <id>0</id>
+          <attributcontent>
+            <ch.mitoco.model.ModelAttributContent>
+              <type>String</type>
+              <value></value>
+            </ch.mitoco.model.ModelAttributContent>
+          </attributcontent>
+          <attributdefinition/>
+          <attcolor reference="../../../objectcolor"/>
+          <Lable></Lable>
+          <minMax>false</minMax>
+          <direction>false</direction>
+          <zoom>0</zoom>
+        </ch.mitoco.model.ModelMtAttributs>
+      </objectattributs>
+      <objectposition>
+        <x>200.0</x>
+        <y>200.0</y>
+        <z>0.0</z>
+        <w>1.0</w>
+      </objectposition>
+    </ch.mitoco.model.ModelMtObjects>
+    <ch.mitoco.model.ModelMtObjects>
+      <id>0</id>
+      <objecttyp>5</objecttyp>
+      <objectcolor>
+        <name>undefined</name>
+        <r>112.0</r>
+        <g>160.0</g>
+        <b>60.0</b>
+        <alpha>34.0</alpha>
+        <writeProtected>false</writeProtected>
+      </objectcolor>
+      <objectattributs>
+        <ch.mitoco.model.ModelMtAttributs>
+          <id>0</id>
+          <attributcontent>
+            <ch.mitoco.model.ModelAttributContent>
+              <type>String</type>
+              <value></value>
+            </ch.mitoco.model.ModelAttributContent>
+          </attributcontent>
+          <attributdefinition/>
+          <attcolor reference="../../../objectcolor"/>
+          <Lable></Lable>
+          <minMax>false</minMax>
+          <direction>false</direction>
+          <zoom>0</zoom>
+        </ch.mitoco.model.ModelMtAttributs>
+        <ch.mitoco.model.ModelMtAttributs>
+          <id>1</id>
+          <attributcontent>
+            <ch.mitoco.model.ModelAttributContent>
+              <type>String</type>
+              <value></value>
+            </ch.mitoco.model.ModelAttributContent>
+          </attributcontent>
+          <attributdefinition/>
+          <attcolor reference="../../../../ch.mitoco.model.ModelMtObjects/objectcolor"/>
+          <Lable></Lable>
+          <minMax>false</minMax>
+          <direction>false</direction>
+          <zoom>0</zoom>
+        </ch.mitoco.model.ModelMtAttributs>
+        <ch.mitoco.model.ModelMtAttributs>
+          <id>2</id>
+          <attributcontent>
+            <ch.mitoco.model.ModelAttributContent>
+              <type>String</type>
+              <value></value>
+            </ch.mitoco.model.ModelAttributContent>
+          </attributcontent>
+          <attributdefinition/>
+          <attcolor reference="../../../../ch.mitoco.model.ModelMtObjects/objectcolor"/>
+          <Lable></Lable>
+          <minMax>false</minMax>
+          <direction>false</direction>
+          <zoom>0</zoom>
+        </ch.mitoco.model.ModelMtAttributs>
+      </objectattributs>
+      <objectposition>
+        <x>300.0</x>
+        <y>200.0</y>
+        <z>0.0</z>
+        <w>1.0</w>
+      </objectposition>
     </ch.mitoco.model.ModelMtObjects>
   </objecttyp>
   <objectdescription>
@@ -163,6 +331,18 @@
     <ch.mitoco.model.ModelTypDescription>
       <objectypeid>2</objectypeid>
       <objectdescription>Auswertung</objectdescription>
+    </ch.mitoco.model.ModelTypDescription>
+    <ch.mitoco.model.ModelTypDescription>
+      <objectypeid>3</objectypeid>
+      <objectdescription>2Attribute</objectdescription>
+    </ch.mitoco.model.ModelTypDescription>
+    <ch.mitoco.model.ModelTypDescription>
+      <objectypeid>4</objectypeid>
+      <objectdescription>Test1</objectdescription>
+    </ch.mitoco.model.ModelTypDescription>
+    <ch.mitoco.model.ModelTypDescription>
+      <objectypeid>5</objectypeid>
+      <objectdescription>TestDropDown</objectdescription>
     </ch.mitoco.model.ModelTypDescription>
   </objectdescription>
 </ch.mitoco.model.ModelObjectTyps>
