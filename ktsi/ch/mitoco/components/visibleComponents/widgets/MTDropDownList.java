@@ -175,7 +175,7 @@ public class MTDropDownList extends Attributes {
 	
 		
 		// Data transfer for labeltext
-		if (model.getLable() == null) {
+		if (model.getLable() == null || model.getLable().isEmpty()) {
 			System.out.println("Set Default Label");
 			fname = defaultlabeltext;
 		} else {

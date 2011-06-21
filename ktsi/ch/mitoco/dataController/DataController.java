@@ -66,6 +66,7 @@ public class DataController {
 	/** Test: Linker Controller. */
 	private MTLinkController linker; //TODO: Test
 	
+	private MTCanvas canvas;
 
 	/**Daten Kontroller Konstruktor.
 	 * 
@@ -73,9 +74,10 @@ public class DataController {
 	 */
 	public DataController(final MTApplication mtAppl, MTCanvas canvas) {
 		this.mtApplication = mtAppl;
+		this.canvas = canvas;
 		objectcounter = 0;
-		linker = new MTLinkController(mtAppl, canvas , getMyobjectList()); //TODO: Test
 		
+		linker = new MTLinkController(mtApplication, canvas); 
 	}
 	
 	/**Erstellt ein Objekt auf einer Scene
@@ -106,7 +108,10 @@ public class DataController {
 		dataModel.getMtobjects().add(object);
 		
 		myobjectList.add(new MyMTObject(mtApplication, dataModel.getMtobjects().get(objectcounter), objectcounter, linker));
-		linker.setTapAndHoldListener(getMyobjectList().get(objectcounter)); //TODO: Test
+		
+		System.out.println("DataController:  ObjektListe lokal: "+ myobjectList );
+		linker.setObjectList(myobjectList);
+		linker.setTapAndHoldListener(myobjectList.get(objectcounter)); //TODO: Test
 		
 		objectcounter++;
 		
@@ -190,6 +195,33 @@ public class DataController {
 				linker.setTapAndHoldListener(getMyobjectList().get(objectcounter)); //TODO: Test
 				objectcounter++;
 			}
+			linker.setObjectList(myobjectList);
+			return true;
+		}
+		
+	}
+	/**Load SceneListeXML
+	 * 
+	 * 
+	 * @return
+	 */
+	public Boolean loadSceneListeXML() {
+		LoadXML = new LoadXML("xstream.xml");
+			
+		if (objectcounter > 0) {
+			System.out.println("Grösser Null " + objectcounter);
+			//Objects are already drawn, you have to clean
+			return false;
+			}
+		else {
+			dataModel = LoadXML.getDataModel();
+			for (Iterator<ModelMtObjects> it = dataModel.getMtobjects().iterator(); it.hasNext();) {
+				myobjectList.add(new MyMTObject(mtApplication, it.next(), objectcounter, linker));
+				System.out.println("Object Gen:" + objectcounter);
+				linker.setTapAndHoldListener(getMyobjectList().get(objectcounter)); //TODO: Test
+				objectcounter++;
+			}
+			linker.setObjectList(myobjectList);
 			return true;
 		}
 		

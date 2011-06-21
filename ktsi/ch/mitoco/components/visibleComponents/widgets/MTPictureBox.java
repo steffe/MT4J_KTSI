@@ -402,7 +402,7 @@ public class MTPictureBox extends Attributes {
 		}
 		
 		// Data transfer for labeltext
-		if (model.getLable() == null) {
+		if (model.getLable() == null || model.getLable().isEmpty() ) {
 			fname = defaultlabeltext;
 		} else {
 			fname = model.getLable();

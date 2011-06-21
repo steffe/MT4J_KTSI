@@ -21,78 +21,34 @@ import ch.mitoco.components.visibleComponents.MyMTObject;
 import processing.core.PApplet;
 
 /** MTObjectLink for connect two myMTObjects with a MTLine. */
-public class MTObjectLink extends MTLine {
+public class MTLink extends MTLine {
 	
 	/** Start Object. */
 	private MyMTObject startObject;
 	
 	/** End Object. */
 	private MyMTObject endObject;
-
-	/** MTEllipse. */
-	private MTEllipse linkHead;
 	
-	/** PApplet.*/
-	private PApplet pApplet;
-	
-	/** endPoint.*/
-	private Vertex endPoint;
-	
-	/** Object ID */
-	private int id;
-	/** MTObjectLink Constructor.
+	/** MTLink Constructor.
 	 * 
 	 * @param pApplet PApplet
 	 * @param startPoint vertex
 	 * @param endPoint vertex
 	 */
-	public MTObjectLink(PApplet pApplet, Vertex startPoint, Vertex endPoint, int ID) {
+	public MTLink(PApplet pApplet, Vertex startPoint, Vertex endPoint) {
 		super(pApplet, startPoint, endPoint);
-		this.pApplet = pApplet;
-		this.endPoint = endPoint;
-		this.id = ID;
 		init();
 	}
 
 	/** Init Method.*/
 	private void init() {
-		System.out.println("MTObjectLink: LinkerHandler Object generated ");
-		linkHead = new MTEllipse(pApplet, endPoint, 20, 20);
-		linkHead.setStrokeColor(MTColor.NAVY);
-		linkHead.setStrokeWeight(4);
-		linkHead.setVisible(true);
-		linkHead.setFillColor(MTColor.GRAY);
-		linkHead.setName("linkHead");
-		this.addChild(linkHead);
+		System.out.println("Link generated ");
 		
-		this.setStrokeColor(MTColor.NAVY);
+		this.setStrokeColor(MTColor.GREEN);
 		this.setStrokeWeight(4);
 		this.setVisible(true);
-		this.translateGlobal(new Vector3D(0, 0, -1));
-		this.setName(String.valueOf(id));
-		setComposite(true);
-		reset();
+		this.translateGlobal(new Vector3D(0,0,-20));
 
-		unregisterAllInputProcessors();
-		removeAllGestureEventListeners();
-
-		registerInputProcessor(new DragProcessor(pApplet, true));		
-		addGestureListener(DragProcessor.class, new IGestureEventListener() {
-
-			@Override
-			public boolean processGestureEvent(MTGestureEvent ge) {
-				DragEvent event = (DragEvent) ge;
-				if (event.getId() == DragEvent.GESTURE_ENDED) {
-					reset();
-				} else {
-					Vector3D to = getGlobalVecToParentRelativeSpace(linkHead, event.getTo());
-					setNewEndPosition(new Vertex(to));
-				}
-				return false;
-			}
-		});
-
-	 addGestureListener(DragProcessor.class, new DragAndDropAction());
 	}
 
 	/** 
@@ -101,19 +57,6 @@ public class MTObjectLink extends MTLine {
 	 * @param text String
 	 * */
 	public void setDescription(final String text) {
-		
-	}
-	
-	private void setNewEndPosition(Vertex newendPoint) {
-		setVertices(new Vertex[]{getVerticesLocal()[0], newendPoint});
-		linkHead.setPositionRelativeToParent(getVerticesLocal()[1]);
-	
-	}
-	
-	
-	private void reset() {
-		setVertices(new Vertex[]{getVerticesLocal()[0], endPoint});
-		linkHead.setPositionRelativeToParent(getVerticesLocal()[1]);
 		
 	}
 	

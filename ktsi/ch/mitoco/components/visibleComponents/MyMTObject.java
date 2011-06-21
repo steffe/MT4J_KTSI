@@ -40,6 +40,7 @@ import org.mt4jx.input.gestureAction.dnd.DragAndDropAction;
 import org.mt4jx.input.gestureAction.dnd.DragAndDropTarget;
 import org.mt4jx.input.inputProcessors.componentProcessors.Group3DProcessorNew.IClusterEventListener;
 
+
 import ch.mitoco.components.visibleComponents.objectlink.MTLinkController;
 import ch.mitoco.components.visibleComponents.widgets.Attributes;
 import ch.mitoco.components.visibleComponents.widgets.Attributes;
@@ -52,7 +53,6 @@ import ch.mitoco.model.ModelAttributContent;
 import ch.mitoco.model.ModelAttributDefinition;
 import ch.mitoco.model.ModelMtAttributs;
 import ch.mitoco.model.ModelMtObjects;
-
 import processing.core.PImage;
 
 /**
@@ -143,6 +143,9 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 	/** Test: Linker Controller. */
 	private MTLinkController linker; //TODO: Test
 	
+	/** ID in Interger */
+	private Integer idInt;
+	
 	
 	private ArrayList<MTComponent> droppedComponents = new ArrayList<MTComponent>();
 	
@@ -164,13 +167,13 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 	 * @param objectID INT ObjectID  
 	 * 
 	 */
-	public MyMTObject(final MTApplication pApplet2, final ModelMtObjects model, final int objectID, MTLinkController linker) {
+	public MyMTObject(final MTApplication pApplet2, final ModelMtObjects model, final int objectID, MTLinkController linkerorg) {
 		super(pApplet2, 0, 0, 0, 0, 0, 5, 5);
 
 		this.pApplet = pApplet2;
 		this.id = objectID;
 		this.selected = false;
-		this.linker = linker;
+		this.linker = linkerorg;
 		
 		// Data Model 
 		this.objectmodel = model;
@@ -189,13 +192,15 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 		
 		this.setSizeLocal(obSizeMinWidth, obSizeMinHeight);
 		this.setStrokeWeight(1);
-		this.setName("Object "+id);
-				
+		Integer idInt = new Integer(id);
+		this.setName(idInt.toString());
+		
+		
+		
 		//Create a textfield
 		textField = new MTTextArea(pApplet, fontArial); 
 		textField.setNoStroke(true);
 		textField.setNoFill(true);
-		textField.setText("Object" + " ID:" + id);
 		textField.setPickable(false);
 		textField.translate(new Vector3D(5, 5));
 		
@@ -225,8 +230,10 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 				case TapEvent.TAPPED:
 					baserect.rotateZ(new Vector3D((baserect.getWidthXY(TransformSpace.LOCAL) / 2) + 10, (baserect.getHeightXY(TransformSpace.LOCAL) / 2) + 10), 180);
 					updownrotate = !updownrotate;
-					printMTObjectModel(objectmodel);
-					dataWrite();
+					printMTObjectModel(objectmodel); //TODO: Eintrag fürs Testen: gibt DataModel inhalt aus
+					dataWrite(); 
+					linker.printSelectedList();
+					linker.showTaggedObject();
 					break;	
 				default:
 					break;
@@ -332,10 +339,11 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 	 * ID 1: 	MTNumField
 	 * ID 2: 	MTDropDown
 	 * ID 3: 	MTPictureBox
-	 * ID 4:    futur MTTextBox
+	 * ID 4:    
 	 * ID 5:	futur MTPainter
 	 * ID 6:	futur MTBrowser
 	 * ID 7:	futur MTPDFReader
+	 * ID 8:	futur MTTextBox
 	 * 
 	 * TODO: Interface bauen.
 	 */
@@ -346,21 +354,21 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 		for (ModelMtAttributs it : attributesmodel) {
 			switch(it.getId()) {
 			case(0):
-				System.out.println(i + "Attributs MTTextAttribut " + it);
+				System.out.println("MyMTObject: " + i + "Attributs MTTextAttribut " + it);
 				
 				myAttributs.add(new MTTextAttribut(pApplet, attributesmodel.get(i), fontArialMini, 250, 30, "Test", "TestFeld Text", labelfont));
 				myAttributs.get(i).setPositionRelativeToParent(new Vector3D(this.getWidthXY(TransformSpace.LOCAL) / 2, x));
 			
 				break;
 			case(1):	
-				System.out.println(i + "Attributs MTNumField " + it);
+				System.out.println("MyMTObject: " + i + "Attributs MTNumField " + it);
 			
 				myAttributs.add(new MTNumField(pApplet, attributesmodel.get(i), fontArialMini, 250, 30, true, "1111134.34", "TestFeld", labelfont));
 				myAttributs.get(i).setPositionRelativeToParent(new Vector3D(this.getWidthXY(TransformSpace.LOCAL) / 2, x));
 			
 				break;
 			case(2):
-				System.out.println(i + "Attributs MTDropDown " + it);
+				System.out.println("MyMTObject: " + i + "Attributs MTDropDown " + it);
 			
 				myAttributs.add(new MTDropDownList(pApplet, attributesmodel.get(i), fontArialMini, 250, 30, "Projekt Wichtigkeit", labelfont));
 				myAttributs.get(i).setPositionRelativeToParent(new Vector3D(this.getWidthXY(TransformSpace.LOCAL) / 2, x));
@@ -368,14 +376,20 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 				break;
 				
 			case(3):
-				System.out.println(i + "Attributs MTPictureBox " + it);
+				System.out.println("MyMTObject: " + i + "Attributs MTPictureBox " + it);
 				
 				myAttributs.add(new MTPictureBox(pApplet, attributesmodel.get(i), 250, 100, "Picuture", labelfont));
 				myAttributs.get(i).setPositionRelativeToParent(new Vector3D(this.getWidthXY(TransformSpace.LOCAL) / 2, x + 40));
 
-
-
+				break;
+				
+			case(4): //TODO: Richtige werte Einfügen.
+				System.out.println("MyMTObject: " + i + "Attributs MTListAttribut " + it);
 			
+				myAttributs.add(new MTPictureBox(pApplet, attributesmodel.get(i), 250, 100, "Picuture", labelfont));
+				myAttributs.get(i).setPositionRelativeToParent(new Vector3D(this.getWidthXY(TransformSpace.LOCAL) / 2, x + 40));
+
+				
 				break;
 			default:
 				break;
@@ -403,7 +417,7 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 	private void addToBaserect() {
 		
 		for (int j = myAttributs.size() - 1; j >= 0; j--) {
-			  System.out.println("addChild " + j);
+			  System.out.println("MyMTObject: addChild " + j);
 			  baserect.addChild(myAttributs.get(j));
 			}		
 	}
@@ -448,19 +462,19 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 		}
 		
 		// Base Backround Color
-		System.out.println("Fill Color");
+		System.out.println("MyMTObject: Fill Color");
 		if (this.objectmodel.getObjectFillcolor() == null) {
-			System.out.println("No Fill Color found");
+			System.out.println("MyMTObject: No Fill Color found");
 			baserect.setFillColor(MTColor.GRAY);
 			baserect.setStrokeColor(MTColor.GRAY);
 		} else {
-			System.out.println("Fill Color found");
+			System.out.println("MyMTObject: Fill Color found");
 		baserect.setStrokeColor(this.objectmodel.getObjectFillcolor());
 		baserect.setFillColor(this.objectmodel.getObjectFillcolor());
 		}
 		
 		// Object Position with random when no position is stored
-		System.out.println("Position");
+		System.out.println("MyMTObject: Position");
 		if (this.objectmodel.getObjectposition() == null) {
 			this.setPositionGlobal(new Vector3D(ToolsMath.nextRandomInt(140, 800), ToolsMath.nextRandomInt(140, 700)));
 		} else {
@@ -468,7 +482,7 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 		}
 		
 		// Object Font
-		System.out.println("Font");
+		System.out.println("MyMTObject: Font");
 		if (this.objectmodel.getObjectfont() == null) {
 			fontArial = FontManager.getInstance().createFont(pApplet, "arial.ttf", 
 					15, 	//Font size
@@ -477,6 +491,12 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 			fontArial = this.objectmodel.getObjectfont();
 		}
 		
+		// Object Labeltext
+		if (this.objectmodel.getObjectlable() == null) {
+			textField.setText("Object" + " ID:" + id);
+		} else {
+			textField.setText(this.objectmodel.getObjectlable() + id);
+		}
 		
 	}
 	
@@ -571,10 +591,12 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 	private void printMTObjectModel(final ModelMtObjects obmodel) {
 		
 		System.out.println("\n");
+		System.out.println("MyMTObject: \n");
 		System.out.println("Object ID:       " + obmodel.getId());
 		System.out.println("Object Color:    " + obmodel.getObjectcolor());
 		System.out.println("Object Font:     " + obmodel.getObjectfont());
 		System.out.println("Object Position: " + obmodel.getObjectposition());
+		System.out.println("Object Label     " + obmodel.getObjectlable());
 		
 		for (ModelMtAttributs attribut : obmodel.getObjectattributs()) {
 			System.out.println("   Attribut ID:  " + attribut.getId());
@@ -607,7 +629,7 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 	 * @param strokecolor MTColor
 	 * */ 
 	public void setTaggedColor(final MTColor strokecolor) {
-		System.out.println("SET Tagged COLOR STROKE!!!!!!!");
+		System.out.println("MyMTObject: SET Tagged COLOR STROKE!!!!!!!");
 		befortaggedColor = this.getStrokeColor();
 		this.setStrokeColor(strokecolor);
 		this.setStrokeWeight(3);
@@ -618,7 +640,7 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 	 * 
 	 * */ 
 	public final void setNormalColor() {
-		System.out.println("SET Normal COLOR STROKE!!!!!!!");
+		System.out.println("MyMTObject: SET Normal COLOR STROKE!!!!!!!");
 		this.setStrokeColor(befortaggedColor);
 		this.setStrokeWeight(1);
 	}
@@ -685,11 +707,29 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 	}
 
 	public void writeOutput() {
-		String text = this.getName() + "\n";
+		//String text = this.getName() + "\n";
+		int node1 = new Integer(0);
+		int node2 = new Integer(0);
+		
 		for (int i = 0; i < this.droppedComponents.size(); i++) {
-			text+= "- " + droppedComponents.get(i).getName() + "\n";
+		
+			//text+= "- " + droppedComponents.get(i).getName() + "\n";
+			
+			try {
+				node1 = new Integer(Integer.valueOf((droppedComponents.get(i).getName())).intValue()) ;
+				node2 = new Integer(Integer.valueOf(this.getName()).intValue()) ;
+				
+					if ( !(node1 == node2)) { //Der Link wird nicht auf sich selbst ausgeführt und zeigt auf ein anderes Objekt
+						linker.createLink(node1, node2);
+						linker.setSelectedObjectColor(1);
+					} else {
+						System.out.println("MyMTObject: Rekursive Link nicht möglich. ");
+					}
+				
+				} catch (NumberFormatException nfe) {
+				System.err.println("MyMTObject: Kann String nicht umwandeln. ");
+				}
 		}
-		System.out.println("Gefundene Componend: " + text);
 	}
 		
 	@Override
@@ -698,8 +738,20 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 			this.droppedComponents.add(droppedComponent);
 		}
 
-		this.setStrokeColor(this.getFillColor());
-		System.out.println(this.getName() +": "+ droppedComponent.getName() + " dropped.");
+		//this.setStrokeColor(this.getFillColor());
+		System.out.println("MyMTObject:" + this.getName() +": "+ droppedComponent.getName() + " dropped.");
+		/*
+		String idString = new String(droppedComponent.getName());
+		int test = new Integer(0);
+		try {
+			test = Integer.valueOf(idString).intValue();
+
+			} catch (NumberFormatException nfe) {
+			System.err.println("Kann Zahl nicht umwandeln. "+ idString);
+			}
+		*/
+		//marker(String.valueOf(this.getID()));
+		
 		this.writeOutput();
 		
 		
@@ -707,8 +759,16 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 
 	@Override
 	public void componentEntered(MTComponent enteredComponent) {
-		System.out.println(this.getName() +": "+ enteredComponent.getName() + " entered.");
-		this.setStrokeColor(new MTColor(255,0,0));
+		
+		//System.out.println("MyMTObject:" + this.getName() +": "+ enteredComponent.getName() + " entered.");
+		
+		//this.setTaggedColor(MTColor.RED);
+		//this.setStrokeColor(new MTColor(255,0,0));
+		//String[] objectID;
+		//objectID = enteredComponent.getName().split("\\s+");
+		marker(String.valueOf(this.getID()));
+		
+
 		this.writeOutput();
 		
 	}
@@ -716,8 +776,11 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 	@Override
 	public void componentExited(MTComponent exitedComponent) {
 		this.droppedComponents.remove(exitedComponent);
-		this.setStrokeColor(this.getFillColor());
-		System.out.println(this.getName() +": "+ exitedComponent.getName() + " exited.");
+	
+		//this.setStrokeColor(this.getFillColor());
+		
+		marker(String.valueOf(this.getID()));
+		//System.out.println("MyMTObject:" + this.getName() +": "+ exitedComponent.getName() + " exited.");
 		this.writeOutput();
 		
 	}
@@ -728,6 +791,23 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 		return true;
 	}
 
+	/**
+	 * Markiert das Ausgewählte Objekt über den Linker Controller.
+	 * 
+	 * @param obj String
+	 */
+	private void marker( String obj) {
+		
+		Integer idObj = new Integer(0);
+		try {
+			 idObj = Integer.valueOf(obj).intValue();
+			linker.setSelectedObjectColor(idObj);
+			 System.out.println("MyMTObject: IDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD des zu markierenden Objekts " + idObj);
+			} catch (NumberFormatException nfe) {
+			System.err.println("MyMTObject: Kann Zahl nicht umwandeln. ");
+			}
+		
+	}
 	
 }
 

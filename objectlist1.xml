@@ -225,7 +225,7 @@
           </attributcontent>
           <attributdefinition/>
           <attcolor reference="../../../../ch.mitoco.model.ModelMtObjects/objectcolor"/>
-          <Lable></Lable>
+          <Lable>Warum</Lable>
           <minMax>false</minMax>
           <direction>false</direction>
           <zoom>0</zoom>

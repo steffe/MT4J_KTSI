@@ -60,7 +60,7 @@ public class MTLinkController {
 	private List<MTObjectLink> linklist;
 	
 	/** List with MTSelectStoreObjects ID. */
-	private List<MTSelectStoreObject> selectObjectID;
+	private List<MTSelectStoreObject> selectedObjectID;
 	
 	/** List with valid pairs for link building. */
 	private List<MTSelectStoreObject> validLinkPair;
@@ -74,33 +74,42 @@ public class MTLinkController {
 	 * @param canvas
 	 * @param 
 	 * */
-	public MTLinkController(AbstractMTApplication pApplet, MTCanvas canvas, List<MyMTObject> myobjectList) {
+	public MTLinkController(AbstractMTApplication pApplet, MTCanvas canvas) {
 		this.pApplet = pApplet;
 		this.app = pApplet;
 		this.canvas = canvas;
-		this.myobjectList = myobjectList;
 		
-		
+		System.out.println("MTLinkController: Konstruktor: ObjektListe " + this.myobjectList);
 		linklist = new ArrayList<MTObjectLink>();
-		selectObjectID = new ArrayList<MTSelectStoreObject>();
-		selectObjectID.add(new MTSelectStoreObject());
-	
+		
+		selectedObjectID = new ArrayList<MTSelectStoreObject>(); // Alle Markierten Object IDs werden als Paar gespeichert
+		selectedObjectID.add(new MTSelectStoreObject()); // Erste Object für Dupleten Speicher. Die nächsten Objekte werden in der Methode storeSelectObject erstellt
+		
 		validLinkPair = new ArrayList<MTSelectStoreObject>();
-		lassoProcessor = new LassoProcessor(app, canvas, canvas.getViewingCamera());
 		
 		init();
 	}
 
 	/** Init Method.*/
 	private void init() {
-		System.out.println("MTLinkController init() ");
-		link = new MTObjectLink(pApplet, new Vertex(new Vector3D(0, 0, 0)), new Vertex(new Vector3D(0, 0, 0)));
-		canvas.addChild(link);
-		
-		eventObjectHandling();
-		selectedLasso();
+		System.out.println("MTLinkController: init() ");
+		//link = new MTObjectLink(pApplet, new Vertex(new Vector3D(0, 0, 0)), new Vertex(new Vector3D(0, 0, 0)),);
+		//canvas.addChild(link);
+		lassoProcessor = new LassoProcessor(app, canvas, canvas.getViewingCamera());
 		canvas.registerInputProcessor(lassoProcessor);
 		canvas.addGestureListener(LassoProcessor.class, new DefaultLassoAction(app, canvas.getClusterManager(), canvas));
+		eventObjectHandling();
+		selectedLasso();
+	}
+
+	/**
+	 * Objectliste wird gesetzt. 
+	 * @param myobjectList
+	 */
+	public synchronized void setObjectList(List<MyMTObject> myobjectList){
+		this.myobjectList = null;
+		this.myobjectList = myobjectList;
+		System.out.println("MTLinkController: setObjectList: ObjektListe " + this.myobjectList + " IM ÜbergabeParameter " + myobjectList);
 		
 	}
 	
@@ -129,7 +138,7 @@ public class MTLinkController {
 								break;
 							}
 						} else {
-							link.destroy();
+						
 						}
 						
 					} else {
@@ -140,39 +149,22 @@ public class MTLinkController {
 			}
 			);
 		} else {
-			System.out.println("MyMTObjekt Liste ist LEER" );
+			System.out.println("MTLinkController: MyMTObjekt Liste ist LEER" );
 			
 		}
-		
-		
+	
 	}
+	
 	/** Test Methode to draw a linie.
 	 *  @param input1 Vector3D 
 	 *  @param input2 Vector3D
 	 * */
 	private void drawLinie(Vector3D input1, Vector3D input2) {
-		link.setVertices(new Vertex[]{new Vertex(input1), new Vertex(input2)});
-		canvas.addChild(link);
+		//link.setVertices(new Vertex[]{new Vertex(input1), new Vertex(input2)});
+		//canvas.addChild(link);
 		
 	}
 	
-	/**
-	 *  Set the StrokeColor from the selected Object.
-	 *  
-	 *  @param obj MyMTObject
-	 *   
-	 * */	
-	private void setSelectedObjectColor( final MyMTObject obj) {
-		if (obj.getTagFlag() == true) {
-			obj.setNormalColor();
-			obj.setTagFlag(false);
-			removeSelectObject(obj);
-		} else {
-			obj.setTaggedColor(MTColor.RED);
-			obj.setTagFlag(true);
-			storeSelectObject(obj);
-		}		
-	}
 	
 	/**
 	 * 
@@ -182,6 +174,7 @@ public class MTLinkController {
 	//TODO Insert this in Model Controller when object Createt
 	@Deprecated
 	public final void setTapAndHoldListener() {
+		System.out.println("MTLinkController: setTapAndHoldListener: für ListenFeld");
 		for (MyMTObject it : myobjectList) {
 			detectionObSelection(it);
 			detectionObSelectionLasso(it);			
@@ -195,9 +188,11 @@ public class MTLinkController {
 	 * @param obj MyMTObject
 	 */
 	public final void setTapAndHoldListener(final MyMTObject obj) {
+		System.out.println("MTLinkController: setTapAndHoldListener: für Objekt: " + obj);
+		
 		detectionObSelection(obj);
-		detectionObSelectionLasso(obj);
-		linklist.add(obj.getID(), new MTObjectLink(pApplet, new Vertex(obj.getCenterPointLocal()), new Vertex(new Vector3D(obj.getWidthXY(TransformSpace.LOCAL) /2, -30))));
+		detectionObSelectionLasso(obj);	
+		linklist.add(obj.getID(), new MTObjectLink(pApplet, new Vertex( new Vector3D(10, 10)), new Vertex(new Vector3D(-40, 10)), obj.getID()));
 		obj.addChild(linklist.get(obj.getID()));
 		
 	}
@@ -235,7 +230,9 @@ public class MTLinkController {
 	
 	/** Object detection/selection with LassoProcessor
 	 * 
-	 * @param obj
+	 * Jedem Object wird dem LassoProcessor hinzugefügt, damit es auch lassoable wird.
+	 * 
+	 * @param obj MyMTObject
 	 */
 	private void detectionObSelectionLasso(final MyMTObject obj) {
 		
@@ -243,8 +240,48 @@ public class MTLinkController {
 
 	}
 	
+	/**
+	 *  Set the StrokeColor from the selected Object.
+	 *  
+	 *  @param obj MyMTObject
+	 *   
+	 * */	
+	private void setSelectedObjectColor( final MyMTObject obj) {
+		if (obj.getTagFlag() == true) {
+			obj.setNormalColor();
+			obj.setTagFlag(false);
+			removeSelectObject(obj);
+		} else {
+			obj.setTaggedColor(MTColor.RED);
+			obj.setTagFlag(true);
+			storeSelectObject(obj);
+		}		
+	}
 	
-	
+	/**
+	 *  Set the StrokeColor from the selected Object with Interger ID.
+	 *  
+	 *  @param objID int
+	 *   
+	 * */	
+	public void setSelectedObjectColor(final int objID) {
+		
+		System.out.println("MTLinkController: setSelectedObjectColor: Object ID " + objID );
+		System.out.println("MTLinkController: setSelectedObjectColor: Object ID " + myobjectList.get(objID));
+		
+		
+		if (myobjectList.get(objID).getTagFlag() == true) {
+			myobjectList.get(objID).setNormalColor();
+			myobjectList.get(objID).setTagFlag(false);
+			//removeSelectObject(myobjectList.get(objID));
+		} else {
+			myobjectList.get(objID).setTaggedColor(MTColor.RED);
+			myobjectList.get(objID).setTagFlag(true);
+			//storeSelectObject(myobjectList.get(objID));
+		}	
+		
+	}
+
 	int i = 0;
 	int j = 0; // Objecte 
 	/** Save the selected MyMtObject.
@@ -253,16 +290,14 @@ public class MTLinkController {
 	 * */
 	private void storeSelectObject(final MyMTObject obj) {
 		
-		
-		
 		if(i%2==0){
-			selectObjectID.get(j).setEndObjectID(obj.getID());
+			selectedObjectID.get(j).setEndObjectID(obj.getID());
 			System.out.println("Object erstellt" +j +":"+i );
 			i++;
 		} else {
 		
-			selectObjectID.get(j).setStartObjectID(obj.getID());
-			selectObjectID.get(j).setValid(true);
+			selectedObjectID.get(j).setStartObjectID(obj.getID());
+			selectedObjectID.get(j).setValid(true);
 			System.out.println("Object erstellt" +j +":"+i );
 			i++;
 			
@@ -270,7 +305,7 @@ public class MTLinkController {
 		if(i%2==0){
 			System.out.println("Dupplete Vorhanden" +j );
 			j++;
-			selectObjectID.add(new MTSelectStoreObject());
+			selectedObjectID.add(new MTSelectStoreObject());
 			System.out.println("Wurde erstellt: " +j );
 			
 		}
@@ -286,7 +321,7 @@ public class MTLinkController {
 		if(i%2==0){
 			System.out.println("Dupplete Vorhanden" +j );
 			System.out.println("Wurde gelöscht: " +j );
-			selectObjectID.remove(j);
+			selectedObjectID.remove(j);
 			j--;
 
 		}
@@ -302,7 +337,7 @@ public class MTLinkController {
 			System.out.println("Gelöscht Zahl ist ungerade: " +j + ":"+i );
 		}
 	
-		for(MTSelectStoreObject it: selectObjectID) {
+		for(MTSelectStoreObject it: selectedObjectID) {
 			if (it.getEndObjectID() == obj.getID()){
 				it.setValid(false);
 				it.setEndObjectID(-1);
@@ -321,7 +356,7 @@ public class MTLinkController {
 	 * */
 	public void printSelectedList() {
 		
-		for (MTSelectStoreObject it : selectObjectID) {
+		for (MTSelectStoreObject it : selectedObjectID) {
 			System.out.println("Opject Paar gepeichert " + it.getEndObjectID() + ":" + it.getStartObjectID() + " PAAR ist Valid; " + it.isValid());
 		}
 
@@ -333,7 +368,7 @@ public class MTLinkController {
 	 * 
 	 * */
 	public final void storeValidPair() {
-		for (MTSelectStoreObject it : selectObjectID) {
+		for (MTSelectStoreObject it : selectedObjectID) {
 			if (it.isValid() ){
 				validLinkPair.add(new MTSelectStoreObject(it.getStartObjectID(), it.getEndObjectID(), it.isValid()));		
 			}
@@ -342,6 +377,24 @@ public class MTLinkController {
 		for (MTSelectStoreObject itt : validLinkPair) {
 			System.out.println("VALID Opject Paar gepeichert " + itt.getEndObjectID() + ":" + itt.getStartObjectID() + " PAAR ist Valid; " + itt.isValid());
 		}
+		
+	}
+	
+	public void showTaggedObject() {
+		for (MyMTObject itt : myobjectList) {
+			System.out.println("Objekt: " + itt.getID() +" Markiert " + itt.getTagFlag());
+		}
+		
+	}
+	
+	/**
+	 * 
+	 * @param node1
+	 * @param node2
+	 */
+	public void createLink(int node1, int node2) {
+		
+		System.out.println("MTLinkController: createLink: Link for Objekt ID; " + node1 + " und " + node2);
 		
 	}
 	
@@ -371,7 +424,7 @@ public class MTLinkController {
 						if (!(myobjectList == null)) {
 							for (MyMTObject it : myobjectList) {
 								if (it.isSelected() == true) {
-									System.out.println("@@@@@ Object ist gespeichert NR:" + it.getID());
+									System.out.println("MTLinkController: @@@@@ Object ist gespeichert NR:" + it.getID());
 									
 								}
 							}
