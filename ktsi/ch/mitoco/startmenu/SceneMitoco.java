@@ -281,7 +281,7 @@ public class SceneMitoco extends AbstractScene{
 		MTListCell cell = new MTListCell(app ,  realListCellWidth, listCellHeight);
 		cell.setNoFill(true);
 		cell.setNoStroke(true);
-		cell.rotateY(cell.getCenterPointLocal(), 45);
+		//cell.rotateY(cell.getCenterPointLocal(), 45);
 		
 //		/*
 		Vertex[] vertices = new Vertex[]{
