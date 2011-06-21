@@ -200,33 +200,7 @@ public class DataController {
 		}
 		
 	}
-	/**Load SceneListeXML
-	 * 
-	 * 
-	 * @return
-	 */
-	public Boolean loadSceneListeXML() {
-		LoadXML = new LoadXML("xstream.xml");
-			
-		if (objectcounter > 0) {
-			System.out.println("Grösser Null " + objectcounter);
-			//Objects are already drawn, you have to clean
-			return false;
-			}
-		else {
-			dataModel = LoadXML.getDataModel();
-			for (Iterator<ModelMtObjects> it = dataModel.getMtobjects().iterator(); it.hasNext();) {
-				myobjectList.add(new MyMTObject(mtApplication, it.next(), objectcounter, linker));
-				System.out.println("Object Gen:" + objectcounter);
-				linker.setTapAndHoldListener(getMyobjectList().get(objectcounter)); //TODO: Test
-				objectcounter++;
-			}
-			linker.setObjectList(myobjectList);
-			return true;
-		}
-		
-	}
-	
+
 	/**Will save the actual dataModel with content to a XML File.
 	 * 
 	 */
