@@ -9,9 +9,11 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.mt4j.MTApplication;
+import org.mt4j.components.MTComponent;
 import org.mt4j.components.TransformSpace;
 import org.mt4j.components.visibleComponents.shapes.MTLine;
 import org.mt4j.components.visibleComponents.shapes.MTPolygon;
+import org.mt4j.components.visibleComponents.widgets.MTOverlayContainer;
 import org.mt4j.input.IMTInputEventListener;
 import org.mt4j.input.gestureAction.DefaultPanAction;
 import org.mt4j.input.gestureAction.DefaultZoomAction;
@@ -41,9 +43,11 @@ import org.mt4j.util.math.Vector3D;
 import org.mt4jx.util.animation.AnimationUtil;
 
 import ch.mitoco.components.visibleComponents.MyMTObject;
+import ch.mitoco.components.visibleComponents.filechooser.FileChooser;
 import ch.mitoco.dataController.DataController;
 import ch.mitoco.model.ModelSceneList;
 import ch.mitoco.model.ModelTypDescription;
+import ch.mitoco.reporting.MitocoReporting;
 
 
 /** Hello Word Scene. */
@@ -79,6 +83,11 @@ public class MitocoScene extends AbstractScene {
 	
 	/**InputCursor for RadialMenu.	*/
 	private InputCursor ic;
+	
+	/**Filechooser objekt. */
+	private FileChooser fileChooser;
+	
+	private MTOverlayContainer guiOverlay;
 	
 	/** Test: Linker Controller. */
 	//private MTLinkController linker; //TODO: Test
@@ -190,6 +199,9 @@ public class MitocoScene extends AbstractScene {
 				return false;
 			}				
 		});
+		
+		fileChooser = new FileChooser(this);
+		
 		
 		// Standard Default ZoomAction and Pan TwoFingers
 		this.getCanvas().registerInputProcessor(new ZoomProcessor(mtApplication));
@@ -311,6 +323,7 @@ public class MitocoScene extends AbstractScene {
 				          final MTFingerInputEvt cursorInputEvt = (MTFingerInputEvt) inEvt;
 				          switch (cursorInputEvt.getId()) {
 				            case TapEvent.GESTURE_STARTED:
+				            	/*
 				            	if (!dataController.loadSceneXML()) {
 									for (Iterator<MyMTObject> it = dataController.getMyobjectList().iterator(); it.hasNext();) {
 										getCanvas().removeChild(dataController.getMyobjectList().get(it.next().getID()));	
@@ -322,6 +335,11 @@ public class MitocoScene extends AbstractScene {
 									}
 									counter = dataController.getObjectcounter();
 								}
+				            	*/
+				            	MitocoScene.this.getCanvas().addChild(fileChooser);
+				        		fileChooser.sendToFront();
+				            	
+				            	
 				            	//linker.setTapAndHoldListener(); //TODO: Test
 								break;
 								
@@ -335,6 +353,28 @@ public class MitocoScene extends AbstractScene {
 				        return false;
 				      }
 				    };
+				    
+				    final IMTInputEventListener startReporting = new IMTInputEventListener() {
+					      @Override
+					      public boolean processInputEvent(final MTInputEvent inEvt) {
+					        // Most input events in MT4j are an instance of AbstractCursorInputEvt (mouse, multi-touch..)
+					        if (inEvt instanceof MTFingerInputEvt) {
+					          final MTFingerInputEvt cursorInputEvt = (MTFingerInputEvt) inEvt;
+					          switch (cursorInputEvt.getId()) {
+					            case TapEvent.GESTURE_STARTED:
+					            	new MitocoReporting(mtApplication, "ReportingAp", MitocoScene.this);
+									break;
+									
+					            default:
+					              break;
+					          }
+					        } else {
+					          //LOG.warn("Some other event occured:" + inEvt);
+					        }
+
+					        return false;
+					      }
+					    };
 				    
 				    final IMTInputEventListener showInputListener = new IMTInputEventListener() {
 				        @Override
@@ -460,6 +500,10 @@ public class MitocoScene extends AbstractScene {
         
         subMenu2.addSubMenuItem(new MTMenuItem("Copy", null));
         subMenu2.addSubMenuItem(new MTMenuItem("Send", null));
+        final MTMenuItem submenu21 = new MTMenuItem("Reporting", null);
+        submenu21.addInputEventListener(startReporting); 
+        
+        menu2.addSubMenuItem(submenu21);
         menu2.addSubMenuItem(subMenu2);
         menu2.addSubMenuItem(new MTMenuItem("Copy Objecet", null));
         menu2.addSubMenuItem(new MTMenuItem("Paste", null));
@@ -532,5 +576,11 @@ public class MitocoScene extends AbstractScene {
 
 		    closeAnim.start();
 		  }
+	  
+	// Method to retrieve the File Chooser
+	public FileChooser getFc() { return fileChooser; }
+	// Method to retrieve the gui overlay
+	
+	public MTComponent getGuiOverlay() { return this.getCanvas(); }
 	
 }
