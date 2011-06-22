@@ -215,7 +215,7 @@ public class MTLinkController {
 	 * @param obj MyMTObject 
 	 */
 	private void detectionObSelection(final MyMTObject obj) {
-		obj.registerInputProcessor(new TapAndHoldProcessor(app, 2000));
+		obj.registerInputProcessor(new TapAndHoldProcessor(app, 1000));
 		obj.addGestureListener(TapAndHoldProcessor.class, new TapAndHoldVisualizer(app, canvas));
 		obj.addGestureListener(TapAndHoldProcessor.class, new IGestureEventListener() {
 			public boolean processGestureEvent(MTGestureEvent ge) {
