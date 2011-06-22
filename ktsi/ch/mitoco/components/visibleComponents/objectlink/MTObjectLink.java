@@ -38,8 +38,15 @@ public class MTObjectLink extends MTLine {
 	/** endPoint.*/
 	private Vertex endPoint;
 	
-	/** Object ID */
+	/** Object ID. */
 	private int id;
+	
+	/** StrokeWeight. */
+	private int strokeWeight;
+	
+	/** Stroke Color*/
+	private MTColor strokeColor;
+	
 	/** MTObjectLink Constructor.
 	 * 
 	 * @param pApplet PApplet
@@ -51,22 +58,24 @@ public class MTObjectLink extends MTLine {
 		this.pApplet = pApplet;
 		this.endPoint = endPoint;
 		this.id = ID;
+		this.strokeWeight = 3;
+		this.strokeColor = MTColor.SILVER;
 		init();
 	}
 
 	/** Init Method.*/
 	private void init() {
 		System.out.println("MTObjectLink: LinkerHandler Object generated ");
-		linkHead = new MTEllipse(pApplet, endPoint, 20, 20);
-		linkHead.setStrokeColor(MTColor.NAVY);
-		linkHead.setStrokeWeight(4);
+		linkHead = new MTEllipse(pApplet, endPoint, 15, 15);
+		linkHead.setStrokeColor(strokeColor);
+		linkHead.setStrokeWeight(strokeWeight);
 		linkHead.setVisible(true);
-		linkHead.setFillColor(MTColor.GRAY);
+		linkHead.setFillColor(MTColor.GREY);
 		linkHead.setName("linkHead");
 		this.addChild(linkHead);
 		
-		this.setStrokeColor(MTColor.NAVY);
-		this.setStrokeWeight(4);
+		this.setStrokeColor(strokeColor);
+		this.setStrokeWeight(strokeWeight);
 		this.setVisible(true);
 		this.translateGlobal(new Vector3D(0, 0, -1));
 		this.setName(String.valueOf(id));

@@ -2,6 +2,7 @@ package ch.mitoco.components.visibleComponents.objectlink;
 
 import java.awt.event.InputEvent;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.batik.dom.events.EventListenerList;
@@ -57,7 +58,7 @@ public class MTLinkController {
 	private MTObjectLink link;
 	
 	/** Link Liste. */
-	private List<MTObjectLink> linklist;
+	private List<MTObjectLink> linkHeadlist;
 	
 	/** List with MTSelectStoreObjects ID. */
 	private List<MTSelectStoreObject> selectedObjectID;
@@ -68,7 +69,10 @@ public class MTLinkController {
 	/** Lasso Processor.*/
 	private LassoProcessor lassoProcessor;
 	
-	/** MTLinlController. 
+	/** Liste mit Links.*/
+	private List<MTLink> linkliste;
+	
+	/** MTLinkController. 
 	 * 
 	 * @param pApplet 
 	 * @param canvas
@@ -80,13 +84,15 @@ public class MTLinkController {
 		this.canvas = canvas;
 		
 		System.out.println("MTLinkController: Konstruktor: ObjektListe " + this.myobjectList);
-		linklist = new ArrayList<MTObjectLink>();
+		linkHeadlist = new ArrayList<MTObjectLink>();
 		
 		selectedObjectID = new ArrayList<MTSelectStoreObject>(); // Alle Markierten Object IDs werden als Paar gespeichert
 		selectedObjectID.add(new MTSelectStoreObject()); // Erste Object für Dupleten Speicher. Die nächsten Objekte werden in der Methode storeSelectObject erstellt
 		
 		validLinkPair = new ArrayList<MTSelectStoreObject>();
 		
+		linkliste = Collections.synchronizedList(new ArrayList<MTLink>()); // Liste für alle Objekte LINK, Thread Safe TODO: Nutzen muss noch abgeklärt werden
+	
 		init();
 	}
 
@@ -98,7 +104,7 @@ public class MTLinkController {
 		lassoProcessor = new LassoProcessor(app, canvas, canvas.getViewingCamera());
 		canvas.registerInputProcessor(lassoProcessor);
 		canvas.addGestureListener(LassoProcessor.class, new DefaultLassoAction(app, canvas.getClusterManager(), canvas));
-		eventObjectHandling();
+		
 		selectedLasso();
 	}
 
@@ -116,29 +122,30 @@ public class MTLinkController {
 	/** Position Dedection for MTObjects.*/
 	// TODO Postition Dedection
 	private void eventObjectHandling() {
-		if (!(myobjectList == null)) {
-			canvas.addInputListener(new IMTInputEventListener() {
+		
+		for (MyMTObject it : myobjectList){
+			it.addInputListener(new IMTInputEventListener() {
 				
 				public boolean processInputEvent(MTInputEvent inEvt) {
 				
 					if (inEvt instanceof AbstractCursorInputEvt) {
 						AbstractCursorInputEvt cursorInputEvt = (AbstractCursorInputEvt) inEvt;
-						if (myobjectList.size() == 3) {
+						if (!(linkliste.isEmpty())) {
 							switch (cursorInputEvt.getId()) {
 							case AbstractCursorInputEvt.INPUT_STARTED:
-								drawLinie(myobjectList.get(0).getCenterPointGlobal(), myobjectList.get(1).getCenterPointGlobal());	
+								drawLinie();	
 								break;
 							case AbstractCursorInputEvt.INPUT_UPDATED:
-								drawLinie(myobjectList.get(0).getCenterPointGlobal(), myobjectList.get(1).getCenterPointGlobal());
+								drawLinie();
 								break;
 							case AbstractCursorInputEvt.INPUT_ENDED:
-								drawLinie(myobjectList.get(0).getCenterPointGlobal(), myobjectList.get(1).getCenterPointGlobal());
+								drawLinie();
 								break;
 							default:
 								break;
 							}
 						} else {
-						
+							//System.out.println("MTLinkController: eventObjectHandling: Keine Link Objekte vorhanden");	
 						}
 						
 					} else {
@@ -148,22 +155,26 @@ public class MTLinkController {
 				}
 			}
 			);
-		} else {
-			System.out.println("MTLinkController: MyMTObjekt Liste ist LEER" );
-			
 		}
-	
 	}
 	
-	/** Test Methode to draw a linie.
-	 *  @param input1 Vector3D 
-	 *  @param input2 Vector3D
+	/** 
+	 * Test Methode to draw a linie.
+	 * 
 	 * */
-	private void drawLinie(Vector3D input1, Vector3D input2) {
+	private void drawLinie() {
+		
+		for (MTLink it: linkliste) {
+			it.setVertices(new Vertex[]{
+					new Vertex(myobjectList.get(it.getStartObjectID()).getCenterPointGlobal()),
+					new Vertex(myobjectList.get(it.getEndObjectID()).getCenterPointGlobal())});
+		}
+		
 		//link.setVertices(new Vertex[]{new Vertex(input1), new Vertex(input2)});
 		//canvas.addChild(link);
 		
 	}
+	
 	
 	
 	/**
@@ -192,8 +203,8 @@ public class MTLinkController {
 		
 		detectionObSelection(obj);
 		detectionObSelectionLasso(obj);	
-		linklist.add(obj.getID(), new MTObjectLink(pApplet, new Vertex( new Vector3D(10, 10)), new Vertex(new Vector3D(-40, 10)), obj.getID()));
-		obj.addChild(linklist.get(obj.getID()));
+		linkHeadlist.add(obj.getID(), new MTObjectLink(pApplet, new Vertex( new Vector3D(10, 10)), new Vertex(new Vector3D(-40, 10)), obj.getID()));
+		obj.addChild(linkHeadlist.get(obj.getID()));
 		
 	}
 	
@@ -204,7 +215,7 @@ public class MTLinkController {
 	 * @param obj MyMTObject 
 	 */
 	private void detectionObSelection(final MyMTObject obj) {
-		obj.registerInputProcessor(new TapAndHoldProcessor(app, 1000));
+		obj.registerInputProcessor(new TapAndHoldProcessor(app, 2000));
 		obj.addGestureListener(TapAndHoldProcessor.class, new TapAndHoldVisualizer(app, canvas));
 		obj.addGestureListener(TapAndHoldProcessor.class, new IGestureEventListener() {
 			public boolean processGestureEvent(MTGestureEvent ge) {
@@ -262,19 +273,23 @@ public class MTLinkController {
 	 *  Set the StrokeColor from the selected Object with Interger ID.
 	 *  
 	 *  @param objID int
+	 *  @param setting boolean 
+	 *  				1 = markieren
+	 *  				0 = nicht markiert
+	 *   
 	 *   
 	 * */	
-	public void setSelectedObjectColor(final int objID) {
+	public void setSelectedObjectColor(final int objID, boolean setting) {
 		
 		System.out.println("MTLinkController: setSelectedObjectColor: Object ID " + objID );
 		System.out.println("MTLinkController: setSelectedObjectColor: Object ID " + myobjectList.get(objID));
 		
 		
-		if (myobjectList.get(objID).getTagFlag() == true) {
+		if (myobjectList.get(objID).getTagFlag() == true && !setting) {
 			myobjectList.get(objID).setNormalColor();
 			myobjectList.get(objID).setTagFlag(false);
 			//removeSelectObject(myobjectList.get(objID));
-		} else {
+		} else if (setting) {
 			myobjectList.get(objID).setTaggedColor(MTColor.RED);
 			myobjectList.get(objID).setTagFlag(true);
 			//storeSelectObject(myobjectList.get(objID));
@@ -388,19 +403,81 @@ public class MTLinkController {
 	}
 	
 	/**
+	 * Erstellt Link zwischen zwei Objekte. Soll ein Link erstellt werden der schon vorhanden ist wird dieser gelöscht. Zwischen zwei gleiche Objekte (ID Paar) kann nur ein Link bestehen.
 	 * 
-	 * @param node1
-	 * @param node2
+	 * @param node1 int
+	 * @param node2 int
 	 */
 	public void createLink(int node1, int node2) {
 		
 		System.out.println("MTLinkController: createLink: Link for Objekt ID; " + node1 + " und " + node2);
+		System.out.println("MTLinkController: createLink: Link for Objekt ID; " + myobjectList.get(node1).getCenterPointGlobal() + " und " + myobjectList.get(node2).getCenterPointGlobal());
+		/**
+		 * 1. Link erstellen 
+		 *    - a. Abfrage: Link schon in der Liste 
+		 *    - b. Wenn ja Link löschen ansonsten erstellen
+		 *
+		 */
+
+		Vertex vNode1 = new Vertex(new Vector3D(myobjectList.get(node1).getCenterPointGlobal()));
+		Vertex vNode2 = new Vertex(new Vector3D(myobjectList.get(node2).getCenterPointGlobal()));
+		
+		boolean found = false;
+		if (!(linkliste.isEmpty())) {
+			
+			
+				for (int i = 0;i< linkliste.size();i++) {		
+					MTLink it = linkliste.get(i);
+					//if ((it.getStartObjectID() == node1 && it.getEndObjectID() == node2) || (it.getStartObjectID() == node2 && it.getEndObjectID() == node1)) {
+			
+					// TODO: Falsche Check liefert zu schnell ein vorhanden
+					if ((it.getStartObjectID() == node1 && it.getEndObjectID() == node2) || (it.getStartObjectID() == node2 && it.getEndObjectID() == node1)) {
+						System.out.println("MTLinkController: createLink: Link SCHON in der Liste vorhanden; " + node1 + " und " + node2 + "\n \t \t Vorhanderner LINK: " + it.getStartObjectID() + " und " + it.getEndObjectID());
+						canvas.removeChild(it);
+						linkliste.remove(i);
+						found = true;
+						
+						
+					} else {
+						System.out.println("MTLinkController: createLink: NICHT GEFUNDEN");
+					}
+						
+				}
+				if (!found) {
+					//Testen ist das Linksetzen über die Typen der zwei Objekte erlaubt (Über eine Deny Liste)
+				System.out.println("MTLinkController: createLink: Link noch NICHT in der Liste vorhanden; " + node1 + " und " + node2);
+				MTLink l1 = new MTLink(pApplet, vNode1, vNode2, node1, node2);
+				linkliste.add(l1);
+				addMTLinktoCanvas(l1);
+				}
+			
+			
+		} else {
+			System.out.println("MTLinkController: createLink: Linkliste ist leer; " + linkliste);
+			MTLink l2 = new MTLink(pApplet, vNode1, vNode2, node1, node2);
+			linkliste.add(l2);
+			addMTLinktoCanvas(l2);
+			
+		}
 		
 	}
 	
+	/**
+	 * MTLink auf dem Canvas Zeichnen.
+	 * 
+	 * @param obj MTLink
+	 */
+	private void addMTLinktoCanvas(final MTLink obj) {	
+		System.out.println("MTLinkController: addMTLinktoCanvas: Link wird dem Canavas zugeordnet; ");
+		canvas.addChild(obj);
+		eventObjectHandling();
+	}
+	
+	
+	
 	
 	/**
-	 * 
+	 * Which Object ist lassobaled.
 	 */
 	public final void selectedLasso() {
 		

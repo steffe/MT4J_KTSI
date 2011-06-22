@@ -706,22 +706,31 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 		sp.setBubbledEventsEnabled(true);  
 	}
 
+	/**
+	 * 
+	 * Write Methode
+	 * 
+	 * Wurde eine Linkparnter gefunden wird von der Methode componentDropped() 
+	 * 
+	 */
 	public void writeOutput() {
-		//String text = this.getName() + "\n";
+		
+		System.out.println("MyMTObject: writeOutput:  Objekt gefunden ");
 		int node1 = new Integer(0);
 		int node2 = new Integer(0);
-		
+	
 		for (int i = 0; i < this.droppedComponents.size(); i++) {
-		
-			//text+= "- " + droppedComponents.get(i).getName() + "\n";
-			
+	
 			try {
-				node1 = new Integer(Integer.valueOf((droppedComponents.get(i).getName())).intValue()) ;
-				node2 = new Integer(Integer.valueOf(this.getName()).intValue()) ;
+				node1 = new Integer(Integer.valueOf((droppedComponents.get(i).getName())).intValue()) ; // Name der Linie die selbe ist 
+				node2 = new Integer(Integer.valueOf(this.getName()).intValue());
+				
+				linker.setSelectedObjectColor(node2, false);
+				linker.setSelectedObjectColor(node1, false);
 				
 					if ( !(node1 == node2)) { //Der Link wird nicht auf sich selbst ausgeführt und zeigt auf ein anderes Objekt
 						linker.createLink(node1, node2);
-						linker.setSelectedObjectColor(1);
+						droppedComponents.remove(i);
 					} else {
 						System.out.println("MyMTObject: Rekursive Link nicht möglich. ");
 					}
@@ -730,58 +739,55 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 				System.err.println("MyMTObject: Kann String nicht umwandeln. ");
 				}
 		}
+		
+		
 	}
 		
 	@Override
 	public void componentDropped(MTComponent droppedComponent, DragEvent de) {
 		if(!droppedComponents.contains(droppedComponent)){
 			this.droppedComponents.add(droppedComponent);
-		}
-
-		//this.setStrokeColor(this.getFillColor());
-		System.out.println("MyMTObject:" + this.getName() +": "+ droppedComponent.getName() + " dropped.");
-		/*
-		String idString = new String(droppedComponent.getName());
-		int test = new Integer(0);
-		try {
-			test = Integer.valueOf(idString).intValue();
-
-			} catch (NumberFormatException nfe) {
-			System.err.println("Kann Zahl nicht umwandeln. "+ idString);
+		
+			if( !(this.getName().equalsIgnoreCase(droppedComponent.getName()))){
+				marker(this.getName() , droppedComponent.getName(), false); // Entfernen Markierung
 			}
-		*/
-		//marker(String.valueOf(this.getID()));
+	
+		}
+		System.out.println("MyMTObject: componentDropped: " + this.getName() + ": " + droppedComponent.getName() + " dropped.");
 		
 		this.writeOutput();
 		
 		
 	}
 
+	/**
+	 * Bewegt sich das MTObjectLink auf ein anderes Objekt wird diese Methode aufgrufen.
+	 */
 	@Override
 	public void componentEntered(MTComponent enteredComponent) {
+		System.out.println("MyMTObject: componentEntered: " + this.getName() + ": " + enteredComponent.getName() + " entered.");
 		
-		//System.out.println("MyMTObject:" + this.getName() +": "+ enteredComponent.getName() + " entered.");
+		if( !(this.getName().equalsIgnoreCase(enteredComponent.getName()))){
+			marker(this.getName() , enteredComponent.getName(), true);
+		}
 		
-		//this.setTaggedColor(MTColor.RED);
-		//this.setStrokeColor(new MTColor(255,0,0));
-		//String[] objectID;
-		//objectID = enteredComponent.getName().split("\\s+");
-		marker(String.valueOf(this.getID()));
 		
-
-		this.writeOutput();
+		//this.writeOutput();
 		
 	}
 
 	@Override
 	public void componentExited(MTComponent exitedComponent) {
-		this.droppedComponents.remove(exitedComponent);
-	
-		//this.setStrokeColor(this.getFillColor());
 		
-		marker(String.valueOf(this.getID()));
-		//System.out.println("MyMTObject:" + this.getName() +": "+ exitedComponent.getName() + " exited.");
-		this.writeOutput();
+		
+		if( !(this.getName().equalsIgnoreCase(exitedComponent.getName()))){
+			marker(this.getName(), exitedComponent.getName(), false);
+		}
+		this.droppedComponents.remove(exitedComponent);
+		
+		
+		System.out.println("MyMTObject: componentExited: " + this.getName() + ": " + exitedComponent.getName() + " exited.");
+		//this.writeOutput();
 		
 	}
 	
@@ -794,17 +800,27 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 	/**
 	 * Markiert das Ausgewählte Objekt über den Linker Controller.
 	 * 
-	 * @param obj String
+	 * @param targetObj String
+	 * @param setting boolean 
+	 *  			1 = markieren
+	 *  			0 = nicht markiert
 	 */
-	private void marker( String obj) {
+	private void marker(String targetObj, String startObj, boolean setting) {
 		
 		Integer idObj = new Integer(0);
+		Integer idSObj = new Integer(0);
 		try {
-			 idObj = Integer.valueOf(obj).intValue();
-			linker.setSelectedObjectColor(idObj);
-			 System.out.println("MyMTObject: IDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD des zu markierenden Objekts " + idObj);
+			 idObj = Integer.valueOf(targetObj).intValue(); // Target Objekt
+			 idSObj = Integer.valueOf(startObj).intValue(); //  Start Objekts
+			
+				 if (!(idObj == idSObj)) {
+					 linker.setSelectedObjectColor(idObj, setting);
+					 System.out.println("MyMTObject: marker: des zu markierenden Objekts " + idObj + " StartObjekt ID:" + idSObj);
+				 } else {
+					 System.out.println("MyMTObject: marker: Markieren des eigenen  Objekts nicht möglich: " + idObj + " StartObjekt ID:" + idSObj);
+				 } 
 			} catch (NumberFormatException nfe) {
-			System.err.println("MyMTObject: Kann Zahl nicht umwandeln. ");
+			System.err.println("MyMTObject: marker: Kann Zahl nicht umwandeln. ");
 			}
 		
 	}

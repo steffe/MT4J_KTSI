@@ -165,34 +165,18 @@ public class MTTextAttribut extends Attributes {
 				
 					MTTextKeyboard textKeyboard = new MTTextKeyboard(app1);
 					textKeyboard.setFillColor(trans);
-					
-					numKeyText = new MTTextArea(app1, 0, 0, width, height, iF);
 					textKeyboard.setNoStroke(true);
 					textKeyboard.setPositionRelativeToParent(new Vector3D(textKeyboard.getWidthXY(TransformSpace.LOCAL) / 2, (textKeyboard.getHeightXY(TransformSpace.LOCAL) / 2) + 50));
 					
-					numKeyText.setFillColor(new MTColor(205, 200, 177, 255));
-					numKeyText.unregisterAllInputProcessors();
-					numKeyText.setEnableCaret(true);
-					
-					//textKeyboard.snapToKeyboard(numKeyText);
-					//numKeyText.setText(textarea.getText());
-					//textKeyboard.addTextInputListener(numKeyText);
-					
-
 					textKeyboard.addTextInputListener(textarea);
 					
 					addChild(textKeyboard);
-					//numKeyText.setPositionRelativeToParent(new Vector3D((width / 2), -10));
-					
-					
+						
 					textKeyboard.addStateChangeListener(StateChange.COMPONENT_DESTROYED, new StateChangeListener() {
 						
 						@Override
 						public void stateChanged(final StateChangeEvent evt) {
-							
-							//textarea.setText(numKeyText.getText());
 							dataWrite();
-							
 						}
 					}
 					);

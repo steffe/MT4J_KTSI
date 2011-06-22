@@ -170,6 +170,7 @@ public class DataController {
 				linker.setTapAndHoldListener(getMyobjectList().get(objectcounter)); //TODO: Test
 				objectcounter++;
 			}
+			linker.setObjectList(myobjectList);
 			return true;
 		}
 		
