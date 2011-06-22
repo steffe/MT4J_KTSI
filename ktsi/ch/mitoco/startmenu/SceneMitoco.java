@@ -10,6 +10,7 @@ import org.mt4j.components.visibleComponents.widgets.MTListCell;
 import org.mt4j.components.visibleComponents.widgets.MTSceneMenu;
 import org.mt4j.components.visibleComponents.widgets.MTSceneWindow;
 import org.mt4j.components.visibleComponents.widgets.MTTextArea;
+import org.mt4j.components.visibleComponents.widgets.buttons.MTImageButton;
 import org.mt4j.input.gestureAction.InertiaDragAction;
 import org.mt4j.input.inputProcessors.IGestureEventListener;
 import org.mt4j.input.inputProcessors.MTGestureEvent;
@@ -85,10 +86,10 @@ public class SceneMitoco extends AbstractScene{
 	/** The preferred icon width. */
 	private int preferredIconWidth;
 	
-	/** ModelFunctionListe */
+	/** ModelFunctionListe. */
 	private ModelFunctionList modelfunctionList;
 	
-	/** Wert für die anzahl der Plazuhalter Icons */
+	/** Wert für die anzahl der Plazuhalter Icons. */
 	private int emptyPlaceHolder;
 	
 	/**
@@ -113,6 +114,35 @@ public class SceneMitoco extends AbstractScene{
 		modelfunctionList = new ModelFunctionList();
 		LoadXML scenelist = new LoadXML("sceneListe.xml", "sceneliste");
 		modelfunctionList = scenelist.getSceneListe();
+		
+		PImage closeNewImage = mtApplication.loadImage("ch" + MTApplication.separator + "mitoco" + MTApplication.separator + "data" + MTApplication.separator +  "closeButton64.png");
+		MTImageButton buttonClose = new MTImageButton(mtApplication, closeNewImage);
+
+		buttonClose.setSizeLocal(40, 40);
+		buttonClose.setFillColor(new MTColor(255, 255, 255, 200));
+		buttonClose.setName("CloseUpdate");
+		buttonClose.setNoStroke(true);
+		buttonClose.setPositionGlobal(new Vector3D(20, 20));
+		
+		buttonClose.addGestureListener(TapProcessor.class, new IGestureEventListener() {
+			@Override
+			public boolean processGestureEvent(final MTGestureEvent ge) {
+				TapEvent te = (TapEvent) ge;
+				switch(te.getTapID()) {
+				case TapEvent.TAPPED:
+					Runtime.getRuntime().exit(0);
+					break;
+				
+				default:
+					break;
+				}
+				
+				
+				
+				
+			return false;
+			}
+		});
 		
 		
 		
@@ -221,6 +251,7 @@ public class SceneMitoco extends AbstractScene{
 			this.setTransition(new FadeTransition(app, 730));	
 		}
 		
+		getCanvas().addChild(buttonClose);
 	}
 	
 	/**

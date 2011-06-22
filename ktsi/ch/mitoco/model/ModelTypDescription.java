@@ -1,8 +1,16 @@
 package ch.mitoco.model;
 
+import java.util.ArrayList;
+
 public class ModelTypDescription {
 	private int objectypeid;
 	private String objectdescription;
+	private ArrayList<Integer> objectdenylink;
+	
+	public ModelTypDescription(){
+		setObjectdenylink(new ArrayList<Integer>());
+	}
+	
 	/**
 	 * @param objectypeid the objectypeid to set
 	 */
@@ -26,6 +34,20 @@ public class ModelTypDescription {
 	 */
 	public String getObjectdescription() {
 		return objectdescription;
+	}
+
+	/**
+	 * @param objectdenylink the objectdenylink to set
+	 */
+	public void setObjectdenylink(ArrayList<Integer> objectdenylink) {
+		this.objectdenylink = objectdenylink;
+	}
+
+	/**
+	 * @return the objectdenylink
+	 */
+	public ArrayList<Integer> getObjectdenylink() {
+		return objectdenylink;
 	}
 
 }

@@ -3,12 +3,12 @@ package ch.mitoco.model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ModelObjectLink {
+public class ModelLink {
 	private int firstObject;
 	private int secondObject;
 	private List<ModelLinkDescription> objectlinkdescription;
 	
-	public ModelObjectLink() {
+	public ModelLink() {
 		setObjectlinkdescription(new ArrayList<ModelLinkDescription>());
 				
 	}

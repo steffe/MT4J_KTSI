@@ -10,6 +10,7 @@ import org.mt4j.components.MTCanvas;
 
 import ch.mitoco.components.visibleComponents.MyMTObject;
 import ch.mitoco.components.visibleComponents.objectlink.MTLinkController;
+import ch.mitoco.model.ModelLink;
 import ch.mitoco.model.ModelMtObjects;
 import ch.mitoco.model.ModelObjectTyps;
 import ch.mitoco.model.ModelScence;
@@ -23,44 +24,40 @@ import com.thoughtworks.xstream.XStream;
  */
 public class DataController {
 	
-	/**XML Scenen Loader Objekt.
-	 * 
-	 */
+	/**XML Scenen Loader Objekt.*/
+
 	private LoadXML LoadXML;
 	
-	/**XML Objekttyp Loader Object.
-	 * 
-	 */
+	/**XML Objekttyp Loader Object.*/
+
 	private LoadObjectXML loadObjectXML;
 	
-	/**Datenobjekt für eine Scene.
-	 * 
-	 */
+	/**Datenobjekt für eine Scene.*/
+
 	private ModelScence dataModel;
 	
-	/**Abeleitetes mtApplication Objekt.
-	 * 
-	 */
+	/**Abeleitetes mtApplication Objekt.*/
+
 	private MTApplication mtApplication;
 	
-	/**ArrayListe in welchem Objekte abespeicher werden.
-	 * 
-	 */
+	/**ArrayListe in welchem Objekte abespeicher werden.*/
+
 	private ArrayList<MyMTObject> myobjectList;
 	
-	/**Enthält Objettype die möglich sind.
-	 * 
-	 */
+	/**Enthält Objettype die möglich sind.*/
+
+	 
 	private ModelObjectTyps objectetyps;
 	
-	/**Anzahl Objekte welche auf der Scene sind.
-	 * 
-	 */
+	/**Speichert verknüpfte Objekte. */
+	private ModelLink modelLink;
+	
+	/**Anzahl Objekte welche auf der Scene sind.*/
+
 	private int objectcounter;
 	
-	/**Speicher Objekt.
-	 * 
-	 */
+	/**Speicher Objekt.*/
+
 	private SaveXML save;
 	
 	/** Test: Linker Controller. */
@@ -145,8 +142,11 @@ public class DataController {
 	 */
 	public ModelScence createDataModel(final String scenename) {
 		dataModel = new ModelScence();
+		//To-Do: IDs höchzählen 
 		dataModel.setId(1);
 		dataModel.setName(scenename);
+		modelLink = new ModelLink();
+		dataModel.getMtobjectlinks().add(modelLink);
 		return dataModel;
 	}
 	

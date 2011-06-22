@@ -47,6 +47,9 @@ public class ModelMtAttributs {
 	 */
 	private int zoom;
 	
+	/**Diese Variable definiert die Höhe eines einzelnen Attributs. */
+	private int attributHight;
+	
 	/**ModelMtAttributs Konstruktor.
 	 * Set the ArrayList for AttributContent and AttributDefinition
 	 */
@@ -177,6 +180,18 @@ public class ModelMtAttributs {
 	 */
 	public List<ModelAttributDefinition> getAttributdefinition() {
 		return attributdefinition;
+	}
+	/**
+	 * @param attributHight the attributHight to set
+	 */
+	public void setAttributHight(int attributHight) {
+		this.attributHight = attributHight;
+	}
+	/**
+	 * @return the attributHight
+	 */
+	public int getAttributHight() {
+		return attributHight;
 	}
 
 }

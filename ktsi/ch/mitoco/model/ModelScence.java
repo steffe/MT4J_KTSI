@@ -8,11 +8,11 @@ public class ModelScence {
 	 private long id;
 	 private String name;
 	 private List<ModelMtObjects> mtobjects;
-	 private List<ModelObjectLink> mtobjectlinks;
+	 private List<ModelLink> mtlinks;
 	 
 	    public ModelScence() {
 	    	mtobjects = new ArrayList<ModelMtObjects>();
-	    	setMtobjectlinks(new ArrayList<ModelObjectLink>());
+	    	setMtobjectlinks(new ArrayList<ModelLink>());
 	    }
 
 		public long getId() {
@@ -42,15 +42,15 @@ public class ModelScence {
 		/**
 		 * @param mtobjectlinks ModelObjectLink
 		 */
-		public void setMtobjectlinks(List<ModelObjectLink> mtobjectlinks) {
-			this.mtobjectlinks = mtobjectlinks;
+		public void setMtobjectlinks(List<ModelLink> mtobjectlinks) {
+			this.mtlinks = mtobjectlinks;
 		}
 
 		/**
 		 * @return the mtobjectlinks
 		 */
-		public List<ModelObjectLink> getMtobjectlinks() {
-			return mtobjectlinks;
+		public List<ModelLink> getMtobjectlinks() {
+			return mtlinks;
 		}
 
 }

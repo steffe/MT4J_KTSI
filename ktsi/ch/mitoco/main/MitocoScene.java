@@ -166,6 +166,9 @@ public class MitocoScene extends AbstractScene {
 						startxGestureVector = ic.getStartPosX();
 						endyGestureVector = ic.getCurrentEvtPosY();
 						endxGestureVector = ic.getCurrentEvtPosX();
+						System.out.println("Direction " + ic.getDirection());
+						System.out.println("Direction " + ic.getPosition());
+						System.out.println("Speed " + ic.getVelocityVector());
 						if ((MitocoScene.this.mtRadialMenu1 != null) && !MitocoScene.this.mtRadialMenu1.isVisible())
 			              {
 							MitocoScene.this.mtRadialMenu1.destroy();
@@ -484,6 +487,8 @@ public class MitocoScene extends AbstractScene {
             new MTColor(255, 255, 255, 255), // Font fill color
             true); // Anti-alias
         this.mtRadialMenu1 = new MTRadialMenu(mtApplication, vector, font, 1f, menuItems);
+        
+        
         if (startxGestureVector < endxGestureVector) {
         	this.mtRadialMenu1.rotateZ(mtRadialMenu1.getCenterPointLocal(), 0);
         } else if (startyGestureVector < endyGestureVector) {

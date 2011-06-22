@@ -10,6 +10,7 @@ public class ModelObjectTyps {
 	public ModelObjectTyps() {
 		objecttyp = new ArrayList<ModelMtObjects>();
 		setObjectdescription(new ArrayList<ModelTypDescription>());
+		
 	}
 	
 	/**

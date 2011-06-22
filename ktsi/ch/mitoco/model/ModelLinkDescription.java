@@ -1,8 +1,11 @@
 package ch.mitoco.model;
 
+import org.mt4j.util.MTColor;
+
 public class ModelLinkDescription {
 	private String linkdescription;
 	private String linkvalue;
+	private MTColor linkcolor;
 	
 	public ModelLinkDescription() {
 		
@@ -22,6 +25,20 @@ public class ModelLinkDescription {
 
 	public String getLinkvalue() {
 		return linkvalue;
+	}
+
+	/**
+	 * @param linkcolor the linkcolor to set
+	 */
+	public void setLinkcolor(MTColor linkcolor) {
+		this.linkcolor = linkcolor;
+	}
+
+	/**
+	 * @return the linkcolor
+	 */
+	public MTColor getLinkcolor() {
+		return linkcolor;
 	}
 
 }
