@@ -12,7 +12,7 @@
         </ch.mitoco.model.ModelTypDescription>
         <ch.mitoco.model.ModelTypDescription>
           <objectypeid>1</objectypeid>
-          <objectdescription>Scorcard</objectdescription>
+          <objectdescription>Scorecard</objectdescription>
         </ch.mitoco.model.ModelTypDescription>
       </sceneobjekte>
       <showAll>false</showAll>

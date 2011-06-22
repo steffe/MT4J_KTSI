@@ -80,30 +80,83 @@
       <objectattributs>
         <ch.mitoco.model.ModelMtAttributs>
           <id>0</id>
-          <attributcontent>
+                    <attributcontent>
             <ch.mitoco.model.ModelAttributContent>
-              <type>String</type>
-              <value></value>
+              <type>Loch 01</type>
+              <value>0</value>
+            </ch.mitoco.model.ModelAttributContent>
+            <ch.mitoco.model.ModelAttributContent>
+              <type>Loch 02</type>
+              <value>0</value>
+            </ch.mitoco.model.ModelAttributContent>
+            <ch.mitoco.model.ModelAttributContent>
+              <type>Loch 03</type>
+              <value>0</value>
+            </ch.mitoco.model.ModelAttributContent>
+            <ch.mitoco.model.ModelAttributContent>
+              <type>Loch 04</type>
+              <value>0</value>
+            </ch.mitoco.model.ModelAttributContent>
+            <ch.mitoco.model.ModelAttributContent>
+              <type>Loch 05</type>
+              <value>0</value>
+            </ch.mitoco.model.ModelAttributContent>
+             <ch.mitoco.model.ModelAttributContent>
+              <type>Loch 06</type>
+              <value>0</value>
+            </ch.mitoco.model.ModelAttributContent>
+             <ch.mitoco.model.ModelAttributContent>
+              <type>Loch 07</type>
+              <value>0</value>
+            </ch.mitoco.model.ModelAttributContent>
+             <ch.mitoco.model.ModelAttributContent>
+              <type>Loch 08</type>
+              <value>0</value>
+            </ch.mitoco.model.ModelAttributContent>
+             <ch.mitoco.model.ModelAttributContent>
+              <type>Loch 09</type>
+              <value>0</value>
+            </ch.mitoco.model.ModelAttributContent>
+             <ch.mitoco.model.ModelAttributContent>
+              <type>Loch 10</type>
+              <value>0</value>
+            </ch.mitoco.model.ModelAttributContent>
+             <ch.mitoco.model.ModelAttributContent>
+              <type>Loch 11</type>
+              <value>0</value>
+            </ch.mitoco.model.ModelAttributContent>
+             <ch.mitoco.model.ModelAttributContent>
+              <type>Loch 12</type>
+              <value>0</value>
+            </ch.mitoco.model.ModelAttributContent>
+             <ch.mitoco.model.ModelAttributContent>
+              <type>Loch 13</type>
+              <value>0</value>
+            </ch.mitoco.model.ModelAttributContent>
+             <ch.mitoco.model.ModelAttributContent>
+              <type>Loch 14</type>
+              <value>0</value>
+            </ch.mitoco.model.ModelAttributContent>
+             <ch.mitoco.model.ModelAttributContent>
+              <type>Loch 15</type>
+              <value>0</value>
+            </ch.mitoco.model.ModelAttributContent>
+             <ch.mitoco.model.ModelAttributContent>
+              <type>Loch 16</type>
+              <value>0</value>
+            </ch.mitoco.model.ModelAttributContent>
+             <ch.mitoco.model.ModelAttributContent>
+              <type>Loch 17</type>
+              <value>0</value>
+            </ch.mitoco.model.ModelAttributContent>
+             <ch.mitoco.model.ModelAttributContent>
+              <type>Loch 18</type>
+              <value>0</value>
             </ch.mitoco.model.ModelAttributContent>
           </attributcontent>
           <attributdefinition/>
           <attcolor reference="../../../../ch.mitoco.model.ModelMtObjects/objectcolor"/>
-          <Lable>Loch 1</Lable>
-          <minMax>false</minMax>
-          <direction>false</direction>
-          <zoom>0</zoom>
-        </ch.mitoco.model.ModelMtAttributs>
-        <ch.mitoco.model.ModelMtAttributs>
-          <id>0</id>
-          <attributcontent>
-            <ch.mitoco.model.ModelAttributContent>
-              <type>String</type>
-              <value></value>
-            </ch.mitoco.model.ModelAttributContent>
-          </attributcontent>
-          <attributdefinition/>
-          <attcolor reference="../../../objectcolor"/>
-          <Lable>Loch2</Lable>
+          <Lable>Scorecard</Lable>
           <minMax>false</minMax>
           <direction>false</direction>
           <zoom>0</zoom>
@@ -377,7 +430,7 @@
     </ch.mitoco.model.ModelTypDescription>
     <ch.mitoco.model.ModelTypDescription>
       <objectypeid>1</objectypeid>
-      <objectdescription>Scorcard</objectdescription>
+      <objectdescription>Scorecard</objectdescription>
     </ch.mitoco.model.ModelTypDescription>
     <ch.mitoco.model.ModelTypDescription>
       <objectypeid>2</objectypeid>
