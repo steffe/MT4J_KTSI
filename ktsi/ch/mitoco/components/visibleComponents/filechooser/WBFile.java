@@ -143,6 +143,11 @@ public class WBFile extends MTListCell
 					+File.separator + "ch"+  File.separator+"mitoco"+ File.separator+"data"+ File.separator+"filechooser"+ File.separator
 					+"video.png"), app);
 		}
+		else if(type == "xml") {
+			icon = new MTRectangle(app.loadImage(System.getProperty("user.dir")+File.separator + "ktsi"
+					+File.separator + "ch"+  File.separator+"mitoco"+ File.separator+"data"+ File.separator+"filechooser"+ File.separator
+					+"video.png"), app);
+		}
 		else if(type == "desktop") {
 			icon = new MTRectangle(app.loadImage(System.getProperty("user.dir")+File.separator + "ktsi"
 					+File.separator + "ch"+  File.separator+"mitoco"+ File.separator+"data"+ File.separator+"filechooser"+ File.separator

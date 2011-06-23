@@ -9,6 +9,7 @@ import org.mt4j.components.clipping.Clip;
 import org.mt4j.components.visibleComponents.shapes.AbstractShape;
 import org.mt4j.components.visibleComponents.shapes.MTRectangle;
 import org.mt4j.components.visibleComponents.shapes.MTRectangle.PositionAnchor;
+import org.mt4j.components.visibleComponents.shapes.MTRoundRectangle;
 import org.mt4j.components.visibleComponents.widgets.MTList;
 import org.mt4j.components.visibleComponents.widgets.MTTextArea;
 import org.mt4j.components.visibleComponents.widgets.buttons.MTImageButton;
@@ -49,7 +50,7 @@ public class FileChooserView
 		
 		
 	    //Main window
-		fc_model.window = new MTRectangle(fc_model.getScene().getMTApplication(), 0, 0, 0, 440, 520);
+		fc_model.window = new MTRoundRectangle(fc_model.getScene().getMTApplication(), 0, 0, 0, 440, 520, 5, 5);
 		fc_model.window.setGestureAllowance(RotateProcessor.class, false);
 		fc_model.window.setGestureAllowance(ScaleProcessor.class, false);
 		fc_model.window.addGestureListener(DragProcessor.class, new InertiaDragAction());
@@ -120,7 +121,9 @@ public class FileChooserView
 		fc_model.openButton.setName("openButton");
 		
 		MTTextArea ok = new MTTextArea(fc_model.getScene().getMTApplication(), 
-				FontManager.getInstance().createFont(fc_model.getScene().getMTApplication(), "arial", 15, new MTColor(0,0,0), new MTColor(0,0,0)));
+				FontManager.getInstance().createFont(fc_model.getScene().getMTApplication(), "arial.ttf", 
+						15, 	//Font size
+						MTColor.BLACK));
 		ok.setFillColor(new MTColor(150,150,150));
 		ok.setNoFill(true);
 		ok.setNoStroke(true);
@@ -142,7 +145,9 @@ public class FileChooserView
 		fc_model.cancelButton.setName("cancelButton");
 		
 		MTTextArea cancel = new MTTextArea(fc_model.getScene().getMTApplication(), 
-					FontManager.getInstance().createFont(fc_model.getScene().getMTApplication(), "arial", 15, new MTColor(0,0,0), new MTColor(0,0,0)));
+				FontManager.getInstance().createFont(fc_model.getScene().getMTApplication(), "arial.ttf", 
+						15, 	//Font size
+						MTColor.BLACK));
 		cancel.setFillColor(new MTColor(150,150,150));
 		cancel.setNoFill(true);
 		cancel.setNoStroke(true);
@@ -257,10 +262,9 @@ public class FileChooserView
 		
 		// Create text field for the cell
 		fc_model.lookInText = new MTTextArea(fc_model.getScene().getMTApplication(),
-				FontManager.getInstance().createFont(fc_model.getScene().getMTApplication(), "arial", 
-				22, 	//Font size
-				new MTColor(0, 0, 0, 255),   //Font fill color
-				new MTColor(0, 0, 0, 75)));
+				FontManager.getInstance().createFont(fc_model.getScene().getMTApplication(), "arial.ttf", 
+						15, 	//Font size
+						MTColor.BLACK));
 		fc_model.lookInText.setPickable(false);
 		fc_model.lookInText.unregisterAllInputProcessors();
 		fc_model.lookInText.setText("     "+fc_model.currDir.getName());
@@ -426,6 +430,10 @@ public class FileChooserView
 		fc_model.videosFilter = new WBFileFilter(fc_model.getScene(), (ExtensionFileFilter)fc_model.videos);
 		fc_model.videosFilter.setName("videos...");
 		fc_model.types.addListElement(fc_model.videosFilter);
+		//XML
+		fc_model.XMLFilter = new WBFileFilter(fc_model.getScene(), (ExtensionFileFilter)fc_model.xml);
+		fc_model.XMLFilter.setName("XML...");
+		fc_model.types.addListElement(fc_model.XMLFilter);
 		//All Formats
 		fc_model.allFilter = new WBFileFilter(fc_model.getScene(), null);
 		fc_model.allFilter.setName("all types...");

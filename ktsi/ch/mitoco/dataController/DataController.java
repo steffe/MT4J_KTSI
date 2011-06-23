@@ -154,8 +154,8 @@ public class DataController {
 	 * 
 	 * @return
 	 */
-	public Boolean loadSceneXML() {
-		LoadXML = new LoadXML("xstream.xml", "scenedata");
+	public Boolean loadSceneXML(String filename) {
+		LoadXML = new LoadXML(filename, "scenedata");
 			
 		if (objectcounter > 0) {
 			System.out.println("Grösser Null " + objectcounter);
@@ -164,19 +164,24 @@ public class DataController {
 			}
 		else {
 			dataModel = LoadXML.getDataModel();
+			
+			dataModel.setMtobjectlinks(new ArrayList<ModelLink>());
 			for (Iterator<ModelMtObjects> it = dataModel.getMtobjects().iterator(); it.hasNext();) {
 				myobjectList.add(new MyMTObject(mtApplication, it.next(), objectcounter, linker));
 				System.out.println("Object Gen:" + objectcounter);
 				linker.setTapAndHoldListener(getMyobjectList().get(objectcounter)); //TODO: Test
+				linker.setObjectList(myobjectList);
 				objectcounter++;
+				
 			}
+			System.out.println("Datacontroller: LoadXML "+ dataModel.getMtobjectlinks());
 			return true;
 		}
 		
 	}
 	/**Load SceneListeXML.
 	 * 
-	 * 
+	 * TODO: ueberarbeiten
 	 * @return
 	 */
 	public Boolean loadSceneListeXML() {
@@ -259,6 +264,12 @@ public class DataController {
 	 */
 	public ArrayList<MyMTObject> getMyobjectList() {
 		return myobjectList;
+	}
+	
+	/**Liefert das Datenmodel zurück */
+	public ModelScence getModelScene() {
+		
+		return dataModel;
 	}
 	
 	public void linkObjects(int object1, int object2) {

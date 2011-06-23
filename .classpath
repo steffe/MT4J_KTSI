@@ -61,5 +61,7 @@
 	<classpathentry kind="lib" path="lib/filechooser/poi-ooxml-3.7-20101029.jar"/>
 	<classpathentry kind="lib" path="lib/filechooser/poi-ooxml-schemas-3.7-20101029.jar"/>
 	<classpathentry kind="lib" path="lib/filechooser/poi-scratchpad-3.7-20101029.jar"/>
+	<classpathentry kind="lib" path="lib/GSMovie/gstreamer-java-bin-1.2.jar"/>
+	<classpathentry kind="lib" path="lib/GSMovie/gsvideo06pre.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

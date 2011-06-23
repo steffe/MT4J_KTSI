@@ -9,7 +9,7 @@ Fullscreen=false
 FullscreenExclusive=false
 #Resolution
 DisplayWidth=1024
-DisplayHeight=768
+DisplayHeight=800
 #Which display to use for fullscreen
 Display=1
 #Framerate maximum

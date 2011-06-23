@@ -33,7 +33,7 @@ public class WBFileFilter extends MTListCell
 	private ExtensionFileFilter filter;
 	
 	public WBFileFilter(MitocoScene sc, ExtensionFileFilter ff) {
-		super(400, 28, sc.getMTApplication());
+		super(sc.getMTApplication(), 400, 28);
 		this.app = sc.getMTApplication();
 		this.scene = sc;
 		this.filter = ff;

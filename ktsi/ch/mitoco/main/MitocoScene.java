@@ -200,7 +200,7 @@ public class MitocoScene extends AbstractScene {
 			}				
 		});
 		
-		fileChooser = new FileChooser(this);
+		fileChooser = new FileChooser("C:\\Workspace\\MT4J_KTSI", this);
 		
 		
 		// Standard Default ZoomAction and Pan TwoFingers
@@ -251,6 +251,7 @@ public class MitocoScene extends AbstractScene {
 			            			dataController.createObject(it2.getObjectypeid());
 				            		dataController.getMyobjectList().get(counter).setPositionGlobal(new Vector3D(ToolsMath.nextRandomInt(140, 800), ToolsMath.nextRandomInt(140, 700)));
 				            		System.out.println("Objekttyp gefunden");
+				            		
 				            		break;
 			            		}
 
@@ -302,7 +303,8 @@ public class MitocoScene extends AbstractScene {
 			          switch (cursorInputEvt.getId()) {
 			            case TapEvent.GESTURE_STARTED:
 			            	dataController.saveSceneXML();
-							MitocoScene.this.mtApplication.saveFrame();
+			            	
+							MitocoScene.this.mtApplication.saveFrame("Output-###.png");
 			              break;
 			            default:
 			              break;
@@ -336,10 +338,14 @@ public class MitocoScene extends AbstractScene {
 									counter = dataController.getObjectcounter();
 								}
 				            	*/
-				            	MitocoScene.this.getCanvas().addChild(fileChooser);
-				        		fileChooser.sendToFront();
-				            	
-				            	
+				            	//MitocoScene.this.getCanvas().addChild(fileChooser);
+				            	MitocoScene.this.getCanvas().addChild(fileChooser.getUI());
+				        		//fileChooser.sendToFront();
+				            	fileChooser.toggleFileChooser();
+				        		fileChooser.getUI().sendToFront();
+				        		
+				        		
+				        		
 				            	//linker.setTapAndHoldListener(); //TODO: Test
 								break;
 								
@@ -353,6 +359,42 @@ public class MitocoScene extends AbstractScene {
 				        return false;
 				      }
 				    };
+				    
+				    
+				    final IMTInputEventListener loadButtonInput2 = new IMTInputEventListener() {
+					      @Override
+					      public boolean processInputEvent(final MTInputEvent inEvt) {
+					        // Most input events in MT4j are an instance of AbstractCursorInputEvt (mouse, multi-touch..)
+					        if (inEvt instanceof MTFingerInputEvt) {
+					          final MTFingerInputEvt cursorInputEvt = (MTFingerInputEvt) inEvt;
+					          switch (cursorInputEvt.getId()) {
+					            case TapEvent.GESTURE_STARTED:
+					            	
+					            	if (!dataController.loadSceneXML("xstream.xml")) {
+										for (Iterator<MyMTObject> it = dataController.getMyobjectList().iterator(); it.hasNext();) {
+											getCanvas().removeChild(dataController.getMyobjectList().get(it.next().getID()));	
+										}
+										dataController.clearScene();
+										} else {
+										for (Iterator<MyMTObject> it = dataController.getMyobjectList().iterator(); it.hasNext();) {
+											getCanvas().addChild(dataController.getMyobjectList().get(it.next().getID()));	
+										}
+										counter = dataController.getObjectcounter();
+									}
+					            						            	//linker.setTapAndHoldListener(); //TODO: Test
+									break;
+									
+					            default:
+					              break;
+					          }
+					        } else {
+					          //LOG.warn("Some other event occured:" + inEvt);
+					        }
+
+					        return false;
+					      }
+					    };
+				    
 				    
 				    final IMTInputEventListener startReporting = new IMTInputEventListener() {
 					      @Override
@@ -491,10 +533,13 @@ public class MitocoScene extends AbstractScene {
         final MTMenuItem menu2 = new MTMenuItem("Action", null);
         final MTMenuItem subMenu2 = new MTMenuItem("File", null);
         final MTMenuItem subMenu221 = new MTMenuItem("Load", null);
+        final MTMenuItem subMenu223 = new MTMenuItem("LoadThomas", null);
         final MTMenuItem subMenu222 = new MTMenuItem("Save", null);
         subMenu2.addSubMenuItem(subMenu221);
         subMenu2.addSubMenuItem(subMenu222);
+        subMenu2.addSubMenuItem(subMenu223);
         
+        subMenu223.addInputEventListener(loadButtonInput2);
         subMenu221.addInputEventListener(loadButtonInput);
         subMenu222.addInputEventListener(saveButtonInput);
         
@@ -582,5 +627,22 @@ public class MitocoScene extends AbstractScene {
 	// Method to retrieve the gui overlay
 	
 	public MTComponent getGuiOverlay() { return this.getCanvas(); }
+	
+	public void drawXMLload(String filename) {
+		if (!dataController.loadSceneXML(fileChooser.getSelectionPath())) {
+			for (Iterator<MyMTObject> it = dataController.getMyobjectList().iterator(); it.hasNext();) {
+				getCanvas().removeChild(dataController.getMyobjectList().get(it.next().getID()));	
+			}
+			dataController.clearScene();
+			} else {
+			for (Iterator<MyMTObject> it = dataController.getMyobjectList().iterator(); it.hasNext();) {
+				getCanvas().addChild(dataController.getMyobjectList().get(it.next().getID()));	
+			}
+			counter = dataController.getObjectcounter();
+		}
+		
+		//linker.setTapAndHoldListener();
+		
+	}
 	
 }

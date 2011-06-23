@@ -92,7 +92,10 @@ public class SceneMitoco extends AbstractScene{
 	/** Wert für die anzahl der Plazuhalter Icons. */
 	private int emptyPlaceHolder;
 	
-	/**
+	
+	/**Anzeigen des Startmenü mit allen Scene welche in der SceneListe.xml erfasst sind.
+	 * 
+	 * Scrollbare Scenenauswahl, berechnung für zentrale Ausrichtung
 	 * 
 	 * @param mtApplication
 	 * @param name
@@ -250,6 +253,7 @@ public class SceneMitoco extends AbstractScene{
 		}else{
 			this.setTransition(new FadeTransition(app, 730));	
 		}
+		
 		
 		getCanvas().addChild(buttonClose);
 	}

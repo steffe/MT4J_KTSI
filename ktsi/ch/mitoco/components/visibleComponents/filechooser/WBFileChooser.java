@@ -30,6 +30,7 @@ import org.mt4j.util.MTColor;
 import org.mt4j.util.font.FontManager;
 import org.mt4j.util.math.Vector3D;
 
+import processing.core.PImage;
 import ch.mitoco.main.MitocoScene;
 
 /** 
@@ -77,11 +78,14 @@ public class WBFileChooser  extends MTImageButton  {
 	private WBFileFilter currFilter = null;
 	private WBFileFilter imagesFilter;
 	private WBFileFilter videosFilter;
+	private WBFileFilter xmlFilter;
 	private WBFileFilter allFilter;
 	private WBFileFilter currSelectedFilter = null;
 	private FileFilter images;
 	private FileFilter videos;
+	private FileFilter xml;
 	private FileFilter powerpoints;
+	private String selectionPath;
 	
 	//TODO Add button to hold for selecting multiple files
 	//TODO Add functionality for opening entire folders as slideshows
@@ -110,7 +114,8 @@ public class WBFileChooser  extends MTImageButton  {
 	    		new String[] { "JPG", "JPEG", "PNG", "BMP" });
 	    videos = new ExtensionFileFilter("Videos(*.wmv, *.mov, *.avi, *.flv, *mp4)", 
 	    		new String[] { "WMV", "MOV", "AVI", "FLV", "MP4" });
-	    powerpoints = new ExtensionFileFilter("PowerPoints(*.ppt)", new String[] { "PPT" });
+	    xml = new ExtensionFileFilter("XML(*.xml)", new String[] { "XML" });
+	    powerpoints = new ExtensionFileFilter("XML(*.ppt)", new String[] { "PPT" });
 
 	    //Main window
 		window = new MTRectangle(0, 0, 0, 440, 520, scene.getMTApplication());
@@ -178,6 +183,11 @@ public class WBFileChooser  extends MTImageButton  {
 		if(filter == "movie") {
 			setSelectedFileFilter(videosFilter);
 			setFileFilter(videosFilter);
+			refreshDirectory();
+		}
+		if(filter == "xml") {
+			setSelectedFileFilter(xmlFilter);
+			setFileFilter(xmlFilter);
 			refreshDirectory();
 		}
 		if(filter == "slideshow") {
@@ -283,8 +293,9 @@ public class WBFileChooser  extends MTImageButton  {
 		if(dir.isComputer()) {
 			dispDrives();
 			currDir = dir;
-			currLookInIcon.setTexture(scene.getMTApplication().loadImage(System.getProperty("user.dir")+File.separator 
-					+ "whiteboard"+File.separator +"data"+File.separator +"images"+ File.separator+ "computer.png"));
+			currLookInIcon.setTexture(scene.getMTApplication().loadImage(System.getProperty("user.dir")+File.separator + "ktsi"
+					+File.separator + "ch"+  File.separator+"mitoco"+ File.separator+"data"+ File.separator+"filechooser"+ File.separator
+					+ "computer.png"));
 		}
 		else {
 			//Fill window with directory contents
@@ -342,6 +353,21 @@ public class WBFileChooser  extends MTImageButton  {
 								target++;
 						}
 					}
+					//XMLs
+					if(allFiles || currFilter.getFilter() == xml) {
+						for(int i=0; i<size; i++) {
+							if(xml.accept(list.get(target))) {
+								WBFile tmpXML = new WBFile(scene, list.get(target));
+								fileSelector.addListElement(tmpXML);
+								tmpXML.setIcon("xml");
+								currDispFiles.add(tmpXML);
+								list.remove(list.get(target));
+							}
+							else
+								target++;
+						}
+					}
+					
 					if(allFiles) {
 						for(File file: list) {
 							WBFile tmpFile = new WBFile(scene, file);
@@ -429,9 +455,10 @@ public class WBFileChooser  extends MTImageButton  {
 		}
 		else {
         	//Add video
-        	/*
+        	
 			if(videos.accept(file) && !file.isDirectory()){
-            	MTMovieClip clip = new MTMovieClip(file.getPath(), new Vertex(20,20,0), scene.getMTApplication());
+            	/*
+				MTMovieClip clip = new MTMovieClip(file.getPath(), new Vertex(20,20,0), scene.getMTApplication());
             	clip.setName(file.getName());
             	clip.setUseDirectGL(true);
     			clip.setHeightXYGlobal(300);
@@ -441,7 +468,8 @@ public class WBFileChooser  extends MTImageButton  {
             	System.out.println("Opening: " + file.getName() + ".");
             	//Update settings
             	scene.updateSettings(clip);
-            	toggleFileChooser();
+            	*/
+				toggleFileChooser();
         	}
         	//Add image
         	else if(images.accept(file) && !file.isDirectory()){
@@ -454,17 +482,22 @@ public class WBFileChooser  extends MTImageButton  {
             	photo.setDisplayCloseButton(true);
             	photo.setHeightXYGlobal(300);
             	photo.addGestureListener(DragProcessor.class, new InertiaDragAction());
-    			scene.getLassoProcessor().addClusterable(photo); //make photo lasso-able
-    			scene.addToMediaLayer(photo);
+    			//scene.getLassoProcessor().addClusterable(photo); //make photo lasso-able
+    			scene.getCanvas().addChild(photo);
             	System.out.println("Opening: " + file.getName() + ".");
             	//Update settings
-            	scene.updateSettings(photo); 
+            	//scene.updateSettings(photo); 
+            	toggleFileChooser();
+        	}
+        	else if(xml.accept(file) && !file.isDirectory()){
+        		setSelectionPath(file.getPath());
             	toggleFileChooser();
         	}
         	// Add powerpoint
         	else if(powerpoints.accept(file) && !file.isDirectory()) {
 				// Run powerpoint to image conversion thread.
-				int numberOfSlides = 0;
+				/*
+        		int numberOfSlides = 0;
 				try{
 				numberOfSlides = PowerpointToImageConverter.powerPointToImageConversion(file.getCanonicalPath());
 				}catch(Exception e){}
@@ -483,9 +516,12 @@ public class WBFileChooser  extends MTImageButton  {
             	photo.addGestureListener(DragProcessor.class, new InertiaDragAction());
     			scene.getLassoProcessor().addClusterable(photo); //make photo lasso-able
     			scene.addToMediaLayer(photo);
+    			*/
+    			setSelectionPath(file.getPath());
+    			
             	toggleFileChooser();
         	}
-        	*/
+        	
         	//FIXME see WBSlideShow and WBImage for needed changes
         	//Add slideshow
         	/*else if(file.length == 1 && file[0].isDirectory()){
@@ -1151,5 +1187,19 @@ public class WBFileChooser  extends MTImageButton  {
 		
 
 		filetype.addChild(dropDown);
+	}
+
+	/**
+	 * @param selectionPath the selectionPath to set
+	 */
+	private void setSelectionPath(String selectionPath) {
+		this.selectionPath = selectionPath;
+	}
+
+	/**
+	 * @return the selectionPath
+	 */
+	public String getSelectionPath() {
+		return selectionPath;
 	}
 }

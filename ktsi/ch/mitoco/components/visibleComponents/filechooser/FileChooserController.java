@@ -66,7 +66,7 @@ public class FileChooserController
 					fc_model.upButton.setEnabled(true);
 					fc_model.upButton.setTexture(fc_model.getScene().getMTApplication().loadImage(System.getProperty("user.dir")+File.separator + "ktsi"
 							+File.separator + "ch"+  File.separator+"mitoco"+ File.separator+"data"+ File.separator+"filechooser"+ File.separator
-							+"UpFolder.png"));
+							+"upFolder.png"));
 				}
 				if(fc_model.stopAtDesktop && fc_model.currDir.getFile().getPath().toString().compareTo(fc_model.top.getFile().getPath().toString()) == 0) {
 					fc_model.upButton.setEnabled(false);

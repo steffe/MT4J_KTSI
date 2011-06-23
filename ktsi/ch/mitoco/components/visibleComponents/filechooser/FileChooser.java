@@ -9,13 +9,15 @@ import java.util.Stack;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileSystemView;
 
-import org.mt4j.components.TransformSpace;
+import org.mt4j.components.MTComponent;
 import org.mt4j.components.visibleComponents.shapes.MTRectangle;
+import org.mt4j.components.visibleComponents.shapes.MTRoundRectangle;
 import org.mt4j.components.visibleComponents.widgets.MTList;
 import org.mt4j.components.visibleComponents.widgets.MTTextArea;
 import org.mt4j.components.visibleComponents.widgets.buttons.MTImageButton;
 import org.mt4j.components.visibleComponents.widgets.buttons.MTSvgButton;
 import org.mt4j.components.visibleComponents.widgets.keyboard.MTKeyboard;
+import org.mt4j.input.gestureAction.InertiaDragAction;
 import org.mt4j.input.inputProcessors.IGestureEventListener;
 import org.mt4j.input.inputProcessors.MTGestureEvent;
 import org.mt4j.input.inputProcessors.componentProcessors.dragProcessor.DragProcessor;
@@ -25,14 +27,17 @@ import org.mt4j.input.inputProcessors.componentProcessors.tapProcessor.TapEvent;
 import org.mt4j.input.inputProcessors.componentProcessors.tapProcessor.TapProcessor;
 import org.mt4j.util.MTColor;
 import org.mt4j.util.math.Vector3D;
+import org.mt4j.util.math.Vertex;
 
+import processing.core.PImage;
 import ch.mitoco.main.MitocoScene;
 
 /**
  * The object used to establish filters for the types of files that can be opened by the whiteboard application.
  * Also, opens the files and imports into the application.
  */
-public class FileChooser extends MTImageButton
+public class FileChooser extends MTComponent
+//extends MTRoundRectangle
 {
 	/** Parent scene */
 	private MitocoScene scene;
@@ -50,14 +55,16 @@ public class FileChooser extends MTImageButton
 	protected WBFileFilter currFilter = null;
 	protected WBFileFilter imagesFilter;
 	protected WBFileFilter videosFilter;
+	protected WBFileFilter XMLFilter;
 	protected WBFileFilter allFilter;
 	protected WBFileFilter currSelectedFilter = null;
 	protected FileFilter images;
 	protected FileFilter videos;
+	protected FileFilter xml;
 	protected FileFilter powerpoints;
 	
 	/** GUI globals **/
-	protected MTRectangle window;
+	protected MTRoundRectangle window;
 	protected boolean windowShown;
 	protected MTList fileSelector;
 	protected MTImageButton backButton;
@@ -76,6 +83,7 @@ public class FileChooser extends MTImageButton
 	protected boolean typesShown;
 	protected MTTextArea fileText;
 	protected MTKeyboard keyb;
+	private String selectionPath;
 	
 	/**
 	 * Constructor.
@@ -93,14 +101,14 @@ public class FileChooser extends MTImageButton
 	 */
 	public FileChooser(String homeDir, final MitocoScene sc) 
 	{
-		super(sc.getMTApplication(), sc.getMTApplication().loadImage(System.getProperty("user.dir")+File.separator + "ktsi"
-				+File.separator + "ch"+  File.separator+"mitoco"+ File.separator+"data"+ File.separator+"filechooser"+ File.separator
-				+"browseButton(WB).png"));
+		//super(sc.getMTApplication(), 30, 30, 0, 40, 40, 5, 5);
+		super(sc.getMTApplication());
 		scene = sc;
 		this.setName("FileChooser");
-		this.setNoFill(false);
-		this.setNoStroke(true);
-		this.translate(new Vector3D(5,scene.getMTApplication().height-this.getHeightXY(TransformSpace.GLOBAL)-5,0));	
+		//this.setNoFill(true);
+		//this.setNoStroke(true);
+		this.translate(new Vector3D(100, 100, -10));
+		//this.setSizeLocal(400,400);
 		
 		currDir = new WBFile(scene, new File(homeDir));
 		currDispFiles = new ArrayList<WBFile>();
@@ -110,7 +118,8 @@ public class FileChooser extends MTImageButton
 	    		new String[] { "JPG", "JPEG", "PNG", "BMP" });
 	    videos = new ExtensionFileFilter("Videos(*.wmv, *.mov, *.avi, *.flv, *mp4)", 
 	    		new String[] { "WMV", "MOV", "AVI", "FLV", "MP4" });
-	    powerpoints = new ExtensionFileFilter("PowerPoints(*.ppt)", new String[] { "PPT" });
+	    xml = new ExtensionFileFilter("XML(*.xml)", new String[] { "XML" });
+	    powerpoints = new ExtensionFileFilter("PowerPoint(*.ppt)", new String[] { "PPT" });
 	    
 	    //Disable drag, rotate and scale
 		this.setGestureAllowance(DragProcessor.class, false);
@@ -142,6 +151,14 @@ public class FileChooser extends MTImageButton
 		changeDirectory(currDir);		
 				
 		FileChooserController fc_controller = new FileChooserController(this, fc_view);
+		this.addChild(window);
+		
+		this.setVisible(true);
+		this.sendToFront();
+	}
+	
+	public MTComponent getUI(){
+		return window;
 	}
 	
 	
@@ -169,6 +186,11 @@ public class FileChooser extends MTImageButton
 			setFileFilter(videosFilter);
 			refreshDirectory();
 		}
+		if(filter == "xml") {
+			setSelectedFileFilter(XMLFilter);
+			setFileFilter(XMLFilter);
+			refreshDirectory();
+		}
 		if(filter == "slideshow") {
 			setSelectedFileFilter(allFilter);
 			setFileFilter(allFilter);
@@ -176,6 +198,8 @@ public class FileChooser extends MTImageButton
 		}
 		
 		if(!windowShown) {
+			this.setVisible(true);
+			this.sendToFront();
 			window.setVisible(true);
 			window.sendToFront();
 		}
@@ -188,10 +212,13 @@ public class FileChooser extends MTImageButton
 	 */
 	public void toggleFileChooser() {
 		if(!windowShown) {
+			//this.setVisible(true);
+			//this.sendToFront();
 			window.setVisible(true);
 			window.sendToFront();
 		}
 		else 
+			//this.setVisible(false);
 			window.setVisible(false);
 		
 		windowShown = !windowShown;
@@ -288,8 +315,9 @@ public class FileChooser extends MTImageButton
 		if(dir.isComputer()) {
 			dispDrives();
 			currDir = dir;
-			currLookInIcon.setTexture(scene.getMTApplication().loadImage(System.getProperty("user.dir")+File.separator 
-					+ "whiteboard"+File.separator +"data"+File.separator +"images"+ File.separator+ "computer.png"));
+			currLookInIcon.setTexture(scene.getMTApplication().loadImage(System.getProperty("user.dir")+File.separator + "ktsi"
+					+File.separator + "ch"+  File.separator+"mitoco"+ File.separator+"data"+ File.separator+"filechooser"+ File.separator
+					+ "computer.png"));
 		}
 		else {
 			//Fill window with directory contents
@@ -347,6 +375,22 @@ public class FileChooser extends MTImageButton
 								target++;
 						}
 					}
+					target=0;
+					size = list.size();
+					if(allFiles || currFilter.getFilter() == xml) {
+						for(int i=0; i<size; i++) {
+							if(xml.accept(list.get(target))) {
+								WBFile tmpXml = new WBFile(scene, list.get(target));
+								fileSelector.addListElement(tmpXml);
+								tmpXml.setIcon("xml");
+								currDispFiles.add(tmpXml);
+								list.remove(list.get(target));
+							}
+							else
+								target++;
+						}
+					}
+					
 					if(allFiles) {
 						for(File file: list) {
 							WBFile tmpFile = new WBFile(scene, file);
@@ -360,8 +404,9 @@ public class FileChooser extends MTImageButton
 				//File system root
 				if(currDir.getFile().getParent() == null) {
 					lookInText.setText("     "+currDir.getFile().getAbsolutePath());
-					currLookInIcon.setTexture(scene.getMTApplication().loadImage(System.getProperty("user.dir")+File.separator 
-					+ "whiteboard"+File.separator +"data"+File.separator +"images"+ File.separator+ "drive.png"));
+					currLookInIcon.setTexture(scene.getMTApplication().loadImage(System.getProperty("user.dir")+File.separator + "ktsi"
+							+File.separator + "ch"+  File.separator+"mitoco"+ File.separator+"data"+ File.separator+"filechooser"+ File.separator
+							+ "drive.png"));
 				}
 				//Top desktop
 				else if(stopAtDesktop && currDir.getFile().getPath().toString().compareTo(top.getFile().getPath().toString()) == 0) {
@@ -382,9 +427,9 @@ public class FileChooser extends MTImageButton
 		//Enable back button
 		if(prevDirs.size() == 1) { //Minimize the times the image is loaded
 			backButton.setEnabled(true);
-			backButton.setTexture(scene.getMTApplication().loadImage(System.getProperty("user.dir")+File.separator 
-					+ "whiteboard"+File.separator +"data"+File.separator +"images"
-					+ File.separator+ "back.png"));
+			backButton.setTexture(scene.getMTApplication().loadImage(System.getProperty("user.dir")+File.separator + "ktsi"
+					+File.separator + "ch"+  File.separator+"mitoco"+ File.separator+"data"+ File.separator+"filechooser"+ File.separator
+					+"back.png"));
 		}
 	}
 	
@@ -422,32 +467,34 @@ public class FileChooser extends MTImageButton
     			//Disable up button if at top
     			if(currFile == top) {
     				upButton.setEnabled(false);
-        			upButton.setTexture(scene.getMTApplication().loadImage(System.getProperty("user.dir")+File.separator 
-							+ "whiteboard"+File.separator +"data"+File.separator +"images"
-							+ File.separator+ "noUpFolder.png"));
+        			upButton.setTexture(scene.getMTApplication().loadImage(System.getProperty("user.dir")+File.separator + "ktsi"
+							+File.separator + "ch"+  File.separator+"mitoco"+ File.separator+"data"+ File.separator+"filechooser"+ File.separator
+							+ "noUpFolder.png"));
     			}
     			else {
         			upButton.setEnabled(true);
-        			upButton.setTexture(scene.getMTApplication().loadImage(System.getProperty("user.dir")+File.separator 
-							+ "whiteboard"+File.separator +"data"+File.separator +"images"
-							+ File.separator+ "upFolder.png"));
+        			upButton.setTexture(scene.getMTApplication().loadImage(System.getProperty("user.dir")+File.separator + "ktsi"
+							+File.separator + "ch"+  File.separator+"mitoco"+ File.separator+"data"+ File.separator+"filechooser"+ File.separator
+							+"upFolder.png"));
     			}
 			}
 		}
 		else {
         	//Add video
-			/*
+			
         	if(videos.accept(file) && !file.isDirectory()){
-            	MTMovieClip clip = new MTMovieClip(file.getPath(), new Vertex(20,20,0), scene.getMTApplication());
+            	
+        		MTMovieClip clip = new MTMovieClip(file.getPath(), new Vertex(20,20,0),scene);
             	clip.setName(file.getName());
             	clip.setUseDirectGL(true);
     			clip.setHeightXYGlobal(300);
     			clip.addGestureListener(DragProcessor.class, new InertiaDragAction());
-    			scene.getLassoProcessor().addClusterable(clip); //make clip lasso-able
-    			scene.addToMediaLayer(clip);
+    			//scene.getLassoProcessor().addClusterable(clip); //make clip lasso-able
+    			scene.getCanvas().addChild(clip);
             	System.out.println("Opening: " + file.getName() + ".");
             	//Update settings
-            	scene.updateSettings(clip);
+            	//scene.updateSettings(clip);
+            	
             	toggleFileChooser();
         	}
         	//Add image
@@ -460,17 +507,24 @@ public class FileChooser extends MTImageButton
             	photo.setNoStroke(true);
             	photo.setDisplayCloseButton(true);
             	photo.setHeightXYGlobal(300);
-            	photo.addGestureListener(DragProcessor.class, new InertiaDragAction());
-    			scene.getLassoProcessor().addClusterable(photo); //make photo lasso-able
-    			scene.addToMediaLayer(photo);
+            	//photo.addGestureListener(DragProcessor.class, new InertiaDragAction());
+    			//scene.getLassoProcessor().addClusterable(photo); //make photo lasso-able
+    			scene.getCanvas().addChild(photo);
             	System.out.println("Opening: " + file.getName() + ".");
             	//Update settings
-            	scene.updateSettings(photo); 
+            	//scene.updateSettings(photo); 
             	toggleFileChooser();
         	}
-        	// Add powerpoint
+        	// Add xml
+        	else if(xml.accept(file) && !file.isDirectory()){
+        		selectionPath = file.getPath();
+            	scene.drawXMLload(getSelectionPath());
+            	toggleFileChooser();
+        	}
+        	
         	else if(powerpoints.accept(file) && !file.isDirectory()) {
-				// Run powerpoint to image conversion thread.
+				/*
+        		// Run powerpoint to image conversion thread.
 				int numberOfSlides = 0;
 				try{
 				numberOfSlides = PowerpointToImageConverter.powerPointToImageConversion(file.getCanonicalPath());
@@ -490,9 +544,12 @@ public class FileChooser extends MTImageButton
             	photo.addGestureListener(DragProcessor.class, new InertiaDragAction());
     			scene.getLassoProcessor().addClusterable(photo); //make photo lasso-able
     			scene.addToMediaLayer(photo);
+            	*/
+            	selectionPath = file.getPath();
+            	scene.drawXMLload(getSelectionPath());
             	toggleFileChooser();
         	}
-        	*/
+        	
         	//FIXME see WBSlideShow and WBImage for needed changes
         	//Add slideshow
         	/*else if(file.length == 1 && file[0].isDirectory()){
@@ -526,7 +583,7 @@ public class FileChooser extends MTImageButton
     					"There weren't any images in that folder!"));
         		}
         	} */
-        	//else {
+        	else {
         		//Unreadable drive
         		if(FileSystemView.getFileSystemView().isDrive(currFile.getFile())) {
             		scene.getGuiOverlay().addChild(new WBErrorMessage(scene, 
@@ -541,8 +598,23 @@ public class FileChooser extends MTImageButton
             		scene.getGuiOverlay().addChild(new WBErrorMessage(scene, 
     				"Can't open file of that type!"));
             	}
-        	//}
-		}
+        	}
+        }
+        	
+	}
+
+	/**
+	 * @param selectionPath the selectionPath to set
+	 */
+	final void setSelectionPath(String selectionPath) {
+		this.selectionPath = selectionPath;
+	}
+
+	/**
+	 * @return the selectionPath
+	 */
+	public String getSelectionPath() {
+		return selectionPath;
 	}
 
 
