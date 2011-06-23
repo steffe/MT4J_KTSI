@@ -1,13 +1,8 @@
 package ch.mitoco.components.visibleComponents;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Random;
 
-import javax.smartcardio.ATR;
-
-import org.apache.batik.anim.SetAnimation;
 import org.mt4j.MTApplication;
 import org.mt4j.components.MTComponent;
 import org.mt4j.components.TransformSpace;
@@ -15,7 +10,6 @@ import org.mt4j.components.visibleComponents.shapes.MTRoundRectangle;
 import org.mt4j.components.visibleComponents.widgets.MTTextArea;
 import org.mt4j.components.visibleComponents.widgets.buttons.MTImageButton;
 import org.mt4j.input.IMTInputEventListener;
-import org.mt4j.input.MTEvent;
 import org.mt4j.input.gestureAction.DefaultDragAction;
 import org.mt4j.input.gestureAction.DefaultRotateAction;
 import org.mt4j.input.gestureAction.DefaultScaleAction;
@@ -36,13 +30,10 @@ import org.mt4j.util.font.FontManager;
 import org.mt4j.util.font.IFont;
 import org.mt4j.util.math.ToolsMath;
 import org.mt4j.util.math.Vector3D;
-import org.mt4jx.input.gestureAction.dnd.DragAndDropAction;
 import org.mt4jx.input.gestureAction.dnd.DragAndDropTarget;
-import org.mt4jx.input.inputProcessors.componentProcessors.Group3DProcessorNew.IClusterEventListener;
 
-
+import processing.core.PImage;
 import ch.mitoco.components.visibleComponents.objectlink.MTLinkController;
-import ch.mitoco.components.visibleComponents.widgets.Attributes;
 import ch.mitoco.components.visibleComponents.widgets.Attributes;
 import ch.mitoco.components.visibleComponents.widgets.MTColorPickerGroup;
 import ch.mitoco.components.visibleComponents.widgets.MTDropDownList;
@@ -51,10 +42,8 @@ import ch.mitoco.components.visibleComponents.widgets.MTNumField;
 import ch.mitoco.components.visibleComponents.widgets.MTPictureBox;
 import ch.mitoco.components.visibleComponents.widgets.MTTextAttribut;
 import ch.mitoco.model.ModelAttributContent;
-import ch.mitoco.model.ModelAttributDefinition;
 import ch.mitoco.model.ModelMtAttributs;
 import ch.mitoco.model.ModelMtObjects;
-import processing.core.PImage;
 
 /**
  * 
@@ -321,7 +310,7 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 	 * ID 1: 	MTNumField
 	 * ID 2: 	MTDropDown
 	 * ID 3: 	MTPictureBox
-	 * ID 4:    
+	 * ID 4:    MTListAttribut
 	 * ID 5:	futur MTPainter
 	 * ID 6:	futur MTBrowser
 	 * ID 7:	futur MTPDFReader
@@ -396,7 +385,7 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 				System.out.println("MyMTObject: " + i + "Attributs MTListAttribut " + it  + " " + difx);
 				difx = difx + cap + readAttributHeight(i, defaultHeightListAttribut) / 2;
 				if (i == 0) difx += captop;
-				//myAttributs.add(new MTListAttribut(pApplet, attributesmodel.get(i),fontArialMini, 250, readAttributHight(i, defaultHeightListAttribut), "Löcher", labelfont));
+				myAttributs.add(new MTListAttribut(pApplet, attributesmodel.get(i),fontArialMini, 250, readAttributHeight(i, defaultHeightListAttribut), "Löcher", labelfont));
 				myAttributs.get(i).setPositionRelativeToParent(new Vector3D(this.getWidthXY(TransformSpace.LOCAL) / 2, difx));
 				difx = difx + readAttributHeight(i, defaultHeightListAttribut) / 2;
 				break;

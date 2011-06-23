@@ -107,7 +107,7 @@ public class DataController {
 		myobjectList.add(new MyMTObject(mtApplication, dataModel.getMtobjects().get(objectcounter), objectcounter, linker));
 		
 		System.out.println("DataController:  ObjektListe lokal: "+ myobjectList );
-		linker.setObjectList(myobjectList);
+		linker.setObjectList(myobjectList, dataModel.getMtobjectlinks());
 		linker.setTapAndHoldListener(myobjectList.get(objectcounter)); //TODO: Test
 		
 		objectcounter++;
@@ -170,7 +170,7 @@ public class DataController {
 				myobjectList.add(new MyMTObject(mtApplication, it.next(), objectcounter, linker));
 				System.out.println("Object Gen:" + objectcounter);
 				linker.setTapAndHoldListener(getMyobjectList().get(objectcounter)); //TODO: Test
-				linker.setObjectList(myobjectList);
+				linker.setObjectList(myobjectList, dataModel.getMtobjectlinks());
 				objectcounter++;
 				
 			}
@@ -200,7 +200,7 @@ public class DataController {
 				linker.setTapAndHoldListener(getMyobjectList().get(objectcounter)); //TODO: Test
 				objectcounter++;
 			}
-			linker.setObjectList(myobjectList);
+			linker.setObjectList(myobjectList, dataModel.getMtobjectlinks());
 			return true;
 		}
 		
@@ -268,7 +268,6 @@ public class DataController {
 	
 	/**Liefert das Datenmodel zurück */
 	public ModelScence getModelScene() {
-		
 		return dataModel;
 	}
 	

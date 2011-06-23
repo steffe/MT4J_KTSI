@@ -404,7 +404,7 @@ public class MitocoScene extends AbstractScene {
 					          final MTFingerInputEvt cursorInputEvt = (MTFingerInputEvt) inEvt;
 					          switch (cursorInputEvt.getId()) {
 					            case TapEvent.GESTURE_STARTED:
-					            	new MitocoReporting(mtApplication, "ReportingAp", MitocoScene.this);
+					            	new MitocoReporting(mtApplication, "ReportingAp", MitocoScene.this, dataController, 1);
 									break;
 									
 					            default:
