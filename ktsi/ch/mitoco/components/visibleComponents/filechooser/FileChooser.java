@@ -73,7 +73,7 @@ public class FileChooser extends MTComponent
 	protected MTSvgButton closeButton;
 	protected MTImageButton cancelButton;
 	protected MTImageButton dropDown;
-	protected MTRectangle lookIn;
+	protected MTRoundRectangle lookIn;
 	protected MTRectangle currLookInIcon;
 	protected MTTextArea lookInText;
 	protected boolean lookInShown;

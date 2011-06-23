@@ -31,6 +31,7 @@ import org.mt4j.input.inputProcessors.componentProcessors.unistrokeProcessor.Uni
 import org.mt4j.input.inputProcessors.componentProcessors.zoomProcessor.ZoomProcessor;
 import org.mt4j.input.inputProcessors.globalProcessors.CursorTracer;
 import org.mt4j.sceneManagement.AbstractScene;
+import org.mt4j.util.MT4jSettings;
 import org.mt4j.util.MTColor;
 import org.mt4j.util.animation.AnimationEvent;
 import org.mt4j.util.animation.IAnimation;
@@ -40,7 +41,7 @@ import org.mt4j.util.font.FontManager;
 import org.mt4j.util.font.IFont;
 import org.mt4j.util.math.ToolsMath;
 import org.mt4j.util.math.Vector3D;
-import org.mt4jx.util.animation.AnimationUtil;
+import org.mt4jx.components.visibleComponents.widgets.MTWebBrowser;
 
 import ch.mitoco.components.visibleComponents.MyMTObject;
 import ch.mitoco.components.visibleComponents.filechooser.FileChooser;
@@ -341,7 +342,7 @@ public class MitocoScene extends AbstractScene {
 				            	//MitocoScene.this.getCanvas().addChild(fileChooser);
 				            	MitocoScene.this.getCanvas().addChild(fileChooser.getUI());
 				        		//fileChooser.sendToFront();
-				            	fileChooser.toggleFileChooser();
+				            	fileChooser.toggleFileChooser("xml");
 				        		fileChooser.getUI().sendToFront();
 				        		
 				        		
@@ -426,7 +427,19 @@ public class MitocoScene extends AbstractScene {
 				            final MTFingerInputEvt cursorInputEvt = (MTFingerInputEvt) inEvt;
 				            switch (cursorInputEvt.getId()) {
 				              case TapEvent.GESTURE_STARTED:
-				                AnimationUtil.scaleIn(dataController.getMyobjectList().get(0));
+				            	  for (MyMTObject it : dataController.getMyobjectList()) {
+				            		  if (it.getTagFlag()) {
+				            			  
+				            			  showObjects(it); 
+				            			  //dataController.getMyobjectList()
+				            			it.setVisible(true);
+				            			//AnimationUtil.scaleIn(it);
+				            		  }
+				            		  System.out.println("hide2:"+it);
+				            	  }
+				            	  
+				            	  //AnimationUtil.scaleIn(dataController.getMyobjectList().get(0));
+				                
 				                break;
 				              default:
 				                break;
@@ -449,8 +462,11 @@ public class MitocoScene extends AbstractScene {
 					              case TapEvent.GESTURE_STARTED:
 					            	  for (MyMTObject it : dataController.getMyobjectList()) {
 					            		  if (it.getTagFlag()) {
-					            			  AnimationUtil.scaleOut(it, false); 
+					            			  //AnimationUtil.scaleOut(it, false);
+					            			  hideObjects(it);
+					            			  //it.setVisible(false);
 					            		  }
+					            		  System.out.println("hide2:"+it);
 					            		  
 					            	  }
 					               
@@ -465,8 +481,31 @@ public class MitocoScene extends AbstractScene {
 					          return false;
 					        }
 					      };
-				      
-				      
+					      
+					      final IMTInputEventListener browserListener = new IMTInputEventListener() {
+					          @Override
+					          public boolean processInputEvent(final MTInputEvent inEvt) {
+					            // Most input events in MT4j are an instance of AbstractCursorInputEvt (mouse, multi-touch..)
+					            if (inEvt instanceof MTFingerInputEvt) {
+					              final MTFingerInputEvt cursorInputEvt = (MTFingerInputEvt) inEvt;
+					              switch (cursorInputEvt.getId()) {
+					                case TapEvent.GESTURE_STARTED:
+					                	 MTWebBrowser browser = new MTWebBrowser(getMTApplication(), 800, 600);
+											browser.setFillColor(new MTColor(180,180,180,200));
+											browser.setStrokeColor(MTColor.BLACK);
+											getCanvas().addChild(browser);
+											browser.setPositionGlobal(MT4jSettings.getInstance().getWindowCenter());
+					                   break;
+					                 default:
+					                      break;
+					                  }
+					                } else {
+					                  //LOG.warn("Some other event occured:" + inEvt);
+					                }
+					                return false;
+					              }
+					        };
+
 				      final IMTInputEventListener hideInputListener = new IMTInputEventListener() {
 				          @Override
 				          public boolean processInputEvent(final MTInputEvent inEvt) {
@@ -475,7 +514,7 @@ public class MitocoScene extends AbstractScene {
 				              final MTFingerInputEvt cursorInputEvt = (MTFingerInputEvt) inEvt;
 				              switch (cursorInputEvt.getId()) {
 				                case TapEvent.GESTURE_STARTED:
-				                	hideObjects(dataController.getMyobjectList().get(0));
+				                	//hideObjects(dataController.getMyobjectList().get(0));
 				                   break;
 				                 default:
 				                      break;
@@ -525,7 +564,10 @@ public class MitocoScene extends AbstractScene {
         subMenu5.addSubMenuItem(new MTMenuItem("New", null));
         subMenu5.addSubMenuItem(new MTMenuItem("Old", null));
         subMenu5.addSubMenuItem(new MTMenuItem("Color", null));
-        subMenu5.addSubMenuItem(new MTMenuItem("Text", null));
+        //subMenu5.addSubMenuItem(new MTMenuItem("Browser", null));
+        final MTMenuItem subMenu51 = new MTMenuItem("Browser", null);
+        subMenu51.addInputEventListener(browserListener);
+        subMenu5.addSubMenuItem(subMenu51);
         subMenu5.addSubMenuItem(new MTMenuItem("Special", null));
 
         menu1.addSubMenuItem(subMenu5);
@@ -597,13 +639,13 @@ public class MitocoScene extends AbstractScene {
         this.getCanvas().addChild(mtRadialMenu1);
       }
 	
-	/**Ausblenden von aktivierten Objekten
+	/**Einblenden von aktivierten Objekten
 	 * 
 	 * @param as
 	 */
-	  private static void hideObjects(final MTPolygon as) {
+	  private static void showObjects(final MTPolygon as) {
 		    final float width = as.getWidthXY(TransformSpace.RELATIVE_TO_PARENT);
-		    final IAnimation closeAnim = new AniAnimation(1, width, 5000, AniAnimation.BOUNCE_IN, as);
+		    final IAnimation closeAnim = new AniAnimation(1, width, 500, AniAnimation.ELASTIC_IN, as);
 
 		    closeAnim.addAnimationListener(new IAnimationListener() {
 		      @Override
@@ -621,6 +663,36 @@ public class MitocoScene extends AbstractScene {
 
 		    closeAnim.start();
 		  }
+	  
+	  
+	  /**Ausblenden von aktivierten Objekten
+		 * 
+		 * @param as
+		 */
+		  private static void hideObjects(final MTPolygon as) {
+			    final float width = as.getWidthXY(TransformSpace.RELATIVE_TO_PARENT);
+			    final IAnimation closeAnim = new AniAnimation(1, width, 500, AniAnimation.EXPO_OUT, as);
+
+			    closeAnim.addAnimationListener(new IAnimationListener() {
+			      @Override
+			      public void processAnimationEvent(final AnimationEvent ae) {
+			        switch (ae.getId()) {
+			          case AnimationEvent.ANIMATION_UPDATED:
+			            final float currentVal = ae.getValue();
+			            as.setWidthXYRelativeToParent(currentVal);
+			            break;
+			          case AnimationEvent.ANIMATION_ENDED:
+			        	  as.setVisible(false);
+			          default:
+			            break;
+			        }// switch
+			      }// processanimation
+			    });
+			    
+			    closeAnim.start();
+			    //as.setVisible(false);
+			  }
+	  
 	  
 	// Method to retrieve the File Chooser
 	public FileChooser getFc() { return fileChooser; }

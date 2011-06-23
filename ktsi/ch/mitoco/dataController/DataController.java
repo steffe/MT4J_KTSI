@@ -266,9 +266,19 @@ public class DataController {
 		return myobjectList;
 	}
 	
-	/**Liefert das Datenmodel zurück */
+	/**Liefert das Datenmodel zurück.
+	 * @return
+	 */
 	public ModelScence getModelScene() {
 		return dataModel;
+	}
+	
+	/**Liefert den Link Kontroller zurück.
+	 * 
+	 * @return linker MTLinkController
+	 */
+	public MTLinkController getLinkController() {
+		return linker;
 	}
 	
 	public void linkObjects(int object1, int object2) {

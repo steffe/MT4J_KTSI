@@ -239,7 +239,7 @@ public class HelloWorldScene extends AbstractScene {
 				          final MTFingerInputEvt cursorInputEvt = (MTFingerInputEvt) inEvt;
 				          switch (cursorInputEvt.getId()) {
 				            case TapEvent.GESTURE_STARTED:
-				            	if (!dataController.loadSceneXML()) {
+				            	if (!dataController.loadSceneXML("Test")) {
 									for (Iterator<MyMTObject> it = dataController.getMyobjectList().iterator(); it.hasNext();) {
 										getCanvas().removeChild(dataController.getMyobjectList().get(it.next().getID()));	
 									}

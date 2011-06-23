@@ -41,10 +41,9 @@ public class WBFileFilter extends MTListCell
 		
 		// Create text field for the cell
 		textBox = new MTTextArea(app,
-				FontManager.getInstance().createFont(app, "arial", 
-				22, 	//Font size
-				new MTColor(0, 0, 0, 255),   //Font fill color
-				new MTColor(0, 0, 0, 75)));
+				FontManager.getInstance().createFont(app, "arial.ttf", 
+						15, 	//Font size
+						MTColor.BLACK));
 		textBox.setPickable(false);
 		if(filter == null)
 			textBox.setText("All Formats");

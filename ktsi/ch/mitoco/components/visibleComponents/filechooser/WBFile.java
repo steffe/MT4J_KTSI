@@ -60,9 +60,9 @@ public class WBFile extends MTListCell
 		// Create text field for the cell
 		textBox = new MTTextArea(app,
 				FontManager.getInstance().createFont(app, "arial", 
-				22, 	//Font size
-				new MTColor(0, 0, 0, 255),   //Font fill color
-				new MTColor(0, 0, 0, 75)));
+						22, 	//Font size
+						new MTColor(0, 0, 0, 255),   //Font fill color
+						new MTColor(0, 0, 0, 75)));
 		textBox.setPickable(false);
 		if(inFile.getParent() == null) {
 			if(file.canRead()) 

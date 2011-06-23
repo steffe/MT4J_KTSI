@@ -207,8 +207,8 @@ public class FileChooserView
 			}
 		}
 		fc_model.lookInDropDown.setVisible(false);
-		
-		fc_model.lookIn = new MTRectangle (0,0,280, 30, fc_model.getScene().getMTApplication());
+										
+		fc_model.lookIn = new MTRoundRectangle (fc_model.getScene().getMTApplication(), 0, 0, 0, 280, 30, 5, 5);
 		fc_model.lookIn.translate(new Vector3D(20,15));
 		fc_model.lookIn.setStrokeColor(new MTColor(0,0,0, 150));
 		fc_model.lookIn.setStrokeWeight(2);
@@ -293,9 +293,9 @@ public class FileChooserView
 		fc_model.window.addChild(filenameText);
 		filenameText.translate(new Vector3D(20, 382));
         
-		fc_model.fileText = new MTTextArea(fc_model.getScene().getMTApplication(), FontManager.getInstance().createFont(fc_model.getScene().getMTApplication(), "arial", 22, 
-        		new MTColor(0,0,0,255), //Fill color 
-				new MTColor(0,0,0,75))); //Stroke color
+		fc_model.fileText = new MTTextArea(fc_model.getScene().getMTApplication(), FontManager.getInstance().createFont(fc_model.getScene().getMTApplication(), "arial.ttf", 
+				15, 	//Font size
+				MTColor.BLACK)); //Stroke color
         filenameText.setNoFill(true);
 		filenameText.setNoStroke(true);
 		fc_model.fileText.setPickable(false);
@@ -324,7 +324,9 @@ public class FileChooserView
 			       // flickrButton.setBoundsPickingBehaviour(AbstractShape.BOUNDS_ONLY_CHECK);
 			        
 			        MTTextArea ok = new MTTextArea(fc_model.getScene().getMTApplication(), 
-							FontManager.getInstance().createFont(fc_model.getScene().getMTApplication(), "arial", 15, new MTColor(0,0,0), new MTColor(0,0,0)));
+			        		FontManager.getInstance().createFont(fc_model.getScene().getMTApplication(), "arial.ttf", 
+									15, 	//Font size
+									MTColor.BLACK));
 					ok.setFillColor(new MTColor(150,150,150));
 					ok.setNoFill(true);
 					ok.setNoStroke(true);
@@ -400,10 +402,9 @@ public class FileChooserView
 		//File type
 		// Create text area for the file name
 		MTTextArea filetypeText = new MTTextArea(fc_model.getScene().getMTApplication(),
-				FontManager.getInstance().createFont(fc_model.getScene().getMTApplication(), "arial", 
-				22, 	//Font size
-				new MTColor(0, 0, 0, 255),   //Font fill color
-				new MTColor(0, 0, 0, 75)));
+				FontManager.getInstance().createFont(fc_model.getScene().getMTApplication(), "arial.ttf", 
+						15, 	//Font size
+						MTColor.BLACK));
 		filetypeText.setGestureAllowance(DragProcessor.class, false);
 		filetypeText.setGestureAllowance(RotateProcessor.class, false);
 		filetypeText.setGestureAllowance(ScaleProcessor.class, false);
@@ -486,10 +487,9 @@ public class FileChooserView
 		
 		// Create text field for the cell
 		fc_model.typeText = new MTTextArea(fc_model.getScene().getMTApplication(),
-				FontManager.getInstance().createFont(fc_model.getScene().getMTApplication(), "arial", 
-				22, 	//Font size
-				new MTColor(0, 0, 0, 255),   //Font fill color
-				new MTColor(0, 0, 0, 75)));
+				FontManager.getInstance().createFont(fc_model.getScene().getMTApplication(), "arial.ttf", 
+						15, 	//Font size
+						MTColor.BLACK));
 		fc_model.typeText.setGestureAllowance(DragProcessor.class, false);
 		fc_model.typeText.setGestureAllowance(RotateProcessor.class, false);
 		fc_model.typeText.setGestureAllowance(ScaleProcessor.class, false);

@@ -18,6 +18,7 @@ import org.mt4j.util.math.Plane;
 import org.mt4j.util.math.Ray;
 import org.mt4j.util.math.Tools3D;
 import org.mt4j.util.math.Vector3D;
+import org.mt4j.util.opengl.GL10;
 import org.mt4j.util.opengl.GLTexture;
 
 import processing.core.PApplet;
@@ -267,7 +268,7 @@ public class MTWebView extends MTRectangle{
 		if (webView.isDirty()) {
 			RenderBuffer renderBuffer = webView.render();
 			if (renderBuffer != null) {
-				GL gl = (GL) Tools3D.getGL(getRenderer());
+				GL10 gl = Tools3D.getGL(getRenderer());
 				gl.glBindTexture(texture.getTextureTarget(), texture.getTextureID());
 				gl.glTexImage2D(texture.getTextureTarget(), 0, GL.GL_RGBA, this.browserWidth, this.browserHeight, 0, 0x80E1, GL.GL_UNSIGNED_BYTE,
 					renderBuffer.getBuffer());
