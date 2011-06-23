@@ -98,21 +98,41 @@ public class MTListAttribut extends Attributes {
 	 /** Abstract MT Application.*/
 	 private AbstractMTApplication app1;
 	 
-	private IFont fontArialMini;
-	private ArrayList<MTTextArea> al;
-	private ArrayList<MTTextArea> algt;
-	private HashMap<String, String> hm;
-	private int i;
-	private String defaultString;
-	private String defaultLabelText;
-	private int h = 1;
-	private MTRowLayout2D rowLayout;
-	private ArrayList<MTRoundRectangle> alrr; 
-
-
+	 /** Fonttype Attributtext. */
+	 private IFont fontArialMini;
 	 
-	 //public MTListAttribut(final AbstractMTApplication app, ModelMtAttributs model, final IFont fontArialMini, final int width, final int height, final String labeltext, final IFont labelfont) {
-	 public MTListAttribut(final AbstractMTApplication app, ModelMtAttributs model, final IFont fontArialMini, final int width, final int height, final String labelname, final IFont labelfont) {
+	 /** ArrayList for Values in Scorecard. */
+	 private ArrayList<MTTextArea> al;
+	 
+	 /** ArrayList for Keys in Scorecard. */
+	 private ArrayList<MTTextArea> algt;
+	
+	 /** HashMap for actual Values from XML to be sorted*/
+	 private HashMap<String, String> hm;
+	 
+	 /** Default String for MTList Keys. */
+	 private String defaultString;
+	 
+	 /** Default Label Text for MTList. */
+	 private String defaultLabelText;
+	 
+	 /** Counter which is needed in several methods to calculate the Hole Number. */
+	 private int h = 1;
+	 
+	 /** ArrayList where Keys and Values from al and algt ArrayLists are stored. */
+	 private ArrayList<MTRoundRectangle> alrr; 
+
+
+	 /** Default Constructor. 
+	  *  @param app MTApplication Object
+	  *  @param model DataModel where Attributs are read 
+	  *  @param fontArialMini FontType for Attributtext
+	  *  @param width Width for this Object
+	  *  @param height Height for this Object
+	  *  @param labelname Name of the Label
+	  *  @param labelfont FontType for the Label
+	  * */
+	public MTListAttribut(final AbstractMTApplication app, final ModelMtAttributs model, final IFont fontArialMini, final int width, final int height, final String labelname, final IFont labelfont) {
 			super(app);
 		
 			this.model = model;
@@ -132,9 +152,15 @@ public class MTListAttribut extends Attributes {
 			this.height = height;
 			this.width = width;
 			this.init(app, fontArialMini);	
-		}
+	}
+	
+	/** Init Method to create the Object.
+	 * 
+	 * @param app MTApplication Object
+	 * @param font FontType for Attributtext
+	 */
 	 
-		private void init(final AbstractMTApplication app, final IFont font) {
+	private void init(final AbstractMTApplication app, final IFont font) {
 			this.iF = font;
 			app1 = app;
 			fontsize = iF.getOriginalFontSize();	
@@ -145,8 +171,7 @@ public class MTListAttribut extends Attributes {
 			this.setSizeLocal(width, height);
 			this.setFillColor(blue1);
 			this.setStrokeColor(MTColor.BLACK);
-			
-			
+						
 			label = new MTTextArea(app, 0, -labelfont.getOriginalFontSize(), width - 100, height, labelfont);
 			label.setInnerPadding(0);
 			label.setNoFill(true);
@@ -229,21 +254,8 @@ public class MTListAttribut extends Attributes {
 				
 				//Move one Child
 				al.get(h).translate(new Vector3D(95, 0));
-
-	            //System.out.println("Key :" + key);
-	            //System.out.println("value :" + value);
 	            h++;
 	        }
-			
-			/*
-			MTRoundRectangle mtr = new MTRoundRectangle(app, 0, 0, 0, width, 30, 5, 5);
-			mtr.addChild(algt.get(0));
-			mtr.addChild(al.get(0));
-			mtr.setFillColor(MTColor.GREEN);
-			*/
-			//al.get(0).translate(new Vector3D(95, 0));
-			
-			
 
 			fontArialMini = FontManager.getInstance().createFont(app, "arial.ttf", 
 					14, 	//Font size
@@ -254,11 +266,8 @@ public class MTListAttribut extends Attributes {
 			lista.setNoStroke(true);
 			lista.addGestureListener(DragProcessor.class, new InertiaDragAction());
 			
-			for (i = 0; i < al.size(); i++) {
-			//for (i = 0; i < hm.size(); i++) {
-				
+			for (int i = 0; i < al.size(); i++) {
 				//Hier kann man Groesse der eigentlichen Zelle verändern
-				//MTListCell cell = new MTListCell(app, al.get(i).getWidthXY(TransformSpace.LOCAL) + 100, al.get(i).getHeightXY(TransformSpace.LOCAL));
 				MTListCell cell = new MTListCell(app, 200, 30);
 				cell.setNoFill(true);
 				cell.registerInputProcessor(new TapProcessor(app, 15));
@@ -282,18 +291,6 @@ public class MTListAttribut extends Attributes {
 							
 								textKeyboard.addTextInputListener(al.get(Integer.valueOf(ge.getCurrentTarget().getName())));
 								
-								/* Try and Catch Example (catch ist interessant)
-								try {
-									//System.out.println("Out: " + list.get(ge.getCurrentTarget().getID()).getText());
-									System.out.println(list.get(Integer.valueOf(ge.getCurrentTarget().getName())).getText());
-								
-								} catch (IndexOutOfBoundsException ioobe){
-									System.err.println("Fehler!!");
-								}
-								*/
-														
-								//numKeyText.setText(hm.get(Integer.valueOf(ge.getCurrentTarget().getName())).getText());
-															
 								addChild(textKeyboard);
 							
 								textKeyboard.setPositionRelativeToParent(new Vector3D(textKeyboard.getWidthXY(TransformSpace.LOCAL) / 2, textKeyboard.getWidthXY(TransformSpace.LOCAL) / 2 + 50));
@@ -323,12 +320,12 @@ public class MTListAttribut extends Attributes {
 			
 			this.setVisible(true);
 			createColorPicker();
-			
 		}
 		
 		/** 
 		 * Write data in Datamodel.
-		 * @param test 
+		 * @param key Key to find the corresponding Entry in XML
+		 * @param val Value to write to the corresponding Key Entry in XML
 		 */
 		public final void dataWrite(final String key, final String val) {
 			for (ModelAttributContent it : model.getAttributcontent()) {
@@ -341,12 +338,7 @@ public class MTListAttribut extends Attributes {
 			model.setAttcolor(getFillColor());
 		}
 		
-		/** 
-		 * Read from datamodel and insert in the gui elements.
-		 *
-		 * @param defaultString String 
-		 * @param defaultlabeltext String
-		 */
+		/** Read from datamodel and insert in the gui elements. */
 		private void dataRead() {
 			// Data transfer for value
 			if (model.getAttributcontent() == null) {
@@ -360,9 +352,7 @@ public class MTListAttribut extends Attributes {
 			}
 		}
 		
-		/** 
-		 * Colorpicker.
-		 */
+		/** Colorpicker. */
 		private void createColorPicker() {
 	   
 	        PImage colPick = app1.loadImage("ch" + MTApplication.separator + "mitoco" + MTApplication.separator + "data" + MTApplication.separator +  "colorcircletr.png");
@@ -427,8 +417,6 @@ public class MTListAttribut extends Attributes {
 			label.setVisible(true);
 			colPickButton.setVisible(true);
 		}
-		
-
 
 		/** 
 		 * Set Value Text.
