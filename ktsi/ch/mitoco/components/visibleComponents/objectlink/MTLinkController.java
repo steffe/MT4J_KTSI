@@ -36,6 +36,9 @@ import com.sun.org.apache.bcel.internal.generic.NEW;
 
 import ch.mitoco.components.visibleComponents.MyMTObject;
 import ch.mitoco.components.visibleComponents.widgets.Attributes;
+import ch.mitoco.model.ModelLink;
+import ch.mitoco.model.ModelLinkDescription;
+import ch.mitoco.model.ModelTypDescription;
 import processing.core.PApplet;
 import processing.core.PGraphics;
 
@@ -54,6 +57,9 @@ public class MTLinkController {
 	/** List with all MyMTObject. */
 	private List<MyMTObject> myobjectList;
 		
+	/** Datamodel with all Link verbindungen. */
+	private List<ModelLink> modellinkList;
+	
 	/** Link.*/
 	private MTObjectLink link;
 	
@@ -71,6 +77,8 @@ public class MTLinkController {
 	
 	/** Liste mit Links.*/
 	private List<MTLink> linkliste;
+	
+	
 	
 	/** MTLinkController. 
 	 * 
@@ -109,15 +117,72 @@ public class MTLinkController {
 	}
 
 	/**
-	 * Objectliste wird gesetzt. 
+	 * Objectliste und das Data Model der Links wird gesetzt. 
 	 * @param myobjectList
 	 */
-	public synchronized void setObjectList(List<MyMTObject> myobjectList){
+	public synchronized void setObjectList(List<MyMTObject> myobjectList , List<ModelLink> modellink){
 		this.myobjectList = null;
 		this.myobjectList = myobjectList;
-		System.out.println("MTLinkController: setObjectList: ObjektListe " + this.myobjectList + " IM ÜbergabeParameter " + myobjectList);
+		System.out.println("MTLinkController: setObjectList: ObjektListe und LinkModel " + this.myobjectList + " IM ÜbergabeParameter " + myobjectList);
+		
+		this.modellinkList = null;
+		this.modellinkList = modellink;
+		
+		for(ModelLink it : modellinkList ){
+			System.out.println("MTLinkController: setObjectList: Linklist: First " + it.getFirstObject() + " Second Objekt : " + it.getSecondObject());
+		}
 		
 	}
+	
+	/**
+	 * Lesen der ModelDaten für die Links und Setzten.
+	 */
+	public void readDataAll() {
+		for (ModelLink it : modellinkList) {
+			System.out.println("MTLinkController: readDataAll: Links aus XML werden erstellt: 1: " + it.getFirstObject() + "  2: " + it.getSecondObject());
+			createLink(it.getFirstObject(), it.getSecondObject());
+			
+		}
+	}
+	
+	/**
+	 * LinkListe werden aus dem Gui in das Datamodel geschrieben.
+	 */
+	public void writeDataAll() {
+		
+		for (MTLink it : linkliste) {
+		ModelLink m1 = new ModelLink();
+		m1.setFirstObject(it.getStartObjectID());
+		m1.setSecondObject(it.getEndObjectID());
+		modellinkList.add(m1);	
+		}
+	}
+	
+	public void writeDataOne(MTLink obj) {
+		ModelLink m1 = new ModelLink();
+		m1.setFirstObject(obj.getStartObjectID());
+		m1.setSecondObject(obj.getEndObjectID());
+		
+		
+		List<ModelLinkDescription> d1  = new ArrayList<ModelLinkDescription>();
+		ModelLinkDescription el1 = new ModelLinkDescription();
+		el1.setLinkcolor(obj.getStrokeColor());
+		el1.setLinkdescription(obj.getName());
+		d1.add(el1);
+		
+		m1.setObjectlinkdescription(d1);
+		
+		modellinkList.add(m1);	
+	}
+	
+	/**
+	 * 
+	 * @param linkID
+	 */
+	public void dropLinkDataModel(int linkID) {
+		
+	}
+	
 	
 	/** Position Dedection for MTObjects.*/
 	// TODO Postition Dedection
@@ -165,14 +230,11 @@ public class MTLinkController {
 	private void drawLinie() {
 		
 		for (MTLink it: linkliste) {
+			it.setColorPickerVisible(false);
 			it.setVertices(new Vertex[]{
 					new Vertex(myobjectList.get(it.getStartObjectID()).getCenterPointGlobal()),
-					new Vertex(myobjectList.get(it.getEndObjectID()).getCenterPointGlobal())});
-		}
-		
-		//link.setVertices(new Vertex[]{new Vertex(input1), new Vertex(input2)});
-		//canvas.addChild(link);
-		
+					new Vertex(myobjectList.get(it.getEndObjectID()).getCenterPointGlobal())});	
+		}	
 	}
 	
 	
@@ -395,9 +457,103 @@ public class MTLinkController {
 		
 	}
 	
+	//Gibt das Linkpaar zurück 
+	
+	/**
+	 * 
+	 * Gibt zu eine Link ID zu zwei verlinkten Objekt IDs zurück
+	 * 
+	 * @param node2 int
+	 * @return linkid int
+	 */
+	public int getLinkID(int node1, int node2) {
+		int linkId =0;
+		
+		return linkId;
+	}
+	
+	/**
+	 * 
+	 * Gibt alle IDs der versteckten Links zurück.
+	 * 
+	 * @return
+	 */
+	public int getHiddenLinks() {
+		int hiddenObj=0;
+		
+		return hiddenObj;
+	}
+	
+	/**
+	 * 
+	 * Gibt eine Liste von Link-IDs mit allen verlinkungen eines Objekt zurück.
+	 * 
+	 * @param searchObj int
+	 * @return list List<Integer>
+	 */
+	public final List<Integer> getLinkListObjektID(final int searchObj) {
+		List<Integer> list = new ArrayList<Integer>();
+		//TODO: Ausprogrammieren
+		return list; 
+	}
+	
+	/**
+	 * 
+	 * Gibt eine Liste von Objekt IDs mit allen verlinkungen eines Objekt zurück.
+	 * 
+	 * @param searchObj int
+	 * @return list List<Integer>
+	 */ 
+	public final List<Integer> getLinkListObjekt(final int searchObj) {
+		List<Integer> list = new ArrayList<Integer>();
+		//TODO: Ausprogrammieren
+		return list; 
+	}
+	
+	/**
+	 * Anzeigen oder verstecken aller Links.
+	 * 
+	 * visible = false = Link wird nicht angezeigt
+	 * visible = true = Link wird angezeigt
+	 * 
+	 * @param visible boolean
+	 */
+	public void setVisibleAllLink(boolean visible){
+		
+	}
+	
+	/**
+	 * Verstecken oder Anzeigen eines einzelnen Links über eine bekannte objID.
+	 * 
+	 * @param visible boolean
+	 * @param objID int
+	 */
+	public void setVisibleOneLinkObj(boolean visible, final int objID) {
+		
+	}
+	
+	/**
+	 * 
+	 * Verstecken oder Anzeigen eines einzelnen Links über eine bekannte Link ID.
+	 * 
+	 * @param visible booelan
+	 * @param lnkID int
+	 */
+	public void setVisibleOneLinkID(boolean visible, final int lnkID) {
+		
+	}
+	
+
+	
+	
+	/**
+	 * -> Selector
+	 * Gibt alle Object ID der über den ArcBall getaggten Objekte zurück.
+	 */
 	public void showTaggedObject() {
 		for (MyMTObject itt : myobjectList) {
 			System.out.println("Objekt: " + itt.getID() +" Markiert " + itt.getTagFlag());
+			//TODO: Ausprogrammieren
 		}
 		
 	}
@@ -408,14 +564,14 @@ public class MTLinkController {
 	 * @param node1 int
 	 * @param node2 int
 	 */
-	public void createLink(int node1, int node2) {
+	public void createLink(final int node1, final int node2) {
 		
 		System.out.println("MTLinkController: createLink: Link for Objekt ID; " + node1 + " und " + node2);
 		System.out.println("MTLinkController: createLink: Link for Objekt ID; " + myobjectList.get(node1).getCenterPointGlobal() + " und " + myobjectList.get(node2).getCenterPointGlobal());
 		/**
 		 * 1. Link erstellen 
 		 *    - a. Abfrage: Link schon in der Liste 
-		 *    - b. Wenn ja Link löschen ansonsten erstellen
+		 *    - b. Wenn ja Link löschen, ansonsten erstellen
 		 *
 		 */
 

@@ -12,8 +12,9 @@
         <writeProtected>false</writeProtected>
       </objectcolor>
       <objectattributs>
-      	 <ch.mitoco.model.ModelMtAttributs>
+      	<ch.mitoco.model.ModelMtAttributs>
           <id>1</id>
+          <attributHight>30</attributHight>
           <attributcontent>
             <ch.mitoco.model.ModelAttributContent>
               <type>Double</type>
@@ -36,6 +37,7 @@
         </ch.mitoco.model.ModelMtAttributs>
         <ch.mitoco.model.ModelMtAttributs>
           <id>0</id>
+          <attributHight>30</attributHight>
           <attributcontent>
             <ch.mitoco.model.ModelAttributContent>
               <type>String</type>
@@ -55,6 +57,7 @@
         </ch.mitoco.model.ModelMtAttributs>
         <ch.mitoco.model.ModelMtAttributs>
           <id>2</id>
+          <attributHight>30</attributHight>
           <attributcontent>
             <ch.mitoco.model.ModelAttributContent>
               <type>ListContent</type>
@@ -124,6 +127,18 @@
           <Lable>Bild eines Flugzeugs</Lable>
           <minMax>false</minMax>
         </ch.mitoco.model.ModelMtAttributs>
+        <ch.mitoco.model.ModelMtAttributs>
+          <id>0</id>
+          <attributcontent>
+            <ch.mitoco.model.ModelAttributContent>
+              <type>String</type>
+              <value>Thomas</value>
+            </ch.mitoco.model.ModelAttributContent>
+          </attributcontent>
+          <attcolor reference="../../../objectcolor"/>
+          <Lable>Vorname</Lable>
+          <minMax>false</minMax>
+        </ch.mitoco.model.ModelMtAttributs>
       </objectattributs>
       <objectposition>
         <x>300.0</x>
@@ -134,7 +149,34 @@
     </ch.mitoco.model.ModelMtObjects>
     <ch.mitoco.model.ModelMtObjects>
       <id>3</id>
-      <objectattributs/>
+      <objectcolor>
+        <name>undefined</name>
+        <r>12.0</r>
+        <g>12.0</g>
+        <b>12.0</b>
+        <alpha>34.0</alpha>
+        <writeProtected>false</writeProtected>
+      </objectcolor>
+       <objectattributs>
+        <ch.mitoco.model.ModelMtAttributs>
+          <id>3</id>
+          <attributcontent>
+            <ch.mitoco.model.ModelAttributContent>
+              <type>Path</type>
+              <value>ch/mitoco/data/pictures/mig29.jpg</value>
+            </ch.mitoco.model.ModelAttributContent>
+          </attributcontent>
+          <attcolor reference="../../../objectcolor"/>
+          <Lable>Bild eines Flugzeugs</Lable>
+          <minMax>false</minMax>
+        </ch.mitoco.model.ModelMtAttributs>
+      </objectattributs>
+       <objectposition>
+        <x>500.0</x>
+        <y>100.0</y>
+        <z>0.0</z>
+        <w>1.0</w>
+      </objectposition>
     </ch.mitoco.model.ModelMtObjects>
   </mtobjects>
 </ch.mitoco.model.ModelScence>

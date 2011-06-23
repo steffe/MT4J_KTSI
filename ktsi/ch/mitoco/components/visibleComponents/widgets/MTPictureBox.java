@@ -1,5 +1,6 @@
 package ch.mitoco.components.visibleComponents.widgets;
 
+import org.apache.batik.anim.SetAnimation;
 import org.mt4j.AbstractMTApplication;
 import org.mt4j.MTApplication;
 import org.mt4j.components.StateChange;
@@ -22,6 +23,8 @@ import org.mt4j.input.inputProcessors.componentProcessors.tapProcessor.TapProces
 import org.mt4j.util.MTColor;
 import org.mt4j.util.font.IFont;
 import org.mt4j.util.math.Vector3D;
+
+import com.sun.xml.internal.ws.api.model.wsdl.WSDLBoundOperation.ANONYMOUS;
 
 import ch.mitoco.model.ModelAttributContent;
 import ch.mitoco.model.ModelMtAttributs;
@@ -130,6 +133,7 @@ public class MTPictureBox extends Attributes {
 	private void init(final AbstractMTApplication app) {		
 		this.setSizeLocal(width, height);
 		this.setStrokeColor(MTColor.BLACK);
+		
 		setPath("Default");
 		loadImage();
 		changePicture();
@@ -142,7 +146,6 @@ public class MTPictureBox extends Attributes {
 		label.setText(fname);
 		label.setPickable(false);
 		label.setVisible(false);
-		
 		
 		this.addChild(label);
 		this.addChild(buttonRotate);

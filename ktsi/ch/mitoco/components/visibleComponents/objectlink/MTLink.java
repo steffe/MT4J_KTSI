@@ -72,19 +72,25 @@ public class MTLink extends MTLine {
 		this.startObjectID = startObjectID;
 		this.endObjectID = endObjectID;
 		this.app1 = pApplet;
-		init();
 		createColorPicker();
+		init();
+		
 	}
 	
 	/** Init Method.*/
 	private void init() {
 		System.out.println("MTLINK: init: Link generated ");
 		
+		this.setName("Verbindung zwischen: " + startObjectID + " und " + endObjectID);
+		
 		this.setStrokeColor(MTColor.GREEN);
 		this.setStrokeWeight(4);
 		this.setVisible(true);
 		this.translateGlobal(new Vector3D(0, 0, -3));
 	
+		this.addChild(colPickButton);
+		this.addChild(colorpicker);
+		
 		this.setGestureAllowance(TapProcessor.class, true);
 		this.registerInputProcessor(new TapProcessor(app1));
 		this.addGestureListener(TapProcessor.class, new IGestureEventListener() {
@@ -97,6 +103,11 @@ public class MTLink extends MTLine {
 					
 					if (te.getTapID() == TapEvent.TAPPED) {
 						colPickButton.setVisible(true);
+						colPickButton.setPositionGlobal(getCenterPointLocal());
+						//colPickButton.setPositionRelativeToOther(, new Vector3D(0, 0));
+						//colorpicker.setPositionRelativeToParent(new Vector3D(0, 30));
+						//colPickButton.translate(new Vector3D(50,50));
+						//colorpicker.translate(new Vector3D(100,100));
 					}
 					
 					
@@ -110,6 +121,16 @@ public class MTLink extends MTLine {
 		
 	}
 
+	/**
+	 * Legt die Sichtbarkeit des Colorpickers Fest.
+	 * 
+	 * @param visib boolean
+	 */
+	public void setColorPickerVisible(final boolean visib){
+		colPickButton.setVisible(visib);
+		//colorpicker.setVisible(visib);
+	}
+	
 	/** 
 	 * Set the Link Description. 
 	 * 
@@ -119,6 +140,16 @@ public class MTLink extends MTLine {
 		this.setName(text);
 	}
 
+	/**
+	 * Get the Link Description.
+	 * 
+	 * @return
+	 */
+	public String getDescription() {
+		
+		return this.getName();
+	}
+	
 	/**
 	 * Gibt die ID des Start-Objekts zurück.
 	 * 
@@ -202,8 +233,8 @@ public class MTLink extends MTLine {
         colorpicker.setVisible(false);
 	    colPickButton.setVisible(false);
 	
-        this.addChild(colPickButton);
-		this.addChild(colorpicker);
+//        this.addChild(colPickButton);
+//		this.addChild(colorpicker);
 	}
 	
 	
