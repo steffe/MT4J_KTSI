@@ -38,14 +38,7 @@ public class ModelMtAttributs {
 	 */
 	private boolean minMax;
 	
-	/**
-	 * 
-	 */
-	private boolean direction;
-	/**
-	 * 
-	 */
-	private int zoom;
+
 	
 	/**Diese Variable definiert die Höhe eines einzelnen Attributs. */
 	private int attributHight;
@@ -136,38 +129,6 @@ public class ModelMtAttributs {
 	 */
 	public final void setMinMax(final boolean minMax) {
 		this.minMax = minMax;
-	}
-	
-	/**
-	 * 
-	 * @param direction
-	 */
-	public final void setDirection(final boolean direction) {
-		this.direction = direction;
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	public final boolean isDirection() {
-		return direction;
-	}
-	
-	/**
-	 * 
-	 * @param zoom
-	 */
-	public final void setZoom(final int zoom) {
-		this.zoom = zoom;
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	public final int getZoom() {
-		return zoom;
 	}
 	/**
 	 * @param attributdefinition the attributdefinition to set

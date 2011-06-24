@@ -18,6 +18,10 @@ public class ModelMtObjects {
 	private List<ModelMtAttributs> objectattributs;
 	private Vector3D objectposition;
 	private String objectlable;
+	/**	 */
+	private boolean direction;
+	/**	 */
+	private int zoom;
 	
 	
 	
@@ -153,6 +157,38 @@ public class ModelMtObjects {
 	 */
 	public String getObjectlable() {
 		return objectlable;
+	}
+
+
+	/**
+	 * @param direction the direction to set
+	 */
+	public void setDirection(boolean direction) {
+		this.direction = direction;
+	}
+
+
+	/**
+	 * @return the direction
+	 */
+	public boolean isDirection() {
+		return direction;
+	}
+
+
+	/**
+	 * @param zoom the zoom to set
+	 */
+	public void setZoom(int zoom) {
+		this.zoom = zoom;
+	}
+
+
+	/**
+	 * @return the zoom
+	 */
+	public int getZoom() {
+		return zoom;
 	}
 
 }

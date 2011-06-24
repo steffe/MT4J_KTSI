@@ -19,7 +19,7 @@ public class PDFExampleScene extends AbstractScene {
 		super(mtApplication, name);
 		this.app = mtApplication;
 		
-		final MTPDF pdf = new MTPDF(mtApplication, new File("d:/Test.pdf"));
+		final MTPDF pdf = new MTPDF(mtApplication, new File("D:/Test.pdf"));
 		pdf.scaleGlobal(.5f, .5f, .5f, pdf.getCenterPointGlobal());
 //		pdf.addGestureListener(DragProcessor.class, new IGestureEventListener() {
 //			@Override

@@ -484,7 +484,7 @@ public class FileChooser extends MTComponent
 			
         	if(videos.accept(file) && !file.isDirectory()){
             	
-        		MTMovieClip clip = new MTMovieClip(file.getPath(), new Vertex(20,20,0),scene);
+        		MTMovieClip clip = new MTMovieClip(file.getPath(), new Vertex(20, 20, 0), scene);
             	clip.setName(file.getName());
             	clip.setUseDirectGL(true);
     			clip.setHeightXYGlobal(300);

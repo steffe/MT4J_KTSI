@@ -303,7 +303,7 @@ public class FileChooserView
 		fc_model.fileText.setEnableCaret(true);
 		
         //File name box to spawn keyboard and recieve input text
-		MTRectangle filename = new MTRectangle (0,0,290, 30, fc_model.getScene().getMTApplication());
+		MTRoundRectangle filename = new MTRoundRectangle(fc_model.getScene().getMTApplication(), 0, 0, 0, 290 , 30, 5, 5);
 		filename.translate(new Vector3D(130,380));
 		filename.setStrokeColor(new MTColor(0,0,0, 150));
 		filename.setStrokeWeight(2);
@@ -447,7 +447,7 @@ public class FileChooserView
 		fc_model.currFilter.setNoStroke(false);
 		
 		//File type drop down
-		MTRectangle filetype = new MTRectangle (0,0,290, 30, fc_model.getScene().getMTApplication());
+		MTRoundRectangle filetype = new MTRoundRectangle (fc_model.getScene().getMTApplication(), 0, 0, 0, 290, 30, 5, 5 );
 		filetype.translate(new Vector3D(130,430));
 		filetype.setStrokeColor(new MTColor(0,0,0, 150));
 		filetype.setStrokeWeight(2);

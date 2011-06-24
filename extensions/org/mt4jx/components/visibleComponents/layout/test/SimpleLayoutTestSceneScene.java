@@ -28,14 +28,14 @@ public class SimpleLayoutTestSceneScene extends AbstractScene {
 		MTTextArea t1 = new MTTextArea(mtApplication, fontArial); 
 		t1.setText("TF 01");
 		MTTextArea t2 = new MTTextArea(mtApplication, fontArial); 
-		t2.setText("TF 02");
+		t2.setText("TF 0dasdasdasdasd2");
 		MTTextArea t3 = new MTTextArea(mtApplication, fontArial); 
 		t3.setText("TF 03");
 		
 		MTTextArea t4 = new MTTextArea(mtApplication, fontArial); 
 		t4.setText("TF 04");
 		MTTextArea t5 = new MTTextArea(mtApplication, fontArial); 
-		t5.setText("TF 05");
+		t5.setText("TF ddtxtxhctdtchdthx kuzjzj zj r05");
 		MTTextArea t6 = new MTTextArea(mtApplication, fontArial); 
 		t6.setText("TF 06");
 

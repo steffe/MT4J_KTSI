@@ -48,7 +48,7 @@ public class WBFile extends MTListCell
 	}
 	
 	public WBFile(MitocoScene sc, File inFile, float indent) {
-		super(400, 28, sc.getMTApplication());
+		super(sc.getMTApplication(), 400, 28);
 		this.app = sc.getMTApplication();
 		this.scene = sc;
 		this.file = inFile;
@@ -56,6 +56,7 @@ public class WBFile extends MTListCell
 		this.setName(file.getName());
 		this.setLineStipple((short)0xDDDD);
 		this.setNoStroke(true);
+		
 		
 		// Create text field for the cell
 		textBox = new MTTextArea(app,

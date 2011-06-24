@@ -45,6 +45,7 @@ import org.mt4jx.components.visibleComponents.widgets.MTWebBrowser;
 
 import ch.mitoco.components.visibleComponents.MyMTObject;
 import ch.mitoco.components.visibleComponents.filechooser.FileChooser;
+import ch.mitoco.components.visibleComponents.filechooser.PDFViewer;
 import ch.mitoco.dataController.DataController;
 import ch.mitoco.model.ModelSceneList;
 import ch.mitoco.model.ModelTypDescription;
@@ -418,6 +419,31 @@ public class MitocoScene extends AbstractScene {
 					        return false;
 					      }
 					    };
+					    
+					    final IMTInputEventListener showPDFlistener = new IMTInputEventListener() {
+						      @Override
+						      public boolean processInputEvent(final MTInputEvent inEvt) {
+						        // Most input events in MT4j are an instance of AbstractCursorInputEvt (mouse, multi-touch..)
+						        if (inEvt instanceof MTFingerInputEvt) {
+						          final MTFingerInputEvt cursorInputEvt = (MTFingerInputEvt) inEvt;
+						          switch (cursorInputEvt.getId()) {
+						            case TapEvent.GESTURE_STARTED:
+						            	PDFViewer testpdf = new PDFViewer(mtApplication, "Test", "D:/Test.pdf");
+						            	MitocoScene.this.getCanvas().addChild(testpdf);
+						            	testpdf.setVisible(true);
+						            	testpdf.sendToFront();
+						              break;
+						            default:
+						              break;
+						          }
+						        } else {
+						          //LOG.warn("Some other event occured:" + inEvt);
+						        }
+
+						        return false;
+						      }
+						    };    
+					    
 				    
 				    final IMTInputEventListener showInputListener = new IMTInputEventListener() {
 				        @Override
@@ -568,6 +594,10 @@ public class MitocoScene extends AbstractScene {
         final MTMenuItem subMenu51 = new MTMenuItem("Browser", null);
         subMenu51.addInputEventListener(browserListener);
         subMenu5.addSubMenuItem(subMenu51);
+        final MTMenuItem subMenu52 = new MTMenuItem("PDF", null);
+        subMenu52.addInputEventListener(showPDFlistener);
+        subMenu5.addSubMenuItem(subMenu52);
+        
         subMenu5.addSubMenuItem(new MTMenuItem("Special", null));
 
         menu1.addSubMenuItem(subMenu5);

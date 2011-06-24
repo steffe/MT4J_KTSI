@@ -7,7 +7,7 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 
 public class PathUtil {
-	private static String separator = "/"; // used for string return values
+	private static String separator = "\\"; // used for string return values
 	private static String[] toAbsolutePathStringArray(File f) {
 		Vector<String> tmp = new Vector<String>();
 		String absolutePath;

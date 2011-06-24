@@ -234,7 +234,7 @@ implements ILassoable {
 				DragEvent de = (DragEvent)ge;
 				float currValue = slider.getValue();
 				switch (de.getId()) {
-				case MTGestureEvent.GESTURE_DETECTED:
+				case MTGestureEvent.GESTURE_STARTED:
 					dragging = true;
 					break;
 				case MTGestureEvent.GESTURE_UPDATED:

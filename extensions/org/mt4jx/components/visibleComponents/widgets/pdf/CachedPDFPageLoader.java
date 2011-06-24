@@ -14,7 +14,7 @@ public class CachedPDFPageLoader {
 	private Hashtable<String, RenderedPDFPage> renderedPDFPageTable = new Hashtable<String, RenderedPDFPage>();
 	private Hashtable<String, Long> lastAccessTable = new Hashtable<String, Long>();
 	
-	private File storageRoot = new File("./imgcache");
+	private File storageRoot = new File("imgcache");
 	private double scaleFactor;
 	
 	private boolean useDisk = true;
@@ -105,7 +105,7 @@ public class CachedPDFPageLoader {
 		return renderedPDFPageTable.get(key);
 	}
 	private String encodeKey(File pdf, int page){
-		return PathUtil.toRelativePathString(storageRoot, new File(storageRoot.getAbsolutePath() + "/" + pdf.getName() + "/" + page + ".png"));
+		return PathUtil.toRelativePathString(storageRoot, new File(storageRoot.getAbsolutePath() + "\\" + pdf.getName() + "\\" + page + ".png"));
 	}
 	private String getStoragePath(String key){
 		return this.storageRoot.getAbsolutePath() + key;
