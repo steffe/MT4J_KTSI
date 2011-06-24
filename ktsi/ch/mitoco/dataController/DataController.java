@@ -85,7 +85,7 @@ public class DataController {
 	 * @param objecttype
 	 * 			Int entscheidet welcher Objekttype erstellt wird
 	 */
-	public void createObject(int objecttype) {
+	public int createObject(int objecttype) {
 		ModelMtObjects object = new ModelMtObjects();
 		
 		
@@ -109,10 +109,11 @@ public class DataController {
 		System.out.println("DataController:  ObjektListe lokal: "+ myobjectList );
 		linker.setObjectList(myobjectList, dataModel.getMtobjectlinks());
 		linker.setTapAndHoldListener(myobjectList.get(objectcounter)); //TODO: Test
-		
+		Integer objectindex = new Integer(myobjectList.indexOf(myobjectList.get(objectcounter)));
+		System.out.println("Objectindex: "+objectindex);
 		objectcounter++;
 		
-		//returnn created Object
+		return objectindex;
 	}
 	
 	//Delete GUI Object (Datenmodel)

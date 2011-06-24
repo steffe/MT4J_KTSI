@@ -9,11 +9,15 @@ import org.mt4j.components.visibleComponents.shapes.MTPolygon;
 import org.mt4j.components.visibleComponents.shapes.MTRectangle;
 import org.mt4j.input.inputProcessors.IGestureEventListener;
 import org.mt4j.input.inputProcessors.MTGestureEvent;
+import org.mt4j.input.inputProcessors.componentProcessors.dragProcessor.DragEvent;
 import org.mt4j.input.inputProcessors.componentProcessors.tapProcessor.TapEvent;
 import org.mt4j.input.inputProcessors.componentProcessors.tapProcessor.TapProcessor;
 import org.mt4j.util.MTColor;
 import org.mt4j.util.math.Matrix;
 import org.mt4j.util.math.Vertex;
+import org.mt4jx.input.gestureAction.dnd.DragAndDropActionListener;
+import org.mt4jx.input.gestureAction.dnd.DragAndDropTarget;
+import org.mt4jx.input.gestureAction.dnd.DropTarget;
 
 import processing.core.PApplet;
 
@@ -26,7 +30,8 @@ import processing.core.PApplet;
  * 
  */
 
-public class ObjectRectangle extends MTRectangle {
+public class ObjectRectangle extends MTRectangle implements DragAndDropTarget, DragAndDropActionListener
+	{
 	
 	private List<MTComponent> mStackedComponents = new ArrayList<MTComponent>();
 	
@@ -89,5 +94,56 @@ public class ObjectRectangle extends MTRectangle {
 
 			mActivationBorder.setLocalMatrix(inv.mult(gmat));
 		}
+	}
+
+	@Override
+	public void componentDropped(MTComponent droppedComponent, DragEvent de) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean dndAccept(MTComponent component) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void objectDroppedOnTarget(MTComponent droppedObject, DropTarget dt,
+			DragEvent de) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void objectDroppedNotOnTarget(MTComponent droppedObject, DragEvent de) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void objectEnteredTarget(MTComponent object, DropTarget dt,
+			DragEvent de) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void objectExitedTarget(MTComponent object, DropTarget dt,
+			DragEvent de) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void componentEntered(MTComponent enteredComponent) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void componentExited(MTComponent exitedComponent) {
+		// TODO Auto-generated method stub
+		
 	}
 }

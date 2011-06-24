@@ -24,8 +24,6 @@
           <attcolor reference="../../../objectcolor"/>
           <Lable>Vorname</Lable>
           <minMax>false</minMax>
-          <direction>false</direction>
-          <zoom>0</zoom>
         </ch.mitoco.model.ModelMtAttributs>
         <ch.mitoco.model.ModelMtAttributs>
           <id>0</id>
@@ -39,8 +37,6 @@
           <attcolor reference="../../../objectcolor"/>
           <Lable>Nachname</Lable>
           <minMax>false</minMax>
-          <direction>false</direction>
-          <zoom>0</zoom>
         </ch.mitoco.model.ModelMtAttributs>
           <ch.mitoco.model.ModelMtAttributs>
           <id>0</id>
@@ -54,8 +50,6 @@
           <attcolor reference="../../../objectcolor"/>
           <Lable>HCP</Lable>
           <minMax>false</minMax>
-          <direction>false</direction>
-          <zoom>0</zoom>
         </ch.mitoco.model.ModelMtAttributs>
       </objectattributs>
       <objectposition>
@@ -158,8 +152,6 @@
           <attcolor reference="../../../../ch.mitoco.model.ModelMtObjects/objectcolor"/>
           <Lable>Scorecard</Lable>
           <minMax>false</minMax>
-          <direction>false</direction>
-          <zoom>0</zoom>
         </ch.mitoco.model.ModelMtAttributs>
       </objectattributs>
       <objectposition>
@@ -194,8 +186,6 @@
           <attcolor reference="../../../objectcolor"/>
           <Lable>Total Schlaege</Lable>
           <minMax>false</minMax>
-          <direction>false</direction>
-          <zoom>0</zoom>
         </ch.mitoco.model.ModelMtAttributs>
       </objectattributs>
       <objectposition>
@@ -230,8 +220,6 @@
           <attcolor reference="../../../objectcolor"/>
           <Lable></Lable>
           <minMax>false</minMax>
-          <direction>false</direction>
-          <zoom>0</zoom>
         </ch.mitoco.model.ModelMtAttributs>
         <ch.mitoco.model.ModelMtAttributs>
           <id>1</id>
@@ -245,8 +233,6 @@
           <attcolor reference="../../../objectcolor"/>
           <Lable></Lable>
           <minMax>false</minMax>
-          <direction>false</direction>
-          <zoom>0</zoom>
         </ch.mitoco.model.ModelMtAttributs>
       </objectattributs>
       <objectposition>
@@ -381,8 +367,6 @@
           <attcolor reference="../../../objectcolor"/>
           <Lable></Lable>
           <minMax>false</minMax>
-          <direction>false</direction>
-          <zoom>0</zoom>
         </ch.mitoco.model.ModelMtAttributs>
         <ch.mitoco.model.ModelMtAttributs>
           <id>1</id>
@@ -396,8 +380,6 @@
           <attcolor reference="../../../../ch.mitoco.model.ModelMtObjects/objectcolor"/>
           <Lable></Lable>
           <minMax>false</minMax>
-          <direction>false</direction>
-          <zoom>0</zoom>
         </ch.mitoco.model.ModelMtAttributs>
         <ch.mitoco.model.ModelMtAttributs>
           <id>2</id>
@@ -411,9 +393,40 @@
           <attcolor reference="../../../../ch.mitoco.model.ModelMtObjects/objectcolor"/>
           <Lable></Lable>
           <minMax>false</minMax>
-          <direction>false</direction>
-          <zoom>0</zoom>
         </ch.mitoco.model.ModelMtAttributs>
+      </objectattributs>
+      <objectposition>
+        <x>300.0</x>
+        <y>200.0</y>
+        <z>0.0</z>
+        <w>1.0</w>
+      </objectposition>
+    </ch.mitoco.model.ModelMtObjects>
+    <ch.mitoco.model.ModelMtObjects>
+      <id>0</id>
+      <objecttyp>6</objecttyp>
+      <objectcolor>
+        <name>undefined</name>
+        <r>112.0</r>
+        <g>160.0</g>
+        <b>60.0</b>
+        <alpha>34.0</alpha>
+        <writeProtected>false</writeProtected>
+      </objectcolor>
+      <objectattributs>
+      	<ch.mitoco.model.ModelMtAttributs>
+      		<id>3</id>
+          <attributcontent>
+            <ch.mitoco.model.ModelAttributContent>
+              <type>Path</type>
+              <value>ch/mitoco/data/pictures/mig29.jpg</value>
+            </ch.mitoco.model.ModelAttributContent>
+          </attributcontent>
+          <attributdefinition/>
+          <attcolor reference="../../../../ch.mitoco.model.ModelMtObjects/objectcolor"/>
+          <Lable></Lable>
+          <minMax>false</minMax>
+      	</ch.mitoco.model.ModelMtAttributs>
       </objectattributs>
       <objectposition>
         <x>300.0</x>
@@ -447,6 +460,10 @@
     <ch.mitoco.model.ModelTypDescription>
       <objectypeid>5</objectypeid>
       <objectdescription>TestDropDown</objectdescription>
+    </ch.mitoco.model.ModelTypDescription>
+    <ch.mitoco.model.ModelTypDescription>
+      <objectypeid>6</objectypeid>
+      <objectdescription>Picture</objectdescription>
     </ch.mitoco.model.ModelTypDescription>
   </objectdescription>
 </ch.mitoco.model.ModelObjectTyps>

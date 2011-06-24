@@ -5,7 +5,6 @@ import org.mt4j.components.visibleComponents.shapes.MTRectangle;
 import org.mt4j.input.inputProcessors.globalProcessors.CursorTracer;
 import org.mt4j.sceneManagement.AbstractScene;
 import org.mt4j.util.MTColor;
-import org.mt4jx.input.gestureAction.dnd.example.stack.ComponentStack;
 
 /** Hier wird der TemplateModi aufgebaut und gesteuert.
  * 
@@ -16,7 +15,7 @@ import org.mt4jx.input.gestureAction.dnd.example.stack.ComponentStack;
  * 
  */
 
-public class CreateScene extends AbstractScene {
+public class CreateScene extends AbstractScene  {
 	
 	private AbstractMTApplication app;
 

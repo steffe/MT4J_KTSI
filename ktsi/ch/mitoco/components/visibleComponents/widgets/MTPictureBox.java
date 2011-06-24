@@ -1,18 +1,13 @@
 package ch.mitoco.components.visibleComponents.widgets;
 
-import org.apache.batik.anim.SetAnimation;
 import org.mt4j.AbstractMTApplication;
 import org.mt4j.MTApplication;
-import org.mt4j.components.StateChange;
-import org.mt4j.components.StateChangeEvent;
-import org.mt4j.components.StateChangeListener;
 import org.mt4j.components.TransformSpace;
 import org.mt4j.components.visibleComponents.shapes.MTRectangle;
 import org.mt4j.components.visibleComponents.shapes.MTRectangle.PositionAnchor;
 import org.mt4j.components.visibleComponents.widgets.MTColorPicker;
 import org.mt4j.components.visibleComponents.widgets.MTTextArea;
 import org.mt4j.components.visibleComponents.widgets.buttons.MTImageButton;
-import org.mt4j.components.visibleComponents.widgets.keyboard.MTTextKeyboard;
 import org.mt4j.input.inputProcessors.IGestureEventListener;
 import org.mt4j.input.inputProcessors.MTGestureEvent;
 import org.mt4j.input.inputProcessors.componentProcessors.dragProcessor.DragProcessor;
@@ -24,11 +19,11 @@ import org.mt4j.util.MTColor;
 import org.mt4j.util.font.IFont;
 import org.mt4j.util.math.Vector3D;
 
-import com.sun.xml.internal.ws.api.model.wsdl.WSDLBoundOperation.ANONYMOUS;
-
+import processing.core.PImage;
+import ch.mitoco.components.visibleComponents.filechooser.FileChooser;
+import ch.mitoco.main.MitocoScene;
 import ch.mitoco.model.ModelAttributContent;
 import ch.mitoco.model.ModelMtAttributs;
-import processing.core.PImage;
 /**
  * MTDropDownList provide a DropDownList with five import levels.
  * 
@@ -63,7 +58,7 @@ public class MTPictureBox extends Attributes {
 	private IFont labelfont;
 	
 	/** Picture File Path.*/
-	private String filePath;
+	//private String filePath;
 	
 	/** Picture Box.*/
 	private MTRectangle pictureBox;
@@ -89,19 +84,20 @@ public class MTPictureBox extends Attributes {
 	private float factor;
 	
 	/** MTImageButton for change the picture.*/
-	private MTImageButton buttonRotate;
+	private MTImageButton buttonLoad;
 	
 	/** The MTTextAre Numbers. */	
-	private MTTextArea pathText;
-	
-	/** Transparency Color for keyboard (fix). */
-	 private MTColor trans = new MTColor(0, 0, 0, 10);
+	//private MTTextArea pathText;
 	
 	/** MTColorPicker. 	 */
 	 private MTColorPicker colorpicker;
 	
 	 /** MTButton for ColorPicker. */
 	 private MTImageButton colPickButton;
+	 
+	 /**Filechooser objekt. */
+	private FileChooser fileChooser;
+	private String fileChooserPath;
 	 
 	/** 
 	 * Construtor MTPictureBox.
@@ -122,7 +118,9 @@ public class MTPictureBox extends Attributes {
 		this.app = app;
 		this.model = model;
 		
+		
 		dataRead(labelname); // Daten lesen
+		fileChooserPath = new String();
 		
 		this.init(app);
 	}
@@ -135,10 +133,10 @@ public class MTPictureBox extends Attributes {
 		this.setStrokeColor(MTColor.BLACK);
 		
 		setPath("Default");
-		loadImage();
-		changePicture();
+		//loadSelectedImage();
+		//changePicture();
 	
-		label = new MTTextArea(app, 0, -labelfont.getOriginalFontSize(), width, height, labelfont);
+		label = new MTTextArea(app, 0, labelfont.getOriginalFontSize(), width, height, labelfont);
 		label.setInnerPadding(0);
 		label.setNoFill(true);
 		label.setStrokeColor(MTColor.LIME);
@@ -148,15 +146,15 @@ public class MTPictureBox extends Attributes {
 		label.setVisible(false);
 		
 		this.addChild(label);
-		this.addChild(buttonRotate);
+		//this.addChild(buttonLoad);
 		createColorPicker();
 	}
 	
 	/** Load Images for picturebox.
 	 * Methode ist verantwortlich für das erstellen und laden eines Bilds.
 	 */
-	public void loadImage() {
-
+	public void loadSelectedImage() {
+		
 		try {
 		image = app.loadImage(getPath());	
 		pictureBox = new MTRectangle(app, image);
@@ -214,13 +212,28 @@ public class MTPictureBox extends Attributes {
 						if (minmax) {
 						pictureBox.setSizeLocal(picwidth, picheight);
 						
-						buttonRotate.setVisible(true);
+						buttonLoad.setVisible(true);
 						
 						minmax = false;
 						} else {
+							
+							if (!MitocoScene.getFilechooserPath().equals(null)) {
+						
+								setPath(MitocoScene.getFilechooserPath());
+							}
+							else
+							{
+								setPath("Default");
+							}
+							if(imagePath.equals(null)){
+								setPath("Default");
+							}
+							
+							//pictureBox.destroy();
+							//loadSelectedImage();
 						pictureBox.setSizeLocal(picwidth / factor, picheight / factor);
 						
-						buttonRotate.setVisible(false);
+						buttonLoad.setVisible(false);
 						
 						minmax = true;
 						}
@@ -247,22 +260,22 @@ public class MTPictureBox extends Attributes {
 		
 		// Button for Rotate
 		PImage buttonImage = app.loadImage("ch" + MTApplication.separator + "mitoco" + MTApplication.separator + "data" + MTApplication.separator +  "buttonLoadImage.png");
-		buttonRotate = new MTImageButton(app, buttonImage);
-		buttonRotate.setSizeLocal(30, 30);
-		buttonRotate.setFillColor(new MTColor(255, 255, 255, 200));
-		buttonRotate.setName("KeyboardButton");
-		buttonRotate.setNoStroke(true);
+		buttonLoad = new MTImageButton(app, buttonImage);
+		buttonLoad.setSizeLocal(30, 30);
+		buttonLoad.setFillColor(new MTColor(255, 255, 255, 200));
+		buttonLoad.setName("KeyboardButton");
+		buttonLoad.setNoStroke(true);
 		//keyboardButton.translateGlobal(new Vector3D(-2,mtApplication.height-keyboardButton.getWidthXY(TransformSpace.GLOBAL)+2,0));
-		buttonRotate.setPositionGlobal(new Vector3D(15, 15));
+		buttonLoad.setPositionGlobal(new Vector3D(15, 15));
 		
-		buttonRotate.addGestureListener(TapProcessor.class, new IGestureEventListener() {
+		buttonLoad.addGestureListener(TapProcessor.class, new IGestureEventListener() {
 			
 			@Override
 			public boolean processGestureEvent(final MTGestureEvent ge) {
 				TapEvent te = (TapEvent) ge;
 				switch(te.getTapID()) {
 				case TapEvent.TAPPED:
-					
+					/*
 					MTTextKeyboard textKeyboard = new MTTextKeyboard(app);
 					textKeyboard.setFillColor(trans);
 					pathText = new MTTextArea(app, 0, 0, width, 20, labelfont);
@@ -280,21 +293,35 @@ public class MTPictureBox extends Attributes {
 					
 					addChild(textKeyboard);
 					pathText.setPositionRelativeToParent(new Vector3D((width / 2), -10));
+					*/
+					//MitocoScene.drawFilechooser("video");
+					setPath("default");
+					MitocoScene.drawFilechooser("image");
+					//if(getPath().equals("default") || getPath().equals(test)){
+					//	setPath(test);
+					//}
+					//fileChooser = new FileChooser("",));
+					//pictureBox.destroy();
+					//loadImage();
 					
+				
+					//fileChooser = new FileChooser("C:\\Workspace\\MT4J_KTSI", this);	
+					//addChild(fileChooser.getUI());
+		      		//fileChooser.sendToFront();
+		          	//fileChooser.toggleFileChooser("xml");
+		      		//fileChooser.getUI().sendToFront();
+					
+					/*
 					textKeyboard.addStateChangeListener(StateChange.COMPONENT_DESTROYED, new StateChangeListener() {
-						
 						@Override
 						public void stateChanged(final StateChangeEvent evt) {
-							
 							setPath(pathText.getText());
-							
-							
 							pictureBox.destroy();
 							loadImage();
-							
 						}
 					}
-					);
+					
+					);*/
 					break;	
 				default:
 					break;
@@ -302,7 +329,7 @@ public class MTPictureBox extends Attributes {
 			return false;
 			}
 		});
-		buttonRotate.setVisible(false);
+		buttonLoad.setVisible(false);
 	}
 	
 	/** 
@@ -475,7 +502,7 @@ public class MTPictureBox extends Attributes {
 	 */
 	public final void setValue(final String value) {
 		
-		filePath = value;
+		imagePath = value;
 	}
 	
 	/** 
@@ -483,7 +510,7 @@ public class MTPictureBox extends Attributes {
 	 *@return dString String 
 	 */
 	public final String getValue() {
-		return filePath;
+		return imagePath;
 	}
 
 	

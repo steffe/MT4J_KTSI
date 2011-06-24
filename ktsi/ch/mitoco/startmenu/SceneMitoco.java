@@ -38,6 +38,7 @@ import ch.mitoco.dataController.LoadXML;
 import ch.mitoco.main.MitocoScene;
 import ch.mitoco.model.ModelFunctionList;
 import ch.mitoco.model.ModelSceneList;
+import ch.mitoco.templateMode.CreateScene;
 
 /**Startmenü.
  * 
@@ -227,6 +228,19 @@ public class SceneMitoco extends AbstractScene{
 			
 			getCanvas().addChild(list);
 		}
+		
+		
+			this.addScene(new ICreateScene() {
+				public Iscene getNewScene() {
+					return new CreateScene(app, "Template");
+				}
+				public String getTitle() {
+					return "Templates";
+				}
+			}, app.loadImage("ch" + MTApplication.separator + "mitoco" + MTApplication.separator + "data" + MTApplication.separator +  "templatemodus.jpg"));
+			
+			getCanvas().addChild(list);
+	
 
 		for (int i = 0; i < emptyPlaceHolder; i++) {
 			this.addScene(new ICreateScene() {

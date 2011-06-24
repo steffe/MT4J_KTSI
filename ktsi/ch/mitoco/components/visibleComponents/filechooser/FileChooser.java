@@ -29,7 +29,6 @@ import org.mt4j.util.MTColor;
 import org.mt4j.util.math.Vector3D;
 import org.mt4j.util.math.Vertex;
 
-import processing.core.PImage;
 import ch.mitoco.main.MitocoScene;
 
 /**
@@ -110,6 +109,7 @@ public class FileChooser extends MTComponent
 		this.translate(new Vector3D(100, 100, -10));
 		//this.setSizeLocal(400,400);
 		
+		selectionPath = new String();
 		currDir = new WBFile(scene, new File(homeDir));
 		currDispFiles = new ArrayList<WBFile>();
 		prevDirs = new Stack<WBFile>();
@@ -499,20 +499,20 @@ public class FileChooser extends MTComponent
         	}
         	//Add image
         	else if(images.accept(file) && !file.isDirectory()){
-            	PImage texture = 
-            		scene.getMTApplication().loadImage(file.getPath());
-        		WBImage photo = new WBImage(texture, scene);
-            	photo.setName(file.getName());
-            	photo.setNoFill(true);
-            	photo.setNoStroke(true);
-            	photo.setDisplayCloseButton(true);
-            	photo.setHeightXYGlobal(300);
+            	//PImage texture = scene.getMTApplication().loadImage(file.getPath());
+        		//WBImage photo = new WBImage(texture, scene);
+            	//photo.setName(file.getName());
+            	//photo.setNoFill(true);
+            	//photo.setNoStroke(true);
+            	//photo.setDisplayCloseButton(true);
+            	//photo.setHeightXYGlobal(300);
             	//photo.addGestureListener(DragProcessor.class, new InertiaDragAction());
     			//scene.getLassoProcessor().addClusterable(photo); //make photo lasso-able
-    			scene.getCanvas().addChild(photo);
+    			//scene.getCanvas().addChild(photo);
             	System.out.println("Opening: " + file.getName() + ".");
             	//Update settings
             	//scene.updateSettings(photo); 
+            	selectionPath = file.getPath();
             	toggleFileChooser();
         	}
         	// Add xml
