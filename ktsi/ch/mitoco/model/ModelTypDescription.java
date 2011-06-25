@@ -5,6 +5,7 @@ import java.util.ArrayList;
 public class ModelTypDescription {
 	private int objectypeid;
 	private String objectdescription;
+	private int kardinalitaet;
 	private ArrayList<Integer> objectdenylink;
 	
 	public ModelTypDescription(){
@@ -48,6 +49,20 @@ public class ModelTypDescription {
 	 */
 	public ArrayList<Integer> getObjectdenylink() {
 		return objectdenylink;
+	}
+
+	/**
+	 * @param kardinalitaet the kardinalitaet to set
+	 */
+	public void setKardinalitaet(int kardinalitaet) {
+		this.kardinalitaet = kardinalitaet;
+	}
+
+	/**
+	 * @return the kardinalitaet
+	 */
+	public int getKardinalitaet() {
+		return kardinalitaet;
 	}
 
 }

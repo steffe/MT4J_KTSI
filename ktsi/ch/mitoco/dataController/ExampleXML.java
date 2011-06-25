@@ -1,5 +1,7 @@
 package ch.mitoco.dataController;
 
+import java.util.ArrayList;
+
 import org.mt4j.util.MTColor;
 import org.mt4j.util.math.Vector3D;
 
@@ -183,6 +185,10 @@ public class ExampleXML {
 		ModelTypDescription Desc3 = new ModelTypDescription();
 		Desc1.setObjectypeid(0);
 		Desc1.setObjectdescription("Object 1");
+		ArrayList<Integer> inn = new ArrayList<Integer>();
+		inn.add(0);
+		inn.add(3);
+		Desc1.setObjectdenylink(inn);
 		Desc2.setObjectypeid(1);
 		Desc2.setObjectdescription("Object 2");
 		Desc3.setObjectypeid(3);

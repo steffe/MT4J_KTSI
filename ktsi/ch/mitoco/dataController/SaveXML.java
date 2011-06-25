@@ -70,5 +70,20 @@ public class SaveXML {
 	
 		
 	}
+	
+	public SaveXML(final String filename){
+		
+		XStream xstreamSave = new XStream();
+		
+		//myobjectList.get(0).model.getObjectattributs().get(0).getAttributcontent().get(0).getValue()
+		//dataModel.getMtobjects().add();
+		ExampleXML test = new ExampleXML();
+		try {
+			xstreamSave.toXML(test.getObjectType(), new FileOutputStream(filename));
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 }

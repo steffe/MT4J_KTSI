@@ -33,6 +33,8 @@ import org.mt4j.util.animation.ani.AniAnimation;
 import ch.mitoco.components.visibleComponents.MyMTObject;
 import ch.mitoco.components.visibleComponents.filechooser.FileChooser;
 import ch.mitoco.dataController.DataController;
+import ch.mitoco.dataController.SaveXML;
+import ch.mitoco.model.ModelScence;
 import ch.mitoco.model.ModelSceneList;
 
 
@@ -108,7 +110,11 @@ public class MitocoScene extends AbstractScene {
 		dataController = new DataController(mtAppl, getCanvas());
 		dataController.createDataModel(sceneData.getScenename());
 		dataController.createObjectList();
-	
+		
+		
+		ModelScence test2 = new ModelScence();
+		test2.setId(2);
+		//SaveXML test = new SaveXML("arrayTest.xml");
 		
 		//linker = new MTLinkController(mtAppl, getCanvas(), dataController.getMyobjectList()); //TODO: Test
 		

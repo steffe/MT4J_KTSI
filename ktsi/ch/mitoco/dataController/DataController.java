@@ -14,6 +14,7 @@ import ch.mitoco.model.ModelLink;
 import ch.mitoco.model.ModelMtObjects;
 import ch.mitoco.model.ModelObjectTyps;
 import ch.mitoco.model.ModelScence;
+import ch.mitoco.model.ModelTypDescription;
 
 import com.thoughtworks.xstream.XStream;
 
@@ -63,6 +64,8 @@ public class DataController {
 	/** Test: Linker Controller. */
 	private MTLinkController linker; //TODO: Test
 	
+	private ModelTypDescription modeltTypeDesc;
+	
 	private MTCanvas canvas;
 
 	/**Daten Kontroller Konstruktor.
@@ -103,11 +106,13 @@ public class DataController {
 		}
 		object.setId(objectcounter);
 		dataModel.getMtobjects().add(object);
-		
+		modeltTypeDesc = new ModelTypDescription();
+		//modeltTypeDesc.setObjectdenylink(new ArrayList<Integer>());
+		//getObjectetyps().getObjectdescription().add(modeltTypeDesc);
 		myobjectList.add(new MyMTObject(mtApplication, dataModel.getMtobjects().get(objectcounter), objectcounter, linker));
 		
 		System.out.println("DataController:  ObjektListe lokal: "+ myobjectList );
-		linker.setObjectList(myobjectList, dataModel.getMtobjectlinks());
+		linker.setObjectList(myobjectList, dataModel.getMtobjectlinks(), getObjectetyps());
 		linker.setTapAndHoldListener(myobjectList.get(objectcounter)); //TODO: Test
 		Integer objectindex = new Integer(myobjectList.indexOf(myobjectList.get(objectcounter)));
 		System.out.println("Objectindex: "+objectindex);
@@ -171,7 +176,7 @@ public class DataController {
 				myobjectList.add(new MyMTObject(mtApplication, it.next(), objectcounter, linker));
 				System.out.println("Object Gen:" + objectcounter);
 				linker.setTapAndHoldListener(getMyobjectList().get(objectcounter)); //TODO: Test
-				linker.setObjectList(myobjectList, dataModel.getMtobjectlinks());
+				linker.setObjectList(myobjectList, dataModel.getMtobjectlinks(), getObjectetyps());
 				objectcounter++;
 				
 			}
@@ -201,7 +206,7 @@ public class DataController {
 				linker.setTapAndHoldListener(getMyobjectList().get(objectcounter)); //TODO: Test
 				objectcounter++;
 			}
-			linker.setObjectList(myobjectList, dataModel.getMtobjectlinks());
+			linker.setObjectList(myobjectList, dataModel.getMtobjectlinks(), getObjectetyps());
 			return true;
 		}
 		
@@ -301,6 +306,7 @@ public class DataController {
 		loadObjectXML();
 		objectetyps = loadObjectXML.getObjectModel();
 		return objectetyps;
+		
 	}
 
 	/**
@@ -309,6 +315,20 @@ public class DataController {
 	 */
 	public int getObjectcounter() {
 		return objectcounter;
+	}
+
+	/**
+	 * @param modeltTypeDesc the modeltTypeDesc to set
+	 */
+	public void setModeltTypeDesc(ModelTypDescription modeltTypeDesc) {
+		this.modeltTypeDesc = modeltTypeDesc;
+	}
+
+	/**
+	 * @return the modeltTypeDesc
+	 */
+	public ModelTypDescription getModeltTypeDesc() {
+		return modeltTypeDesc;
 	}
 
 	

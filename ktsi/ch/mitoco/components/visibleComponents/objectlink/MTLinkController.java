@@ -38,6 +38,7 @@ import ch.mitoco.components.visibleComponents.MyMTObject;
 import ch.mitoco.components.visibleComponents.widgets.Attributes;
 import ch.mitoco.model.ModelLink;
 import ch.mitoco.model.ModelLinkDescription;
+import ch.mitoco.model.ModelObjectTyps;
 import ch.mitoco.model.ModelTypDescription;
 import processing.core.PApplet;
 import processing.core.PGraphics;
@@ -120,15 +121,21 @@ public class MTLinkController {
 	 * Objectliste und das Data Model der Links wird gesetzt. 
 	 * @param myobjectList
 	 */
-	public synchronized void setObjectList(List<MyMTObject> myobjectList , List<ModelLink> modellink){
+	public synchronized void setObjectList(List<MyMTObject> myobjectList , List<ModelLink> modellink, ModelObjectTyps modelObjectTyps){
 		this.myobjectList = null;
 		this.myobjectList = myobjectList;
 		System.out.println("MTLinkController: setObjectList: ObjektListe und LinkModel " + this.myobjectList + " IM ÜbergabeParameter " + myobjectList);
-		
 		this.modellinkList = null;
 		this.modellinkList = modellink;
 		
-		for(ModelLink it : modellinkList ){
+		for (ModelTypDescription it : modelObjectTyps.getObjectdescription()) {
+			//ArrayList<Integer> inn = it.getObjectdenylink();
+			for (Integer itt : it.getObjectdenylink()) {
+				System.out.println("MTLinkController: Denny Object ID: " + itt);
+			}
+		}
+			
+		for (ModelLink it : modellinkList) {
 			System.out.println("MTLinkController: setObjectList: Linklist: First " + it.getFirstObject() + " Second Objekt : " + it.getSecondObject());
 		}
 		
