@@ -139,8 +139,22 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 	/** DragAndDrop Target Objekt Speicher. */
 	private ArrayList<MTComponent> droppedComponents = new ArrayList<MTComponent>();
 	
-	/** Arraylist for attribut hight*/
+	/** Arraylist for attribut hight.*/
 	private ArrayList<Integer> attributHight = new  ArrayList<Integer>();
+	
+	/** Objekt Typ.*/
+	private int objecttyp;
+	
+	/**
+	 * Default Höhe der Attribute, wenn keinen Wert über das Datamodel mitgegeben wurde .
+	 */
+	private int defaultHeightTextAttribut = 30;
+	private int defaultHeightNumField = 30;
+	private int defaultHeightDropDown = 30;
+	private int defaultHeightMTPictureBox = 120;
+	private int defaultHeightListAttribut = 200;
+	
+	
 	
 	/** Constructor MyMTObject.
 	 * 
@@ -171,22 +185,33 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 		this.objectmodel = model;
 		attributesmodel = model.getObjectattributs();
 		
-		obSizeMinWidth = 300; // Grösse Min
-		obSizeMinHeight = 300; // Grösse Min
-		obSizeMaxWidth = 300;
-		obSizeMaxHeight = 400;
+//		obSizeMinWidth = 300; // Grösse Min
+//		obSizeMinHeight = 300; // Grösse Min
+//		obSizeMaxWidth = 300;
+//		obSizeMaxHeight = 400;
+		minmaxModus = 1; // Objekt wird im MinModus gestartet
 		
-		obDifSizeHeight = obSizeMaxHeight - obSizeMinHeight;
 	
 		fontArial = FontManager.getInstance().createFont(pApplet, "arial.ttf", 
 				15, 	//Font size
 				MTColor.BLACK);
 		
-		this.setSizeLocal(obSizeMinWidth, obSizeMinHeight);
+		//this.setSizeLocal(obSizeMinWidth, obSizeMinHeight);
 		this.setStrokeWeight(1);
 		Integer idInt = new Integer(id);
 		this.setName(idInt.toString());
 		
+		// Font for Textfield
+		fontArialMini = FontManager.getInstance().createFont(pApplet, "arial.ttf", 
+				14, 	//Font size
+				MTColor.BLACK);
+		// Font for Label
+		labelfont = FontManager.getInstance().createFont(pApplet, "arial.ttf", 
+				14, 	//Font size
+				MTColor.WHITE);
+		
+		// Crate ArrayList for Attributs
+		myAttributs = new ArrayList<Attributes>();
 		
 		
 		//Create a textfield
@@ -201,6 +226,14 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 		baserect.setNoStroke(true);
 		baserect.setPickable(false);
 		
+		this.setSizeLocal(300, 100);
+		baserect.setSizeLocal(300, 100);
+		
+		// ColorPicker
+		colorpicker = new MTColorPickerGroup(pApplet, this, baserect);
+		colorpicker.translate(new Vector3D(0, -35, 0));
+		colorpicker.setVisible(false);
+	
 		readData();
 		
 		// Button for Rotate
@@ -211,7 +244,7 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 		buttonRotate.setName("KeyboardButton");
 		buttonRotate.setNoStroke(true);
 		//keyboardButton.translateGlobal(new Vector3D(-2,mtApplication.height-keyboardButton.getWidthXY(TransformSpace.GLOBAL)+2,0));
-		buttonRotate.setPositionGlobal(new Vector3D(20, obSizeMinHeight - 20));
+		//buttonRotate.setPositionGlobal(new Vector3D(20, obSizeMinHeight - 20));
 		
 		buttonRotate.addGestureListener(TapProcessor.class, new IGestureEventListener() {
 			
@@ -226,6 +259,7 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 					dataWrite(); 
 					linker.printSelectedList();
 					linker.showTaggedObject();
+					linker.getLinkListObject(0);
 					break;	
 				default:
 					break;
@@ -241,12 +275,12 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 		buttonMaxMin.setFillColor(new MTColor(255, 255, 255, 200));
 		buttonMaxMin.setName("KeyboardImage");
 		buttonMaxMin.setNoStroke(true);
-		buttonMaxMin.setPositionGlobal(new Vector3D(obSizeMinWidth - 20, 20));
+		//buttonMaxMin.setPositionGlobal(new Vector3D(obSizeMinWidth - 20, 20));
 		
 		buttonMaxMin.addGestureListener(TapProcessor.class, new IGestureEventListener() {
 			
-			private float h = getHeightXY(TransformSpace.RELATIVE_TO_PARENT);
-			private float w = getWidthXY(TransformSpace.RELATIVE_TO_PARENT);
+			//private float h = getHeightXY(TransformSpace.RELATIVE_TO_PARENT);
+			//private float w = getWidthXY(TransformSpace.RELATIVE_TO_PARENT);
 			
 			@Override
 			public boolean processGestureEvent(final MTGestureEvent ge) {
@@ -254,10 +288,15 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 				switch (ke.getTapID()) {
 				case TapEvent.TAPPED:
 					dataWrite();
-					if (minmaxModus == 0) {
-						setMax(h, w);
+					if (minmaxModus == 0) { //TODO: IF Löschen!!!!
+						setAttributForMinModus();
+//						setMax(h, w);
+//						minmaxModus = 1;
+						
 					} else {
-						setMin(h, w);
+						setAttributForMinModus();
+//						setMin(h, w);
+//						minmaxModus = 0;
 					}
 					break;
 
@@ -269,30 +308,17 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 			}
 		});
 
-		// ColorPicker
-		colorpicker = new MTColorPickerGroup(pApplet, this, baserect);
-		colorpicker.translate(new Vector3D(0, -35, 0));
-		colorpicker.setVisible(false);
-		
-		// Font for Textfield
-		fontArialMini = FontManager.getInstance().createFont(pApplet, "arial.ttf", 
-				14, 	//Font size
-				MTColor.BLACK);
-		// Font for Label
-		labelfont = FontManager.getInstance().createFont(pApplet, "arial.ttf", 
-				14, 	//Font size
-				MTColor.WHITE);
-		
-		// Crate ArrayList for Attributs
-		myAttributs = new ArrayList<Attributes>();
 		
 		// Add MTComponets to Canvas
 		// --------------------------------
 
 		baserect.addChild(textField); //Titeltext
+
 		createAttributes();
+		setAttributForMinModus();		
 		addToBaserect(); // Add all Attributes to the base Rect Object
 		setPickableAttributes();
+		
 		saveOnEvent();		
 		this.addChild(baserect);
 		this.addChild(buttonRotate);
@@ -300,6 +326,7 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 		this.addChild(colorpicker);
 	}
 	
+
 	/** Create attributes.
 	 * 
 	 * Anhanden der IDs die im attributesmodel gespeichert sind, wird das Objekt aufgebaut.
@@ -319,110 +346,263 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 	 * TODO: Interface bauen.
 	 * 
 	 * Für Jedes Attribut muss ein Defaulthöhen angegeben werden. Dies wird verwendet, wenn kein Wert im Datamodel (xml) vorhanden ist.
-	 * 
-	 */
-	private void createAttributes() {
-		
-	/*
-	 * Default Höhe der Attribute, wenn keinen Wert über das Datamodel mitgegeben wurde 
-	 */
-	int defaultHeightTextAttribut = 30;
-	int defaultHeightNumField = 30;
-	int defaultHeightDropDown = 30;
-	int defaultHeightMTPictureBox = 120;
-	int defaultHeightListAttribut = 200;
-	
-	/*
 	 * Jedes Attribut muss der Anchor in der mitte haben (Center) damit das aufstellen klappt.
 	 */
+	private void createAttributes() {
+
 	int i = 0;
-	int captop = 20; // Zusätzlicher Abstand zum ersten Attribut
-	int cap = 20; // Abstand zwischen den Zeilen
-	int difx = 0; // Zähler der sich aufsummiert von Attribut zu Attribut.
 		for (ModelMtAttributs it : attributesmodel) {
 			switch(it.getId()) {
 			case(0):
-				System.out.println("MyMTObject: " + i + "Attributs MTTextAttribut " + it + " " + difx);
-				
-				difx = difx + cap + readAttributHeight(i, defaultHeightTextAttribut) / 2;
-				if (i == 0) difx += captop; // Erste Attribut im Objekt bekommt ein grösser Abstand von oben
+				System.out.println("MyMTObject: " + i + "Attributs MTTextAttribut " + it);
 				myAttributs.add(new MTTextAttribut(pApplet, attributesmodel.get(i), fontArialMini, 250, readAttributHeight(i, defaultHeightTextAttribut), "Test", "TestFeld Text", labelfont));
-				myAttributs.get(i).setPositionRelativeToParent(new Vector3D(this.getWidthXY(TransformSpace.LOCAL) / 2, difx /*+ readAttributHeight(i,defaultHeightTextAttribut)/2*/));
-				difx = difx + readAttributHeight(i, defaultHeightTextAttribut) / 2;
 				break;
 			
 			case(1):	
-				System.out.println("MyMTObject: " + i + "Attributs MTNumField " + it + " "+ difx);
-				
-				difx = difx + cap + readAttributHeight(i, defaultHeightNumField) / 2;
-				if (i == 0) difx += captop;
+				System.out.println("MyMTObject: " + i + "Attributs MTNumField " + it);
 				myAttributs.add(new MTNumField(pApplet, attributesmodel.get(i), fontArialMini, 250, readAttributHeight(i, defaultHeightNumField), true, "1111134.34", "TestFeld", labelfont));
-				myAttributs.get(i).setPositionRelativeToParent(new Vector3D(this.getWidthXY(TransformSpace.LOCAL) / 2, difx /*+ readAttributHeight(i, defaultHeightNumField)/2*/ ));
-				difx = difx + readAttributHeight(i, defaultHeightNumField) / 2;
 				break;
 			
 			case(2):
-				System.out.println("MyMTObject: " + i + "Attributs MTDropDown " + it + " "+ difx);
-				
-				difx = difx + cap + readAttributHeight(i, defaultHeightDropDown) / 2;
-				if (i == 0) difx += captop;
+				System.out.println("MyMTObject: " + i + "Attributs MTDropDown " + it);
 				myAttributs.add(new MTDropDownList(pApplet, attributesmodel.get(i), fontArialMini, 250, readAttributHeight(i, defaultHeightDropDown), "Projekt Wichtigkeit", labelfont));
-				myAttributs.get(i).setPositionRelativeToParent(new Vector3D(this.getWidthXY(TransformSpace.LOCAL) / 2, difx /*+ readAttributHeight(i, defaultHeightDropDown)/2 */ ));
-				difx = difx + readAttributHeight(i, defaultHeightDropDown) / 2;
 				break;
 				
 			case(3):
-				System.out.println("MyMTObject: PB " + i + "Attributs MTPictureBox " + it  + " " + difx);
-				
-				difx = difx + cap + readAttributHeight(i, defaultHeightMTPictureBox) / 2;
-				if (i == 0) difx += captop;
+				System.out.println("MyMTObject: PB " + i + "Attributs MTPictureBox " + it);
 				myAttributs.add(new MTPictureBox(pApplet, attributesmodel.get(i), 250, readAttributHeight(i, defaultHeightMTPictureBox), "Picuture", labelfont));
-				myAttributs.get(i).setPositionRelativeToParent(new Vector3D(this.getWidthXY(TransformSpace.LOCAL) / 2, difx));
-				difx = difx + readAttributHeight(i, defaultHeightMTPictureBox)/2;
 				break;
 				
-			case(4): //TODO: Richtige werte Einfügen.
-				System.out.println("MyMTObject: " + i + "Attributs MTListAttribut " + it  + " " + difx);
-				difx = difx + cap + readAttributHeight(i, defaultHeightListAttribut) / 2;
-				if (i == 0) difx += captop;
-				myAttributs.add(new MTListAttribut(pApplet, attributesmodel.get(i),fontArialMini, 250, readAttributHeight(i, defaultHeightListAttribut), "Löcher", labelfont));
-				myAttributs.get(i).setPositionRelativeToParent(new Vector3D(this.getWidthXY(TransformSpace.LOCAL) / 2, difx));
-				difx = difx + readAttributHeight(i, defaultHeightListAttribut) / 2;
+			case(4): 
+				System.out.println("MyMTObject: " + i + "Attributs MTListAttribut " + it);
+				myAttributs.add(new MTListAttribut(pApplet, attributesmodel.get(i), fontArialMini, 250, readAttributHeight(i, defaultHeightListAttribut), "Löcher", labelfont));
 				break;
 			default:
 				break;
 			}
 		i++;
 		}
-		setMyMTObjectNewSize(difx); // Grösse des Objekts festlegen
+		//setAttributForMinModus();
+		
 	}
 	
 	/**
-	 * Lesen aus dem Datenmodel oder setzten des Default Wertes für die Attributhöhe.
+	 * 
+	 * Methode um die höhe im Max Modus zu setzten
+	 * 
+	 *  Attribute die im Min-Modus versteckt sind werden ausgeblendet. 
+	 */
+	private void setAttributForMinModus() {
+		/*
+		 * Zwei Methoden 
+		 *  1. Postitionierung für den Max-Modus
+		 *  2. Positioinierung für den Min-Modus
+		 *  
+		 * Selbe Spiel wir beim erstellen der Attribute createAttributs einfach der min/Max Status des Attributs muss ausgelesen werden Auslesen 
+		 * 
+		 * Ablauf:
+		 * 1. Objekte werden instanziert und erstell (createObject) und dem canvas zugeordnet
+		 * 2. Positioniert wird für den MinModus berechnet
+		 * 
+		 * 3. Positionierung wird für den MaxModus berechnet (wenn Max gedrückt wird)
+		 * 
+		 * setVisible
+		 * 
+		 */
+		int i = 0; // Anzahl Attribute
+		int j = 0; // Anzahl Attribute im MinModus
+		int difx = 0; // Zähler der die Attribut Postition aufsummiert von Attribut zu Attribut. Max Modus
+		int difxHiddenMinModus = 0; // Zähler der die Attribut Postition aufsummiert von Attribut zu Attribut. Max Modus
+		
+		for (ModelMtAttributs it : attributesmodel) {
+			switch(it.getId()) {
+			case(0):
+				System.out.println("MyMTObject: Position setzten: " + i + "Attributs MTTextAttribut: " + it + " Höhe des Attr:" + difx);
+			
+				if (minmaxModus == 0) {
+					//Objekt ist im MaxModus
+					myAttributs.get(i).setVisible(true);
+					difx = setAttributPosition(difx, readAttributHeight(i, defaultHeightTextAttribut), i, myAttributs.get(i));			
+				} else if (minmaxModus == 1) {
+					//Objekt ist im MinModus
+					if (!(attributesmodel.get(i).isMinMax())) {
+						difxHiddenMinModus = difx; // Alle die MinModus Angezeigt werden (Hidden Objekte entfernen
+						difx = setAttributPosition(difx, readAttributHeight(i, defaultHeightTextAttribut), i, myAttributs.get(i));
+						j++;
+					} else {
+						 myAttributs.get(i).setVisible(false);
+					}
+				}
+				break;
+			
+			case(1):
+				System.out.println("MyMTObject: Position setzten: " + i + "Attributs MTNumField " + it + " " + difx);
+				
+				if (minmaxModus == 0) {
+					myAttributs.get(i).setVisible(true);
+					difx = setAttributPosition(difx, readAttributHeight(i, defaultHeightNumField), i, myAttributs.get(i));
+				} else if (minmaxModus == 1) {
+					if (!(attributesmodel.get(i).isMinMax())) {
+						difxHiddenMinModus = difx; // Alle die MinModus Angezeigt werden (Hidden Objekte entfernen
+						difx = setAttributPosition(difx, readAttributHeight(i, defaultHeightNumField), i, myAttributs.get(i));
+						j++;
+					} else  {
+						myAttributs.get(i).setVisible(false);
+					}
+				}
+				
+
+				break;
+			
+			case(2):
+				System.out.println("MyMTObject: Position setzten: " + i + "Attributs MTDropDown " + it + " " + difx);
+				
+				if (minmaxModus == 0) {
+					myAttributs.get(i).setVisible(true);
+					difx = setAttributPosition(difx, readAttributHeight(i, defaultHeightDropDown), i, myAttributs.get(i));
+				} else if (minmaxModus == 1) {
+					if (!(attributesmodel.get(i).isMinMax())) {
+						difxHiddenMinModus = difx; // Alle die MinModus Angezeigt werden (Hidden Objekte entfernen
+						difx = setAttributPosition(difx, readAttributHeight(i, defaultHeightDropDown), i, myAttributs.get(i));
+						j++;
+					} else  {
+						myAttributs.get(i).setVisible(false);
+					}
+				}
+				break;
+			
+			case(3):
+				System.out.println("MyMTObject: Position setzten: " + i + "Attributs MTPictureBox " + it  + " " + difx);
+				
+				if (minmaxModus == 0) {
+					myAttributs.get(i).setVisible(true);
+					difx = setAttributPosition(difx, readAttributHeight(i, defaultHeightMTPictureBox), i, myAttributs.get(i));
+				} else if (minmaxModus == 1) {
+					//MinModus
+					if (!(attributesmodel.get(i).isMinMax())) {
+						difxHiddenMinModus = difx; // Alle die MinModus Angezeigt werden (Hidden Objekte entfernen
+						difx = setAttributPosition(difx, readAttributHeight(i, defaultHeightMTPictureBox), i, myAttributs.get(i));
+						j++;
+					} else  {
+						myAttributs.get(i).setVisible(false);
+					}
+				}
+				break;
+			
+			case(4):
+				System.out.println("MyMTObject: Position setzten: " + i + "Attributs MTListAttribut " + it  + " " + difx);
+				
+				if (minmaxModus == 0) {
+					myAttributs.get(i).setVisible(true);
+					difx = setAttributPosition(difx, readAttributHeight(i, defaultHeightListAttribut), i, myAttributs.get(i));
+				} else if (minmaxModus == 1) {
+					if (!(attributesmodel.get(i).isMinMax())) {
+						difxHiddenMinModus = difx; // Alle die MinModus Angezeigt werden (Hidden Objekte entfernen
+						difx = setAttributPosition(difx, readAttributHeight(i, defaultHeightListAttribut), i, myAttributs.get(i));
+						j++;
+					} else  {
+						myAttributs.get(i).setVisible(false);
+					}
+				}
+				break;
+			default:
+				break;
+			
+			}
+			i++;
+		}	
+		setMyMTObjectNewSize(difx, j); // Grösse des Objekts festlegen
+	}
+	
+	/**
+	 * Liest aus dem Datenmodel oder setzten des Default Wertes für die Attributhöhe.
+	 * 
+	 * Zudem wird die Höhe der einzlen Attribute in einem Array gespeichert.
 	 * 
 	 * @param attributID int
-	 * @param defaultHight int
+	 * 			ID Nummer des gerade aufgerufen Attributs (nicht ID des Typs)
+	 * @param defaultHight int 
+	 * 			Hier muss die default Höhe angegeben werden. Dieser wird verwendetet, wenn keine Höhe im Datenmodel festgelegt worden ist.
 	 * @return attributHight.get(attributID) int
 	 */
 	private int readAttributHeight(final int attributID,  final int defaultHight) {
 		if (attributesmodel.get(attributID).getAttributHight() == 0) {
-//				System.out.println("MyMTObject: readAttributHight: Default " + defaultHight);
+				System.out.println("MyMTObject: readAttributHight: Default " + defaultHight);
 				attributHight.add(attributID, defaultHight);
 			} else {
-//				System.out.println("MyMTObject: readAttributHight: aus XML " + attributesmodel.get(attributID).getAttributHight());
+				System.out.println("MyMTObject: readAttributHight: aus XML " + attributesmodel.get(attributID).getAttributHight());
 				attributHight.add(attributID, attributesmodel.get(attributID).getAttributHight());
 			}
 		return attributHight.get(attributID);
 	}
 	
+	
+	
 	/**
-	 * Festlegen der neuen Grösse des MyMTObject
+	 * Festlegen der neuen Grösse des MyMTObject.
 	 * 
 	 * @param size int
 	 */
-	private void setMyMTObjectNewSize(final int size) {
-	System.out.println("MyMTObject: setMyMTObjectNewSize: Platzbedarf (Höhe) der Attribute: " + size);
+	private void setMyMTObjectNewSize(final int sizeMax, final int countforMinAttr) {
 	
+	//float h = getHeightXY(TransformSpace.RELATIVE_TO_PARENT);
+	//float w = getWidthXY(TransformSpace.RELATIVE_TO_PARENT);
+	
+	//setMax(h, w);
+		
+	
+	obSizeMinWidth = 300;
+	obSizeMaxWidth = 300;
+	
+	obDifSizeHeight = obSizeMaxHeight - obSizeMinHeight;
+	
+	if (minmaxModus ==0){
+		// Im Maxmodus
+		System.out.println("MyMTObject: setMyMTObjectNewSize: Platzbedarf (Höhe) der Attribute MaxModus: " + sizeMax);
+		
+		
+		obSizeMaxHeight = sizeMax + 40; // 40 + Offset für Abstand zum Objektrand unten
+		this.setSizeLocal(obSizeMaxWidth, obSizeMaxHeight);
+		baserect.setSizeLocal(obSizeMaxWidth - 20, obSizeMaxHeight - 20);
+		
+		for (Attributes it : myAttributs) {
+			it.setMax();
+		}
+		colorpicker.setVisible(true);
+		
+		if (updownrotate) {
+			baserect.translate(new Vector3D(0, obDifSizeHeight));
+		}	
+		buttonMaxMin.setPositionRelativeToParent(new Vector3D(obSizeMaxWidth - 20, 20));
+		//buttonMaxMin.translate(new Vector3D(obSizeMaxWidth - obSizeMinWidth, 0));
+//		buttonRotate.translate(new Vector3D(0, obSizeMaxHeight - obSizeMinHeight));
+		buttonRotate.setPositionRelativeToParent(new Vector3D(20, obSizeMaxHeight - 20));
+		minmaxModus = 1;
+		
+	} else if (minmaxModus == 1) {
+		// IM MinModus
+		System.out.println("MyMTObject: setMyMTObjectNewSize: Platzbedarf (Höhe) der Attribute MinModus: " + sizeMax);
+		
+		obSizeMinHeight = sizeMax + 40;
+		this.setSizeLocal(obSizeMinWidth, obSizeMinHeight);
+		baserect.setSizeLocal(obSizeMinWidth - 20, obSizeMinHeight - 20);
+		
+		for (Attributes it : myAttributs) {
+			it.setMin();
+		}
+		colorpicker.setVisible(false);
+		
+		if (updownrotate) {
+			baserect.translate(new Vector3D(0, -obDifSizeHeight));
+		}	
+		
+		buttonMaxMin.setPositionRelativeToParent(new Vector3D(obSizeMinWidth - 20, 20));
+//		buttonMaxMin.translate(new Vector3D(obSizeMinWidth - obSizeMaxWidth, 0));
+//		buttonRotate.translate(new Vector3D(0, obSizeMinHeight - obSizeMaxHeight));
+		buttonRotate.setPositionRelativeToParent(new Vector3D(20, obSizeMinHeight - 20));
+		minmaxModus = 0;
+	}
+		
 	}
 	
 	/**
@@ -445,83 +625,47 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 			  baserect.addChild(myAttributs.get(j));
 			}		
 	}
-	
-	/**
-	 * SetMax Modus für das Objekt.
-	 * 
-	 * @param h float
-	 * @param w float
-	 */
-	private void setMax(final float h, final float w) {
-		setSizeLocal(obSizeMaxWidth, obSizeMaxHeight);
-		baserect.setSizeLocal(obSizeMaxWidth - 20, obSizeMaxHeight - 20);
-		if (updownrotate) {
-			baserect.translate(new Vector3D(0, obDifSizeHeight));
-		}	
-		buttonMaxMin.translate(new Vector3D(obSizeMaxWidth - w, 0));
-		buttonRotate.translate(new Vector3D(0, obSizeMaxHeight - h));
-
 		
-		minmaxModus = 1;
-		
-		for (Attributes it : myAttributs) {
-			it.setMax();
-		}
-		colorpicker.setVisible(true);
-	}
-	
 	/**
 	 * 
-	 * SetMin Modus für das Objekt. Colorpicker und Labels werden ausgeblendet.
-	 * 
-	 * @param h float
-	 * @param w float
+	 * @param difx
+	 * @param defaultHeight
+	 * @param i int Postition des Attributs
+	 * @param it Attributes
+	 * @return
 	 */
-	private void setMin(final float h, final float w) {
-		setSizeLocal(w, h);
+	private int setAttributPosition(int difx, int defaultHeight, int i, Attributes it ) {
+		int captop = 20; // Zusätzlicher Abstand zum ersten Attribut
+		int cap = 20; // Abstand zwischen den Zeilen
 		
-		baserect.setSizeLocal(w - 20, h - 20);
-		if (updownrotate) {
-			baserect.translate(new Vector3D(0, -obDifSizeHeight));
-		}
+		difx = difx + cap + readAttributHeight(i, defaultHeight) / 2;
+		if (i == 0) difx += captop; // Erste Attribut im Objekt bekommt ein grösser Abstand von oben
+		it.setPositionRelativeToParent(new Vector3D(this.getWidthXY(TransformSpace.LOCAL) / 2, difx /*+ readAttributHeight(i,defaultHeightTextAttribut)/2*/));
+		difx = difx + readAttributHeight(i, defaultHeight) / 2;
 		
-		buttonMaxMin.translate(new Vector3D(w - obSizeMaxWidth, 0));
-		buttonRotate.translate(new Vector3D(0, h - obSizeMaxHeight));
-		
-		
-		minmaxModus = 0;
-		
-		for (Attributes it : myAttributs) {
-			it.setMin();
-		}
-		colorpicker.setVisible(false);
-	}
-	
-	/**
-	 *  Attribute die im Min-Modus versteckt sind werden ausgeblendet. 
-	 */
-	private void setAttributForMinModus() {
 		/*
-		 * Zwei Methoden 
-		 *  1. Postitionierung für den Max-Modus
-		 *  2. Positioinierung für den Min-Modus
-		 *  
-		 * Selbe Spiel wir beim erstellen der Attribute createAttributs einfach der min/Max Status des Attributs muss ausgelesen werden Auslesen 
-		 * 
-		 * Ablauf:
-		 * 1. Objekte werden instanziert und erstell (createObject) und dem canvas zugeordnet
-		 * 2. Positioniert wird für den MinModus berechnet
-		 * 
-		 * 3. Positionierung wird für den MaxModus berechnet (wenn Max gedrückt wird)
-		 * 
-		 * setVisible
-		 * 
-		 */
+		if (attributesmodel.size() == 1) { // Befinden sich im Objekt nur ein Attribut muss die grösse nach unten nachgerechnet werden!! 
+			System.out.println("MyMTObject: setAttributPosition: sNur ein Attribut im Objekt vorhanden !!!!!!");
+			difx  = difx + readAttributHeight(i, defaultHeight) / 2;
+		}
+		*/
+		
+		return difx;
 	}
+	
+
+	
 	
 	
 	/**
 	 * Read data from object Model.
+	 * 
+	 * 1. Setzten der Farbe für Rahmenlinie, Rahmen und Hintergrund
+	 * 2. Setzten der Objektposition
+	 * 3. Setzen des Objekt Titels
+	 * 4. Setzten Schriftsatzt
+	 * 5. Setzten des Objekttyp
+	 * 
 	 */
 	private void readData() {		
 		
@@ -570,10 +714,17 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 		}
 		
 		// Object Labeltext
-		if (this.objectmodel.getObjectlable() == null) {
+		if (this.objectmodel.getObjectlable() == null || this.objectmodel.getObjectlable().isEmpty()) {
 			textField.setText("Object" + " ID:" + id);
 		} else {
 			textField.setText(this.objectmodel.getObjectlable() + id);
+		}
+		
+		// Object Typ wird gesetzt
+		if (this.objectmodel.getObjecttyp() == 0) {
+			setObjecttyp(-1);
+		} else {
+			setObjecttyp(this.objectmodel.getObjecttyp());
 		}
 		
 	}
@@ -591,7 +742,6 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 		// Save Font (Not in use)
 	
 		// Save Directions
-		
 	}
 	
 	/** Position Dedection for MTObjects.*/
@@ -676,14 +826,17 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 		System.out.println("Object Position: " + obmodel.getObjectposition());
 		System.out.println("Object Label     " + obmodel.getObjectlable());
 		System.out.println("Object Typ       " + obmodel.getObjecttyp());
-		
+		//System.out.println("   Zoom:         " + attribut.getZoom());
+		//System.out.println("   Aussrichtung: " + attribut.isDirection());
 		
 		for (ModelMtAttributs attribut : obmodel.getObjectattributs()) {
 			System.out.println("   Attribut ID:  " + attribut.getId());
 			System.out.println("   Color:        " + attribut.getAttcolor());
 			System.out.println("   Label:        " + attribut.getLable());
-			System.out.println("   Zoom:         " + attribut.getZoom());
+			
 			System.out.println("   Hight:        " + attribut.getAttributHight());
+			System.out.println("   MinMax:       " + attribut.isMinMax());
+			
 			int i = 0;
 			for (ModelAttributContent it : attribut.getAttributcontent()) {
 				System.out.println("              " + i + " Attr. Typ: " + it.getType());
@@ -904,6 +1057,26 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 			System.err.println("MyMTObject: marker: Kann Zahl nicht umwandeln. ");
 			}
 		
+	}
+
+	/**
+	 * 
+	 * Gibt des Objekttyp als Int Wert zurück.
+	 * 
+	 * @return int
+	 */
+	public final int getObjecttyp() {
+		return objecttyp;
+	}
+
+	/**
+	 * 
+	 * Setzen des Objekttyps.
+	 * 
+	 * @param objecttyp int
+	 */
+	private void setObjecttyp(final int objecttyp) {
+		this.objecttyp = objecttyp;
 	}
 	
 }

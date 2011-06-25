@@ -491,9 +491,10 @@ public class MTLinkController {
 	 * @param searchObj int
 	 * @return list List<Integer>
 	 */
-	public final List<Integer> getLinkListObjektID(final int searchObj) {
+	public final List<Integer> getLinkListObjectID(final int searchObj) {
 		List<Integer> list = new ArrayList<Integer>();
 		//TODO: Ausprogrammieren
+
 		return list; 
 	}
 	
@@ -504,9 +505,18 @@ public class MTLinkController {
 	 * @param searchObj int
 	 * @return list List<Integer>
 	 */ 
-	public final List<Integer> getLinkListObjekt(final int searchObj) {
+	public final List<Integer> getLinkListObject(final int searchObj) {
 		List<Integer> list = new ArrayList<Integer>();
-		//TODO: Ausprogrammieren
+	
+		
+		for (MTLink it : linkliste) {
+			if (it.getEndObjectID() == searchObj)
+				list.add(it.getStartObjectID());
+			if (it.getStartObjectID() == searchObj)
+				list.add(it.getEndObjectID());
+		}
+	
+		
 		return list; 
 	}
 	
@@ -586,11 +596,14 @@ public class MTLinkController {
 					MTLink it = linkliste.get(i);
 					//if ((it.getStartObjectID() == node1 && it.getEndObjectID() == node2) || (it.getStartObjectID() == node2 && it.getEndObjectID() == node1)) {
 			
-					// TODO: Falsche Check liefert zu schnell ein vorhanden
+					
 					if ((it.getStartObjectID() == node1 && it.getEndObjectID() == node2) || (it.getStartObjectID() == node2 && it.getEndObjectID() == node1)) {
 						System.out.println("MTLinkController: createLink: Link SCHON in der Liste vorhanden; " + node1 + " und " + node2 + "\n \t \t Vorhanderner LINK: " + it.getStartObjectID() + " und " + it.getEndObjectID());
 						canvas.removeChild(it);
+						
 						linkliste.remove(i);
+						it.destroy();
+						
 						found = true;
 						
 						
@@ -600,7 +613,7 @@ public class MTLinkController {
 						
 				}
 				if (!found) {
-					//Testen ist das Linksetzen über die Typen der zwei Objekte erlaubt (Über eine Deny Liste)
+				//Testen ist das Linksetzen über die Typen der zwei Objekte erlaubt (Über eine Deny Liste)
 				System.out.println("MTLinkController: createLink: Link noch NICHT in der Liste vorhanden; " + node1 + " und " + node2);
 				MTLink l1 = new MTLink(pApplet, vNode1, vNode2, node1, node2);
 				linkliste.add(l1);
