@@ -78,6 +78,12 @@ public class BuildRadialMenu extends MTComponent{
 			this.Mitoco = Mitoco;
 			this.sceneData = sceneData;
 			this.ic = ic;
+			
+			startyGestureVector = ic.getStartPosY();
+			startxGestureVector = ic.getStartPosX();
+			endyGestureVector = ic.getCurrentEvtPosY();
+			endxGestureVector = ic.getCurrentEvtPosX();
+			
 			//InputEvents for RadialMenu
 			final IMTInputEventListener createObjectInput = new IMTInputEventListener() {
 			      @Override
@@ -160,13 +166,15 @@ public class BuildRadialMenu extends MTComponent{
 								
 				              break;
 				            case TapEvent.GESTURE_ENDED:
-				            	//TODO: MitocoScene.this.mtApplication.saveFrame("Output-###.png");
+				            	Mitoco.getMTApplication().saveFrame("Output-###.png");
 				            default:
 				              break;
 				          }
 				        } else {
 				          //LOG.warn("Some other event occured:" + inEvt);
 				        }
+				        
+				        
 
 				        return false;
 				      }
@@ -194,14 +202,13 @@ public class BuildRadialMenu extends MTComponent{
 									}
 					            	*/
 					            	
-					            	//Mitoco.getCanvas().addChild(fileChooser.getUI());
 					            	//fileChooser.toggleFileChooser("xml");
 					        		//fileChooser.getUI().sendToFront();
-					            	fileChooser = new FileChooser("C:\\Workspace\\MT4J_KTSI", BuildRadialMenu.this.Mitoco);
-					        		Mitoco.getCanvas().addChild(fileChooser.getUI());
-					            	//Mitoco.drawFilechooser("xml");
-					        		fileChooser.toggleFileChooser("xml");
-					          		fileChooser.getUI().sendToFront(); 
+					            	//fileChooser = new FileChooser("C:\\", BuildRadialMenu.this.Mitoco);
+					        		//Mitoco.getCanvas().addChild(fileChooser.getUI());
+					            	Mitoco.drawFilechooser("xml");
+					        		//fileChooser.toggleFileChooser("xml");
+					          		//fileChooser.getUI().sendToFront(); 
 					        		
 					            	//linker.setTapAndHoldListener(); //TODO: Test
 									break;
@@ -413,7 +420,7 @@ public class BuildRadialMenu extends MTComponent{
 			
 			// Build list of menu items
 	        final List<MTMenuItem> menuItems = new ArrayList<MTMenuItem>();
-	        final MTMenuItem menu1 = new MTMenuItem("New", null);
+	        final MTMenuItem objectsmenu = new MTMenuItem("New", null);
 	        
 	        if (sceneData.getShowAll()) {
 	        	for (Iterator<ModelTypDescription> it =  dataController.getObjectetyps().getObjectdescription().iterator(); it.hasNext();) {
@@ -421,7 +428,7 @@ public class BuildRadialMenu extends MTComponent{
 	        		//menu1.addSubMenuItem(new MTMenuItem(it.next().getObjectdescription(), null));
 	        		//final IMTInputEventListener createObjectInput = new IMTInputEventListener() {
 	        		//menu1.addSubMenuItem(new MTMenuItem(it.next().getObjectdescription(), new ConcurrentHashMap<Class<? extends IInputProcessor>, IGestureEventListener>(){
-	        		menu1.addSubMenuItem(subMenu11);
+	        		objectsmenu.addSubMenuItem(subMenu11);
 	        		subMenu11.addInputEventListener(createObjectInput);
 	        	}
 	        	} else        {
@@ -433,66 +440,56 @@ public class BuildRadialMenu extends MTComponent{
 	            		//final IMTInputEventListener createObjectInput = new IMTInputEventListener() {
 	            		//menu1.addSubMenuItem(new MTMenuItem(it.next().getObjectdescription(), new ConcurrentHashMap<Class<? extends IInputProcessor>, IGestureEventListener>(){
 	            		
-	        			menu1.addSubMenuItem(subMenu11);
+	        			objectsmenu.addSubMenuItem(subMenu11);
 	            		subMenu11.addInputEventListener(createObjectInput);
 	        		//}
 	        		
 	        	}
 	        	
 	        }
-	        final MTMenuItem subMenu5 = new MTMenuItem("View", null);
-	        subMenu5.addSubMenuItem(new MTMenuItem("All", null));
-	        subMenu5.addSubMenuItem(new MTMenuItem("New", null));
-	        subMenu5.addSubMenuItem(new MTMenuItem("Old", null));
-	        subMenu5.addSubMenuItem(new MTMenuItem("Color", null));
-	        //subMenu5.addSubMenuItem(new MTMenuItem("Browser", null));
-	        final MTMenuItem subMenu51 = new MTMenuItem("Browser", null);
-	        subMenu51.addInputEventListener(browserListener);
-	        subMenu5.addSubMenuItem(subMenu51);
-	        final MTMenuItem subMenu52 = new MTMenuItem("PDF", null);
-	        subMenu52.addInputEventListener(showPDFlistener);
-	        subMenu5.addSubMenuItem(subMenu52);
-	        
-	        subMenu5.addSubMenuItem(new MTMenuItem("Special", null));
+	        final MTMenuItem viewmenu = new MTMenuItem("View", null);
+	        final MTMenuItem browser = new MTMenuItem("Browser", null);
+	        browser.addInputEventListener(browserListener);
+	        viewmenu.addSubMenuItem(browser);
+	        final MTMenuItem pdf = new MTMenuItem("PDF", null);
+	        pdf.addInputEventListener(showPDFlistener);
+	        viewmenu.addSubMenuItem(pdf);
+	    
+	  
 
-	        menu1.addSubMenuItem(subMenu5);
-
-	        final MTMenuItem menu2 = new MTMenuItem("Action", null);
-	        final MTMenuItem subMenu2 = new MTMenuItem("File", null);
-	        final MTMenuItem subMenu221 = new MTMenuItem("Load", null);
-	        final MTMenuItem subMenu223 = new MTMenuItem("LoadThomas", null);
-	        final MTMenuItem subMenu222 = new MTMenuItem("Save", null);
-	        subMenu2.addSubMenuItem(subMenu221);
-	        subMenu2.addSubMenuItem(subMenu222);
-	        subMenu2.addSubMenuItem(subMenu223);
+	        final MTMenuItem actionmenu = new MTMenuItem("Action", null);
 	        
-	        subMenu223.addInputEventListener(loadButtonInput2);
-	        subMenu221.addInputEventListener(loadButtonInput);
-	        subMenu222.addInputEventListener(saveButtonInput);
-	        
-	        subMenu2.addSubMenuItem(new MTMenuItem("Copy", null));
-	        subMenu2.addSubMenuItem(new MTMenuItem("Send", null));
+	        final MTMenuItem loadfile = new MTMenuItem("Load File", null);
+	        final MTMenuItem loadfileTest = new MTMenuItem("LoadThomas", null);
+	        final MTMenuItem saveFile = new MTMenuItem("Save File", null);
 	        final MTMenuItem submenu21 = new MTMenuItem("Reporting", null);
 	        submenu21.addInputEventListener(startReporting); 
+	        actionmenu.addSubMenuItem(submenu21);
+	        actionmenu.addSubMenuItem(loadfile);
+	        actionmenu.addSubMenuItem(loadfileTest);
+	        actionmenu.addSubMenuItem(saveFile);
+	        actionmenu.addSubMenuItem(new MTMenuItem("Save Picture", null));
 	        
-	        menu2.addSubMenuItem(submenu21);
-	        menu2.addSubMenuItem(subMenu2);
-	        menu2.addSubMenuItem(new MTMenuItem("Copy Objecet", null));
-	        menu2.addSubMenuItem(new MTMenuItem("Paste", null));
-	        menu2.addSubMenuItem(new MTMenuItem("Clear", null));
-	        final MTMenuItem menu3 = new MTMenuItem("Maximize", null);
-	        final MTMenuItem menu4 = new MTMenuItem("Minimize", null);
+	        loadfileTest.addInputEventListener(loadButtonInput2);
+	        loadfile.addInputEventListener(loadButtonInput);
+	        saveFile.addInputEventListener(saveButtonInput);
+	        //actionmenu.addSubMenuItem(new MTMenuItem("Copy Objecet", null));
+	        //actionmenu.addSubMenuItem(new MTMenuItem("Paste", null));
+	        actionmenu.addSubMenuItem(new MTMenuItem("Clear", null));
+	        final MTMenuItem maximizemenu = new MTMenuItem("Maximize", null);
+	        final MTMenuItem minimizemenu = new MTMenuItem("Minimize", null);
 	        
-	        menu4.addInputEventListener(hide2InputListener);
-	        menu3.addInputEventListener(showInputListener);
+	        maximizemenu.addInputEventListener(hide2InputListener);
+	        minimizemenu.addInputEventListener(showInputListener);
 	                
 	        final MTMenuItem menu5 = new MTMenuItem("Exit", null);
 	        menu5.addInputEventListener(exitButtonInput); 
 	     
-	        menuItems.add(menu1);
-	        menuItems.add(menu2);
-	        menuItems.add(menu3);
-	        menuItems.add(menu4);
+	        menuItems.add(objectsmenu);
+	        menuItems.add(viewmenu);
+	        menuItems.add(actionmenu);
+	        menuItems.add(maximizemenu);
+	        menuItems.add(minimizemenu);
 	        menuItems.add(menu5);
 
 	        // Create menu

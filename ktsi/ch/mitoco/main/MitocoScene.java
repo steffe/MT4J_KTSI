@@ -195,7 +195,7 @@ public class MitocoScene extends AbstractScene {
 			}				
 		});
 		
-		fileChooser = new FileChooser("C:\\Workspace\\MT4J_KTSI", this);
+		fileChooser = new FileChooser("C:\\", this);
 		getCanvas().addChild(fileChooser.getUI());
 		
 		// Standard Default ZoomAction and Pan TwoFingers
@@ -203,6 +203,10 @@ public class MitocoScene extends AbstractScene {
 		this.getCanvas().addGestureListener(ZoomProcessor.class, new DefaultZoomAction());
 		this.getCanvas().registerInputProcessor(new PanProcessorTwoFingers(mtApplication));
 		this.getCanvas().addGestureListener(PanProcessorTwoFingers.class, new DefaultPanAction());
+	}
+	
+	void run(){
+		
 	}
 
 	@Override

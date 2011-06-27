@@ -29,6 +29,7 @@ import org.mt4j.util.MTColor;
 import org.mt4j.util.math.Vector3D;
 import org.mt4j.util.math.Vertex;
 
+import processing.core.PImage;
 import ch.mitoco.main.MitocoScene;
 
 /**
@@ -55,11 +56,13 @@ public class FileChooser extends MTComponent
 	protected WBFileFilter imagesFilter;
 	protected WBFileFilter videosFilter;
 	protected WBFileFilter XMLFilter;
+	protected WBFileFilter PDFFilter;
 	protected WBFileFilter allFilter;
 	protected WBFileFilter currSelectedFilter = null;
 	protected FileFilter images;
 	protected FileFilter videos;
 	protected FileFilter xml;
+	protected FileFilter pdf;
 	protected FileFilter powerpoints;
 	
 	/** GUI globals **/
@@ -119,6 +122,7 @@ public class FileChooser extends MTComponent
 	    videos = new ExtensionFileFilter("Videos(*.wmv, *.mov, *.avi, *.flv, *mp4)", 
 	    		new String[] { "WMV", "MOV", "AVI", "FLV", "MP4" });
 	    xml = new ExtensionFileFilter("XML(*.xml)", new String[] { "XML" });
+	    pdf = new ExtensionFileFilter("PDF(*.pdf)", new String[] { "PDF" });
 	    powerpoints = new ExtensionFileFilter("PowerPoint(*.ppt)", new String[] { "PPT" });
 	    
 	    //Disable drag, rotate and scale
@@ -189,6 +193,11 @@ public class FileChooser extends MTComponent
 		if(filter == "xml") {
 			setSelectedFileFilter(XMLFilter);
 			setFileFilter(XMLFilter);
+			refreshDirectory();
+		}
+		if(filter == "pdf") {
+			setSelectedFileFilter(PDFFilter);
+			setFileFilter(PDFFilter);
 			refreshDirectory();
 		}
 		if(filter == "slideshow") {
@@ -391,6 +400,22 @@ public class FileChooser extends MTComponent
 						}
 					}
 					
+					target=0;
+					size = list.size();
+					if(allFiles || currFilter.getFilter() == pdf) {
+						for(int i=0; i<size; i++) {
+							if(pdf.accept(list.get(target))) {
+								WBFile tmpPdf = new WBFile(scene, list.get(target));
+								fileSelector.addListElement(tmpPdf);
+								tmpPdf.setIcon("pdf");
+								currDispFiles.add(tmpPdf);
+								list.remove(list.get(target));
+							}
+							else
+								target++;
+						}
+					}
+					
 					if(allFiles) {
 						for(File file: list) {
 							WBFile tmpFile = new WBFile(scene, file);
@@ -499,16 +524,16 @@ public class FileChooser extends MTComponent
         	}
         	//Add image
         	else if(images.accept(file) && !file.isDirectory()){
-            	//PImage texture = scene.getMTApplication().loadImage(file.getPath());
-        		//WBImage photo = new WBImage(texture, scene);
-            	//photo.setName(file.getName());
-            	//photo.setNoFill(true);
-            	//photo.setNoStroke(true);
-            	//photo.setDisplayCloseButton(true);
-            	//photo.setHeightXYGlobal(300);
-            	//photo.addGestureListener(DragProcessor.class, new InertiaDragAction());
+            	PImage texture = scene.getMTApplication().loadImage(file.getPath());
+        		WBImage photo = new WBImage(texture, scene);
+            	photo.setName(file.getName());
+            	photo.setNoFill(true);
+            	photo.setNoStroke(true);
+            	photo.setDisplayCloseButton(true);
+            	photo.setHeightXYGlobal(300);
+            	photo.addGestureListener(DragProcessor.class, new InertiaDragAction());
     			//scene.getLassoProcessor().addClusterable(photo); //make photo lasso-able
-    			//scene.getCanvas().addChild(photo);
+    			scene.getCanvas().addChild(photo);
             	System.out.println("Opening: " + file.getName() + ".");
             	//Update settings
             	//scene.updateSettings(photo); 
@@ -519,6 +544,12 @@ public class FileChooser extends MTComponent
         	else if(xml.accept(file) && !file.isDirectory()){
         		selectionPath = file.getPath();
             	scene.drawXMLload(getSelectionPath());
+            	toggleFileChooser();
+        	}
+        	
+        	else if(pdf.accept(file) && !file.isDirectory()){
+        		selectionPath = file.getPath();
+            	//scene.drawXMLload(getSelectionPath());
             	toggleFileChooser();
         	}
         	
@@ -546,7 +577,7 @@ public class FileChooser extends MTComponent
     			scene.addToMediaLayer(photo);
             	*/
             	selectionPath = file.getPath();
-            	scene.drawXMLload(getSelectionPath());
+            	//scene.drawXMLload(getSelectionPath());
             	toggleFileChooser();
         	}
         	

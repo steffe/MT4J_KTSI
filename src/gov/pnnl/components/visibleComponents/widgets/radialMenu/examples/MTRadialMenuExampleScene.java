@@ -208,6 +208,7 @@ public class MTRadialMenuExampleScene extends AbstractScene {
           switch (cursorInputEvt.getId()) {
             case TapEvent.GESTURE_STARTED:
               AnimationUtil.scaleIn(mtRectangle);
+              
               break;
             default:
               break;

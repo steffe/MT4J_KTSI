@@ -187,8 +187,9 @@ public class WBImage extends MTRectangle implements ILassoable{
 			//keybCloseSvg.scale(0.5f, 0.5f, 1, new Vector3D(0,0,0));
 			keybCloseSvg.translate(new Vector3D(this.getWidthXY(TransformSpace.RELATIVE_TO_PARENT) - 45, 2,0));
 			keybCloseSvg.setBoundsPickingBehaviour(AbstractShape.BOUNDS_ONLY_CHECK);
-			//TODO: keybCloseSvg.addActionListener(new CloseActionListener(new MTComponent[]{this, keybCloseSvg}) );
-//			pic.addChild(keybCloseSvg);
+			//keybCloseSvg.addActionListener(new CloseActionListener(new MTComponent[]{this, keybCloseSvg}) );
+			//keybCloseSvg.addGestureListener(TapProcessor.class, new CloseActionListener(new MTComponent[]{this, keybCloseSvg}));
+			//			pic.addChild(keybCloseSvg);
 			keybCloseSvg.setName("closeButton");
 			this.addChild(keybCloseSvg);
 		}else{
