@@ -121,6 +121,26 @@ public class DataController {
 		return objectindex;
 	}
 	
+	
+	public int createObject(ModelMtObjects object) {
+		//ModelMtObjects object = new ModelMtObjects();
+		object.setId(objectcounter);
+		dataModel.getMtobjects().add(object);
+		modeltTypeDesc = new ModelTypDescription();
+		//modeltTypeDesc.setObjectdenylink(new ArrayList<Integer>());
+		//getObjectetyps().getObjectdescription().add(modeltTypeDesc);
+		myobjectList.add(new MyMTObject(mtApplication, dataModel.getMtobjects().get(objectcounter), objectcounter, linker));
+		
+		System.out.println("DataController:  ObjektListe lokal: "+ myobjectList );
+		linker.setObjectList(myobjectList, dataModel.getMtobjectlinks(), getObjectetyps());
+		linker.setTapAndHoldListener(myobjectList.get(objectcounter)); //TODO: Test
+		Integer objectindex = new Integer(myobjectList.indexOf(myobjectList.get(objectcounter)));
+		System.out.println("Objectindex: "+objectindex);
+		objectcounter++;
+		
+		return objectindex;
+	}
+	
 	//Delete GUI Object (Datenmodel)
 	/**delete the Selected GUI Objects and the Datamodel.
 	 * 
@@ -158,7 +178,8 @@ public class DataController {
 	
 	/**Loading the XML File and build the myobjectList.
 	 * 
-	 * @return
+	 * 
+	 * @return Boolean returns true if the Loading was successfully
 	 */
 	public Boolean loadSceneXML(String filename) {
 		LoadXML = new LoadXML(filename, "scenedata");
@@ -174,7 +195,9 @@ public class DataController {
 		else {
 			dataModel = LoadXML.getDataModel();
 			
+			//Muss wegfallen, Links werden nicht geladen
 			dataModel.setMtobjectlinks(new ArrayList<ModelLink>());
+			
 			for (Iterator<ModelMtObjects> it = dataModel.getMtobjects().iterator(); it.hasNext();) {
 				myobjectList.add(new MyMTObject(mtApplication, it.next(), objectcounter, linker));
 				System.out.println("Object Gen:" + objectcounter);
@@ -188,33 +211,7 @@ public class DataController {
 		}
 		
 	}
-	/**Load SceneListeXML.
-	 * 
-	 * TODO: ueberarbeiten
-	 * @return
-	 */
-	public Boolean loadSceneListeXML() {
-		LoadXML = new LoadXML("xstream.xml", "sceneliste");
-			
-		if (objectcounter > 0) {
-			System.out.println("Grösser Null " + objectcounter);
-			//Objects are already drawn, you have to clean
-			return false;
-			}
-		else {
-			dataModel = LoadXML.getDataModel();
-			for (Iterator<ModelMtObjects> it = dataModel.getMtobjects().iterator(); it.hasNext();) {
-				myobjectList.add(new MyMTObject(mtApplication, it.next(), objectcounter, linker));
-				System.out.println("Object Gen:" + objectcounter);
-				linker.setTapAndHoldListener(getMyobjectList().get(objectcounter)); //TODO: Test
-				objectcounter++;
-			}
-			linker.setObjectList(myobjectList, dataModel.getMtobjectlinks(), getObjectetyps());
-			return true;
-		}
-		
-	}
-
+	
 	/**Will save the actual dataModel with content to a XML File.
 	 * 
 	 */
@@ -230,7 +227,8 @@ public class DataController {
 		System.out.println("ClearScene: " + objectcounter);
 		myobjectList.removeAll(getMyobjectList());
 		objectcounter = 0;
-		dataModel = null;
+		dataModel.getMtobjects().removeAll(myobjectList);
+		dataModel.getMtobjectlinks().removeAll(getMyobjectList());
 	}
 	
 	/**Load Objecttyps from XML.

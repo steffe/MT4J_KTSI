@@ -68,8 +68,16 @@ public class BuildRadialMenu extends MTComponent{
 	/** Spezifische ScenenDaten	 */
 	private ModelSceneList sceneData;
 	
-	/**
+
+	
+	/**Builds the whole Contextmenu based on RadialMenu
+	 * It reads the Objekttyps an Builds the only the selectable Objects
 	 * 
+	 * @param mtAppl MTApplication
+	 * @param dataController DataController object to acces the XMLs
+	 * @param Mitoco the Scene for drawing on it
+	 * @param sceneData the Datamodel
+	 * @param ic the Gesture Coordinates to calculate the direction
 	 */
 	public BuildRadialMenu(final MTApplication mtAppl, final DataController dataController, final MitocoScene Mitoco, final ModelSceneList sceneData, final InputCursor ic) {
 		super(mtAppl);
@@ -413,6 +421,26 @@ public class BuildRadialMenu extends MTComponent{
 					                return false;
 					              }
 					        };
+					        
+					        final IMTInputEventListener deleteListener = new IMTInputEventListener() {
+						          @Override
+						          public boolean processInputEvent(final MTInputEvent inEvt) {
+						            // Most input events in MT4j are an instance of AbstractCursorInputEvt (mouse, multi-touch..)
+						            if (inEvt instanceof MTFingerInputEvt) {
+						              final MTFingerInputEvt cursorInputEvt = (MTFingerInputEvt) inEvt;
+						              switch (cursorInputEvt.getId()) {
+						                case TapEvent.GESTURE_STARTED:
+						                	//hideObjects(dataController.getMyobjectList().get(0));
+						                   break;
+						                 default:
+						                      break;
+						                  }
+						                } else {
+						                  //LOG.warn("Some other event occured:" + inEvt);
+						                }
+						                return false;
+						              }
+						        };
 					    
 					    
 					    
@@ -478,9 +506,11 @@ public class BuildRadialMenu extends MTComponent{
 	        actionmenu.addSubMenuItem(new MTMenuItem("Clear", null));
 	        final MTMenuItem maximizemenu = new MTMenuItem("Maximize", null);
 	        final MTMenuItem minimizemenu = new MTMenuItem("Minimize", null);
+	        final MTMenuItem deletemenu = new MTMenuItem("Delete selected", null);
 	        
 	        maximizemenu.addInputEventListener(hide2InputListener);
 	        minimizemenu.addInputEventListener(showInputListener);
+	        deletemenu.addInputEventListener(deleteListener);
 	                
 	        final MTMenuItem menu5 = new MTMenuItem("Exit", null);
 	        menu5.addInputEventListener(exitButtonInput); 
@@ -490,6 +520,7 @@ public class BuildRadialMenu extends MTComponent{
 	        menuItems.add(actionmenu);
 	        menuItems.add(maximizemenu);
 	        menuItems.add(minimizemenu);
+	        menuItems.add(deletemenu);
 	        menuItems.add(menu5);
 
 	        // Create menu

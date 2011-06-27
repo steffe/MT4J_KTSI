@@ -104,6 +104,8 @@ public class SceneMitoco extends AbstractScene{
 	
 	public SceneMitoco(MTApplication mtApplication, String name) {
 		super(mtApplication, name);
+		Thread SceneMitoco = new Thread();
+		SceneMitoco.start();
 		// TODO Auto-generated constructor stub
 		this.app = mtApplication;
 		this.hasFBO = GLFBO.isSupported(app);
@@ -272,8 +274,8 @@ public class SceneMitoco extends AbstractScene{
 		getCanvas().addChild(buttonClose);
 	}
 	
-	/**
-	 * Adds the tap processor.
+	/** Creates the Tap Prozessor for each Scene
+	 *
 	 * 
 	 * @param cell the cell
 	 * @param createScene the create scene
@@ -318,8 +320,19 @@ public class SceneMitoco extends AbstractScene{
 		});
 	}
 	
-	/**
-	 * Adds the scene.
+	void run(){
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("Startmenü: Saved Imageg");
+		app.saveFrame("Output-###.png");
+	}
+	
+	/**Adds the Scene to an MTList Object
+	 * 
 	 * 
 	 * @param sceneToCreate the scene to create
 	 * @param icon the icon

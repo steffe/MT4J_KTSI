@@ -204,10 +204,6 @@ public class MitocoScene extends AbstractScene {
 		this.getCanvas().registerInputProcessor(new PanProcessorTwoFingers(mtApplication));
 		this.getCanvas().addGestureListener(PanProcessorTwoFingers.class, new DefaultPanAction());
 	}
-	
-	void run(){
-		
-	}
 
 	@Override
 	public void init() {
@@ -219,14 +215,15 @@ public class MitocoScene extends AbstractScene {
 	
 	}
 
-	// Method to retrieve the File Chooser
+	/**Returns the Filechooser objekt.
+	 * so you can show the filechooser from other Classes
+	 * 
+	 * @return Filechooser
+	 */
 	public static FileChooser getFc() { return fileChooser; }
 	// Method to retrieve the gui overlay
 	
-	/**Returns the Canvas. */
-	/**
-	 * 
-	 */
+	/**Returns the Main Canvas. */
 	public MTComponent getGuiOverlay() { return this.getCanvas(); }
 	
 	
@@ -241,9 +238,9 @@ public class MitocoScene extends AbstractScene {
 	public void drawXMLload(String filename) {
 	
 		if (!dataController.loadSceneXML(fileChooser.getSelectionPath())) {
-			WBErrorMessage test = new WBErrorMessage(MitocoScene.this,"Fehler beim Laden von XML");
-			test.setVisible(true);
-			getCanvas().addChild(test);
+			WBErrorMessage errormessage = new WBErrorMessage(MitocoScene.this,"Fehler beim Laden von XML");
+			errormessage.setVisible(true);
+			getCanvas().addChild(errormessage);
 			for (Iterator<MyMTObject> it = dataController.getMyobjectList().iterator(); it.hasNext();) {
 				getCanvas().removeChild(dataController.getMyobjectList().get(it.next().getID()));	
 			}
@@ -286,7 +283,7 @@ public class MitocoScene extends AbstractScene {
 		  }
 	  
 	  
-	  /**Ausblenden von aktivierten Objekten
+	  	/**Ausblenden von aktivierten Objekten
 		 * 
 		 * @param as
 		 */
@@ -315,10 +312,11 @@ public class MitocoScene extends AbstractScene {
 			 }
 	
 		  /**Aufrufen des Datei-Explorers
-		   * 
+		   * the following filters are possible
 		   * Filter: 	xml
 		   * 			image
 		   * 			movies
+		   * 			pdf
 		   * Um den Pfad der selektieren Datei zu erhalten mus die Methode getFilechooserPath
 		   * aufgerufen werden.
 		   * 
