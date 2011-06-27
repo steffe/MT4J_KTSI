@@ -2,6 +2,9 @@ package ch.mitoco.components.visibleComponents.widgets;
 
 import org.mt4j.AbstractMTApplication;
 import org.mt4j.MTApplication;
+import org.mt4j.components.StateChange;
+import org.mt4j.components.StateChangeEvent;
+import org.mt4j.components.StateChangeListener;
 import org.mt4j.components.TransformSpace;
 import org.mt4j.components.visibleComponents.shapes.MTRectangle;
 import org.mt4j.components.visibleComponents.shapes.MTRectangle.PositionAnchor;
@@ -85,6 +88,7 @@ public class MTPictureBox extends Attributes {
 	
 	/** MTImageButton for change the picture.*/
 	private MTImageButton buttonLoad;
+	private MTImageButton buttonSet;
 	
 	/** The MTTextAre Numbers. */	
 	//private MTTextArea pathText;
@@ -144,10 +148,13 @@ public class MTPictureBox extends Attributes {
 		label.setText(fname);
 		label.setPickable(false);
 		label.setVisible(false);
-		
+		//FileChooser test = new FileChooser(app.getComponent(1));
 		this.addChild(label);
 		//this.addChild(buttonLoad);
+		
 		createColorPicker();
+		createLoadButton();
+		createSetButton();
 	}
 	
 	/** Load Images for picturebox.
@@ -216,21 +223,6 @@ public class MTPictureBox extends Attributes {
 						
 						minmax = false;
 						} else {
-							
-							if (!MitocoScene.getFilechooserPath().equals(null)) {
-						
-								setPath(MitocoScene.getFilechooserPath());
-							}
-							else
-							{
-								setPath("Default");
-							}
-							if(imagePath.equals(null)){
-								setPath("Default");
-							}
-							
-							//pictureBox.destroy();
-							//loadSelectedImage();
 						pictureBox.setSizeLocal(picwidth / factor, picheight / factor);
 						
 						buttonLoad.setVisible(false);
@@ -256,7 +248,7 @@ public class MTPictureBox extends Attributes {
 	 * 
 	 * TODO: Keyboard mit dem Pfad durch ein Dateibrowser ersetzten.
 	 */
-	private void changePicture() {
+	private void createLoadButton() {
 		
 		// Button for Rotate
 		PImage buttonImage = app.loadImage("ch" + MTApplication.separator + "mitoco" + MTApplication.separator + "data" + MTApplication.separator +  "buttonLoadImage.png");
@@ -275,28 +267,100 @@ public class MTPictureBox extends Attributes {
 				TapEvent te = (TapEvent) ge;
 				switch(te.getTapID()) {
 				case TapEvent.TAPPED:
-					/*
-					MTTextKeyboard textKeyboard = new MTTextKeyboard(app);
-					textKeyboard.setFillColor(trans);
-					pathText = new MTTextArea(app, 0, 0, width, 20, labelfont);
-					textKeyboard.setNoStroke(true);
-					textKeyboard.setPositionRelativeToParent(new Vector3D(textKeyboard.getWidthXY(TransformSpace.LOCAL) / 2, (textKeyboard.getHeightXY(TransformSpace.LOCAL) / 2) + 50));
-					
-					pathText.setFillColor(new MTColor(205, 200, 177, 255));
-					pathText.unregisterAllInputProcessors();
-					pathText.setEnableCaret(true);
-					
-					textKeyboard.snapToKeyboard(pathText);
-					
-					pathText.setText(getPath());
-					textKeyboard.addTextInputListener(pathText);
-					
-					addChild(textKeyboard);
-					pathText.setPositionRelativeToParent(new Vector3D((width / 2), -10));
-					*/
-					//MitocoScene.drawFilechooser("video");
+			
 					setPath("default");
 					MitocoScene.drawFilechooser("image");
+					
+					MitocoScene.getFc().addStateChangeListener(StateChange.COMPONENT_DESTROYED, new StateChangeListener() {
+						@Override
+						public void stateChanged(final StateChangeEvent evt) {
+							//if (!MitocoScene.getFilechooserPath().equals(null) || !getPath().equals(null)) {
+								System.out.println("MtPictureBox: CloseFilechooser draw Image");
+								setPath(MitocoScene.getFilechooserPath());
+								try {
+									image = app.loadImage(getPath());	
+									pictureBox = new MTRectangle(app, image);
+									} catch (NullPointerException ex) {
+										
+										System.out.println("Wrong Path or picture not exits: " + ex);
+										pictureBox = new MTRectangle(app, width, height);
+										pictureBox.setFillColor(MTColor.RED);
+										pictureBox.setNoStroke(true);
+										MTTextArea error = new MTTextArea(app);
+										error.setNoFill(true);
+										error.setNoStroke(true);
+										error.setText("Missing file or wrong path");
+										error.setPickable(false);
+										pictureBox.addChild(error);
+									}
+									
+									picheight = pictureBox.getHeightXY(TransformSpace.LOCAL);
+									picwidth = pictureBox.getWidthXY(TransformSpace.LOCAL);
+										
+									float factorHeight = picheight / (height - 5);
+									float factorWidht = picwidth / (width - 5);
+									
+									System.out.println("Höhe Factor: " + factorHeight + "Bild Höhe : " + picheight + " Attribut Höhe "+  height);
+									System.out.println("Breiten Factor: " + factorWidht + "Bild Breite: " + picwidth + " Attribut breite " + width);
+									
+									
+									
+									if (factorHeight > factorWidht) {
+										factor = factorHeight;
+									} else {
+										factor = factorWidht;
+									}
+									
+									pictureBox.setSizeLocal(picwidth / factor, picheight / factor);
+									pictureBox.setAnchor(PositionAnchor.CENTER);
+									System.out.println("Höhe " + pictureBox.getHeightXY(TransformSpace.LOCAL) + " Breite " + pictureBox.getWidthXY(TransformSpace.LOCAL));
+									pictureBox.setPositionRelativeToParent(new Vector3D(width / 2, height / 2));
+									pictureBox.setPickable(true);
+									
+									pictureBox.setGestureAllowance(DragProcessor.class, false);
+									pictureBox.setGestureAllowance(ScaleProcessor.class, false);
+									pictureBox.setGestureAllowance(RotateProcessor.class, false);
+									pictureBox.setGestureAllowance(TapProcessor.class, true);
+									//this.addChild(sa);
+									
+									pictureBox.registerInputProcessor(new TapProcessor(app, 25, true, 350));
+									pictureBox.addGestureListener(TapProcessor.class, new IGestureEventListener() {
+										
+										@Override
+										public boolean processGestureEvent(MTGestureEvent ge) {
+											if (ge instanceof TapEvent) {
+												TapEvent te = (TapEvent) ge;
+												if (te.getTapID() == TapEvent.TAPPED) {
+													if (minmax) {
+													pictureBox.setSizeLocal(picwidth, picheight);
+													
+													buttonLoad.setVisible(true);
+													
+													minmax = false;
+													} else {
+													pictureBox.setSizeLocal(picwidth / factor, picheight / factor);
+													
+													buttonLoad.setVisible(false);
+													
+													minmax = true;
+													}
+												}	
+											}
+											return false;
+										}
+									});
+									
+									
+									
+									addChild(pictureBox);
+
+									
+							}
+						//}
+					}
+					
+					);
+					
 					//if(getPath().equals("default") || getPath().equals(test)){
 					//	setPath(test);
 					//}
@@ -330,7 +394,129 @@ public class MTPictureBox extends Attributes {
 			}
 		});
 		buttonLoad.setVisible(false);
+		this.addChild(buttonLoad);
+		
 	}
+	
+	
+	private void createSetButton() {
+		
+		// Button for Rotate
+		PImage buttonImage = app.loadImage("ch" + MTApplication.separator + "mitoco" + MTApplication.separator + "data" + MTApplication.separator +  "buttonSetImage.png");
+		buttonSet = new MTImageButton(app, buttonImage);
+		buttonSet.setSizeLocal(30, 30);
+		buttonSet.setFillColor(new MTColor(255, 255, 255, 200));
+		buttonSet.setName("SetImage");
+		buttonSet.setNoStroke(true);
+		//buttonSet.translateGlobal(new Vector3D(45, 45));
+		buttonSet.setPositionGlobal(new Vector3D(45, 15));
+		
+		buttonSet.addGestureListener(TapProcessor.class, new IGestureEventListener() {
+			
+			@Override
+			public boolean processGestureEvent(final MTGestureEvent ge) {
+				TapEvent te = (TapEvent) ge;
+				switch(te.getTapID()) {
+				case TapEvent.TAPPED:
+					if (!MitocoScene.getFilechooserPath().equals(null) || !getPath().equals(null)) {
+						setPath(MitocoScene.getFilechooserPath());
+						try {
+							image = app.loadImage(getPath());	
+							pictureBox = new MTRectangle(app, image);
+							} catch (NullPointerException ex) {
+								
+								System.out.println("Wrong Path or picture not exits: " + ex);
+								pictureBox = new MTRectangle(app, width, height);
+								pictureBox.setFillColor(MTColor.RED);
+								pictureBox.setNoStroke(true);
+								MTTextArea error = new MTTextArea(app);
+								error.setNoFill(true);
+								error.setNoStroke(true);
+								error.setText("Missing file or wrong path");
+								error.setPickable(false);
+								pictureBox.addChild(error);
+							}
+							
+							picheight = pictureBox.getHeightXY(TransformSpace.LOCAL);
+							picwidth = pictureBox.getWidthXY(TransformSpace.LOCAL);
+								
+							float factorHeight = picheight / (height - 5);
+							float factorWidht = picwidth / (width - 5);
+							
+							System.out.println("Höhe Factor: " + factorHeight + "Bild Höhe : " + picheight + " Attribut Höhe "+  height);
+							System.out.println("Breiten Factor: " + factorWidht + "Bild Breite: " + picwidth + " Attribut breite " + width);
+							
+							
+							
+							if (factorHeight > factorWidht) {
+								factor = factorHeight;
+							} else {
+								factor = factorWidht;
+							}
+							
+							pictureBox.setSizeLocal(picwidth / factor, picheight / factor);
+							pictureBox.setAnchor(PositionAnchor.CENTER);
+							System.out.println("Höhe " + pictureBox.getHeightXY(TransformSpace.LOCAL) + " Breite " + pictureBox.getWidthXY(TransformSpace.LOCAL));
+							pictureBox.setPositionRelativeToParent(new Vector3D(width / 2, height / 2));
+							pictureBox.setPickable(true);
+							
+							pictureBox.setGestureAllowance(DragProcessor.class, false);
+							pictureBox.setGestureAllowance(ScaleProcessor.class, false);
+							pictureBox.setGestureAllowance(RotateProcessor.class, false);
+							pictureBox.setGestureAllowance(TapProcessor.class, true);
+							//this.addChild(sa);
+							
+							pictureBox.registerInputProcessor(new TapProcessor(app, 25, true, 350));
+							pictureBox.addGestureListener(TapProcessor.class, new IGestureEventListener() {
+								
+								@Override
+								public boolean processGestureEvent(MTGestureEvent ge) {
+									if (ge instanceof TapEvent) {
+										TapEvent te = (TapEvent) ge;
+										if (te.getTapID() == TapEvent.TAPPED) {
+											if (minmax) {
+											pictureBox.setSizeLocal(picwidth, picheight);
+											
+											buttonLoad.setVisible(true);
+											
+											minmax = false;
+											} else {
+											pictureBox.setSizeLocal(picwidth / factor, picheight / factor);
+											
+											buttonLoad.setVisible(false);
+											
+											minmax = true;
+											}
+										}	
+									}
+									return false;
+								}
+							});
+							
+							
+							
+							addChild(pictureBox);
+
+							
+					}
+					//if(imagePath.equals(null)){
+					//	setPath("Default");
+					//}
+					
+					//pictureBox.destroy();
+					//loadSelectedImage();
+					break;	
+				default:
+					break;
+				}
+			return false;
+			}
+		});
+		buttonSet.setVisible(false);
+		this.addChild(buttonSet);
+		
+	}
+	
 	
 	/** 
 	 * Colorpicker.
@@ -469,7 +655,8 @@ public class MTPictureBox extends Attributes {
 	public final void setMin() {
 		label.setVisible(false);
 		colPickButton.setVisible(false);
-		
+		buttonLoad.setVisible(false);
+		buttonSet.setVisible(false);
 	}
 	
 	/**
@@ -478,6 +665,8 @@ public class MTPictureBox extends Attributes {
 	public final void setMax() {
 		label.setVisible(true);
 		colPickButton.setVisible(true);
+		buttonLoad.setVisible(true);
+		buttonSet.setVisible(true);
 	}
 	
 	/** 

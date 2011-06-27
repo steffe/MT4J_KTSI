@@ -42,10 +42,7 @@ public class BuildRadialMenu extends MTComponent{
 	private DataController dataController;
 	/**InputCursor for RadialMenu.	*/
 	private InputCursor ic;
-	
-	/**Filechooser objekt. */
-	private FileChooser fileChooser;
-	
+		
 	/**RadialMenu.	*/
 	private MTRadialMenu mtRadialMenu1;
 	
@@ -55,6 +52,9 @@ public class BuildRadialMenu extends MTComponent{
 	
 	/** Object Counter and Object ID. */
 	private int counter;
+	
+	/**Filechooser objekt. */
+	private static FileChooser fileChooser;
 	
 	/** Object Index */
 	private int objectindex;
@@ -197,8 +197,11 @@ public class BuildRadialMenu extends MTComponent{
 					            	//Mitoco.getCanvas().addChild(fileChooser.getUI());
 					            	//fileChooser.toggleFileChooser("xml");
 					        		//fileChooser.getUI().sendToFront();
-					        		Mitoco.drawFilechooser("xml");
-					        		
+					            	fileChooser = new FileChooser("C:\\Workspace\\MT4J_KTSI", BuildRadialMenu.this.Mitoco);
+					        		Mitoco.getCanvas().addChild(fileChooser.getUI());
+					            	//Mitoco.drawFilechooser("xml");
+					        		fileChooser.toggleFileChooser("xml");
+					          		fileChooser.getUI().sendToFront(); 
 					        		
 					            	//linker.setTapAndHoldListener(); //TODO: Test
 									break;

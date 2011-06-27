@@ -162,6 +162,9 @@ public class DataController {
 	 */
 	public Boolean loadSceneXML(String filename) {
 		LoadXML = new LoadXML(filename, "scenedata");
+		if (!LoadXML.getReaderStatus()) {
+			return false;
+		}
 			
 		if (objectcounter > 0) {
 			System.out.println("Grösser Null " + objectcounter);

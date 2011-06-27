@@ -32,8 +32,8 @@ import org.mt4j.util.animation.ani.AniAnimation;
 
 import ch.mitoco.components.visibleComponents.MyMTObject;
 import ch.mitoco.components.visibleComponents.filechooser.FileChooser;
+import ch.mitoco.components.visibleComponents.filechooser.WBErrorMessage;
 import ch.mitoco.dataController.DataController;
-import ch.mitoco.dataController.SaveXML;
 import ch.mitoco.model.ModelScence;
 import ch.mitoco.model.ModelSceneList;
 
@@ -146,7 +146,8 @@ public class MitocoScene extends AbstractScene {
 				//final IMTComponent3D target = th.getTarget();
 				switch (ue.getId()) {
 				case UnistrokeEvent.GESTURE_STARTED:
-					getCanvas().addChild(ue.getVisualization());
+					//Draws yellow Gesture lines
+					//TODO: Disabled because of Lasso: getCanvas().addChild(ue.getVisualization());
 				
 					
 					
@@ -215,7 +216,7 @@ public class MitocoScene extends AbstractScene {
 	}
 
 	// Method to retrieve the File Chooser
-	public FileChooser getFc() { return fileChooser; }
+	public static FileChooser getFc() { return fileChooser; }
 	// Method to retrieve the gui overlay
 	
 	/**Returns the Canvas. */
@@ -234,7 +235,11 @@ public class MitocoScene extends AbstractScene {
 	 * @param filename
 	 */
 	public void drawXMLload(String filename) {
+	
 		if (!dataController.loadSceneXML(fileChooser.getSelectionPath())) {
+			WBErrorMessage test = new WBErrorMessage(MitocoScene.this,"Fehler beim Laden von XML");
+			test.setVisible(true);
+			getCanvas().addChild(test);
 			for (Iterator<MyMTObject> it = dataController.getMyobjectList().iterator(); it.hasNext();) {
 				getCanvas().removeChild(dataController.getMyobjectList().get(it.next().getID()));	
 			}
@@ -319,6 +324,7 @@ public class MitocoScene extends AbstractScene {
       		//fileChooser.sendToFront();
           	fileChooser.toggleFileChooser(filter);
       		fileChooser.getUI().sendToFront();  
+      		
 		  }
 		  
 		  /**Gibt den Pfad mit der ausgewählten datei des Filechoosers zurück
@@ -329,5 +335,8 @@ public class MitocoScene extends AbstractScene {
 		  
 		  		return fileChooser.getSelectionPath();
 		}
+		  
+
+		  
 
 }
