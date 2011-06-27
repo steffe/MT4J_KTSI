@@ -14,6 +14,7 @@ import ch.mitoco.model.ModelMtObjects;
 import ch.mitoco.model.ModelScence;
 
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.XStreamException;
 
 
 /**Loading a XML File which was generated with xstream and the MiToCo Datamodel
@@ -34,6 +35,8 @@ public class LoadXML {
 	 * 
 	 */
 	private ModelFunctionList sceneListe;
+	
+	private boolean readearfailure;
 		
 	/**
 	 * 
@@ -58,8 +61,10 @@ public class LoadXML {
 		XStream xstream = new XStream();
 		try {
 			dataModel = (ModelScence) xstream.fromXML(new FileInputStream(filename));
+			readearfailure = true;
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
+			readearfailure = false;
 			e.printStackTrace();
 		}
 		int counter = 0;
@@ -93,7 +98,16 @@ public class LoadXML {
 		}
 		else if (typ.equals("scenedata")){
 			try {
-				dataModel = (ModelScence) xstream.fromXML(new FileInputStream(filename));
+				 // parses the string and sets the time
+		        try {
+		        	dataModel = (ModelScence) xstream.fromXML(new FileInputStream(filename));
+		        	readearfailure = true;
+		        } catch (XStreamException e) {
+		        	readearfailure = false;
+		        	//throw new XStreamException(e);
+		                
+		        }
+		        
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -102,9 +116,11 @@ public class LoadXML {
 		else if (typ.equals("sceneliste")){
 			try {
 				setSceneListe((ModelFunctionList) xstream.fromXML(new FileInputStream(filename)));
+				readearfailure = true;
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				readearfailure = false;
 			}
 		}
 		else{
@@ -142,6 +158,10 @@ public class LoadXML {
 	 */
 	public ModelFunctionList getSceneListe() {
 		return sceneListe;
+	}
+	
+	public boolean getReaderStatus(){
+		return readearfailure;
 	}
 
 }
