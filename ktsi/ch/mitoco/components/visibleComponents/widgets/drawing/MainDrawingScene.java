@@ -4,6 +4,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import org.mt4j.AbstractMTApplication;
+import org.mt4j.MTApplication;
 import org.mt4j.components.MTComponent;
 import org.mt4j.components.TransformSpace;
 import org.mt4j.components.visibleComponents.shapes.MTEllipse;
@@ -36,12 +37,15 @@ public class MainDrawingScene extends MTComponent {
 	private MTEllipse pencilBrush;
 	private DrawSurfaceScene drawingScene;
 	
+	private MTRoundRectangle frame;
 //	private String imagesPath = System.getProperty("user.dir")+File.separator + "examples"+  File.separator +"advanced"+ File.separator + File.separator +"drawing"+ File.separator + File.separator +"data"+ File.separator +  File.separator +"images" + File.separator ;
 	private String imagesPath = "advanced" + AbstractMTApplication.separator + "drawing" + AbstractMTApplication.separator + "data" + AbstractMTApplication.separator + "images" + AbstractMTApplication.separator;
 
 	public MainDrawingScene(AbstractMTApplication mtApplication, String name) {
 		super(mtApplication, name);
 		this.pa = mtApplication;
+		
+		//TODO: Entfernen des Drag, Zoom usw Prozessors
 		
 		if (!(MT4jSettings.getInstance().isOpenGlMode() && GLFBO.isSupported(pa))){
 			System.err.println("Drawing example can only be run in OpenGL mode on a gfx card supporting the GL_EXT_framebuffer_object extension!");
@@ -50,8 +54,16 @@ public class MainDrawingScene extends MTComponent {
 		//this.registerGlobalInputProcessor(new CursorTracer(mtApplication, this));
 		
 		//Create window frame
-        MTRoundRectangle frame = new MTRoundRectangle(pa,-50, -50, 0, pa.width+100, pa.height+100,25, 25);
-        frame.setSizeXYGlobal(pa.width-10, pa.height-10);
+		frame = new MTRoundRectangle(pa, -50, -50, 0, pa.width + 100, pa.height + 100, 25, 25);
+       
+		System.out.println("MainDrawingScene: PA Grösse Breite: " + pa.width + " und Höhe: " + pa.height);
+		
+        //frame.setSizeXYGlobal(pa.width-10, pa.height-10);
+        frame.setSizeXYGlobal(230, 200);
+
+        // 390 300
+        frame.translate(new Vector3D( - ((pa.width/2)-100) , -((pa.height/2)-100)));
+        
         this.addChild(frame);
         //Create the scene in which we actually draw
         drawingScene = new DrawSurfaceScene(pa, "DrawSurface Scene");
@@ -80,10 +92,14 @@ public class MainDrawingScene extends MTComponent {
         //Create the frame/window that displays the drawing scene through a FBO
 //        final MTSceneTexture sceneWindow = new MTSceneTexture(0,0, pa, drawingScene);
 		//We have to create a fullscreen fbo in order to save the image uncompressed
+//		final MTSceneTexture sceneTexture = new MTSceneTexture(pa,0, 0, pa.width, pa.height, drawingScene);
+	     
 		final MTSceneTexture sceneTexture = new MTSceneTexture(pa,0, 0, pa.width, pa.height, drawingScene);
         sceneTexture.getFbo().clear(true, 255, 255, 255, 0, true);
         sceneTexture.setStrokeColor(new MTColor(155,155,155));
         frame.addChild(sceneTexture);
+       
+//        frame.setTexture(newTexImage)
         
         //Eraser button
         PImage eraser = pa.loadImage(imagesPath + "Kde_crystalsvg_eraser.png");
@@ -105,6 +121,8 @@ public class MainDrawingScene extends MTComponent {
 			}
         });
         frame.addChild(b);
+        
+  
         
         //Pen brush selector button
         PImage penIcon = pa.loadImage(imagesPath + "pen.png");
@@ -246,8 +264,7 @@ public class MainDrawingScene extends MTComponent {
         p.unregisterAllInputProcessors();
         p.setPickable(false);
         slider.getOuterShape().addChild(p);
-        slider.getKnob().sendToFront();
-        
+        slider.getKnob().sendToFront(); 
 	}
 
 	public void onEnter() {}
@@ -262,4 +279,35 @@ public class MainDrawingScene extends MTComponent {
 //		}
 //		return destroyed;
 //	}
+	
+	boolean modus = false;
+	/**
+	 * 
+	 * @param modus
+	 */
+	public void setSize(boolean test) {
+        //this.scaleGlobal(0.5f, 0.5f, 0, new Vector3D(0,0,0));
+        int difh = 170;
+		int difw = 100;
+		
+		if(!modus){
+			// Max Modus
+			frame.setSizeXYGlobal(540, 400); // Width /heigth
+	        this.translate(new Vector3D(difh, difw));
+
+	        
+	        PImage savePicture = new PImage();
+	        savePicture = frame.getTexture(); 
+	        //savePicture.save("testforMe.png");
+	        
+			modus = true;
+		} else {
+			// Min Modus
+			frame.setSizeXYGlobal(240, 200);
+	        this.translate(new Vector3D(-difh, -difw));
+			modus = false;
+		}
+
+	}
+	
 }

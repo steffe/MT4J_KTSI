@@ -22,15 +22,18 @@ import org.mortbay.jetty.handler.HandlerList;
 import org.mortbay.jetty.handler.ResourceHandler;
 import org.mortbay.log.Log;
 
+import ch.mitoco.main.MitocoScene;
+
 /* ------------------------------------------------------------ */
 /** File server
  * Usage - java org.mortbay.jetty.example.FileServer [ port [ docroot ]]
  * @author gregw
  *
  */
-public class FileServer implements Runnable {
+public class FileServer extends Thread {
 	public FileServer() {
 		System.out.println("FileServer: Wird gestart !!! ");
+		
 	}
 	
 	public void run() {

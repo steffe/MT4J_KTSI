@@ -63,6 +63,8 @@ public class MTDrawingBox extends Attributes {
 	/** Picture File Path.*/
 	//private String filePath;
 	
+	/** Drawing Area.*/
+	private  MainDrawingScene m1;
 	
 	/** Picture width. */
 	private float picwidth;
@@ -150,11 +152,33 @@ public class MTDrawingBox extends Attributes {
 	}
 
 	private void createDrawingScene() {
-
-        MainDrawingScene m1 = new MainDrawingScene(app, "Drawing Side");
-       // m1.scaleGlobal( 0.2f, 0.2f  , 0, new Vector3D(0,0));
+		
+		
+        m1 = new MainDrawingScene(app, "Drawing Side");
+        //m1.scale( 0.5f, 0.5f  , 0, new Vector3D(0,0), TransformSpace.LOCAL);
+       
         m1.translate(new Vector3D(30,0));
+       
         this.addChild(m1);
+        
+        //Eraser button
+        PImage minmax = app.loadImage("ch" + MTApplication.separator + "mitoco" + MTApplication.separator + "data" + MTApplication.separator +  "buttonMaxMin.png");
+        MTImageButton mm = new MTImageButton(app, minmax);
+        mm.setNoStroke(true);
+        mm.setSizeLocal(30, 30);
+//        mm.translate(new Vector3D(0,0,0));
+        mm.addGestureListener(TapProcessor.class, new IGestureEventListener() {
+			public boolean processGestureEvent(MTGestureEvent ge) {
+				TapEvent te = (TapEvent)ge;
+				if (te.isTapped()){
+//					//As we are messing with opengl here, we make sure it happens in the rendering thread
+					System.out.println("MTDrawingBox: Tapped ");
+					m1.setSize(true);
+				}
+				return true;
+			}
+        });
+        this.addChild(mm);
 	}
 	
 	

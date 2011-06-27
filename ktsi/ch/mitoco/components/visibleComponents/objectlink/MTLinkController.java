@@ -103,9 +103,11 @@ public class MTLinkController {
 		
 		selectedLasso();
 		
-		FileServer server = new FileServer();
-//		server.run();
-//		server.createWebserver();
+		// Jetty Fileserver
+		Thread thread = new FileServer();
+		thread.start();
+		
+
 		
 	}
 
@@ -146,16 +148,29 @@ public class MTLinkController {
 	 * Lesen der ModelDaten für die Links und Setzten.
 	 */
 	public void readDataAll() {
-		for (ModelLink it : modellinkList) {
-			System.out.println("MTLinkController: readDataAll: Links aus XML werden erstellt: 1: " + it.getFirstObject() + "  2: " + it.getSecondObject());
+		if(!(modellinkList.isEmpty())){
+			for (ModelLink it : modellinkList) {
+				System.out.println("MTLinkController: readDataAll: Links aus XML werden erstellt: 1: " + it.getFirstObject() + "  2: " + it.getSecondObject());
+				
+				Vertex vNode1 = new Vertex(new Vector3D(myobjectList.get(it.getFirstObject()).getCenterPointGlobal()));
+				Vertex vNode2 = new Vertex(new Vector3D(myobjectList.get(it.getSecondObject()).getCenterPointGlobal()));
+				
+				MTLink link = new MTLink(pApplet, vNode1, vNode2, it.getFirstObject(), it.getSecondObject());
+				linkliste.add(link);
+				addMTLinktoCanvas(link);
+			}
+		} else {
+			System.out.println("MTLinkController: readDataAll: Liste ist leer ");
 			
-			Vertex vNode1 = new Vertex(new Vector3D(myobjectList.get(it.getFirstObject()).getCenterPointGlobal()));
-			Vertex vNode2 = new Vertex(new Vector3D(myobjectList.get(it.getSecondObject()).getCenterPointGlobal()));
-			
-			MTLink link = new MTLink(pApplet, vNode1, vNode2, it.getFirstObject(), it.getSecondObject());
-			linkliste.add(link);
-			addMTLinktoCanvas(link);
 		}
+		
+	}
+	
+	
+	public void showLinkListe() {
+		for (MTLink it : linkliste) {
+			System.out.println("MTLinkController: showLinkListe: EndObjekt " + it.getEndObjectID() + " StartObj:" +it.getStartObjectID());
+			}
 	}
 	
 	/**
@@ -490,12 +505,19 @@ public class MTLinkController {
 	/** 
 	 * Print selected Object in the list.
 	 * */
-	public void printSelectedList() {
+	public List<Integer> getSelectedList() {
+		List<Integer> list = new ArrayList<Integer>();
 		
-		for (MTSelectStoreObject it : selectedObjectID) {
-			System.out.println("Opject Paar gepeichert " + it.getEndObjectID() + ":" + it.getStartObjectID() + " PAAR ist Valid; " + it.isValid());
+//		for (MTSelectStoreObject it : selectedObjectID) {
+//			System.out.println("Opject Paar gepeichert " + it.getEndObjectID() + ":" + it.getStartObjectID() + " PAAR ist Valid; " + it.isValid());
+//		}
+		for (MyMTObject it : myobjectList) {
+			if(it.getTagFlag() == true) {
+				list.add(it.getID());
+			}
 		}
-
+		
+		return list; 
 	}
 	
 	/**

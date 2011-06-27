@@ -258,9 +258,10 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 					updownrotate = !updownrotate;
 					printMTObjectModel(objectmodel); //TODO: Eintrag fürs Testen: gibt DataModel inhalt aus
 					dataWrite(); 
-					linker.printSelectedList();
+					linker.getSelectedList();
 					linker.showTaggedObject();
 					linker.getLinkListObject(0);
+					linker.showLinkListe();
 					break;	
 				default:
 					break;
