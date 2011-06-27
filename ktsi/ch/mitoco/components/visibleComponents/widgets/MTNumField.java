@@ -140,7 +140,7 @@ public class MTNumField extends Attributes {
 		fontsize = iF.getOriginalFontSize();		
 		
 		this.setSizeLocal(width, height);
-		this.setFillColor(blue1);
+		//this.setFillColor(blue1);
 		this.setStrokeColor(MTColor.BLACK);
 		
 		textarea = new MTTextArea(app, 0, (height - fontsize) / 2, width, height, font);
@@ -280,7 +280,11 @@ public class MTNumField extends Attributes {
 		// Color for Rectangle Fill Color
 		if (model.getAttcolor() == null) {
 			this.setFillColor(blue1);
+			System.out.println("MTNumField: KANN NICHT AUSGELESEN WERDEN");
+			
 		} else {
+			System.out.println("MTNumField: Farbe wird ausgelesen = " + model.getAttcolor());
+			//this.setFillColor(MTColor.BLACK);
 			this.setFillColor(model.getAttcolor());
 		}
 		
@@ -297,7 +301,7 @@ public class MTNumField extends Attributes {
 				//TODO Was ist zu tun wenn dieses Werte Paar noch nicht exitiert???
 			}
 		}
-		model.setAttcolor(getFillColor());
+		model.setAttcolor(this.getFillColor());
 	}
 	
 	/** 

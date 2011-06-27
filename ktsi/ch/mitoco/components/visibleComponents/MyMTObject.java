@@ -36,6 +36,7 @@ import processing.core.PImage;
 import ch.mitoco.components.visibleComponents.objectlink.MTLinkController;
 import ch.mitoco.components.visibleComponents.widgets.Attributes;
 import ch.mitoco.components.visibleComponents.widgets.MTColorPickerGroup;
+import ch.mitoco.components.visibleComponents.widgets.MTDrawingBox;
 import ch.mitoco.components.visibleComponents.widgets.MTDropDownList;
 import ch.mitoco.components.visibleComponents.widgets.MTListAttribut;
 import ch.mitoco.components.visibleComponents.widgets.MTNumField;
@@ -44,6 +45,7 @@ import ch.mitoco.components.visibleComponents.widgets.MTTextAttribut;
 import ch.mitoco.model.ModelAttributContent;
 import ch.mitoco.model.ModelMtAttributs;
 import ch.mitoco.model.ModelMtObjects;
+import ch.mitoco.webserver.FileServer;
 
 /**
  * 
@@ -153,7 +155,7 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 	private int defaultHeightDropDown = 30;
 	private int defaultHeightMTPictureBox = 120;
 	private int defaultHeightListAttribut = 200;
-	
+	private int defaultHeightMTDrawingBox = 200;
 	
 	
 	/** Constructor MyMTObject.
@@ -190,8 +192,7 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 //		obSizeMaxWidth = 300;
 //		obSizeMaxHeight = 400;
 		minmaxModus = 1; // Objekt wird im MinModus gestartet
-		
-	
+			
 		fontArial = FontManager.getInstance().createFont(pApplet, "arial.ttf", 
 				15, 	//Font size
 				MTColor.BLACK);
@@ -377,12 +378,16 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 				System.out.println("MyMTObject: " + i + "Attributs MTListAttribut " + it);
 				myAttributs.add(new MTListAttribut(pApplet, attributesmodel.get(i), fontArialMini, 250, readAttributHeight(i, defaultHeightListAttribut), "Löcher", labelfont));
 				break;
+				
+			case(5):
+				System.out.println("MyMTObject: " + i + "Attributs MTDrawingBox " + it);
+				myAttributs.add(new MTDrawingBox(pApplet, 250, readAttributHeight(i,defaultHeightMTDrawingBox), "Zeichnen", labelfont));
+				break;
 			default:
 				break;
 			}
 		i++;
 		}
-		//setAttributForMinModus();
 		
 	}
 	
@@ -409,7 +414,7 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 		 * setVisible
 		 * 
 		 */
-		int i = 0; // Anzahl Attribute
+		int i = 0; // Anzahl Attribute im MaxModus
 		int j = 0; // Anzahl Attribute im MinModus
 		int difx = 0; // Zähler der die Attribut Postition aufsummiert von Attribut zu Attribut. Max Modus
 		int difxHiddenMinModus = 0; // Zähler der die Attribut Postition aufsummiert von Attribut zu Attribut. Max Modus
@@ -422,12 +427,12 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 				if (minmaxModus == 0) {
 					//Objekt ist im MaxModus
 					myAttributs.get(i).setVisible(true);
-					difx = setAttributPosition(difx, readAttributHeight(i, defaultHeightTextAttribut), i, myAttributs.get(i));			
+					difx = setAttributPosition(difx, readAttributHeight(i, defaultHeightTextAttribut), i, myAttributs.get(i), -1);			
 				} else if (minmaxModus == 1) {
 					//Objekt ist im MinModus
 					if (!(attributesmodel.get(i).isMinMax())) {
-						difxHiddenMinModus = difx; // Alle die MinModus Angezeigt werden (Hidden Objekte entfernen
-						difx = setAttributPosition(difx, readAttributHeight(i, defaultHeightTextAttribut), i, myAttributs.get(i));
+						
+						difx = setAttributPosition(difx, readAttributHeight(i, defaultHeightTextAttribut), i, myAttributs.get(i), j);
 						j++;
 					} else {
 						 myAttributs.get(i).setVisible(false);
@@ -440,11 +445,10 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 				
 				if (minmaxModus == 0) {
 					myAttributs.get(i).setVisible(true);
-					difx = setAttributPosition(difx, readAttributHeight(i, defaultHeightNumField), i, myAttributs.get(i));
+					difx = setAttributPosition(difx, readAttributHeight(i, defaultHeightNumField), i, myAttributs.get(i), -1);
 				} else if (minmaxModus == 1) {
 					if (!(attributesmodel.get(i).isMinMax())) {
-						difxHiddenMinModus = difx; // Alle die MinModus Angezeigt werden (Hidden Objekte entfernen
-						difx = setAttributPosition(difx, readAttributHeight(i, defaultHeightNumField), i, myAttributs.get(i));
+						difx = setAttributPosition(difx, readAttributHeight(i, defaultHeightNumField), i, myAttributs.get(i), j);
 						j++;
 					} else  {
 						myAttributs.get(i).setVisible(false);
@@ -459,11 +463,10 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 				
 				if (minmaxModus == 0) {
 					myAttributs.get(i).setVisible(true);
-					difx = setAttributPosition(difx, readAttributHeight(i, defaultHeightDropDown), i, myAttributs.get(i));
+					difx = setAttributPosition(difx, readAttributHeight(i, defaultHeightDropDown), i, myAttributs.get(i), -1);
 				} else if (minmaxModus == 1) {
 					if (!(attributesmodel.get(i).isMinMax())) {
-						difxHiddenMinModus = difx; // Alle die MinModus Angezeigt werden (Hidden Objekte entfernen
-						difx = setAttributPosition(difx, readAttributHeight(i, defaultHeightDropDown), i, myAttributs.get(i));
+						difx = setAttributPosition(difx, readAttributHeight(i, defaultHeightDropDown), i, myAttributs.get(i), j);
 						j++;
 					} else  {
 						myAttributs.get(i).setVisible(false);
@@ -476,12 +479,11 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 				
 				if (minmaxModus == 0) {
 					myAttributs.get(i).setVisible(true);
-					difx = setAttributPosition(difx, readAttributHeight(i, defaultHeightMTPictureBox), i, myAttributs.get(i));
+					difx = setAttributPosition(difx, readAttributHeight(i, defaultHeightMTPictureBox), i, myAttributs.get(i), -1);
 				} else if (minmaxModus == 1) {
 					//MinModus
 					if (!(attributesmodel.get(i).isMinMax())) {
-						difxHiddenMinModus = difx; // Alle die MinModus Angezeigt werden (Hidden Objekte entfernen
-						difx = setAttributPosition(difx, readAttributHeight(i, defaultHeightMTPictureBox), i, myAttributs.get(i));
+						difx = setAttributPosition(difx, readAttributHeight(i, defaultHeightMTPictureBox), i, myAttributs.get(i), j);
 						j++;
 					} else  {
 						myAttributs.get(i).setVisible(false);
@@ -494,11 +496,26 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 				
 				if (minmaxModus == 0) {
 					myAttributs.get(i).setVisible(true);
-					difx = setAttributPosition(difx, readAttributHeight(i, defaultHeightListAttribut), i, myAttributs.get(i));
+					difx = setAttributPosition(difx, readAttributHeight(i, defaultHeightListAttribut), i, myAttributs.get(i), -1);
 				} else if (minmaxModus == 1) {
 					if (!(attributesmodel.get(i).isMinMax())) {
-						difxHiddenMinModus = difx; // Alle die MinModus Angezeigt werden (Hidden Objekte entfernen
-						difx = setAttributPosition(difx, readAttributHeight(i, defaultHeightListAttribut), i, myAttributs.get(i));
+						difx = setAttributPosition(difx, readAttributHeight(i, defaultHeightListAttribut), i, myAttributs.get(i), j);
+						j++;
+					} else  {
+						myAttributs.get(i).setVisible(false);
+					}
+				}
+				break;
+			
+			case(5):
+				System.out.println("MyMTObject: Position setzten: " + i + "Attributs MTDrawingBox " + it  + " " + difx);
+				
+				if (minmaxModus == 0) {
+					myAttributs.get(i).setVisible(true);
+					difx = setAttributPosition(difx, readAttributHeight(i, defaultHeightMTDrawingBox), i, myAttributs.get(i), -1);
+				} else if (minmaxModus == 1) {
+					if (!(attributesmodel.get(i).isMinMax())) {
+						difx = setAttributPosition(difx, readAttributHeight(i, defaultHeightMTDrawingBox), i, myAttributs.get(i), j);
 						j++;
 					} else  {
 						myAttributs.get(i).setVisible(false);
@@ -525,7 +542,7 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 	 * 			Hier muss die default Höhe angegeben werden. Dieser wird verwendetet, wenn keine Höhe im Datenmodel festgelegt worden ist.
 	 * @return attributHight.get(attributID) int
 	 */
-	private int readAttributHeight(final int attributID,  final int defaultHight) {
+	private int readAttributHeight(final int attributID, final int defaultHight) {
 		if (attributesmodel.get(attributID).getAttributHight() == 0) {
 				System.out.println("MyMTObject: readAttributHight: Default " + defaultHight);
 				attributHight.add(attributID, defaultHight);
@@ -628,18 +645,21 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 		
 	/**
 	 * 
+	 * Mit dieser Metode wird das Attribut auf dem Objekt platziert und wenn nötig den Abstand gegen Oben definiert.
+	 * 
 	 * @param difx
 	 * @param defaultHeight
-	 * @param i int Postition des Attributs
+	 * @param i int Anzahl Attribute im Max-Modus
 	 * @param it Attributes
+	 * @param j int Anzahl Attribute im Min-Modus
 	 * @return
 	 */
-	private int setAttributPosition(int difx, int defaultHeight, int i, Attributes it ) {
+	private int setAttributPosition(int difx, int defaultHeight, int i, Attributes it, final int j) {
 		int captop = 20; // Zusätzlicher Abstand zum ersten Attribut
 		int cap = 20; // Abstand zwischen den Zeilen
 		
 		difx = difx + cap + readAttributHeight(i, defaultHeight) / 2;
-		if (i == 0) difx += captop; // Erste Attribut im Objekt bekommt ein grösser Abstand von oben
+		if (i == 0 || j == 0) difx += captop; // Erste Attribut im Objekt bekommt ein grösser Abstand von oben
 		it.setPositionRelativeToParent(new Vector3D(this.getWidthXY(TransformSpace.LOCAL) / 2, difx /*+ readAttributHeight(i,defaultHeightTextAttribut)/2*/));
 		difx = difx + readAttributHeight(i, defaultHeight) / 2;
 		
@@ -717,11 +737,11 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 		if (this.objectmodel.getObjectlable() == null || this.objectmodel.getObjectlable().isEmpty()) {
 			textField.setText("Object" + " ID:" + id);
 		} else {
-			textField.setText(this.objectmodel.getObjectlable() + id);
+			textField.setText(this.objectmodel.getObjectlable() + " " +id);
 		}
 		
 		// Object Typ wird gesetzt
-		if (this.objectmodel.getObjecttyp() == 0) {
+		if (this.objectmodel.getObjecttyp() == 0 ) {
 			setObjecttyp(-1);
 		} else {
 			setObjecttyp(this.objectmodel.getObjecttyp());
@@ -742,6 +762,11 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 		// Save Font (Not in use)
 	
 		// Save Directions
+		this.objectmodel.setDirection(updownrotate);
+		for (Attributes it : myAttributs ) {
+			it.dataWrite();
+		}
+		
 	}
 	
 	/** Position Dedection for MTObjects.*/
@@ -908,6 +933,8 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 	 * @see com.jMT.input.inputAnalyzers.clusterInputAnalyzer.IdragClusterable#setSelected(boolean)
 	 */
 	public void setSelected(boolean selected) {
+		linker.setVisibleAllOne(!selected, id); // Verstecken der Linien, wenn Objekt im Lasso ist.
+		linker.drawLinie();
 		this.selected = selected;
 	}
 	
@@ -959,8 +986,8 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 				node1 = new Integer(Integer.valueOf((droppedComponents.get(i).getName())).intValue()) ; // Name der Linie die selbe ist 
 				node2 = new Integer(Integer.valueOf(this.getName()).intValue());
 				
-				linker.setSelectedObjectColor(node2, false);
-				linker.setSelectedObjectColor(node1, false);
+				linker.setSelectedObjectColor(node2, false, MTColor.RED);
+				linker.setSelectedObjectColor(node1, false, MTColor.RED);
 				
 					if ( !(node1 == node2)) { //Der Link wird nicht auf sich selbst ausgeführt und zeigt auf ein anderes Objekt
 						linker.createLink(node1, node2);
@@ -1048,7 +1075,13 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 			 idSObj = Integer.valueOf(startObj).intValue(); //  Start Objekts
 			
 				 if (!(idObj == idSObj)) {
-					 linker.setSelectedObjectColor(idObj, setting);
+					 // Testen ob der Link erlaubt ist oder nicht, Farbliches Markieren
+					 if(linker.isValidLinkRequest(idObj, idSObj)) {
+						 linker.setSelectedObjectColor(idObj, setting, MTColor.GREEN);
+					 } else {
+						 linker.setSelectedObjectColor(idObj, setting, MTColor.RED);
+					 }
+					
 					 System.out.println("MyMTObject: marker: des zu markierenden Objekts " + idObj + " StartObjekt ID:" + idSObj);
 				 } else {
 					 System.out.println("MyMTObject: marker: Markieren des eigenen  Objekts nicht möglich: " + idObj + " StartObjekt ID:" + idSObj);

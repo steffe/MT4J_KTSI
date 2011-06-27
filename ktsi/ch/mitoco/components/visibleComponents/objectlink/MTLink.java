@@ -10,6 +10,8 @@ import org.mt4j.components.visibleComponents.widgets.buttons.MTImageButton;
 import org.mt4j.input.inputProcessors.IGestureEventListener;
 import org.mt4j.input.inputProcessors.MTGestureEvent;
 import org.mt4j.input.inputProcessors.componentProcessors.dragProcessor.DragProcessor;
+import org.mt4j.input.inputProcessors.componentProcessors.rotateProcessor.RotateProcessor;
+import org.mt4j.input.inputProcessors.componentProcessors.scaleProcessor.ScaleProcessor;
 import org.mt4j.input.inputProcessors.componentProcessors.tapProcessor.TapEvent;
 import org.mt4j.input.inputProcessors.componentProcessors.tapProcessor.TapProcessor;
 import org.mt4j.util.MTColor;
@@ -91,6 +93,10 @@ public class MTLink extends MTLine {
 		this.addChild(colPickButton);
 		this.addChild(colorpicker);
 		
+		this.setGestureAllowance(DragProcessor.class, false);
+		this.setGestureAllowance(RotateProcessor.class, false);
+		this.setGestureAllowance(ScaleProcessor.class, false);
+		
 		this.setGestureAllowance(TapProcessor.class, true);
 		this.registerInputProcessor(new TapProcessor(app1));
 		this.addGestureListener(TapProcessor.class, new IGestureEventListener() {
@@ -104,6 +110,7 @@ public class MTLink extends MTLine {
 					if (te.getTapID() == TapEvent.TAPPED) {
 						colPickButton.setVisible(true);
 						colPickButton.setPositionGlobal(getCenterPointLocal());
+						colorpicker.setPositionGlobal(getCenterPointLocal());
 						//colPickButton.setPositionRelativeToOther(, new Vector3D(0, 0));
 						//colorpicker.setPositionRelativeToParent(new Vector3D(0, 30));
 						//colPickButton.translate(new Vector3D(50,50));

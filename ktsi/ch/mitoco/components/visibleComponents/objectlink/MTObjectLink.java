@@ -23,11 +23,11 @@ import processing.core.PApplet;
 /** MTObjectLink for connect two myMTObjects with a MTLine. */
 public class MTObjectLink extends MTLine {
 	
-	/** Start Object. */
-	private MyMTObject startObject;
+//	/** Start Object. */
+//	private MyMTObject startObject;
 	
-	/** End Object. */
-	private MyMTObject endObject;
+//	/** End Object. */
+//	private MyMTObject endObject;
 
 	/** MTEllipse. */
 	private MTEllipse linkHead;
@@ -44,7 +44,7 @@ public class MTObjectLink extends MTLine {
 	/** StrokeWeight. */
 	private int strokeWeight;
 	
-	/** Stroke Color*/
+	/** Stroke Color.*/
 	private MTColor strokeColor;
 	
 	/** MTObjectLink Constructor.
@@ -104,58 +104,100 @@ public class MTObjectLink extends MTLine {
 	 addGestureListener(DragProcessor.class, new DragAndDropAction());
 	}
 
-	/** 
-	 * Set the Link Description. 
-	 * 
-	 * @param text String
-	 * */
-	public void setDescription(final String text) {
-		
-	}
+//	/** 
+//	 * Set the Link Description. 
+//	 * 
+//	 * @param text String
+//	 * */
+//	public void setDescription(final String text) {
+//		
+//	}
 	
+	/**
+	 * Setzt den neuen Punkt des Target Finder (LinkHead) und des Linienende.
+	 * @param newendPoint 
+	 */
 	private void setNewEndPosition(Vertex newendPoint) {
 		setVertices(new Vertex[]{getVerticesLocal()[0], newendPoint});
 		linkHead.setPositionRelativeToParent(getVerticesLocal()[1]);
 	
 	}
 	
-	
+	/**
+	 * Setzt den Target Finder (LinkHead) und die Linie wieder auf den Ursprungspunkt zurück.
+	 */
 	private void reset() {
 		setVertices(new Vertex[]{getVerticesLocal()[0], endPoint});
 		linkHead.setPositionRelativeToParent(getVerticesLocal()[1]);
 		
 	}
+
+	/** 
+	 * Gibt die Linien dicke des Linkhead und der Linie zurück. 
+	 * 
+	 * @return strokeWeight int
+	 */
+	public final int getStrokeWeightLinkObject() {
+		return strokeWeight;
+	}
+
+	/**
+	 * Setzt die Dicke der Linie des Linkheads und der Linie.
+	 * 
+	 * @param strokeWeight int
+	 */
+	public void setStrokeWeightLinkObject(final int strokeWeight) {
+		this.strokeWeight = strokeWeight;
+	}
+
+	/**
+	 * Gibt die Farbe der Linie und des Linkheads zurück.
+	 * 
+	 * @return strokeColor MTColor
+	 */
+	public MTColor getStrokeColor() {
+		return strokeColor;
+	}
+
+	/**
+	 * Setzt die Farbe der Linien und des Linkheads
+	 */
+	public void setStrokeColor(MTColor strokeColor) {
+		this.strokeColor = strokeColor;
+	}
 	
-	/**
-	 * 
-	 * @return
-	 */
-	public MyMTObject getStartObject() {
-		return startObject;
-	}
-
-	/**
-	 * 
-	 * @param startObject
-	 */
-	public void setStartObject(MyMTObject startObject) {
-		this.startObject = startObject;
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	public MyMTObject getEndObject() {
-		return endObject;
-	}
-
-	/**
-	 * 
-	 * @param endObject
-	 */
-	public void setEndObject(MyMTObject endObject) {
-		this.endObject = endObject;
-	}
+	
+//	/**
+//	 * 
+//	 * @return
+//	 */
+//	public MyMTObject getStartObject() {
+//		return startObject;
+//	}
+//
+//	/**
+//	 * 
+//	 * @param startObject
+//	 */
+//	public void setStartObject(MyMTObject startObject) {
+//		this.startObject = startObject;
+//	}
+//
+//	/**
+//	 * 
+//	 * @return
+//	 */
+//	public MyMTObject getEndObject() {
+//		return endObject;
+//	}
+//
+//	/**
+//	 * 
+//	 * 
+//	 * @param endObject MyMTOb
+//	 */
+//	public void setEndObject(MyMTObject endObject) {
+//		this.endObject = endObject;
+//	}
 	
 }

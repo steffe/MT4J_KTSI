@@ -63,5 +63,8 @@
 	<classpathentry kind="lib" path="lib/filechooser/poi-scratchpad-3.7-20101029.jar"/>
 	<classpathentry kind="lib" path="lib/GSMovie/gstreamer-java-bin-1.2.jar"/>
 	<classpathentry kind="lib" path="lib/GSMovie/gsvideo06pre.jar"/>
+	<classpathentry kind="lib" path="lib/jetty/jetty-6.1.26RC0.jar"/>
+	<classpathentry kind="lib" path="lib/jetty/jetty-util-6.1.26RC0.jar"/>
+	<classpathentry kind="lib" path="lib/jetty/servlet-api-2.5-20081211.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

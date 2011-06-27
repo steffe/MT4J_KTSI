@@ -2,7 +2,7 @@
   <objecttyp>
     <ch.mitoco.model.ModelMtObjects>
       <id>0</id>
-      <objecttyp>0</objecttyp>
+      <objecttyp>1</objecttyp>
       <objectcolor>
         <name>undefined</name>
         <r>12.0</r>
@@ -62,7 +62,7 @@
     </ch.mitoco.model.ModelMtObjects>
     <ch.mitoco.model.ModelMtObjects>
       <id>1</id>
-      <objecttyp>1</objecttyp>
+      <objecttyp>2</objecttyp>
       <objectcolor>
         <name>undefined</name>
         <r>12.0</r>
@@ -164,7 +164,7 @@
     </ch.mitoco.model.ModelMtObjects>
     <ch.mitoco.model.ModelMtObjects>
       <id>0</id>
-      <objecttyp>2</objecttyp>
+      <objecttyp>3</objecttyp>
       <objectcolor>
         <name>undefined</name>
         <r>112.0</r>
@@ -198,7 +198,7 @@
     </ch.mitoco.model.ModelMtObjects>
         <ch.mitoco.model.ModelMtObjects>
       <id>0</id>
-      <objecttyp>3</objecttyp>
+      <objecttyp>4</objecttyp>
       <objectcolor>
         <name>undefined</name>
         <r>12.0</r>
@@ -244,7 +244,7 @@
     </ch.mitoco.model.ModelMtObjects>
     <ch.mitoco.model.ModelMtObjects>
       <id>0</id>
-      <objecttyp>4</objecttyp>
+      <objecttyp>5</objecttyp>
       <objectcolor>
         <name>undefined</name>
         <r>12.0</r>
@@ -345,7 +345,7 @@
     </ch.mitoco.model.ModelMtObjects>
     <ch.mitoco.model.ModelMtObjects>
       <id>0</id>
-      <objecttyp>5</objecttyp>
+      <objecttyp>6</objecttyp>
       <objectcolor>
         <name>undefined</name>
         <r>112.0</r>
@@ -404,7 +404,7 @@
     </ch.mitoco.model.ModelMtObjects>
     <ch.mitoco.model.ModelMtObjects>
       <id>0</id>
-      <objecttyp>6</objecttyp>
+      <objecttyp>7</objecttyp>
       <objectcolor>
         <name>undefined</name>
         <r>112.0</r>
@@ -438,51 +438,51 @@
   </objecttyp>
   <objectdescription>
     <ch.mitoco.model.ModelTypDescription>
-      <objectypeid>0</objectypeid>
+      <objectypeid>1</objectypeid>
       <objectdescription>Player</objectdescription>
    	  <kardinalitaet>0</kardinalitaet>
       <objectdenylink>
-        <int>0</int>
+        <int>1</int>
         <int>3</int>
       </objectdenylink>
     </ch.mitoco.model.ModelTypDescription>
     <ch.mitoco.model.ModelTypDescription>
-      <objectypeid>1</objectypeid>
+      <objectypeid>2</objectypeid>
       <objectdescription>Scorecard</objectdescription>
       <kardinalitaet>0</kardinalitaet>
       <objectdenylink>
       </objectdenylink>
     </ch.mitoco.model.ModelTypDescription>
     <ch.mitoco.model.ModelTypDescription>
-      <objectypeid>2</objectypeid>
+      <objectypeid>3</objectypeid>
       <objectdescription>Auswertung</objectdescription>
       <kardinalitaet>0</kardinalitaet>
       <objectdenylink>
       </objectdenylink>
     </ch.mitoco.model.ModelTypDescription>
     <ch.mitoco.model.ModelTypDescription>
-      <objectypeid>3</objectypeid>
+      <objectypeid>4</objectypeid>
       <objectdescription>2Attribute</objectdescription>
       <kardinalitaet>0</kardinalitaet>
       <objectdenylink>
       </objectdenylink>
     </ch.mitoco.model.ModelTypDescription>
     <ch.mitoco.model.ModelTypDescription>
-      <objectypeid>4</objectypeid>
+      <objectypeid>5</objectypeid>
       <objectdescription>Test1</objectdescription>
       <kardinalitaet>0</kardinalitaet>
       <objectdenylink>
       </objectdenylink>
     </ch.mitoco.model.ModelTypDescription>
     <ch.mitoco.model.ModelTypDescription>
-      <objectypeid>5</objectypeid>
+      <objectypeid>6</objectypeid>
       <objectdescription>TestDropDown</objectdescription>
       <kardinalitaet>0</kardinalitaet>
       <objectdenylink>
       </objectdenylink>
     </ch.mitoco.model.ModelTypDescription>
     <ch.mitoco.model.ModelTypDescription>
-      <objectypeid>6</objectypeid>
+      <objectypeid>7</objectypeid>
       <objectdescription>Picture</objectdescription>
       <kardinalitaet>0</kardinalitaet>
       <objectdenylink>
