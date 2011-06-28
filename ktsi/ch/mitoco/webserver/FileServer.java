@@ -33,12 +33,17 @@ import ch.mitoco.main.MitocoScene;
  *
  */
 public class FileServer extends Thread {
-	/** Port für den Webserver */
+	
+	/** Port für den Webserver. */
 	private int port;
 	
-	public FileServer(int port) {
+	/** Path String for Jetty Resource.*/
+	private String path;
+	
+	public FileServer(int port, String path) {
 		System.out.println("FileServer: Wird gestart !!! ");
 		this.port = port;
+		this.path = path;
 	}
 	
 	public void run() {
@@ -51,7 +56,7 @@ public class FileServer extends Thread {
             Server server = new Server(port);
             
             ResourceHandler publicDocs = new ResourceHandler();
-            publicDocs.setResourceBase("e:/jetty/htdocs");
+            publicDocs.setResourceBase(path);
             
             ResourceHandler resource_handler=new ResourceHandler();
             resource_handler.setWelcomeFiles(new String[]{"index.html"});

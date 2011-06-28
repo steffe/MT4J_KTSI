@@ -102,15 +102,8 @@ public class MTLinkController {
 		canvas.addGestureListener(LassoProcessor.class, new DefaultLassoAction(app, canvas.getClusterManager(), canvas));
 		
 		selectedLasso();
-		
-		
-		
-		// Jetty Fileserver
-//		Thread thread = new FileServer(0);
-//		thread.start();
-		
-
-		
+	
+	
 	}
 
 	/**
