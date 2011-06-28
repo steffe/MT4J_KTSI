@@ -156,19 +156,35 @@ public class MitocoReporting extends AbstractScene {
         float height = 0;
         objectCounter = 0;
         
+        //rad is needed to calc from rad to °
+        final float rad = 57.29577951f;
+        
         for (String key : sortedKeysObject) {
 			Integer k = Integer.parseInt(key);
 			for (final MyMTObject ite : mtobjs) {
 	        	int id = ite.getID();
 	        	if (k == id) {
-//	        		linker.setVisibleOne(false, id);
-					System.out.println("Matching ID: " + k + " " + id);
+					Vector3D v1 = new Vector3D();
+					Vector3D v2 = new Vector3D();
+					Vector3D v3 = new Vector3D();
+					
+					//V2 = Rotation Wert, V3 Scale Wert
+					ite.getGlobalMatrix().decompose(v1, v2, v3);
+					System.out.println("V1 " + v1 + "V2 " + v2 + "V3 " + v3);
+					
+					ite.rotateZ(ite.getCenterPointGlobal(), -(v2.getZ() * rad));
+					
+					//Inverse (Reciprocal) Value
+					float invRes = 1 / v3.getX();
+					ite.scaleGlobal(invRes, invRes, 1.0f, ite.getCenterPointGlobal());
+					
+					ite.getGlobalMatrix().decompose(v1, v2, v3);
+					System.out.println("V1 " + v1 + "V2 " + v2 + "V3 " + v3);
+										
 					Vector3D aktVec01 = new Vector3D();
 					aktVec01.translate(new Vector3D(ite.getWidthXY(TransformSpace.GLOBAL) / 2, ite.getHeightXY(TransformSpace.GLOBAL) / 2 + height, 0));
-					//ite.tweenTranslate(aktVec01, 400, 0.1f, 0.6f);
-					//AnimationUtil.translate(ite, 0, 0);
 					ite.setPositionGlobal(aktVec01);
-//					linker.setVisibleOne(true, id);
+					
 					linker.drawLinie();
 					float heightObj = ite.getHeightXY(TransformSpace.GLOBAL);
 					System.out.println("Höhe:" + height);

@@ -169,7 +169,7 @@ public class MTListAttribut extends Attributes {
 			defaultLabelText = "DefaultLabel";
 			
 			this.setSizeLocal(width, height);
-			this.setFillColor(blue1);
+			this.setFillColor(new MTColor(0, 0, 0, 0));
 			this.setStrokeColor(MTColor.BLACK);
 						
 			label = new MTTextArea(app, 0, -labelfont.getOriginalFontSize(), width - 100, height, labelfont);
@@ -212,8 +212,9 @@ public class MTListAttribut extends Attributes {
 			
 			alrr = new ArrayList<MTRoundRectangle>();
 			for (int j = 0; j < 18; j++) {
-				alrr.add(new MTRoundRectangle(app, 0, 0, 0, 200, 30, 5, 5));
-				alrr.get(j).setFillColor(MTColor.GREEN);
+				alrr.add(new MTRoundRectangle(app, 0, 0, 0, 247, 30, 5, 5));
+				alrr.get(j).setFillColor(new MTColor(0, 0, 0, 0));
+				alrr.get(j).setStrokeColor(new MTColor(22, 22, 22));
 			}
 			
 			//HashMap um via dataRead den Inhalt aus dem File zu lesen
@@ -268,8 +269,10 @@ public class MTListAttribut extends Attributes {
 			
 			for (int i = 0; i < al.size(); i++) {
 				//Hier kann man Groesse der eigentlichen Zelle verändern
-				MTListCell cell = new MTListCell(app, 200, 30);
+				MTListCell cell = new MTListCell(app, 247, 30);
 				cell.setNoFill(true);
+				cell.setFillColor(new MTColor(0, 0, 0, 0));
+				cell.setStrokeColor(new MTColor(0, 0, 0, 0));
 				cell.registerInputProcessor(new TapProcessor(app, 15));
 				cell.setName(Integer.toString(i));
 				
@@ -300,6 +303,12 @@ public class MTListAttribut extends Attributes {
 									public void stateChanged(final StateChangeEvent evt) {
 										String key = String.valueOf(algt.get(Integer.valueOf(ge.getCurrentTarget().getName())).getText());
 										String val = String.valueOf(al.get(Integer.valueOf(ge.getCurrentTarget().getName())).getText());
+										System.out.println("Value: [" + val + "]");
+										if (val.equals("")) {
+											System.out.println("Key: " + key + "Val: " + val);
+											val = "0";
+											al.get(Integer.valueOf(ge.getCurrentTarget().getName())).setText(val);
+										}
 										dataWrite(key, val);
 										
 										
