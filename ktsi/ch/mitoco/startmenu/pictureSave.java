@@ -1,15 +1,5 @@
 package ch.mitoco.startmenu;
 
-import java.awt.AWTException;
-import java.awt.Dimension;
-import java.awt.Rectangle;
-import java.awt.Robot;
-import java.awt.Toolkit;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
 
 
 public class pictureSave extends Thread {
@@ -28,7 +18,7 @@ public class pictureSave extends Thread {
 		while(x<=400)
         {
 		try {
-			Thread.sleep(1000);
+			Thread.sleep(10000);
 			
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
@@ -37,6 +27,9 @@ public class pictureSave extends Thread {
 //		System.out.println("Startmenü: Saved Imageg");
 //		app.getMTApplication().saveFrame(path + "Output-###.png");
 		
+		//app.getMTApplication().saveFrame(path + "out###.png");
+		//SceneMitoco.takescreenshot();
+		/*
 		try {
 			 Toolkit toolkit = Toolkit.getDefaultToolkit();
 		      Dimension oScreenSize = toolkit.getScreenSize();
@@ -58,7 +51,7 @@ public class pictureSave extends Thread {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+		*/
 		
 		x++;
         }

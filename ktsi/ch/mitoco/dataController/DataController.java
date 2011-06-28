@@ -243,8 +243,8 @@ public class DataController {
 	/**Will save the actual dataModel with content to a XML File.
 	 * 
 	 */
-	public void saveSceneXML() {
-		save = new SaveXML(SceneMitoco.getExportPath() + "savetest1.xml", dataModel);
+	public void saveSceneXML(String filename) {
+		save = new SaveXML(SceneMitoco.getExportPath() + filename + ".xml", dataModel);
 		
 	}
 	

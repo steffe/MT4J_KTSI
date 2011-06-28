@@ -12,6 +12,12 @@ import java.util.List;
 
 import org.mt4j.MTApplication;
 import org.mt4j.components.MTComponent;
+import org.mt4j.components.StateChange;
+import org.mt4j.components.StateChangeEvent;
+import org.mt4j.components.StateChangeListener;
+import org.mt4j.components.TransformSpace;
+import org.mt4j.components.visibleComponents.widgets.MTTextArea;
+import org.mt4j.components.visibleComponents.widgets.keyboard.MTTextKeyboard;
 import org.mt4j.input.IMTInputEventListener;
 import org.mt4j.input.inputData.InputCursor;
 import org.mt4j.input.inputData.MTFingerInputEvt;
@@ -32,6 +38,7 @@ import ch.mitoco.dataController.DataController;
 import ch.mitoco.model.ModelSceneList;
 import ch.mitoco.model.ModelTypDescription;
 import ch.mitoco.reporting.MitocoReporting;
+import ch.mitoco.startmenu.SceneMitoco;
 
 /**
  * @author steffe
@@ -56,6 +63,8 @@ public class BuildRadialMenu extends MTComponent{
 	/**Filechooser objekt. */
 	private static FileChooser fileChooser;
 	
+	private MTTextArea textarea;
+	
 	/** Object Index */
 	private int objectindex;
 	
@@ -64,9 +73,13 @@ public class BuildRadialMenu extends MTComponent{
 	private float startxGestureVector;
 	private float endyGestureVector;
 	private float startyGestureVector;
+	private String filename;
 	
 	/** Spezifische ScenenDaten	 */
 	private ModelSceneList sceneData;
+	
+	/** Transparenc Color for keyboard (fix). */
+	private MTColor trans = new MTColor(0, 0, 0, 10);
 	
 
 	
@@ -165,16 +178,52 @@ public class BuildRadialMenu extends MTComponent{
 			   final IMTInputEventListener saveButtonInput = new IMTInputEventListener() {
 				      @Override
 				      public boolean processInputEvent(final MTInputEvent inEvt) {
+				    	  filename = new String();
 				        // Most input events in MT4j are an instance of AbstractCursorInputEvt (mouse, multi-touch..)
 				        if (inEvt instanceof MTFingerInputEvt) {
 				          final MTFingerInputEvt cursorInputEvt = (MTFingerInputEvt) inEvt;
 				          switch (cursorInputEvt.getId()) {
 				            case TapEvent.GESTURE_STARTED:
-				            	dataController.saveSceneXML();
+				            	final IFont font = FontManager.getInstance().createFont(mtApplication, "arial.ttf",
+				        	            16, // Font size
+				        	            new MTColor(255, 255, 255, 255), // Font fill color
+				        	            true);
+				          
+				            	
+				            	MTTextKeyboard textKeyboard = new MTTextKeyboard(mtApplication);
+								textKeyboard.setFillColor(trans);
+								textKeyboard.setNoStroke(true);
+								textKeyboard.setPositionRelativeToParent(new Vector3D(textKeyboard.getWidthXY(TransformSpace.LOCAL) / 2, (textKeyboard.getHeightXY(TransformSpace.LOCAL) / 2) + 50));
 								
+								
+							  	textarea = new MTTextArea(mtApplication, 35, -20, 100, 16, font);
+				        		textarea.setInnerPadding(0);
+				        		textarea.setInnerPaddingLeft(3);
+				        		textarea.setInnerPaddingTop(0);
+				        		textarea.setText("Filename");
+				        		textarea.setFillColor(new MTColor(0, 0, 0, 0));
+				        		textarea.setNoStroke(false);
+								
+								textKeyboard.addTextInputListener(textarea);
+								
+								Mitoco.getCanvas().addChild(textKeyboard);
+								textKeyboard.addChild(textarea);	
+								textKeyboard.addStateChangeListener(StateChange.COMPONENT_DESTROYED, new StateChangeListener() {
+									
+									@Override
+									public void stateChanged(final StateChangeEvent evt) {
+										filename = textarea.getText();
+										dataController.saveSceneXML(filename);
+						            	Mitoco.getMTApplication().saveFrame(SceneMitoco.getExportPath() + filename + "_Output-###.png");
+									}
+								}
+								);
+				            	
+				            	
+				            	
+				            	
 				              break;
 				            case TapEvent.GESTURE_ENDED:
-				            	Mitoco.getMTApplication().saveFrame("Output-###.png");
 				            default:
 				              break;
 				          }
@@ -558,6 +607,9 @@ public class BuildRadialMenu extends MTComponent{
 	        //AnimationUtil.rotate2D(mtRectangle, 720);
 	        Mitoco.getCanvas().addChild(mtRadialMenu1);
 	      }
+	
+	
+
 	}
 
 

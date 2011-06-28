@@ -217,7 +217,7 @@ public class HelloWorldScene extends AbstractScene {
 			          final MTFingerInputEvt cursorInputEvt = (MTFingerInputEvt) inEvt;
 			          switch (cursorInputEvt.getId()) {
 			            case TapEvent.GESTURE_STARTED:
-			            	dataController.saveSceneXML();
+			            	dataController.saveSceneXML("test");
 							HelloWorldScene.this.mtApplication.saveFrame();
 			              break;
 			            default:

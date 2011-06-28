@@ -58,7 +58,7 @@ public class SceneMitoco extends AbstractScene{
 	}
 	
 	/** The app. */
-	private MTApplication app;
+	private static MTApplication app;
 	/** The has fbo. */
 	private boolean hasFBO;
 	/** The switch directly to scene. */
@@ -489,6 +489,10 @@ public class SceneMitoco extends AbstractScene{
 	public static String getExportPath(){
 	
 		return exportPath;
+	}
+	
+	public static void takescreenshot(){
+		app.saveFrame(exportPath + "out###.png");
 	}
 	
 
