@@ -24,6 +24,8 @@ import org.mortbay.log.Log;
 
 import ch.mitoco.main.MitocoScene;
 
+
+
 /* ------------------------------------------------------------ */
 /** File server
  * Usage - java org.mortbay.jetty.example.FileServer [ port [ docroot ]]
@@ -31,16 +33,21 @@ import ch.mitoco.main.MitocoScene;
  *
  */
 public class FileServer extends Thread {
-	public FileServer() {
+	/** Port für den Webserver */
+	private int port;
+	
+	public FileServer(int port) {
 		System.out.println("FileServer: Wird gestart !!! ");
-		
+		this.port = port;
 	}
 	
 	public void run() {
 		// TODO Auto-generated method stub
     	try {
-            int port = 8080;
-
+    		if(port ==0){
+    			port = 8080;
+    		}
+          
             Server server = new Server(port);
             
             ResourceHandler publicDocs = new ResourceHandler();

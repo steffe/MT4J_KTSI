@@ -1,7 +1,16 @@
 package ch.mitoco.components.visibleComponents.widgets.drawing;
 
+import java.awt.AWTException;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.Robot;
+import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 
 import org.mt4j.AbstractMTApplication;
 import org.mt4j.MTApplication;
@@ -12,6 +21,7 @@ import org.mt4j.components.visibleComponents.shapes.MTPolygon;
 import org.mt4j.components.visibleComponents.shapes.MTRectangle;
 import org.mt4j.components.visibleComponents.shapes.MTRoundRectangle;
 import org.mt4j.components.visibleComponents.widgets.MTColorPicker;
+import org.mt4j.components.visibleComponents.widgets.MTImage;
 import org.mt4j.components.visibleComponents.widgets.MTSceneTexture;
 import org.mt4j.components.visibleComponents.widgets.MTSlider;
 import org.mt4j.components.visibleComponents.widgets.buttons.MTImageButton;
@@ -23,11 +33,16 @@ import org.mt4j.input.inputProcessors.componentProcessors.tapProcessor.TapProces
 import org.mt4j.input.inputProcessors.globalProcessors.CursorTracer;
 import org.mt4j.sceneManagement.AbstractScene;
 import org.mt4j.sceneManagement.IPreDrawAction;
+import org.mt4j.sceneManagement.Iscene;
 import org.mt4j.util.MT4jSettings;
 import org.mt4j.util.MTColor;
 import org.mt4j.util.math.Vector3D;
 import org.mt4j.util.math.Vertex;
 import org.mt4j.util.opengl.GLFBO;
+import org.w3c.css.sac.SACMediaList;
+
+import com.sun.opengl.impl.mipmap.Image;
+import com.sun.opengl.impl.mipmap.Type_Widget;
 
 import processing.core.PImage;
 
@@ -36,7 +51,7 @@ public class MainDrawingScene extends MTComponent {
 	private MTRectangle textureBrush;
 	private MTEllipse pencilBrush;
 	private DrawSurfaceScene drawingScene;
-	
+	private MTSceneTexture sceneTexture;
 	private MTRoundRectangle frame;
 //	private String imagesPath = System.getProperty("user.dir")+File.separator + "examples"+  File.separator +"advanced"+ File.separator + File.separator +"drawing"+ File.separator + File.separator +"data"+ File.separator +  File.separator +"images" + File.separator ;
 	private String imagesPath = "advanced" + AbstractMTApplication.separator + "drawing" + AbstractMTApplication.separator + "data" + AbstractMTApplication.separator + "images" + AbstractMTApplication.separator;
@@ -94,7 +109,7 @@ public class MainDrawingScene extends MTComponent {
 		//We have to create a fullscreen fbo in order to save the image uncompressed
 //		final MTSceneTexture sceneTexture = new MTSceneTexture(pa,0, 0, pa.width, pa.height, drawingScene);
 	     
-		final MTSceneTexture sceneTexture = new MTSceneTexture(pa,0, 0, pa.width, pa.height, drawingScene);
+		sceneTexture = new MTSceneTexture(pa,0, 0, pa.width, pa.height, drawingScene);
         sceneTexture.getFbo().clear(true, 255, 255, 255, 0, true);
         sceneTexture.setStrokeColor(new MTColor(155,155,155));
         frame.addChild(sceneTexture);
@@ -113,7 +128,7 @@ public class MainDrawingScene extends MTComponent {
 //					//As we are messing with opengl here, we make sure it happens in the rendering thread
 					pa.invokeLater(new Runnable() {
 						public void run() {
-							sceneTexture.getFbo().clear(true, 255, 255, 255, 0, true);						
+							sceneTexture.getFbo().clear(true, 255, 255, 255, 0, true);		
 						}
 					});
 				}
@@ -280,6 +295,92 @@ public class MainDrawingScene extends MTComponent {
 //		return destroyed;
 //	}
 	
+	
+	public void createImage() {
+		pa.invokeLater(new Runnable() {
+			public void run() {
+				pa.createImage(800, 600, pa.RGB);
+				PImage save2 = pa.createImage(540,400, pa.ARGB);
+			
+				
+				int width = (int)frame.getWidthXY(TransformSpace.GLOBAL);
+				int height = (int)frame.getHeightXY(TransformSpace.GLOBAL);
+				Vector3D v1 = frame.getCenterPointGlobal();
+				Vector3D v2 = frame.getCenterPointLocal();
+				Vector3D v3 = frame.getCenterPointRelativeToParent();
+				
+				try {
+					
+					Rectangle screen = new Rectangle(pa.getLocationOnScreen().x + (int) v2.x - height / 2, pa.getLocationOnScreen().y + (int) v2.y - width / 2, 540, 400);
+					
+					Robot robot = new Robot();
+					
+					BufferedImage image = robot.createScreenCapture(screen);
+					File file = new File("E:/jetty/htdocs/test.png");
+					ImageIO.write(image, "png", file);
+					
+				} catch (AWTException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+
+				
+				System.out.println("MainDrawingScene: Position Global: " +  v1.x + ":" + v1.y);
+				System.out.println("MainDrawingScene: Grösse des Objekts: " +  frame.getWidthXY(TransformSpace.GLOBAL) + ":" + frame.getHeightXY(TransformSpace.GLOBAL) );
+				System.out.println("MainDrawingScene: Position Local: " +  v2.x + ":" + v2.y);
+				System.out.println("MainDrawingScene: Position Relativ: " +  v3.x + ":" + v3.y);
+				
+				save2 = pa.get((int)v2.x, (int)v2.y, 540, 400);
+				save2.save("test2.tif");
+				
+				
+				PImage savePicture = pa.createImage(pa.width, pa.height, pa.ARGB);
+				savePicture = sceneTexture.getTexture();
+		        System.out.println("MainDrawingScene: " +  savePicture);
+		        savePicture.save("tesgt.tif");
+		        
+		        
+			/*
+		        try
+		        {        
+//		        		BufferedImage b1 = (BufferedImage)savePicture.getImage();
+		        		
+//		        		int w = savePicture.width;
+//		        	    int h = savePicture.height;
+//		        	    int type = BufferedImage.TYPE_INT_ARGB; // other options
+//		        	    BufferedImage dest = new BufferedImage(w, h, type);
+//		        	    Graphics2D g2 = dest.createGraphics();
+//		        	    g2.drawImage(savePicture.getImage(), 0, 0, null);
+//		        	    g2.dispose();
+		        		
+		        		//BufferedImage bi = (BufferedImage)savePicture.getImage();
+//		                File imageFile = new File("E:/jetty/htdocs/test.tif");
+//		                ImageIO.write(bi, "tif", imageFile);
+		        } catch(IOException e){
+		            e.printStackTrace();
+		        }
+				*/
+				
+				
+//				MTImage m1 = new MTImage(pa, savePicture);  // Image ist im savePicture vorhanden.
+//				m1.translate(new Vector3D(200,200));
+//				addChild(m1);
+				
+				
+
+			}
+		});
+        
+    
+        //savePicture.save("testforMe.png");
+		
+		
+	}
+	
 	boolean modus = false;
 	/**
 	 * 
@@ -294,12 +395,7 @@ public class MainDrawingScene extends MTComponent {
 			// Max Modus
 			frame.setSizeXYGlobal(540, 400); // Width /heigth
 	        this.translate(new Vector3D(difh, difw));
-
-	        
-	        PImage savePicture = new PImage();
-	        savePicture = frame.getTexture(); 
-	        //savePicture.save("testforMe.png");
-	        
+	      
 			modus = true;
 		} else {
 			// Min Modus
@@ -307,7 +403,7 @@ public class MainDrawingScene extends MTComponent {
 	        this.translate(new Vector3D(-difh, -difw));
 			modus = false;
 		}
-
+		createImage();
 	}
 	
 }

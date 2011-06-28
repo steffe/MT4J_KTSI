@@ -94,7 +94,7 @@ public class MTLinkController {
 
 	/** Init Method.*/
 	private void init() {
-		System.out.println("MTLinkController: init() ");
+		System.out.println("MTLinkController: init()    CanvasID: " + canvas.getID());
 		//link = new MTObjectLink(pApplet, new Vertex(new Vector3D(0, 0, 0)), new Vertex(new Vector3D(0, 0, 0)),);
 		//canvas.addChild(link);
 		lassoProcessor = new LassoProcessor(app, canvas, canvas.getViewingCamera());
@@ -103,9 +103,11 @@ public class MTLinkController {
 		
 		selectedLasso();
 		
+		
+		
 		// Jetty Fileserver
-		Thread thread = new FileServer();
-		thread.start();
+//		Thread thread = new FileServer(0);
+//		thread.start();
 		
 
 		
@@ -141,7 +143,7 @@ public class MTLinkController {
 		for (ModelLink it : modellinkList) {
 			System.out.println("MTLinkController: setObjectList: Linklist: First " + it.getFirstObject() + " Second Objekt : " + it.getSecondObject());
 		}
-		readDataAll();
+		
 	}
 	
 	/**
@@ -504,8 +506,9 @@ public class MTLinkController {
 	}
 	/** 
 	 * Print selected Object in the list.
-	 * */
-	public List<Integer> getSelectedList() {
+	 * @return list List<Integer> 
+	 */
+	public final List<Integer> getSelectedList() {
 		List<Integer> list = new ArrayList<Integer>();
 		
 //		for (MTSelectStoreObject it : selectedObjectID) {
@@ -584,7 +587,7 @@ public class MTLinkController {
 	 *  
 	 * @param objID int
 	 */
-	public void setVisibleAllOne(boolean visible, int objID){
+	public void setVisibleOne(boolean visible, int objID){
 		for (MTLink it : linkliste) {
 			if (it.getEndObjectID() == objID) {
 				it.setVisible(visible);
@@ -595,6 +598,34 @@ public class MTLinkController {
 		}
 	}
 
+	/**
+	 * 
+	 * Löscht die Links eines gewünschten Objekts.
+	 * 
+	 * @param objID
+	 */
+	public void removeLinkOne(int objID) {
+		List<Integer> listLink = new ArrayList<Integer>();
+
+		// Suchen nach den passenden Links
+		for(int i = 0; i<linkliste.size(); i++){
+			MTLink it = linkliste.get(i);
+			if (it.getEndObjectID() == objID) {
+				listLink.add(i);
+			} else if (it.getStartObjectID() == objID) {
+				listLink.add(i);
+			}	
+			
+		}
+		
+		for(Integer it : listLink) {
+			System.out.println("MTLinkController: removeLinkOne: Link ID; " + it + " Gibt" + linkliste.get(it).getDescription());
+			
+			linkliste.remove(it);
+		}
+		writeDataAll();	
+	}
+	
 	/**
 	 * 
 	 * Gibt eine Liste alle MTLink Objekte zurück.

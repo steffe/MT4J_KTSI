@@ -588,9 +588,10 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 		}
 		colorpicker.setVisible(true);
 		
-		if (updownrotate) {
-			baserect.translate(new Vector3D(0, obDifSizeHeight));
-		}	
+//		if (updownrotate) {
+//			baserect.translate(new Vector3D(0, obDifSizeHeight));
+//		}
+		
 		buttonMaxMin.setPositionRelativeToParent(new Vector3D(obSizeMaxWidth - 20, 20));
 		//buttonMaxMin.translate(new Vector3D(obSizeMaxWidth - obSizeMinWidth, 0));
 //		buttonRotate.translate(new Vector3D(0, obSizeMaxHeight - obSizeMinHeight));
@@ -610,9 +611,9 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 		}
 		colorpicker.setVisible(false);
 		
-		if (updownrotate) {
-			baserect.translate(new Vector3D(0, -obDifSizeHeight));
-		}	
+//		if (updownrotate) {
+//			baserect.translate(new Vector3D(0, -obDifSizeHeight));
+//		}	
 		
 		buttonMaxMin.setPositionRelativeToParent(new Vector3D(obSizeMinWidth - 20, 20));
 //		buttonMaxMin.translate(new Vector3D(obSizeMinWidth - obSizeMaxWidth, 0));
@@ -934,7 +935,7 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 	 * @see com.jMT.input.inputAnalyzers.clusterInputAnalyzer.IdragClusterable#setSelected(boolean)
 	 */
 	public void setSelected(boolean selected) {
-		linker.setVisibleAllOne(!selected, id); // Verstecken der Linien, wenn Objekt im Lasso ist.
+		linker.setVisibleOne(!selected, id); // Verstecken der Linien, wenn Objekt im Lasso ist.
 		linker.drawLinie();
 		this.selected = selected;
 	}
@@ -1111,6 +1112,14 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 	 */
 	private void setObjecttyp(final int objecttyp) {
 		this.objecttyp = objecttyp;
+	}
+
+	@Override
+	public void destroy() {
+		System.err.println("MyMTObject: destroy: Objekt wird gelöscht.");
+	
+		
+		
 	}
 	
 }
