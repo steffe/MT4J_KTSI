@@ -7,6 +7,7 @@ import java.util.Iterator;
 
 import org.mt4j.MTApplication;
 import org.mt4j.components.MTCanvas;
+import org.mt4j.util.MT4jSettings;
 
 import ch.mitoco.components.visibleComponents.MyMTObject;
 import ch.mitoco.components.visibleComponents.objectlink.MTLinkController;
@@ -70,6 +71,8 @@ public class DataController {
 
 	/**Daten Kontroller Konstruktor.
 	 * 
+	 * Builds a DataController for the DataModel, creates also a linker controller
+	 * 
 	 * @param mtAppl MTApplication
 	 */
 	public DataController(final MTApplication mtAppl, MTCanvas canvas) {
@@ -85,8 +88,10 @@ public class DataController {
 	 * Kann ein Objekt anhanden eine Template (Objekttypes( auf einer Scene erstellen, 
 	 * und speichert das Objekt in der myobcetlist.
 	 * 
+	 * 
 	 * @param objecttype
 	 * 			Int entscheidet welcher Objekttype erstellt wird
+	 * @return int objectindex. Wich position in the Objectlist Array(for drawing)
 	 */
 	public int createObject(int objecttype) {
 		ModelMtObjects object = new ModelMtObjects();
@@ -122,6 +127,15 @@ public class DataController {
 	}
 	
 	
+	/**Builds a Object in the Datamodel
+	 * 
+	 * Builds a Object based on the delivered object datamodel on the Scene.
+	 * The Object will be saved in the myobjectlist.
+
+	 * @param object The Datamodel as a Template for the Object
+	 * 			Int entscheidet welcher Objekttype erstellt wird
+	 * @return int objectindex. Wich position in the Objectlist Array(for drawing)
+	 */
 	public int createObject(ModelMtObjects object) {
 		//ModelMtObjects object = new ModelMtObjects();
 		object.setId(objectcounter);
@@ -132,6 +146,8 @@ public class DataController {
 		myobjectList.add(new MyMTObject(mtApplication, dataModel.getMtobjects().get(objectcounter), objectcounter, linker));
 		
 		System.out.println("DataController:  ObjektListe lokal: "+ myobjectList );
+		
+		//Leere Scene --> Object link = 0/0 wieso?
 		linker.setObjectList(myobjectList, dataModel.getMtobjectlinks(), getObjectetyps());
 		linker.setTapAndHoldListener(myobjectList.get(objectcounter)); //TODO: Test
 		Integer objectindex = new Integer(myobjectList.indexOf(myobjectList.get(objectcounter)));
@@ -141,7 +157,6 @@ public class DataController {
 		return objectindex;
 	}
 	
-	//Delete GUI Object (Datenmodel)
 	/**delete the Selected GUI Objects and the Datamodel.
 	 * 
 	 */
@@ -150,6 +165,16 @@ public class DataController {
 		//System.out.println("ClearScene: " + objectcounter);
 		//myobjectList.removeAll(getMyobjectList());
 		//objectcounter = 0;
+		//forschleife
+		
+		for (MyMTObject it : getMyobjectList()) {
+  		  if (it.getTagFlag()) {
+  			  it.destroyMyObject();
+  			  //dataModel.getMtobjects().remove(it);
+  			  //myobjectList.remove(it);
+  		  }
+		}
+		
 		return false;
 	}
 	
@@ -195,9 +220,10 @@ public class DataController {
 		else {
 			dataModel = LoadXML.getDataModel();
 			
+			System.out.println("DataController Object Gen:" + dataModel.getMtobjectlinks());
 			//Muss wegfallen, Links werden nicht geladen
-			dataModel.setMtobjectlinks(new ArrayList<ModelLink>());
-			
+			//dataModel.setMtobjectlinks(new ArrayList<ModelLink>());
+			System.out.println("DataController Object Gen:" + dataModel.getMtobjectlinks());
 			for (Iterator<ModelMtObjects> it = dataModel.getMtobjects().iterator(); it.hasNext();) {
 				myobjectList.add(new MyMTObject(mtApplication, it.next(), objectcounter, linker));
 				System.out.println("Object Gen:" + objectcounter);
@@ -206,6 +232,7 @@ public class DataController {
 				objectcounter++;
 				
 			}
+			linker.readDataAll();
 			System.out.println("Datacontroller: LoadXML "+ dataModel.getMtobjectlinks());
 			return true;
 		}
@@ -216,7 +243,8 @@ public class DataController {
 	 * 
 	 */
 	public void saveSceneXML() {
-		save = new SaveXML("savetest1.xml", dataModel);
+		System.out.println("Test Save:" + MT4jSettings.getInstance().getDataFolderPath());
+		//save = new SaveXML(MT4jSettings.getInstance().getDataFolderPath() + "savetest1.xml", dataModel);
 		
 	}
 	
@@ -252,7 +280,7 @@ public class DataController {
 		
 		
 		try {
-			xstreamSave.toXML(objectetyps, new FileOutputStream("objectlist1.xml"));
+			xstreamSave.toXML(objectetyps, new FileOutputStream(MT4jSettings.getInstance().getDataFolderPath()+"objectlist1.xml"));
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

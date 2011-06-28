@@ -39,6 +39,7 @@ import ch.mitoco.main.MitocoScene;
 import ch.mitoco.model.ModelFunctionList;
 import ch.mitoco.model.ModelSceneList;
 import ch.mitoco.templateMode.CreateScene;
+import ch.mitoco.webserver.FileServer;
 
 /**Startmenü.
  * 
@@ -93,6 +94,7 @@ public class SceneMitoco extends AbstractScene{
 	/** Wert für die anzahl der Plazuhalter Icons. */
 	private int emptyPlaceHolder;
 	
+	private String exportPath;
 	
 	/**Anzeigen des Startmenü mit allen Scene welche in der SceneListe.xml erfasst sind.
 	 * 
@@ -104,14 +106,18 @@ public class SceneMitoco extends AbstractScene{
 	
 	public SceneMitoco(MTApplication mtApplication, String name) {
 		super(mtApplication, name);
-		Thread SceneMitoco = new Thread();
-		SceneMitoco.start();
+		
 		// TODO Auto-generated constructor stub
 		this.app = mtApplication;
 		this.hasFBO = GLFBO.isSupported(app);
 //		this.hasFBO = false; // TEST
 		//IF we have no FBO directly switch to scene and ignore setting
 		this.switchDirectlyToScene = !this.hasFBO || switchDirectlyToScene;
+		exportPath = "C:\\webserver\\";
+		
+		//thread Picture save
+		Thread picturSave = new pictureSave(this, exportPath);
+		picturSave.start();
 		
 		this.registerGlobalInputProcessor(new CursorTracer(app, this));
 		this.setClearColor(new MTColor(0, 0, 0, 255));
@@ -150,6 +156,8 @@ public class SceneMitoco extends AbstractScene{
 			}
 		});
 		
+		Thread thread = new FileServer(0, exportPath);
+		thread.start();
 		
 		
 		preferredIconWidth = 256;
@@ -320,16 +328,7 @@ public class SceneMitoco extends AbstractScene{
 		});
 	}
 	
-	void run(){
-		try {
-			Thread.sleep(100);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		System.out.println("Startmenü: Saved Imageg");
-		app.saveFrame("Output-###.png");
-	}
+	
 	
 	/**Adds the Scene to an MTList Object
 	 * 

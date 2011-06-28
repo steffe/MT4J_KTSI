@@ -24,6 +24,7 @@ import org.mt4j.input.inputProcessors.componentProcessors.unistrokeProcessor.Uni
 import org.mt4j.input.inputProcessors.componentProcessors.zoomProcessor.ZoomProcessor;
 import org.mt4j.input.inputProcessors.globalProcessors.CursorTracer;
 import org.mt4j.sceneManagement.AbstractScene;
+import org.mt4j.util.MT4jSettings;
 import org.mt4j.util.MTColor;
 import org.mt4j.util.animation.AnimationEvent;
 import org.mt4j.util.animation.IAnimation;
@@ -75,7 +76,7 @@ public class MitocoScene extends AbstractScene {
 	/**Filechooser objekt. */
 	private static FileChooser fileChooser;
 	
-	private MTOverlayContainer guiOverlay;
+	private static MTOverlayContainer guiOverlay;
 	
 	private BuildRadialMenu buildRadialMenu;
 	
@@ -195,7 +196,10 @@ public class MitocoScene extends AbstractScene {
 			}				
 		});
 		
-		fileChooser = new FileChooser("C:\\", this);
+		System.out.println("MitocoScene " + MT4jSettings.getInstance().getDataFolderPath());
+		
+		fileChooser = new FileChooser(MT4jSettings.getInstance().getDataFolderPath(), this);
+		
 		getCanvas().addChild(fileChooser.getUI());
 		
 		// Standard Default ZoomAction and Pan TwoFingers
@@ -208,6 +212,12 @@ public class MitocoScene extends AbstractScene {
 	@Override
 	public void init() {
 		
+	}
+	
+	@Override
+	public boolean destroy() {
+		
+		return false;
 	}
 	
 	@Override
