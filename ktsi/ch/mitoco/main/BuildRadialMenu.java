@@ -431,7 +431,14 @@ public class BuildRadialMenu extends MTComponent{
 						              switch (cursorInputEvt.getId()) {
 						                case TapEvent.GESTURE_STARTED:
 						                	//hideObjects(dataController.getMyobjectList().get(0));
-						                   break;
+						                   dataController.deleteObject();
+						                   for (MyMTObject it : dataController.getMyobjectList()) {
+						               		  if (it.getTagFlag()) {
+						               			Mitoco.getCanvas().removeChild(it);
+						               		  }
+						             		}
+						                   
+						                	break;
 						                 default:
 						                      break;
 						                  }
@@ -508,8 +515,8 @@ public class BuildRadialMenu extends MTComponent{
 	        final MTMenuItem minimizemenu = new MTMenuItem("Minimize", null);
 	        final MTMenuItem deletemenu = new MTMenuItem("Delete selected", null);
 	        
-	        maximizemenu.addInputEventListener(hide2InputListener);
-	        minimizemenu.addInputEventListener(showInputListener);
+	        maximizemenu.addInputEventListener(showInputListener);
+	        minimizemenu.addInputEventListener(hide2InputListener);
 	        deletemenu.addInputEventListener(deleteListener);
 	                
 	        final MTMenuItem menu5 = new MTMenuItem("Exit", null);
