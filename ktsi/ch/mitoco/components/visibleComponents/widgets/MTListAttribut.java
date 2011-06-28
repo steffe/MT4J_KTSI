@@ -252,7 +252,7 @@ public class MTListAttribut extends Attributes {
 	            alrr.get(h).addChild(algt.get(h));
 				alrr.get(h).addChild(al.get(h));
 				
-				//Move one Child
+				//Move one Child that childs not lie on each other
 				al.get(h).translate(new Vector3D(95, 0));
 	            h++;
 	        }
@@ -417,7 +417,7 @@ public class MTListAttribut extends Attributes {
 			label.setVisible(true);
 			colPickButton.setVisible(true);
 		}
-
+		
 		/** 
 		 * Set Value Text.
 		 * @param value Double
@@ -433,5 +433,4 @@ public class MTListAttribut extends Attributes {
 		public final double getValue() {
 			return Double.valueOf(textarea.getText()).doubleValue();
 		}
-	 
 }
