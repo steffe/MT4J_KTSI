@@ -1078,9 +1078,11 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 			
 				 if (!(idObj == idSObj)) {
 					 // Testen ob der Link erlaubt ist oder nicht, Farbliches Markieren
-					 if(linker.isValidLinkRequest(idObj, idSObj)) {
+					 if(linker.isValidLinkRequest(idSObj, idObj)) {
+						 System.out.println("MyMTObject: marker: Objekt GRUEN markiert");
 						 linker.setSelectedObjectColor(idObj, setting, MTColor.GREEN);
 					 } else {
+						 System.out.println("MyMTObject: marker: Objekt ROT markiert");
 						 linker.setSelectedObjectColor(idObj, setting, MTColor.RED);
 					 }
 					

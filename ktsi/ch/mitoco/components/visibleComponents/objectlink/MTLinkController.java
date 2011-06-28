@@ -403,17 +403,19 @@ public class MTLinkController {
 				if (myobjectList.get(startObj).getObjecttyp() == it.getObjectypeid()) {
 					
 					// Objekttyp ist in der ModelTypDescription vorhanden. Jetzt muss nur noch die Denny Liste durchsuchen werden
+					int i =1;
 					for (Integer itt : it.getObjectdenylink()) {
-						System.out.println("MTLinkController: isValidLinkRequest: LINK NICHT ERLAUBT - End Objekt : " + itt);	
+						System.out.println("MTLinkController: isValidLinkRequest: Nach Denny Suchen Nr:" + i +" - Nicht erlaubte Objekt IDs: " + itt);	
 						//Liste mit allen Objekten in dem
 						if (myobjectList.get(endObj).getObjecttyp() == itt) {
 							valid = false; // EndObjekt ist in der Liste vorhanden, Link darf nicht erstellt werden		
 							System.out.println("MTLinkController: isValidLinkRequest: LINK NICHT ERLAUBT - End Objekt : " + myobjectList.get(endObj).getObjecttyp() + " ist gleich StartObj: " + itt);
 						break; // Denny gefunden aus der Schlaufe 
 						} else {
-							valid = true; // EnbObjekt ist in der Liste nicht vorhanden, Link darf erstellt werden
-							System.out.println("MTLinkController: isValidLinkRequest: LINK erlaubt");
+							//valid = true; // EnbObjekt ist in der Liste nicht vorhanden, Link darf erstellt werden
+							System.out.println("MTLinkController: isValidLinkRequest: Ziel Objekttyp ist: " + myobjectList.get(endObj).getObjecttyp() + " nicht gleich " + itt);
 						}
+						i++;
 					}
 					break;
 				} else {
@@ -691,7 +693,7 @@ public class MTLinkController {
 					createLinkObject(vNode1, vNode2, node1, node2);
 					}	
 		} else {
-			// Noch kein Link vorhanden
+			// Noch kein Link vorhanden, Link erstellen
 			createLinkObject(vNode1, vNode2, node1, node2);
 		}
 		
