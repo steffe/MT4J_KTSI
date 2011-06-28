@@ -37,6 +37,7 @@ import ch.mitoco.components.visibleComponents.filechooser.WBErrorMessage;
 import ch.mitoco.dataController.DataController;
 import ch.mitoco.model.ModelScence;
 import ch.mitoco.model.ModelSceneList;
+import ch.mitoco.startmenu.SceneMitoco;
 
 
 /** Hello Word Scene. */
@@ -198,7 +199,7 @@ public class MitocoScene extends AbstractScene {
 		
 		System.out.println("MitocoScene " + MT4jSettings.getInstance().getDataFolderPath());
 		
-		fileChooser = new FileChooser(MT4jSettings.getInstance().getDataFolderPath(), this);
+		fileChooser = new FileChooser(SceneMitoco.getExportPath(), this);
 		
 		getCanvas().addChild(fileChooser.getUI());
 		

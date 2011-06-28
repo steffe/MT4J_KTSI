@@ -1,8 +1,10 @@
 package ch.mitoco.startmenu;
 
 import java.awt.AWTException;
+import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.Robot;
+import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -36,13 +38,17 @@ public class pictureSave extends Thread {
 //		app.getMTApplication().saveFrame(path + "Output-###.png");
 		
 		try {
+			 Toolkit toolkit = Toolkit.getDefaultToolkit();
+		      Dimension oScreenSize = toolkit.getScreenSize();
 			
-			Rectangle screen = new Rectangle(app.getMTApplication().getLocationOnScreen().x, app.getMTApplication().getLocationOnScreen().y, app.getMTApplication().getWidth(), app.getMTApplication().getHeight());
-			
+			//Rectangle screen = new Rectangle(app.getMTApplication().getLocationOnScreen().x, app.getMTApplication().getLocationOnScreen().y, app.getMTApplication().getWidth(), app.getMTApplication().getHeight());
+		      Rectangle screen = new Rectangle(oScreenSize);
+			 
 			Robot robot = new Robot();
 			
 			BufferedImage image = robot.createScreenCapture(screen);
-			File file = new File(path+"out.png");
+			File file = new File(path + "out.png");
+			System.out.println("pcicture Save " + SceneMitoco.getExportPath());
 			ImageIO.write(image, "png", file);
 			
 		} catch (AWTException e) {

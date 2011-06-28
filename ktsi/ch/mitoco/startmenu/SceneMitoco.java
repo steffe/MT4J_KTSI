@@ -94,7 +94,8 @@ public class SceneMitoco extends AbstractScene{
 	/** Wert für die anzahl der Plazuhalter Icons. */
 	private int emptyPlaceHolder;
 	
-	private String exportPath;
+	/** Export Path for all Export and Import XMLs and Webserver */
+	private static String exportPath;
 	
 	/**Anzeigen des Startmenü mit allen Scene welche in der SceneListe.xml erfasst sind.
 	 * 
@@ -113,11 +114,10 @@ public class SceneMitoco extends AbstractScene{
 //		this.hasFBO = false; // TEST
 		//IF we have no FBO directly switch to scene and ignore setting
 		this.switchDirectlyToScene = !this.hasFBO || switchDirectlyToScene;
-		exportPath = "C:\\webserver\\";
+		//exportPath = "C:\\webserver\\";
 		
 		//thread Picture save
-		Thread picturSave = new pictureSave(this, exportPath);
-		picturSave.start();
+		
 		
 		this.registerGlobalInputProcessor(new CursorTracer(app, this));
 		this.setClearColor(new MTColor(0, 0, 0, 255));
@@ -126,6 +126,10 @@ public class SceneMitoco extends AbstractScene{
 		modelfunctionList = new ModelFunctionList();
 		LoadXML scenelist = new LoadXML("sceneListe.xml", "sceneliste");
 		modelfunctionList = scenelist.getSceneListe();
+		
+		exportPath = modelfunctionList.getExportPath();
+		Thread picturSave = new pictureSave(this, exportPath);
+		picturSave.start();
 		
 		PImage closeNewImage = mtApplication.loadImage("ch" + MTApplication.separator + "mitoco" + MTApplication.separator + "data" + MTApplication.separator +  "closeButton64.png");
 		MTImageButton buttonClose = new MTImageButton(mtApplication, closeNewImage);
@@ -154,7 +158,7 @@ public class SceneMitoco extends AbstractScene{
 				
 			return false;
 			}
-		});
+		});		
 		
 		Thread thread = new FileServer(0, exportPath);
 		thread.start();
@@ -479,6 +483,12 @@ public class SceneMitoco extends AbstractScene{
 		default:
 			break;
 		}
+	}
+	
+	
+	public static String getExportPath(){
+	
+		return exportPath;
 	}
 	
 

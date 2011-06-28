@@ -16,6 +16,7 @@ import ch.mitoco.model.ModelMtObjects;
 import ch.mitoco.model.ModelObjectTyps;
 import ch.mitoco.model.ModelScence;
 import ch.mitoco.model.ModelTypDescription;
+import ch.mitoco.startmenu.SceneMitoco;
 
 import com.thoughtworks.xstream.XStream;
 
@@ -243,8 +244,7 @@ public class DataController {
 	 * 
 	 */
 	public void saveSceneXML() {
-		System.out.println("Test Save:" + MT4jSettings.getInstance().getDataFolderPath());
-		//save = new SaveXML(MT4jSettings.getInstance().getDataFolderPath() + "savetest1.xml", dataModel);
+		save = new SaveXML(SceneMitoco.getExportPath() + "savetest1.xml", dataModel);
 		
 	}
 	

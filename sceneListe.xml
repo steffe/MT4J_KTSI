@@ -35,4 +35,5 @@
       <showAll>true</showAll>
     </ch.mitoco.model.ModelSceneList>
   </sceneliste>
+  <exportPath>C:\webserver\</exportPath>
 </ch.mitoco.model.ModelFunctionList>

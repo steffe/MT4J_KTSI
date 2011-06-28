@@ -5,6 +5,7 @@ import java.util.List;
 
 public class ModelFunctionList {
 	private List<ModelSceneList> sceneliste;
+	private String exportPath;
 	
 	public ModelFunctionList(){
 		sceneliste = new ArrayList<ModelSceneList>();
@@ -23,6 +24,20 @@ public class ModelFunctionList {
 	 */
 	public void setSceneliste(List<ModelSceneList> sceneliste) {
 		this.sceneliste = sceneliste;
+	}
+
+	/**
+	 * @param exportPath the exportPath to set
+	 */
+	public void setExportPath(String exportPath) {
+		this.exportPath = exportPath;
+	}
+
+	/**
+	 * @return the exportPath
+	 */
+	public String getExportPath() {
+		return exportPath;
 	}
 
 }
