@@ -36,7 +36,6 @@ import org.mt4j.util.MTColor;
 import org.mt4j.util.font.FontManager;
 import org.mt4j.util.font.IFont;
 import org.mt4j.util.math.Vector3D;
-import org.mt4jx.components.visibleComponents.layout.MTRowLayout2D;
 
 import processing.core.PImage;
 import ch.mitoco.components.visibleComponents.widgets.keyboard.MTNumKeyboard;
@@ -44,7 +43,8 @@ import ch.mitoco.model.ModelAttributContent;
 import ch.mitoco.model.ModelMtAttributs;
 
 
-/**MtList Attribut.
+/** MtList Attribut.
+ * 
  * MTList FieldAttribut, kann eine Liste mit verschiedenem Inhalt anzeigen und Scrollen.
  * @author rfeigenwinter
  *
@@ -83,9 +83,6 @@ public class MTListAttribut extends Attributes {
 	/** Transparenz Color. */
 	 private MTColor trans = new MTColor(0, 0, 0, 10);
 	 
-	 /** Default Color for Fill Rectangle. */
-	 private MTColor blue1 = new MTColor(51, 102, 204, 180);
-	 
 	/** Attribut Model Object. */
 	 private ModelMtAttributs model;
 	 
@@ -107,7 +104,7 @@ public class MTListAttribut extends Attributes {
 	 /** ArrayList for Keys in Scorecard. */
 	 private ArrayList<MTTextArea> algt;
 	
-	 /** HashMap for actual Values from XML to be sorted*/
+	 /** HashMap for actual Values from XML to be sorted. */
 	 private HashMap<String, String> hm;
 	 
 	 /** Default String for MTList Keys. */
@@ -154,12 +151,13 @@ public class MTListAttribut extends Attributes {
 			this.init(app, fontArialMini);	
 	}
 	
-	/** Init Method to create the Object.
+	/** Standard Method to create Object in MT4J. 
+	 * 
+	 *  This Class generates a MTList Field with default 18 Cells.
 	 * 
 	 * @param app MTApplication Object
 	 * @param font FontType for Attributtext
 	 */
-	 
 	private void init(final AbstractMTApplication app, final IFont font) {
 			this.iF = font;
 			app1 = app;
@@ -339,7 +337,6 @@ public class MTListAttribut extends Attributes {
 		public final void dataWrite(final String key, final String val) {
 			for (ModelAttributContent it : model.getAttributcontent()) {
 				if (it.getType().equalsIgnoreCase(key)) {
-					System.out.println("If geht................................................" + key + "Val: " + val);
 					it.setValue(val);
 					break;
 				} 

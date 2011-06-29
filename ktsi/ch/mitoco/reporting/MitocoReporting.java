@@ -1,7 +1,5 @@
 package ch.mitoco.reporting;
 
-import gov.pnnl.components.visibleComponents.widgets.radialMenu.examples.MTRadialMenuExampleScene;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -41,20 +39,55 @@ import ch.mitoco.model.ModelAttributContent;
 import ch.mitoco.model.ModelMtAttributs;
 import ch.mitoco.model.ModelMtObjects;
 
+/** Class Responsible for all kind of Reporting Stuff.
+ * 
+ * Right now its controlled via a number which will start the responsible
+ * report. 
+ * 
+ * @author rfeigenwinter
+ *
+ */
 public class MitocoReporting extends AbstractScene {
 	
+	/** Scene where Reports are started from. */
 	private MitocoScene scene;
+	
+	/**  ArryList with all Objekts on the responsible scene. */
 	private ArrayList<MyMTObject> mtobjs;
+	
+	/** Specific Counter for the golfReporting Method. */
 	private int attributCounter;
+	
+	/** Specific Counter for the golfReporting Method. */
 	private int objectCounter;
+	
+	/** HashMap to sort Player to Player Total Count. */
 	private Map<String, Integer> playerTotCount;
+	
+	/** HashMap to sort PlayerID to Player Total Count. */
 	private Map<Integer, Integer> objTotCount;
-	private boolean translate = true;
-	private MTColumnLayout2D colLayout;
+	
+	/** Variable that might be used at another time again. */
+	//private boolean translate = true;
+	
+	/** Variable to calculate summary. */
 	private int sumCount;
+	
+	/** Object Link Controller. Needed to find Relationship between different Objects. */
 	private MTLinkController linker;
+	
+	/** List of all linked Objects. */
 	private List<Integer> linkedObjects;
 	
+	/**
+	 * Constructor for this Class. Needed Input is a valid Number to start the desired Report.
+	 * 
+	 * @param mtApplication MTApplication Object
+	 * @param name Default Name for the Application 
+	 * @param scene Allows access to overlaying scene
+	 * @param dataController Allows control of DataController
+	 * @param reportId ReportingID which needs to define a valid Report in Constructor
+	 */
 	public MitocoReporting(AbstractMTApplication mtApplication, String name, MitocoScene scene, DataController dataController, int reportId) {
 		super(mtApplication, name);
 		this.scene = scene;
@@ -78,7 +111,6 @@ public class MitocoReporting extends AbstractScene {
 	 */
 	private void golfReporting(final AbstractMTApplication app, final DataController dataController) {
 		objectCounter = 0;
-		colLayout = new MTColumnLayout2D(app);
 		mtobjs = dataController.getMyobjectList();
 		linker = dataController.getLinkController();
 		playerTotCount = new LinkedHashMap<String, Integer>();
@@ -129,7 +161,7 @@ public class MitocoReporting extends AbstractScene {
 		//Keys anhand von Values sortieren
         List<String> sortedKeysPlayer = getSortedKeys(playerTotCount);
         List<String> sortedKeysObject = getSortedKeysO(objTotCount);
-        System.out.println(sortedKeysPlayer);
+//        System.out.println(sortedKeysPlayer);
 
         //Hier wird das Datenmodell des Auswertungstyps erstellt.
         //template.setId(3);
@@ -138,7 +170,7 @@ public class MitocoReporting extends AbstractScene {
         
          //sortierte Map ausgeben
         for (String key : sortedKeysPlayer) {
-        	System.out.println("key [" + key + "] --> value [" + playerTotCount.get(key) + "]");
+        	System.out.println("******************************************3key [" + key + "] --> value [" + playerTotCount.get(key) + "]");
         	ModelMtAttributs mtattr1 = new ModelMtAttributs();
         	mtattr1.setId(0);
     		mtattr1.setLable("Name und Total");
@@ -173,7 +205,7 @@ public class MitocoReporting extends AbstractScene {
 					
 					//V2 = Rotation Wert, V3 Scale Wert
 					ite.getGlobalMatrix().decompose(v1, v2, v3);
-					System.out.println("V1 " + v1 + "V2 " + v2 + "V3 " + v3);
+//					System.out.println("V1 " + v1 + "V2 " + v2 + "V3 " + v3);
 					
 					ite.rotateZ(ite.getCenterPointGlobal(), -(v2.getZ() * rad));
 					
@@ -182,7 +214,7 @@ public class MitocoReporting extends AbstractScene {
 					ite.scaleGlobal(invRes, invRes, 1.0f, ite.getCenterPointGlobal());
 					
 					ite.getGlobalMatrix().decompose(v1, v2, v3);
-					System.out.println("V1 " + v1 + "V2 " + v2 + "V3 " + v3);
+//					System.out.println("V1 " + v1 + "V2 " + v2 + "V3 " + v3);
 										
 					Vector3D aktVec01 = new Vector3D();
 					aktVec01.translate(new Vector3D(ite.getWidthXY(TransformSpace.GLOBAL) / 2, ite.getHeightXY(TransformSpace.GLOBAL) / 2 + height, 0));
@@ -190,9 +222,9 @@ public class MitocoReporting extends AbstractScene {
 					
 					linker.drawLinie();
 					float heightObj = ite.getHeightXY(TransformSpace.GLOBAL);
-					System.out.println("Höhe:" + height);
+//					System.out.println("Höhe:" + height);
 					height += heightObj;
-					System.out.println("Höhe:" + height);
+//					System.out.println("Höhe:" + height);
 				}				
         	}
         }
