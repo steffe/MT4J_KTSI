@@ -415,7 +415,7 @@ public class MTLinkController {
 	public boolean isValidLinkRequest(int startObj, int endObj) {
 		boolean valid = true;
 				
-		if (myobjectList.get(startObj).getObjecttyp() == -1) { // Ist dem MyMtObjekt kein Objekttyp zugeordnet (Festgelegt duch -1) kann immer eine Beziehung errichtet werden. 
+		if (myobjectList.get(startObj).getObjecttyp() == -1 || myobjectList.get(endObj).getObjecttyp() == -1) { // Ist dem MyMtObjekt kein Objekttyp zugeordnet (Festgelegt duch -1) kann immer eine Beziehung errichtet werden. 
 			System.out.println("MTLinkController: isValidLinkRequest: Objekttyp ist nicht definiert - ID: " + myobjectList.get(startObj).getObjecttyp());
 			valid = true;
 		} else {
@@ -425,9 +425,11 @@ public class MTLinkController {
 				
 				// In der Denny Liste nach der Richtigen Description für den richtige Objekttyp suchen
 				if (myobjectList.get(startObj).getObjecttyp() == it.getObjectypeid()) {
-					
+				
 					switch(it.getKardinalitaet()) {
 						case(0): // mehrfach Verbindungen möglich
+							
+							if (noConnectionsAllowed(endObj)) { // Darf auf das Ziel Objekt ein Link gesetzt werden 
 								System.out.println("MTLinkController: isValidLinkRequest: CASE 0");
 								// Objekttyp ist in der ModelTypDescription vorhanden. Jetzt muss nur noch die Denny Liste durchsuchen werden
 								int i = 1;
@@ -440,26 +442,34 @@ public class MTLinkController {
 									} 
 									i++;
 								}
-							return true;
+		
+							} else {
+								return false;
+							}
+								
 						
 						case(1): // Eine Verbindung möglich
 							System.out.println("MTLinkController: isValidLinkRequest: CASE 1");
-							if (hasanyLink(startObj) || hasanyLink(endObj)) {	
-								return false;
-							} else {
-								int j = 1;
-								for (Integer itt : it.getObjectdenylink()) {
-									System.out.println("MTLinkController: isValidLinkRequest: Nach Denny Suchen Nr:" + j +" - Nicht erlaubte Objekt IDs: " + itt);	
-									//Liste mit allen Objekten in dem
-									if (myobjectList.get(endObj).getObjecttyp() == itt) {
-										System.out.println("MTLinkController: isValidLinkRequest: LINK NICHT ERLAUBT - End Objekt : " + myobjectList.get(endObj).getObjecttyp() + " ist gleich StartObj: " + itt);
-										return false; // Denny gefunden aus der Schlaufe 
-									} 
-									j++;
-								}
-								return true;
-							}	
 							
+							if (noConnectionsAllowed(endObj)) {
+								if (hasanyLink(startObj) || hasanyLink(endObj)) {	
+									return false;
+								} else {
+									int j = 1;
+									for (Integer itt : it.getObjectdenylink()) {
+										System.out.println("MTLinkController: isValidLinkRequest: Nach Denny Suchen Nr:" + j +" - Nicht erlaubte Objekt IDs: " + itt);	
+										//Liste mit allen Objekten in dem
+										if (myobjectList.get(endObj).getObjecttyp() == itt) {
+											System.out.println("MTLinkController: isValidLinkRequest: LINK NICHT ERLAUBT - End Objekt : " + myobjectList.get(endObj).getObjecttyp() + " ist gleich StartObj: " + itt);
+											return false; // Denny gefunden aus der Schlaufe 
+										} 
+										j++;
+									}
+									return true;
+								}	
+							} else {
+								return false; // Ziel Objekt darf keine Verbindung auf nehmen
+							}
 							// TODO: Testen ob das ZielObjekt auch Kardinalität 1 hat
 						case(2): // Keine Verbindung möglich
 							System.out.println("MTLinkController: isValidLinkRequest: CASE 2");
@@ -502,6 +512,26 @@ public class MTLinkController {
 		return hasLink;
 	}
 	
+	/**
+	 * Gibt zu einem einer Objekttyp die Kardinalität 2 zurück (Keine Links erlaubt).
+	 * 
+	 * @param endObjtyp int
+	 * @return allowed boolean
+	 * 			 true = Links erlaubt, false = Zielobjekt darf keine Links besitzen 
+	 */
+	private boolean noConnectionsAllowed(final int endObjtyp) {
+		for (ModelTypDescription it : modelObjectTypDesc) {
+			
+			if (it.getObjectypeid() == myobjectList.get(endObjtyp).getObjecttyp()) {
+				if (it.getKardinalitaet() == 2) {
+					return false;
+				}
+			}
+	
+		}
+		
+		return true;
+	}
 	
 	
 	
