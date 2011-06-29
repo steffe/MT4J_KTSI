@@ -108,6 +108,9 @@ public class MitocoReporting extends AbstractScene {
 //							System.out.println("**************************************" + iterat.getValue());
 							sumCount += Integer.parseInt(iterat.getValue());
 							attributCounter++;
+							if (attributCounter == 18) {
+								attributCounter = 0;
+							}
 						}
 					}
 					//HashMap für Auswertungs-Objekt
