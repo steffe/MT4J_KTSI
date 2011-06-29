@@ -444,7 +444,7 @@ public class MTLinkController {
 						
 						case(1): // Eine Verbindung möglich
 							System.out.println("MTLinkController: isValidLinkRequest: CASE 1");
-							if (hasanyLink(startObj)) {	
+							if (hasanyLink(startObj) || hasanyLink(endObj)) {	
 								return false;
 							} else {
 								int j = 1;
@@ -458,7 +458,9 @@ public class MTLinkController {
 									j++;
 								}
 								return true;
-							}					
+							}	
+							
+							// TODO: Testen ob das ZielObjekt auch Kardinalität 1 hat
 						case(2): // Keine Verbindung möglich
 							System.out.println("MTLinkController: isValidLinkRequest: CASE 2");
 							return false;
