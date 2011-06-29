@@ -440,7 +440,7 @@
     <ch.mitoco.model.ModelTypDescription>
       <objectypeid>1</objectypeid>
       <objectdescription>Player</objectdescription>
-   	  <kardinalitaet>0</kardinalitaet>
+   	  <kardinalitaet>1</kardinalitaet>
       <objectdenylink>
         <int>1</int>
         <int>3</int>
@@ -449,8 +449,10 @@
     <ch.mitoco.model.ModelTypDescription>
       <objectypeid>2</objectypeid>
       <objectdescription>Scorecard</objectdescription>
-      <kardinalitaet>0</kardinalitaet>
+      <kardinalitaet>1</kardinalitaet>
       <objectdenylink>
+      <int>2</int>
+      <int>3</int>
       </objectdenylink>
     </ch.mitoco.model.ModelTypDescription>
     <ch.mitoco.model.ModelTypDescription>
@@ -484,7 +486,7 @@
     <ch.mitoco.model.ModelTypDescription>
       <objectypeid>7</objectypeid>
       <objectdescription>Picture</objectdescription>
-      <kardinalitaet>0</kardinalitaet>
+      <kardinalitaet>2</kardinalitaet>
       <objectdenylink>
       </objectdenylink>
     </ch.mitoco.model.ModelTypDescription>

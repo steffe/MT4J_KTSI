@@ -263,6 +263,7 @@ public class BuildRadialMenu extends MTComponent{
 					        		//fileChooser.getUI().sendToFront();
 					            	//fileChooser = new FileChooser("C:\\", BuildRadialMenu.this.Mitoco);
 					        		//Mitoco.getCanvas().addChild(fileChooser.getUI());
+					            	MitocoScene.setImageload(true);
 					            	Mitoco.drawFilechooser("xml");
 					        		//fileChooser.toggleFileChooser("xml");
 					          		//fileChooser.getUI().sendToFront(); 

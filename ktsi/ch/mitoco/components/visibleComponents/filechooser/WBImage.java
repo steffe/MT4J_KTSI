@@ -17,8 +17,6 @@
  ***********************************************************************/
 package ch.mitoco.components.visibleComponents.filechooser;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 
 import org.mt4j.MTApplication;
@@ -190,6 +188,7 @@ public class WBImage extends MTRectangle implements ILassoable{
 			//keybCloseSvg.addActionListener(new CloseActionListener(new MTComponent[]{this, keybCloseSvg}) );
 			//keybCloseSvg.addGestureListener(TapProcessor.class, new CloseActionListener(new MTComponent[]{this, keybCloseSvg}));
 			//			pic.addChild(keybCloseSvg);
+			keybCloseSvg.addGestureListener(TapProcessor.class, new CloseActionListener(new MTComponent[]{this, keybCloseSvg}));
 			keybCloseSvg.setName("closeButton");
 			this.addChild(keybCloseSvg);
 		}else{
@@ -210,7 +209,7 @@ public class WBImage extends MTRectangle implements ILassoable{
 	 * 
 	 * @author Cruff
 	 */
-	public class CloseActionListener implements ActionListener{
+	public class CloseActionListener implements IGestureEventListener{
 			/** The comps. */
 			public MTComponent[] comps;
 			
@@ -230,9 +229,49 @@ public class WBImage extends MTRectangle implements ILassoable{
 			/* (non-Javadoc)
 			 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 			 */
-			public void actionPerformed(ActionEvent arg0) {
-				switch (arg0.getID()) {
-				case TapEvent.BUTTON_CLICKED:
+	
+			/**
+			 * Resize.
+			 * 
+			 * @param referenceComp the reference comp
+			 * @param compToResize the comp to resize
+			 * @param width the width
+			 * @param height the height
+			 */
+			protected void resize(MTPolygon referenceComp, MTComponent compToResize, float width, float height){ 
+				Vector3D centerPoint = getRefCompCenterRelParent(referenceComp);
+				compToResize.scale(1/referenceComp.getWidthXY(TransformSpace.RELATIVE_TO_PARENT), (float)1/referenceComp.getWidthXY(TransformSpace.RELATIVE_TO_PARENT), 1, centerPoint, TransformSpace.RELATIVE_TO_PARENT);
+				compToResize.scale(width, width, 1, centerPoint, TransformSpace.RELATIVE_TO_PARENT);
+			}
+			
+			
+			/**
+			 * Gets the ref comp center local.
+			 * 
+			 * @param shape the shape
+			 * 
+			 * @return the ref comp center local
+			 */
+			@SuppressWarnings("deprecation")
+			protected Vector3D getRefCompCenterRelParent(AbstractShape shape){
+				Vector3D centerPoint;
+				if (shape.isBoundingShapeSet()){
+					centerPoint = shape.getBoundingShape().getCenterPointLocal();
+					centerPoint.transform(shape.getLocalMatrix()); //macht den punkt in self space
+				}else{
+					Vector3D localObjCenter = shape.getCenterPointGlobal();
+					localObjCenter.transform(shape.getGlobalInverseMatrix()); //to localobj space
+					localObjCenter.transform(shape.getLocalMatrix()); //to parent relative space
+					centerPoint = localObjCenter;
+				}
+				return centerPoint;
+			}
+
+			@Override
+			public boolean processGestureEvent(MTGestureEvent ge) {
+				TapEvent te = (TapEvent) ge;
+				switch (te.getTapID()) {
+				case TapEvent.TAPPED:
 					//Get the first polygon type out of the array
 					for (int i = 0; i < comps.length; i++) { //TODO this is stupid.. redo this whole thing
 						MTComponent comp = comps[i];
@@ -273,46 +312,7 @@ public class WBImage extends MTRectangle implements ILassoable{
 				default:
 					break;
 				}//switch aeID
+				return false;
 			}
-			
-			/**
-			 * Resize.
-			 * 
-			 * @param referenceComp the reference comp
-			 * @param compToResize the comp to resize
-			 * @param width the width
-			 * @param height the height
-			 */
-			protected void resize(MTPolygon referenceComp, MTComponent compToResize, float width, float height){ 
-				Vector3D centerPoint = getRefCompCenterRelParent(referenceComp);
-				compToResize.scale(1/referenceComp.getWidthXY(TransformSpace.RELATIVE_TO_PARENT), (float)1/referenceComp.getWidthXY(TransformSpace.RELATIVE_TO_PARENT), 1, centerPoint, TransformSpace.RELATIVE_TO_PARENT);
-				compToResize.scale(width, width, 1, centerPoint, TransformSpace.RELATIVE_TO_PARENT);
-			}
-			
-			
-			/**
-			 * Gets the ref comp center local.
-			 * 
-			 * @param shape the shape
-			 * 
-			 * @return the ref comp center local
-			 */
-			@SuppressWarnings("deprecation")
-			protected Vector3D getRefCompCenterRelParent(AbstractShape shape){
-				Vector3D centerPoint;
-				if (shape.isBoundingShapeSet()){
-					centerPoint = shape.getBoundingShape().getCenterPointLocal();
-					centerPoint.transform(shape.getLocalMatrix()); //macht den punkt in self space
-				}else{
-					Vector3D localObjCenter = shape.getCenterPointGlobal();
-					localObjCenter.transform(shape.getGlobalInverseMatrix()); //to localobj space
-					localObjCenter.transform(shape.getLocalMatrix()); //to parent relative space
-					centerPoint = localObjCenter;
-				}
-				return centerPoint;
-			}
-	}//Class closebutton actionlistener
-	
-	
-	
+	}	
 }

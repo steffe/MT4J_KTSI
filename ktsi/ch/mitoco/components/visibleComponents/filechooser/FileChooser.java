@@ -524,7 +524,9 @@ public class FileChooser extends MTComponent
         	}
         	//Add image
         	else if(images.accept(file) && !file.isDirectory()){
-            	PImage texture = scene.getMTApplication().loadImage(file.getPath());
+            	System.out.println("FileChooser: ImageLoad: "+ MitocoScene.getImageload() );
+        		if(MitocoScene.getImageload()){
+        		PImage texture = scene.getMTApplication().loadImage(file.getPath());
         		WBImage photo = new WBImage(texture, scene);
             	photo.setName(file.getName());
             	photo.setNoFill(true);
@@ -534,11 +536,16 @@ public class FileChooser extends MTComponent
             	photo.addGestureListener(DragProcessor.class, new InertiaDragAction());
     			//scene.getLassoProcessor().addClusterable(photo); //make photo lasso-able
     			scene.getCanvas().addChild(photo);
+    			MitocoScene.setImageload(false);
+            	}
+            	else {
+            		selectionPath = file.getPath();
+            	}
+        		toggleFileChooser();
             	System.out.println("Opening: " + file.getName() + ".");
             	//Update settings
             	//scene.updateSettings(photo); 
-            	selectionPath = file.getPath();
-            	toggleFileChooser();
+            	
         	}
         	// Add xml
         	else if(xml.accept(file) && !file.isDirectory()){

@@ -43,8 +43,6 @@ import ch.mitoco.startmenu.SceneMitoco;
 /** Hello Word Scene. */
 
 public class MitocoScene extends AbstractScene {
-
-
 	
 	/**
 	 * List mit MyObjects
@@ -81,6 +79,7 @@ public class MitocoScene extends AbstractScene {
 	
 	private BuildRadialMenu buildRadialMenu;
 	
+	private static Boolean imageload;
 	/** Test: Linker Controller. */
 	//private MTLinkController linker; //TODO: Test
 	
@@ -347,6 +346,20 @@ public class MitocoScene extends AbstractScene {
 		  public static String getFilechooserPath(){
 		  
 		  		return fileChooser.getSelectionPath();
+		}
+
+		/**
+		 * @param imageload the imageload to set
+		 */
+		public static void setImageload(Boolean imageload) {
+			MitocoScene.imageload = imageload;
+		}
+
+		/**
+		 * @return the imageload
+		 */
+		public static Boolean getImageload() {
+			return imageload;
 		}
 		  
 

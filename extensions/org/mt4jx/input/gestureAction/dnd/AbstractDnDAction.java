@@ -137,7 +137,7 @@ public abstract class AbstractDnDAction implements IGestureEventListener {
 				for(int i=0; i<pickList.size(); i++){
 //				for (int i = pickList.size() - 1; i >= 0; i--) {
 					
-					System.out.println("PickList#" + pickList.size());
+					//TODO:System.out.println("PickList#" + pickList.size());
 					PickEntry currentPickEntry = pickList.get(i);
 					MTComponent currentComponent = currentPickEntry.hitObj;
 					// get "parent" of composed components for listener invocation
@@ -150,12 +150,12 @@ public abstract class AbstractDnDAction implements IGestureEventListener {
 							// Only pick a target that will accept the 
 							// source component.
 							if (target.dndAccept(sourceComponent)) {
-								System.out.println("DROP TARGET DETECTED:" +
-										target);
+								//TODO:System.out.println("DROP TARGET DETECTED:" +
+								//		target);
 								return target;
 							}
 						} else {
-						 System.out.println("NOT A DROP TARGET:" + currentComponent);
+						 //TODO: System.out.println("NOT A DROP TARGET:" + currentComponent);
 						}
 					}
 				}

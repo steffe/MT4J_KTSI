@@ -140,7 +140,7 @@ public class MTPictureBox extends Attributes {
 		//loadSelectedImage();
 		//changePicture();
 	
-		label = new MTTextArea(app, 0, labelfont.getOriginalFontSize(), width, height, labelfont);
+		label = new MTTextArea(app, 0, -labelfont.getOriginalFontSize(), width, height, labelfont);
 		label.setInnerPadding(0);
 		label.setNoFill(true);
 		label.setStrokeColor(MTColor.LIME);

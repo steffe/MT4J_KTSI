@@ -3,13 +3,27 @@ package ch.mitoco.model;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The Main Datamodel for the whole Scene. In this Model, all Data for the Objects
+ * and the content will be saved
+ * 
+ * The Model contain all Objects and all Links between the Objects
+ * @author steffe
+ *
+ */
 public class ModelScence {
 	
 	 private long id;
 	 private String name;
+	 
+	 /**List with the Object Datamodel	*/
 	 private List<ModelMtObjects> mtobjects;
+	 /**List with the Link Datamodel	*/
 	 private List<ModelLink> mtlinks;
 	 
+	 	/**
+	 	 * 
+	 	 */
 	    public ModelScence() {
 	    	mtobjects = new ArrayList<ModelMtObjects>();
 	    	setMtobjectlinks(new ArrayList<ModelLink>());
