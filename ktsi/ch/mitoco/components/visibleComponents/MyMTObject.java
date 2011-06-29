@@ -151,6 +151,7 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 	 * Default Höhe der Attribute, wenn keinen Wert über das Datamodel mitgegeben wurde .
 	 */
 	private int defaultHeightTextAttribut = 30;
+
 	private int defaultHeightNumField = 30;
 	private int defaultHeightDropDown = 30;
 	private int defaultHeightMTPictureBox = 120;
@@ -173,9 +174,10 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 	 * @param pApplet2 MTApplication
 	 * @param model ModelMTObjects
 	 * @param objectID INT ObjectID  
+	 * @param linkerorg MTLinkController
 	 * 
 	 */
-	public MyMTObject(final MTApplication pApplet2, final ModelMtObjects model, final int objectID, MTLinkController linkerorg) {
+	public MyMTObject(final MTApplication pApplet2, final ModelMtObjects model, final int objectID, final MTLinkController linkerorg) {
 		super(pApplet2, 0, 0, 0, 0, 0, 5, 5);
 
 		this.pApplet = pApplet2;
@@ -357,22 +359,22 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 			switch(it.getId()) {
 			case(0):
 				System.out.println("MyMTObject: " + i + "Attributs MTTextAttribut " + it);
-				myAttributs.add(new MTTextAttribut(pApplet, attributesmodel.get(i), fontArialMini, 250, readAttributHeight(i, defaultHeightTextAttribut), "Test", "TestFeld Text", labelfont));
+				myAttributs.add(new MTTextAttribut(pApplet, attributesmodel.get(i), fontArialMini, 250, readAttributHeight(i, defaultHeightTextAttribut), "Text Attribut", "Text", labelfont));
 				break;
 			
 			case(1):	
 				System.out.println("MyMTObject: " + i + "Attributs MTNumField " + it);
-				myAttributs.add(new MTNumField(pApplet, attributesmodel.get(i), fontArialMini, 250, readAttributHeight(i, defaultHeightNumField), true, "1111134.34", "TestFeld", labelfont));
+				myAttributs.add(new MTNumField(pApplet, attributesmodel.get(i), fontArialMini, 250, readAttributHeight(i, defaultHeightNumField), true, "0", "Nummernfeld", labelfont));
 				break;
 			
 			case(2):
 				System.out.println("MyMTObject: " + i + "Attributs MTDropDown " + it);
-				myAttributs.add(new MTDropDownList(pApplet, attributesmodel.get(i), fontArialMini, 250, readAttributHeight(i, defaultHeightDropDown), "Projekt Wichtigkeit", labelfont));
+				myAttributs.add(new MTDropDownList(pApplet, attributesmodel.get(i), fontArialMini, 250, readAttributHeight(i, defaultHeightDropDown), "DropDown", labelfont));
 				break;
 				
 			case(3):
 				System.out.println("MyMTObject: PB " + i + "Attributs MTPictureBox " + it);
-				myAttributs.add(new MTPictureBox(pApplet, attributesmodel.get(i), 250, readAttributHeight(i, defaultHeightMTPictureBox), "Picuture", labelfont));
+				myAttributs.add(new MTPictureBox(pApplet, attributesmodel.get(i), 250, readAttributHeight(i, defaultHeightMTPictureBox), "PicutureBox", labelfont));
 				break;
 				
 			case(4): 
@@ -382,7 +384,7 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 				
 			case(5):
 				System.out.println("MyMTObject: " + i + "Attributs MTDrawingBox " + it);
-				myAttributs.add(new MTDrawingBox(pApplet, 250, readAttributHeight(i,defaultHeightMTDrawingBox), "Zeichnen", labelfont));
+				myAttributs.add(new MTDrawingBox(pApplet, attributesmodel.get(i), 250, readAttributHeight(i,defaultHeightMTDrawingBox), "Zeichnen", labelfont));
 				break;
 			default:
 				break;

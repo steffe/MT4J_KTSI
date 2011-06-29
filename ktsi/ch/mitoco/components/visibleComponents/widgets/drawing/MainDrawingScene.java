@@ -306,9 +306,12 @@ public class MainDrawingScene extends MTComponent {
 				int width = (int)frame.getWidthXY(TransformSpace.GLOBAL);
 				int height = (int)frame.getHeightXY(TransformSpace.GLOBAL);
 				Vector3D v1 = frame.getCenterPointGlobal();
-				Vector3D v2 = frame.getCenterPointLocal();
-				Vector3D v3 = frame.getCenterPointRelativeToParent();
 				
+				Vector3D scT = sceneTexture.getCenterPointGlobal();
+//				Vector3D v2 = frame.getCenterPointLocal();
+//				Vector3D v3 = frame.getCenterPointRelativeToParent();
+//				
+				/*
 				try {
 					
 					Rectangle screen = new Rectangle(pa.getLocationOnScreen().x + (int) v2.x - height / 2, pa.getLocationOnScreen().y + (int) v2.y - width / 2, 540, 400);
@@ -326,23 +329,23 @@ public class MainDrawingScene extends MTComponent {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				
+				*/
 
 				
 				System.out.println("MainDrawingScene: Position Global: " +  v1.x + ":" + v1.y);
+				System.out.println("MainDrawingScene: Position Global: " +  scT.x + ":" + scT.y + ":" + scT.z);
 				System.out.println("MainDrawingScene: Grösse des Objekts: " +  frame.getWidthXY(TransformSpace.GLOBAL) + ":" + frame.getHeightXY(TransformSpace.GLOBAL) );
-				System.out.println("MainDrawingScene: Position Local: " +  v2.x + ":" + v2.y);
-				System.out.println("MainDrawingScene: Position Relativ: " +  v3.x + ":" + v3.y);
-				
-				save2 = pa.get((int)v2.x, (int)v2.y, 540, 400);
+
+
+				save2 = pa.get((int)v1.x -270, (int)v1.y -200, 540, 400);
 				save2.save("test2.tif");
 				
-				
+				/*
 				PImage savePicture = pa.createImage(pa.width, pa.height, pa.ARGB);
 				savePicture = sceneTexture.getTexture();
 		        System.out.println("MainDrawingScene: " +  savePicture);
 		        savePicture.save("tesgt.tif");
-		        
+		        */
 		        
 			/*
 		        try
@@ -381,6 +384,8 @@ public class MainDrawingScene extends MTComponent {
 		
 	}
 	
+	
+	
 	boolean modus = false;
 	/**
 	 * 
@@ -403,7 +408,6 @@ public class MainDrawingScene extends MTComponent {
 	        this.translate(new Vector3D(-difh, -difw));
 			modus = false;
 		}
-		createImage();
 	}
 	
 }

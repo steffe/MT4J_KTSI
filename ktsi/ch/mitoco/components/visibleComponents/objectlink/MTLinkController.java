@@ -39,6 +39,7 @@ public class MTLinkController {
 	
 	/** AbstractMTApplication. */
 	private AbstractMTApplication app;
+	
 	/** MTApplication canvas. */
 	private MTCanvas canvas;
 	
@@ -66,9 +67,12 @@ public class MTLinkController {
 	/** Liste mit Links.*/
 	private List<MTLink> linkliste;
 	
+	/** AutoDraw Thread. */
+	private MTAutoDraw autodraw;
 	
-	
-	/** MTLinkController. 
+	/** 
+	 * Konstruktor des MTLinkController. Der Link Controller verwaltet alle Funktionien rund um das Link erstellen. 
+	 * 
 	 * 
 	 * @param pApplet 
 	 * @param canvas
@@ -88,7 +92,12 @@ public class MTLinkController {
 		validLinkPair = new ArrayList<MTSelectStoreObject>();
 		
 		linkliste = Collections.synchronizedList(new ArrayList<MTLink>()); // Liste für alle Objekte LINK, Thread Safe TODO: Nutzen muss noch abgeklärt werden
-	
+		
+		
+		// Thread für Timer für Automatisches Zeichnen
+		autodraw = new MTAutoDraw(this, 1000);
+		autodraw.start();
+		
 		init();
 	}
 
@@ -123,6 +132,7 @@ public class MTLinkController {
 		for (ModelTypDescription it : modelObjectTyps.getObjectdescription()) {
 			//ArrayList<Integer> inn = it.getObjectdenylink();
 			this.modelObjectTypDesc.add(it);
+			System.out.println("MTLinkController: setObjectList: Kardinalitaet:" + it.getKardinalitaet());
 			/*
 			for (Integer itt : it.getObjectdenylink()) {
 				System.out.println("MTLinkController: Denny Object ID: " + itt);
@@ -136,11 +146,11 @@ public class MTLinkController {
 		for (ModelLink it : modellinkList) {
 			System.out.println("MTLinkController: setObjectList: Linklist: First " + it.getFirstObject() + " Second Objekt : " + it.getSecondObject());
 		}
-		
+		autodraw.setOkstorun(true);  // Automatische Zeichen wird gestartet
 	}
 	
 	/**
-	 * Lesen der ModelDaten für die Links und Setzten.
+	 * Lesen der ModelDaten für die Links und setzten dieser auf der Scene.
 	 */
 	public void readDataAll() {
 		if(!(modellinkList.isEmpty())){
@@ -161,8 +171,12 @@ public class MTLinkController {
 		
 	}
 	
-	
-	public void showLinkListe() {
+	/**
+	 * 
+	 * Printout der vorhanden Links.
+	 * 
+	 */
+	public final void showLinkListe() {
 		for (MTLink it : linkliste) {
 			System.out.println("MTLinkController: showLinkListe: EndObjekt " + it.getEndObjectID() + " StartObj:" +it.getStartObjectID());
 			}
@@ -180,7 +194,7 @@ public class MTLinkController {
 	}
 	
 	/**
-	 * Schreibt die Daten eines Link Objekt in das Datamodel.
+	 * Schreibt die Daten eines einzelnen Link Objekts in das Datamodel.
 	 * 
 	 * @param obj MTLink
 	 */
@@ -203,11 +217,16 @@ public class MTLinkController {
 	}
 	
 	
-	/** Position Dedection for MTObjects.*/
-	// TODO Postition Dedection
+	/** 
+	 * Position Dedection for MTObjects.
+	 *  
+	 * Jedes MyMTObject bekommt einen einen InputEventListener der auf alle Inputs diese Objekt höhrt. 
+	 * Tritt ein Event ein wird die Methode drawLine ausgeführt, die die Link Lininen nachführt.
+	 *  
+	 */
 	private void eventObjectHandling() {
 		
-		for (MyMTObject it : myobjectList){
+		for (MyMTObject it : myobjectList) {
 			it.addInputListener(new IMTInputEventListener() {
 				
 				public boolean processInputEvent(MTInputEvent inEvt) {
@@ -228,9 +247,7 @@ public class MTLinkController {
 							default:
 								break;
 							}
-						} else {
-							//System.out.println("MTLinkController: eventObjectHandling: Keine Link Objekte vorhanden");	
-						}
+						} 
 						
 					} else {
 						// handle other input events stuff
@@ -243,7 +260,7 @@ public class MTLinkController {
 	}
 	
 	/** 
-	 * Zeichnet alle Linien die sich in der ArrayListe linkliste befinden.
+	 * Zeichnet alle Linien die sich in der ArrayListe linkliste befinden. 
 	 * */
 	public void drawLinie() {
 		
@@ -255,8 +272,7 @@ public class MTLinkController {
 		}	
 	}
 	
-	
-	
+
 	/**
 	 * 
 	 * Add Gesture Listener (TapAndHoldProcessor) for all MyMTObjects.
@@ -276,7 +292,7 @@ public class MTLinkController {
 	 * 
 	 * Add Gesture Listener (TapAndHoldProcessor) for one selected Object.
 	 * 
-	 * Erstellt den Linkhead (Target Finder) um ein Link zwischen zwei Objekte zu machen.
+	 * Erstellt den Linkhead (Target Finder) um ein Link zwischen zwei Objekte zu erstellen.
 	 * 
 	 * @param obj MyMTObject
 	 */
@@ -381,12 +397,20 @@ public class MTLinkController {
 	/**
 	 * 
 	 * Gibt zurück ob eine Linkverbindung erlaubt ist oder nicht. Dies anhand der in der ModelTypDescription festgelegten Denny List.
+	 * Zudem muss die Kardinalität überprüft werden.
+	 * Kardinalitaet:
+	 * ---------------
+	 * 	0 = mehrfach Verbindung möglich
+	 * 	1 = eine Verbindung möglich
+	 * 	2 = keine Verbindung möglich
+	 * 
 	 * 
 	 * @param startObj int 
 	 * 			ID des start Objekts
 	 * @param endObj int
 	 * 			ID des end Objekts
 	 * @return valid booelan
+	 * 				true = valid, false = nicht valid
 	 */
 	public boolean isValidLinkRequest(int startObj, int endObj) {
 		boolean valid = true;
@@ -402,30 +426,82 @@ public class MTLinkController {
 				// In der Denny Liste nach der Richtigen Description für den richtige Objekttyp suchen
 				if (myobjectList.get(startObj).getObjecttyp() == it.getObjectypeid()) {
 					
-					// Objekttyp ist in der ModelTypDescription vorhanden. Jetzt muss nur noch die Denny Liste durchsuchen werden
-					int i =1;
-					for (Integer itt : it.getObjectdenylink()) {
-						System.out.println("MTLinkController: isValidLinkRequest: Nach Denny Suchen Nr:" + i +" - Nicht erlaubte Objekt IDs: " + itt);	
-						//Liste mit allen Objekten in dem
-						if (myobjectList.get(endObj).getObjecttyp() == itt) {
-							valid = false; // EndObjekt ist in der Liste vorhanden, Link darf nicht erstellt werden		
-							System.out.println("MTLinkController: isValidLinkRequest: LINK NICHT ERLAUBT - End Objekt : " + myobjectList.get(endObj).getObjecttyp() + " ist gleich StartObj: " + itt);
-						break; // Denny gefunden aus der Schlaufe 
-						} else {
-							//valid = true; // EnbObjekt ist in der Liste nicht vorhanden, Link darf erstellt werden
-							System.out.println("MTLinkController: isValidLinkRequest: Ziel Objekttyp ist: " + myobjectList.get(endObj).getObjecttyp() + " nicht gleich " + itt);
+					switch(it.getKardinalitaet()) {
+						case(0): // mehrfach Verbindungen möglich
+								System.out.println("MTLinkController: isValidLinkRequest: CASE 0");
+								// Objekttyp ist in der ModelTypDescription vorhanden. Jetzt muss nur noch die Denny Liste durchsuchen werden
+								int i = 1;
+								for (Integer itt : it.getObjectdenylink()) {
+									System.out.println("MTLinkController: isValidLinkRequest: Nach Denny Suchen Nr:" + i +" - Nicht erlaubte Objekt IDs: " + itt);	
+									//Liste mit allen Objekten in dem
+									if (myobjectList.get(endObj).getObjecttyp() == itt) {
+										System.out.println("MTLinkController: isValidLinkRequest: LINK NICHT ERLAUBT - End Objekt : " + myobjectList.get(endObj).getObjecttyp() + " ist gleich StartObj: " + itt);
+										return false; // Denny gefunden aus der Schlaufe 
+									} 
+									i++;
+								}
+							return true;
+						
+						case(1): // Eine Verbindung möglich
+							System.out.println("MTLinkController: isValidLinkRequest: CASE 1");
+							if (hasanyLink(startObj)) {	
+								return false;
+							} else {
+								int j = 1;
+								for (Integer itt : it.getObjectdenylink()) {
+									System.out.println("MTLinkController: isValidLinkRequest: Nach Denny Suchen Nr:" + j +" - Nicht erlaubte Objekt IDs: " + itt);	
+									//Liste mit allen Objekten in dem
+									if (myobjectList.get(endObj).getObjecttyp() == itt) {
+										System.out.println("MTLinkController: isValidLinkRequest: LINK NICHT ERLAUBT - End Objekt : " + myobjectList.get(endObj).getObjecttyp() + " ist gleich StartObj: " + itt);
+										return false; // Denny gefunden aus der Schlaufe 
+									} 
+									j++;
+								}
+								return true;
+							}					
+						case(2): // Keine Verbindung möglich
+							System.out.println("MTLinkController: isValidLinkRequest: CASE 2");
+							return false;
+						
+						default:
+							break;
 						}
-						i++;
-					}
-					break;
-				} else {
-					System.err.println("MTLinkController: isValidLinkRequest: Object ID: " + it.getObjectypeid() + " gibt es in der ModelTypDescription Liste nicht!");
-					valid = true;
-				}
+				
+				} 
+//				return true;
 			}
 		}
 		return valid;
 	}
+	
+	
+	/**
+	 * 
+	 * Gibt ein Boolean zurück ob ein Objekt schon ein Link hat oder nicht.
+	 * 
+	 * @param searchObj int 
+	 * 		   
+	 * @return hasLink boolean 
+	 * 			true = Link vorhanden, false = Link nicht vorhanden
+	 */
+	private boolean hasanyLink(final int searchObj) {
+		boolean hasLink = false;
+		System.out.println("MTLinkController: hasanyLink: Link suchen Search Obj:" + searchObj);
+		for (MTLink it : linkliste) {
+			if (it.getEndObjectID() == searchObj) {
+				hasLink = true;
+				System.out.println("MTLinkController: hasanyLink: GEFUNDEN:");
+			} else if (it.getStartObjectID() == searchObj) {
+				hasLink = true;
+				System.out.println("MTLinkController: hasanyLink: GEFUNDEN:");
+			}		
+		}
+		System.out.println("MTLinkController: hasanyLink: Rückgabewert:" + hasLink);
+		return hasLink;
+	}
+	
+	
+	
 	
 	/** Zähler für markiertes Objekt.*/
 	private int i = 0;

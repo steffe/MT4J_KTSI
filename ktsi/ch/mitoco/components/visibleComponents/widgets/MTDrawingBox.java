@@ -106,7 +106,7 @@ public class MTDrawingBox extends Attributes {
 	 * @param labelfont IFont
 	 * 
 	 * */
-	public MTDrawingBox(final AbstractMTApplication app, /*ModelMtAttributs model, */ final int width, final int height, final String labelname, final IFont labelfont) {
+	public MTDrawingBox(final AbstractMTApplication app, ModelMtAttributs model, final int width, final int height, final String labelname, final IFont labelfont) {
 		super(app);
 		this.width = width;
 		this.height = height;
@@ -117,8 +117,8 @@ public class MTDrawingBox extends Attributes {
 		this.model = model;
 		
 		
-		//dataRead(labelname); // Daten lesen
-		fileChooserPath = new String();
+		dataRead(labelname); // Daten lesen
+		
 		
 		this.init(app);
 	}
@@ -134,7 +134,7 @@ public class MTDrawingBox extends Attributes {
 		//loadSelectedImage();
 		//changePicture();
 	
-		label = new MTTextArea(app, 0, labelfont.getOriginalFontSize(), width, height, labelfont);
+		label = new MTTextArea(app, 0, -labelfont.getOriginalFontSize(), width, height, labelfont);
 		label.setInnerPadding(0);
 		label.setNoFill(true);
 		label.setStrokeColor(MTColor.LIME);
@@ -151,6 +151,9 @@ public class MTDrawingBox extends Attributes {
 	//	this.registerInputProcessor(new CursorTracer(app, ));
 	}
 
+	/**
+	 * Erstellen der Zeichungsscene.
+	 */
 	private void createDrawingScene() {
 		
 		
@@ -161,7 +164,7 @@ public class MTDrawingBox extends Attributes {
        
         this.addChild(m1);
         
-        //Eraser button
+        //Max Min button
         PImage minmax = app.loadImage("ch" + MTApplication.separator + "mitoco" + MTApplication.separator + "data" + MTApplication.separator +  "buttonMaxMin.png");
         MTImageButton mm = new MTImageButton(app, minmax);
         mm.setNoStroke(true);
@@ -179,6 +182,28 @@ public class MTDrawingBox extends Attributes {
 			}
         });
         this.addChild(mm);
+        
+      //Max Min button
+        String imagesPath = "advanced" + AbstractMTApplication.separator + "drawing" + AbstractMTApplication.separator + "data" + AbstractMTApplication.separator + "images" + AbstractMTApplication.separator;
+
+        
+        PImage draw = app.loadImage(imagesPath + "floppy.png");
+        MTImageButton drawButton = new MTImageButton(app, draw);
+        drawButton.setNoStroke(true);
+        drawButton.setSizeLocal(30, 30);
+        drawButton.translate(new Vector3D(0, + 30, 0));
+        drawButton.addGestureListener(TapProcessor.class, new IGestureEventListener() {
+			public boolean processGestureEvent(MTGestureEvent ge) {
+				TapEvent te = (TapEvent)ge;
+				if (te.isTapped()){
+//					//As we are messing with opengl here, we make sure it happens in the rendering thread
+					System.out.println("MTDrawingBox: Tapped ");
+					m1.createImage();
+				}
+				return true;
+			}
+        });
+        this.addChild(drawButton);
 	}
 	
 	
@@ -267,7 +292,6 @@ public class MTDrawingBox extends Attributes {
 			setPath("Default");
 			System.out.println("PictureBox: no Attributcontent found ");
 			
-			//Double.valueOf(textarea.getText()).doubleValue();
 		} else {
 			for (ModelAttributContent it : model.getAttributcontent()) {
 				if (it.getType().equalsIgnoreCase("Path")) {
@@ -275,7 +299,7 @@ public class MTDrawingBox extends Attributes {
 					setPath(it.getValue());
 					break;
 				} else {
-					System.out.println("PictureBox: Value zu Typ String NICHT GEFUNDEN ");
+					System.out.println("MTDrawingBox: Value zu Typ String NICHT GEFUNDEN ");
 					setPath("Default");
 				}
 			}
