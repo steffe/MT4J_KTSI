@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.mt4j.MTApplication;
 import org.mt4j.components.MTCanvas;
@@ -168,12 +169,26 @@ public class DataController {
 		//objectcounter = 0;
 		//forschleife
 		
-		for (MyMTObject it : getMyobjectList()) {
-  		  if (it.getTagFlag()) {
-  			  it.destroyMyObject();
-  			  //dataModel.getMtobjects().remove(it);
+		List<Integer> listObjects = new ArrayList<Integer>();
+		for (int i = 0; i < getMyobjectList().size(); i++) {
+			MyMTObject it = getMyobjectList().get(i);
+			System.out.println("DataController: removeObject: Object Flag; " + it.getTagFlag());
+			if (it.getTagFlag()) {
+				System.out.println("DataController: removeObject: Object ID; " + it);
+				it.destroyMyObject();
+				listObjects.add(i);
+				dataModel.getMtobjects().remove(i);
+				linker.setVisibleOne(false, i);
+				linker.removeLinkOne(i);
+				
   			  //myobjectList.remove(it);
-  		  }
+  		  	}
+		}
+		
+		for (int y = 0; y < listObjects.size(); y++) {
+			System.out.println("DataController: removeObject: Object ID; " + y);
+			
+			listObjects.remove(y);
 		}
 		
 		return false;
@@ -316,10 +331,6 @@ public class DataController {
 		return linker;
 	}
 	
-	public void linkObjects(int object1, int object2) {
-		
-	}
-
 	/**
 	 * @param objectetyps the objectetyps to set
 	 */
@@ -359,7 +370,13 @@ public class DataController {
 	public ModelTypDescription getModeltTypeDesc() {
 		return modeltTypeDesc;
 	}
-
+	
+	/**
+	 * Hide Link
+	 */
+	public void hideLink(int objID){
+		linker.setVisibleOne(false, objID);
+	}
 	
 	//GUI Object kopieren (Neues GUI Object / DatenModel Kopieren
 	//Objecte Verknüpfen set links get links

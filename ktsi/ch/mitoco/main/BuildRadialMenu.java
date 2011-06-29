@@ -398,6 +398,10 @@ public class BuildRadialMenu extends MTComponent{
 					        }
 					      };
 					      
+					      /**
+					       * Listener Object to Hide an Component on the Scene. It will hide the Object of the Scene with an Animation
+					       * and will hide the link over the DataController without an Animation 
+					       */
 					      final IMTInputEventListener hide2InputListener = new IMTInputEventListener() {
 						        @Override
 						        public boolean processInputEvent(final MTInputEvent inEvt) {
@@ -410,6 +414,7 @@ public class BuildRadialMenu extends MTComponent{
 						            		  if (it.getTagFlag()) {
 						            			  //AnimationUtil.scaleOut(it, false);
 						            			  Mitoco.hideObjects(it);
+						            			  dataController.hideLink(it.getID());
 						            			  //it.setVisible(false);
 						            		  }
 						            		  System.out.println("hide2:"+it);
@@ -428,6 +433,10 @@ public class BuildRadialMenu extends MTComponent{
 						        }
 						      };
 						      
+						      /**
+						       * 
+						       * 
+						       */
 						      final IMTInputEventListener browserListener = new IMTInputEventListener() {
 						          @Override
 						          public boolean processInputEvent(final MTInputEvent inEvt) {
@@ -451,26 +460,6 @@ public class BuildRadialMenu extends MTComponent{
 						                return false;
 						              }
 						        };
-
-					      final IMTInputEventListener hideInputListener = new IMTInputEventListener() {
-					          @Override
-					          public boolean processInputEvent(final MTInputEvent inEvt) {
-					            // Most input events in MT4j are an instance of AbstractCursorInputEvt (mouse, multi-touch..)
-					            if (inEvt instanceof MTFingerInputEvt) {
-					              final MTFingerInputEvt cursorInputEvt = (MTFingerInputEvt) inEvt;
-					              switch (cursorInputEvt.getId()) {
-					                case TapEvent.GESTURE_STARTED:
-					                	//hideObjects(dataController.getMyobjectList().get(0));
-					                   break;
-					                 default:
-					                      break;
-					                  }
-					                } else {
-					                  //LOG.warn("Some other event occured:" + inEvt);
-					                }
-					                return false;
-					              }
-					        };
 					        
 					        final IMTInputEventListener deleteListener = new IMTInputEventListener() {
 						          @Override
@@ -485,6 +474,7 @@ public class BuildRadialMenu extends MTComponent{
 						                   for (MyMTObject it : dataController.getMyobjectList()) {
 						               		  if (it.getTagFlag()) {
 						               			Mitoco.getCanvas().removeChild(it);
+						               			
 						               		  }
 						             		}
 						                   
@@ -535,13 +525,16 @@ public class BuildRadialMenu extends MTComponent{
 	        final MTMenuItem viewmenu = new MTMenuItem("View", null);
 	        final MTMenuItem browser = new MTMenuItem("Browser", null);
 	        browser.addInputEventListener(browserListener);
-	        viewmenu.addSubMenuItem(browser);
+	       
+	        if(System.getProperty("sun.arch.data.model").equals("32")){
+	        	viewmenu.addSubMenuItem(browser);
+	        }
+	        
+	        
 	        final MTMenuItem pdf = new MTMenuItem("PDF", null);
 	        pdf.addInputEventListener(showPDFlistener);
 	        viewmenu.addSubMenuItem(pdf);
 	    
-	  
-
 	        final MTMenuItem actionmenu = new MTMenuItem("Action", null);
 	        
 	        final MTMenuItem loadfile = new MTMenuItem("Load File", null);

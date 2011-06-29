@@ -22,45 +22,69 @@ public class ModelScence {
 	 private List<ModelLink> mtlinks;
 	 
 	 	/**
-	 	 * 
+	 	 * Construktor generats a Object and Link list
 	 	 */
 	    public ModelScence() {
 	    	mtobjects = new ArrayList<ModelMtObjects>();
 	    	setMtobjectlinks(new ArrayList<ModelLink>());
 	    }
 
+	    /**Identification Number of the Scene
+	     * 
+	     * @return Retursn the Scene ID
+	     */
 		public long getId() {
 			return id;
 		}
-
+		
+		/**Set the Identificationnumber of the Scene
+		 * 
+		 * @param id Identification of the Scene
+		 */
 		public void setId(long id) {
 			this.id = id;
 		}
 
+		/**Get the Scene Name
+		 * 
+		 * @return name String
+		 */
 		public String getName() {
 			return name;
 		}
 
+		/**Set the Scene Name
+		 * 
+		 * @param name String
+		 */
 		public void setName(String name) {
 			this.name = name;
 		}
-
+		
+		/**Returns a List from the Object DataModel
+		 * 
+		 * @return ModelMtObjects
+		 */
 		public List<ModelMtObjects> getMtobjects() {
 			return mtobjects;
 		}
-
+		
+		/**Set the Datamodel for the Objectlist
+		 * 
+		 * @param mtobjects
+		 */
 		public void setMtobjects(List<ModelMtObjects> mtobjects) {
 			this.mtobjects = mtobjects;
 		}
 
-		/**
+		/**Set the Objectlink Datamodel
 		 * @param mtobjectlinks ModelObjectLink
 		 */
 		public void setMtobjectlinks(List<ModelLink> mtobjectlinks) {
 			this.mtlinks = mtobjectlinks;
 		}
 
-		/**
+		/**Retursn the Objectlink Datamodel
 		 * @return the mtobjectlinks
 		 */
 		public List<ModelLink> getMtobjectlinks() {

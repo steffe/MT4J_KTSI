@@ -69,8 +69,8 @@ public class ComponentStackScene extends AbstractScene
 		
 		int numComponents = 4;
 		
-		float ch = mtApplication.height/(numComponents + 1);
-		float cw = (ch/th) * tw;
+		float ch = mtApplication.height/(numComponents + 12);
+		float cw = tw * 0.8f;
 		float cx = (tx1 - cw)/2f;
 		
 		float ygap = (mtApplication.height - (ch * numComponents))/(numComponents + 1);
