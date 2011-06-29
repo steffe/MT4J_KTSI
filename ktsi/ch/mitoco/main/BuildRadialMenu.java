@@ -100,12 +100,14 @@ public class BuildRadialMenu extends MTComponent{
 			this.sceneData = sceneData;
 			this.ic = ic;
 			
-			startyGestureVector = ic.getStartPosY();
-			startxGestureVector = ic.getStartPosX();
-			endyGestureVector = ic.getCurrentEvtPosY();
-			endxGestureVector = ic.getCurrentEvtPosX();
+			startyGestureVector = 	ic.getStartPosY();
+			startxGestureVector = 	ic.getStartPosX();
+			endyGestureVector = 	ic.getCurrentEvtPosY();
+			endxGestureVector = 	ic.getCurrentEvtPosX();
 			
-			//InputEvents for RadialMenu
+			/**
+			 * Listener to create a new Object, depend on the choosen Type
+			 */
 			final IMTInputEventListener createObjectInput = new IMTInputEventListener() {
 			      @Override
 			      public boolean processInputEvent(final MTInputEvent inEvt) {
@@ -154,6 +156,9 @@ public class BuildRadialMenu extends MTComponent{
 			    };
 			
 			
+			   /**
+			    * Listener to Exit the entire Application
+			    */
 		    final IMTInputEventListener exitButtonInput = new IMTInputEventListener() {
 			      @Override
 			      public boolean processInputEvent(final MTInputEvent inEvt) {
@@ -174,7 +179,10 @@ public class BuildRadialMenu extends MTComponent{
 			        return false;
 			      }
 			    };
-			    
+			   
+			    /**
+			     * Listener to save a Scene in a XML File, Filename changeable over Keyboard
+			     */
 			   final IMTInputEventListener saveButtonInput = new IMTInputEventListener() {
 				      @Override
 				      public boolean processInputEvent(final MTInputEvent inEvt) {
@@ -237,6 +245,9 @@ public class BuildRadialMenu extends MTComponent{
 				      }
 				    }; 
 				    
+				    /**
+				     * Listener to load show the Filechooser und choose an XML Scene
+				     */
 				    final IMTInputEventListener loadButtonInput = new IMTInputEventListener() {
 					      @Override
 					      public boolean processInputEvent(final MTInputEvent inEvt) {
@@ -245,19 +256,6 @@ public class BuildRadialMenu extends MTComponent{
 					          final MTFingerInputEvt cursorInputEvt = (MTFingerInputEvt) inEvt;
 					          switch (cursorInputEvt.getId()) {
 					            case TapEvent.GESTURE_STARTED:
-					            	/*
-					            	if (!dataController.loadSceneXML()) {
-										for (Iterator<MyMTObject> it = dataController.getMyobjectList().iterator(); it.hasNext();) {
-											getCanvas().removeChild(dataController.getMyobjectList().get(it.next().getID()));	
-										}
-										dataController.clearScene();
-										} else {
-										for (Iterator<MyMTObject> it = dataController.getMyobjectList().iterator(); it.hasNext();) {
-											getCanvas().addChild(dataController.getMyobjectList().get(it.next().getID()));	
-										}
-										counter = dataController.getObjectcounter();
-									}
-					            	*/
 					            	
 					            	//fileChooser.toggleFileChooser("xml");
 					        		//fileChooser.getUI().sendToFront();
@@ -282,7 +280,9 @@ public class BuildRadialMenu extends MTComponent{
 					      }
 					    };
 					    
-					    
+					    /**
+					     * Alternativ load with a fixed XML for Testing
+					     */
 					    final IMTInputEventListener loadButtonInput2 = new IMTInputEventListener() {
 						      @Override
 						      public boolean processInputEvent(final MTInputEvent inEvt) {
@@ -317,7 +317,9 @@ public class BuildRadialMenu extends MTComponent{
 						      }
 						    };
 					    
-					    
+					    /**
+					     * Start the Reporting task
+					     */
 					    final IMTInputEventListener startReporting = new IMTInputEventListener() {
 						      @Override
 						      public boolean processInputEvent(final MTInputEvent inEvt) {
@@ -340,6 +342,9 @@ public class BuildRadialMenu extends MTComponent{
 						      }
 						    };
 						    
+						    /**
+						     * Listener to create an PDF Component on the Scene
+						     */
 						    final IMTInputEventListener showPDFlistener = new IMTInputEventListener() {
 							      @Override
 							      public boolean processInputEvent(final MTInputEvent inEvt) {
@@ -364,7 +369,9 @@ public class BuildRadialMenu extends MTComponent{
 							      }
 							    };    
 						    
-					    
+					    /**
+					     * Make hiden Objects visible over an Animation
+					     */
 					    final IMTInputEventListener showInputListener = new IMTInputEventListener() {
 					        @Override
 					        public boolean processInputEvent(final MTInputEvent inEvt) {
@@ -377,6 +384,7 @@ public class BuildRadialMenu extends MTComponent{
 					            		  if (it.getTagFlag()) {
 					            			  
 					            			  Mitoco.showObjects(it); 
+					            			  dataController.showlink(it.getID());
 					            			  //dataController.getMyobjectList()
 					            			it.setVisible(true);
 					            			//AnimationUtil.scaleIn(it);
@@ -434,8 +442,7 @@ public class BuildRadialMenu extends MTComponent{
 						      };
 						      
 						      /**
-						       * 
-						       * 
+						       * Create a Webbrowser component on the Scene, only 32bit
 						       */
 						      final IMTInputEventListener browserListener = new IMTInputEventListener() {
 						          @Override
@@ -461,6 +468,10 @@ public class BuildRadialMenu extends MTComponent{
 						              }
 						        };
 					        
+						     /**
+						      * Delete Listener, loops trough the Object List and removes the Components from the Canvas wich are tagged
+						      * Runs a method from the dataController witch will delete the datamodel and link
+						      */
 					        final IMTInputEventListener deleteListener = new IMTInputEventListener() {
 						          @Override
 						          public boolean processInputEvent(final MTInputEvent inEvt) {
@@ -526,6 +537,7 @@ public class BuildRadialMenu extends MTComponent{
 	        final MTMenuItem browser = new MTMenuItem("Browser", null);
 	        browser.addInputEventListener(browserListener);
 	       
+	        
 	        if(System.getProperty("sun.arch.data.model").equals("32")){
 	        	viewmenu.addSubMenuItem(browser);
 	        }

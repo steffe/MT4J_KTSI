@@ -349,34 +349,42 @@ public class DataController {
 		
 	}
 
-	/**
-	 * 
-	 * @return
+	/**Returns the Objectcounter
+	 * @return int objectcounter
 	 */
 	public int getObjectcounter() {
 		return objectcounter;
 	}
 
-	/**
+	/**Set the Datamodel for the Objecttype Description.
 	 * @param modeltTypeDesc the modeltTypeDesc to set
 	 */
 	public void setModeltTypeDesc(ModelTypDescription modeltTypeDesc) {
 		this.modeltTypeDesc = modeltTypeDesc;
 	}
 
-	/**
+	/**Get the Datamodel for the Objecttype Description.
 	 * @return the modeltTypeDesc
 	 */
 	public ModelTypDescription getModeltTypeDesc() {
 		return modeltTypeDesc;
 	}
 	
-	/**
-	 * Hide Link
+	/**Hide Link from a selected Object.
+	 * 
 	 */
 	public void hideLink(int objID){
 		linker.setVisibleOne(false, objID);
 	}
+	
+	/**Show Linkes to an selected Object.
+	 * 
+	 * @param objID
+	 */
+	public void showlink(int objID) {
+		linker.setVisibleOne(true, objID);
+	}
+		
 	
 	//GUI Object kopieren (Neues GUI Object / DatenModel Kopieren
 	//Objecte Verknüpfen set links get links
