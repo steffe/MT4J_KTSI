@@ -35,7 +35,6 @@ import ch.mitoco.components.visibleComponents.MyMTObject;
 import ch.mitoco.components.visibleComponents.filechooser.FileChooser;
 import ch.mitoco.components.visibleComponents.filechooser.WBErrorMessage;
 import ch.mitoco.dataController.DataController;
-import ch.mitoco.model.ModelScence;
 import ch.mitoco.model.ModelSceneList;
 import ch.mitoco.startmenu.SceneMitoco;
 
@@ -113,13 +112,13 @@ public class MitocoScene extends AbstractScene {
 		dataController.createObjectList();
 		
 		
-		ModelScence test2 = new ModelScence();
-		test2.setId(2);
+		//ModelScence test2 = new ModelScence();
+		//test2.setId(2);
 		//SaveXML test = new SaveXML("arrayTest.xml");
 		
 		//linker = new MTLinkController(mtAppl, getCanvas(), dataController.getMyobjectList()); //TODO: Test
 		
-		
+		setImageload(false);
 		
 		//Show touches
 		this.registerGlobalInputProcessor(new CursorTracer(mtApplication, this));
