@@ -39,6 +39,7 @@ import org.mt4j.util.math.Vector3D;
 
 import processing.core.PImage;
 import ch.mitoco.components.visibleComponents.widgets.keyboard.MTNumKeyboard;
+import ch.mitoco.components.visibleComponents.widgets.keyboard.MTNumKeyboardInt;
 import ch.mitoco.model.ModelAttributContent;
 import ch.mitoco.model.ModelMtAttributs;
 
@@ -118,6 +119,9 @@ public class MTListAttribut extends Attributes {
 	 
 	 /** ArrayList where Keys and Values from al and algt ArrayLists are stored. */
 	 private ArrayList<MTRoundRectangle> alrr; 
+	 
+	 /** Boolean Variable to check if a Keyboard already is open to prevent several keyboard to open. */
+	 private boolean keyb = false;
 
 
 	 /** Default Constructor. 
@@ -276,16 +280,17 @@ public class MTListAttribut extends Attributes {
 				
 				cell.addGestureListener(TapProcessor.class, new IGestureEventListener() {
 					public boolean processGestureEvent(final MTGestureEvent ge) {
-						if (ge instanceof TapEvent) {
+						if (ge instanceof TapEvent && !keyb) {
 							TapEvent te = (TapEvent) ge;
 							System.out.println(te.getTapID() + " (" + te.getId() + ")");
 							if (te.getTapID() == TapEvent.TAPPED) {
 								System.out.println("Button Clicked");
-								
+								keyb = true;
+																	
 								//Bevor wir einen neuen Wert schreiben löschen wir den bestehenden Inhalt
 								al.get(Integer.valueOf(ge.getCurrentTarget().getName())).clear();
 						
-								MTNumKeyboard textKeyboard = new MTNumKeyboard(app);
+								MTNumKeyboardInt textKeyboard = new MTNumKeyboardInt(app);
 								textKeyboard.setFillColor(trans);
 								textKeyboard.setNoStroke(true);
 								textKeyboard.setPositionRelativeToParent(new Vector3D(textKeyboard.getWidthXY(TransformSpace.LOCAL) / 2, (textKeyboard.getHeightXY(TransformSpace.LOCAL) / 2) + 50));
@@ -308,15 +313,16 @@ public class MTListAttribut extends Attributes {
 											al.get(Integer.valueOf(ge.getCurrentTarget().getName())).setText(val);
 										}
 										dataWrite(key, val);
-										
-										
 									}
 								});
 							}
 						}	
-						return false;
+					
+					return false;
 					}
 				}); 
+				
+				System.out.println("****************553" + keyb);
 				cell.addChild(alrr.get(i));
 				lista.addListElement(cell);
 			}
@@ -327,6 +333,7 @@ public class MTListAttribut extends Attributes {
 			
 			this.setVisible(true);
 			createColorPicker();
+			System.out.println("****************554" + keyb);
 		}
 		
 		/** 
@@ -338,6 +345,7 @@ public class MTListAttribut extends Attributes {
 			for (ModelAttributContent it : model.getAttributcontent()) {
 				if (it.getType().equalsIgnoreCase(key)) {
 					it.setValue(val);
+					keyb = false;
 					break;
 				} 
 			}
