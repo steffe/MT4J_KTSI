@@ -14,6 +14,10 @@
           <objectypeid>1</objectypeid>
           <objectdescription>Scorecard</objectdescription>
         </ch.mitoco.model.ModelTypDescription>
+        <ch.mitoco.model.ModelTypDescription>
+          <objectypeid>9</objectypeid>
+          <objectdescription>PlayerPhoto</objectdescription>
+        </ch.mitoco.model.ModelTypDescription>
       </sceneobjekte>
       <showAll>false</showAll>
     </ch.mitoco.model.ModelSceneList>

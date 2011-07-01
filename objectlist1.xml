@@ -42,7 +42,7 @@
           <id>1</id>
           <attributcontent>
             <ch.mitoco.model.ModelAttributContent>
-              <type>String</type>
+              <type>Double</type>
               <value></value>
             </ch.mitoco.model.ModelAttributContent>
           </attributcontent>
@@ -485,6 +485,79 @@
       </objectposition>
       <objectlable>Default Object</objectlable>
     </ch.mitoco.model.ModelMtObjects>
+     <ch.mitoco.model.ModelMtObjects>
+      <id>0</id>
+      <objecttyp>9</objecttyp>
+      <objectcolor>
+        <name>undefined</name>
+        <r>12.0</r>
+        <g>12.0</g>
+        <b>12.0</b>
+        <alpha>34.0</alpha>
+        <writeProtected>false</writeProtected>
+      </objectcolor>
+      <objectattributs>
+        <ch.mitoco.model.ModelMtAttributs>
+          <id>0</id>
+          <attributcontent>
+            <ch.mitoco.model.ModelAttributContent>
+              <type>String</type>
+              <value></value>
+            </ch.mitoco.model.ModelAttributContent>
+          </attributcontent>
+          <attributdefinition/>
+          <attcolor reference="../../../objectcolor"/>
+          <Lable>Vorname</Lable>
+          <minMax>false</minMax>
+        </ch.mitoco.model.ModelMtAttributs>
+        <ch.mitoco.model.ModelMtAttributs>
+          <id>0</id>
+          <attributcontent>
+            <ch.mitoco.model.ModelAttributContent>
+              <type>String</type>
+              <value></value>
+            </ch.mitoco.model.ModelAttributContent>
+          </attributcontent>
+          <attributdefinition/>
+          <attcolor reference="../../../objectcolor"/>
+          <Lable>Nachname</Lable>
+          <minMax>false</minMax>
+        </ch.mitoco.model.ModelMtAttributs>
+          <ch.mitoco.model.ModelMtAttributs>
+          <id>1</id>
+          <attributcontent>
+            <ch.mitoco.model.ModelAttributContent>
+              <type>Double</type>
+              <value></value>
+            </ch.mitoco.model.ModelAttributContent>
+          </attributcontent>
+          <attributdefinition/>
+          <attcolor reference="../../../objectcolor"/>
+          <Lable>HCP</Lable>
+          <minMax>false</minMax>
+        </ch.mitoco.model.ModelMtAttributs>
+        <ch.mitoco.model.ModelMtAttributs>
+      		<id>3</id>
+          <attributcontent>
+            <ch.mitoco.model.ModelAttributContent>
+              <type>Path</type>
+              <value></value>
+            </ch.mitoco.model.ModelAttributContent>
+          </attributcontent>
+          <attributdefinition/>
+          <attcolor reference="../../../../ch.mitoco.model.ModelMtObjects/objectcolor"/>
+          <Lable>Photo</Lable>
+          <minMax>true</minMax>
+      	</ch.mitoco.model.ModelMtAttributs>
+      </objectattributs>
+      <objectposition>
+        <x>200.0</x>
+        <y>200.0</y>
+        <z>0.0</z>
+        <w>1.0</w>
+      </objectposition>
+      <objectlable>PlayerPhoto</objectlable>
+    </ch.mitoco.model.ModelMtObjects>
   </objecttyp>
   <objectdescription>
     <ch.mitoco.model.ModelTypDescription>
@@ -545,6 +618,15 @@
       <objectdescription>Default Objekt</objectdescription>
       <kardinalitaet>0</kardinalitaet>
       <objectdenylink>
+      </objectdenylink>
+    </ch.mitoco.model.ModelTypDescription>
+    <ch.mitoco.model.ModelTypDescription>
+      <objectypeid>9</objectypeid>
+      <objectdescription>PlayerPhoto</objectdescription>
+      <kardinalitaet>1</kardinalitaet>
+      <objectdenylink>
+      <int>9</int>
+      <int>3</int>
       </objectdenylink>
     </ch.mitoco.model.ModelTypDescription>
   </objectdescription>

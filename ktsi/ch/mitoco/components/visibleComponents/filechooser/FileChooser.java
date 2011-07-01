@@ -552,6 +552,7 @@ public class FileChooser extends MTComponent
         	else if(xml.accept(file) && !file.isDirectory()){
         		selectionPath = file.getPath();
             	scene.drawXMLload(getSelectionPath());
+            	MitocoScene.setImageload(false);
             	toggleFileChooser();
         	}
         	
@@ -561,6 +562,7 @@ public class FileChooser extends MTComponent
             	scene.getCanvas().addChild(testpdf);
             	testpdf.setVisible(true);
             	testpdf.sendToFront();
+            	MitocoScene.setImageload(false);
             	//scene.drawXMLload(getSelectionPath());
             	toggleFileChooser();
         	}

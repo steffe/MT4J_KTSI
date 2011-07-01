@@ -370,6 +370,7 @@ public class DataController {
 	 */
 	public void hideLink(int objID){
 		linker.setVisibleOne(false, objID);
+		myobjectList.get(objID).setSelected(false);
 	}
 	
 	/**Show Linkes to an selected Object.

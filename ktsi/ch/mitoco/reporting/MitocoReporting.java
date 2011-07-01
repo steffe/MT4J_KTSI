@@ -4,35 +4,17 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.LinkedList;
-import java.util.Comparator;
 
 import org.mt4j.AbstractMTApplication;
-import org.mt4j.components.MTComponent;
 import org.mt4j.components.TransformSpace;
-import org.mt4j.components.visibleComponents.shapes.MTLine;
-import org.mt4j.components.visibleComponents.widgets.MTBackgroundImage;
-import org.mt4j.input.IMTInputEventListener;
-import org.mt4j.input.inputData.MTFingerInputEvt;
-import org.mt4j.input.inputData.MTInputEvent;
-import org.mt4j.input.inputProcessors.componentProcessors.tapProcessor.TapEvent;
 import org.mt4j.sceneManagement.AbstractScene;
 import org.mt4j.util.math.Vector3D;
-import org.mt4j.util.math.Vertex;
-import org.mt4jx.components.visibleComponents.layout.MTColumnLayout2D;
-import org.mt4jx.util.animation.AnimationUtil;
 
 import ch.mitoco.components.visibleComponents.MyMTObject;
 import ch.mitoco.components.visibleComponents.objectlink.MTLinkController;
-import ch.mitoco.components.visibleComponents.widgets.MTTextAttribut;
 import ch.mitoco.dataController.DataController;
 import ch.mitoco.main.MitocoScene;
 import ch.mitoco.model.ModelAttributContent;
@@ -124,7 +106,7 @@ public class MitocoReporting extends AbstractScene {
 				String ol = dataController.getModelScene().getMtobjects().get(objectCounter).getObjectlable();
 				
 				//Nur Objekte vom Typ Player werden weiter bearbeitet
-				if (ol.equalsIgnoreCase("Player")) {
+				if (ol.equalsIgnoreCase("PlayerPhoto")) {
 					//Get Name for Player
 					String vorname = dataController.getModelScene().getMtobjects().get(objectCounter).getObjectattributs().get(0).getAttributcontent().get(0).getValue();
 					String nachname = dataController.getModelScene().getMtobjects().get(objectCounter).getObjectattributs().get(1).getAttributcontent().get(0).getValue();

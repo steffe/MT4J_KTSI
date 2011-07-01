@@ -103,6 +103,8 @@ public class MTPictureBox extends Attributes {
 	 /**Filechooser objekt. */
 	private FileChooser fileChooser;
 	private String fileChooserPath;
+	
+	private MTTextArea error;
 	 
 	/** 
 	 * Construtor MTPictureBox.
@@ -161,6 +163,7 @@ public class MTPictureBox extends Attributes {
 		createColorPicker();
 		createLoadButton();
 		createSetButton();
+		loadImage();
 	}
 	
 	/**Load Images for picturebox.
@@ -177,7 +180,7 @@ public class MTPictureBox extends Attributes {
 			pictureBox = new MTRectangle(app, width, height);
 			pictureBox.setFillColor(MTColor.RED);
 			pictureBox.setNoStroke(true);
-			MTTextArea error = new MTTextArea(app);
+			error = new MTTextArea(app);
 			error.setNoFill(true);
 			error.setNoStroke(true);
 			error.setText("Missing file or wrong path");
@@ -278,6 +281,7 @@ public class MTPictureBox extends Attributes {
 //					setPath("default");
 					MitocoScene.drawFilechooser("image");
 					loadButton = true;
+					error.setVisible(false);
 					MitocoScene.getFc().addStateChangeListener(StateChange.COMPONENT_DESTROYED, new StateChangeListener() {
 						@Override
 						public void stateChanged(final StateChangeEvent evt) {
@@ -405,6 +409,100 @@ public class MTPictureBox extends Attributes {
 		
 	}
 	
+	/**Laods the Image from path.
+	 * 
+	 */
+	private void loadImage() {
+		if (!MitocoScene.getFilechooserPath().equals(null) || !getPath().equals(null)) {
+			if(loadButton){
+				setPath(MitocoScene.getFilechooserPath());
+			}
+		
+			System.out.println("Load Image SetButton " + getPath());
+			try {
+				
+				image = app.loadImage(getPath());
+				pictureBox = new MTRectangle(app, image);
+				}
+			catch (NullPointerException ex) {
+					
+					System.out.println("Wrong Path or picture not exits: " + ex);
+					pictureBox = new MTRectangle(app, width - 200, height - 70);
+					pictureBox.setFillColor(MTColor.FUCHSIA);
+					pictureBox.setNoStroke(true);
+					error = new MTTextArea(app);
+					error.setNoFill(true);
+					error.setNoStroke(true);
+					error.setText("Please choose File");
+					error.setPickable(false);
+					pictureBox.addChild(error);
+				}
+				
+				picheight = pictureBox.getHeightXY(TransformSpace.LOCAL);
+				picwidth = pictureBox.getWidthXY(TransformSpace.LOCAL);
+					
+				float factorHeight = picheight / (height - 5);
+				float factorWidht = picwidth / (width - 5);
+				
+				System.out.println("Höhe Factor: " + factorHeight + "Bild Höhe : " + picheight + " Attribut Höhe "+  height);
+				System.out.println("Breiten Factor: " + factorWidht + "Bild Breite: " + picwidth + " Attribut breite " + width);
+				
+				
+				
+				if (factorHeight > factorWidht) {
+					factor = factorHeight;
+				} else {
+					factor = factorWidht;
+				}
+				
+				pictureBox.setSizeLocal(picwidth / factor, picheight / factor);
+				pictureBox.setAnchor(PositionAnchor.CENTER);
+				System.out.println("Höhe " + pictureBox.getHeightXY(TransformSpace.LOCAL) + " Breite " + pictureBox.getWidthXY(TransformSpace.LOCAL));
+				pictureBox.setPositionRelativeToParent(new Vector3D(width / 2, height / 2));
+				pictureBox.setPickable(true);
+				
+				pictureBox.setGestureAllowance(DragProcessor.class, false);
+				pictureBox.setGestureAllowance(ScaleProcessor.class, false);
+				pictureBox.setGestureAllowance(RotateProcessor.class, false);
+				pictureBox.setGestureAllowance(TapProcessor.class, true);
+				//this.addChild(sa);
+				
+				pictureBox.registerInputProcessor(new TapProcessor(app, 25, true, 350));
+				pictureBox.addGestureListener(TapProcessor.class, new IGestureEventListener() {
+					
+					@Override
+					public boolean processGestureEvent(MTGestureEvent ge) {
+						if (ge instanceof TapEvent) {
+							TapEvent te = (TapEvent) ge;
+							if (te.getTapID() == TapEvent.TAPPED) {
+								if (minmax) {
+								pictureBox.setSizeLocal(picwidth, picheight);
+								
+								buttonLoad.setVisible(true);
+								
+								minmax = false;
+								} else {
+								pictureBox.setSizeLocal(picwidth / factor, picheight / factor);
+								
+								//buttonLoad.setVisible(false);
+								
+								minmax = true;
+								}
+							}	
+						}
+						return false;
+					}
+				});
+				
+				
+				
+				addChild(pictureBox);
+
+				
+		}
+		
+	}
+	
 	
 	private void createSetButton() {
 		
@@ -426,92 +524,8 @@ public class MTPictureBox extends Attributes {
 				TapEvent te = (TapEvent) ge;
 				switch(te.getTapID()) {
 				case TapEvent.TAPPED:
-					if (!MitocoScene.getFilechooserPath().equals(null) || !getPath().equals(null)) {
-						if(loadButton){
-							setPath(MitocoScene.getFilechooserPath());
-						}
-					
-						System.out.println("Load Image SetButton " + getPath());
-						try {
-							
-							image = app.loadImage(getPath());
-							pictureBox = new MTRectangle(app, image);
-							} catch (NullPointerException ex) {
-								
-								System.out.println("Wrong Path or picture not exits: " + ex);
-								pictureBox = new MTRectangle(app, width-70, height-70);
-								pictureBox.setFillColor(MTColor.RED);
-								pictureBox.setNoStroke(true);
-								MTTextArea error = new MTTextArea(app);
-								error.setNoFill(true);
-								error.setNoStroke(true);
-								error.setText("Missing file or wrong path");
-								error.setPickable(false);
-								pictureBox.addChild(error);
-							}
-							
-							picheight = pictureBox.getHeightXY(TransformSpace.LOCAL);
-							picwidth = pictureBox.getWidthXY(TransformSpace.LOCAL);
-								
-							float factorHeight = picheight / (height - 5);
-							float factorWidht = picwidth / (width - 5);
-							
-							System.out.println("Höhe Factor: " + factorHeight + "Bild Höhe : " + picheight + " Attribut Höhe "+  height);
-							System.out.println("Breiten Factor: " + factorWidht + "Bild Breite: " + picwidth + " Attribut breite " + width);
-							
-							
-							
-							if (factorHeight > factorWidht) {
-								factor = factorHeight;
-							} else {
-								factor = factorWidht;
-							}
-							
-							pictureBox.setSizeLocal(picwidth / factor, picheight / factor);
-							pictureBox.setAnchor(PositionAnchor.CENTER);
-							System.out.println("Höhe " + pictureBox.getHeightXY(TransformSpace.LOCAL) + " Breite " + pictureBox.getWidthXY(TransformSpace.LOCAL));
-							pictureBox.setPositionRelativeToParent(new Vector3D(width / 2, height / 2));
-							pictureBox.setPickable(true);
-							
-							pictureBox.setGestureAllowance(DragProcessor.class, false);
-							pictureBox.setGestureAllowance(ScaleProcessor.class, false);
-							pictureBox.setGestureAllowance(RotateProcessor.class, false);
-							pictureBox.setGestureAllowance(TapProcessor.class, true);
-							//this.addChild(sa);
-							
-							pictureBox.registerInputProcessor(new TapProcessor(app, 25, true, 350));
-							pictureBox.addGestureListener(TapProcessor.class, new IGestureEventListener() {
-								
-								@Override
-								public boolean processGestureEvent(MTGestureEvent ge) {
-									if (ge instanceof TapEvent) {
-										TapEvent te = (TapEvent) ge;
-										if (te.getTapID() == TapEvent.TAPPED) {
-											if (minmax) {
-											pictureBox.setSizeLocal(picwidth, picheight);
-											
-											buttonLoad.setVisible(true);
-											
-											minmax = false;
-											} else {
-											pictureBox.setSizeLocal(picwidth / factor, picheight / factor);
-											
-											buttonLoad.setVisible(false);
-											
-											minmax = true;
-											}
-										}	
-									}
-									return false;
-								}
-							});
-							
-							
-							
-							addChild(pictureBox);
-
-							
-					}
+					error.setVisible(false);
+					loadImage();
 					//if(imagePath.equals(null)){
 					//	setPath("Default");
 					//}
