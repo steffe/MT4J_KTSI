@@ -5,9 +5,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 import org.mt4j.AbstractMTApplication;
 import org.mt4j.MTApplication;
@@ -15,21 +13,16 @@ import org.mt4j.components.StateChange;
 import org.mt4j.components.StateChangeEvent;
 import org.mt4j.components.StateChangeListener;
 import org.mt4j.components.TransformSpace;
-import org.mt4j.components.visibleComponents.shapes.MTRectangle;
 import org.mt4j.components.visibleComponents.shapes.MTRoundRectangle;
 import org.mt4j.components.visibleComponents.widgets.MTColorPicker;
 import org.mt4j.components.visibleComponents.widgets.MTList;
 import org.mt4j.components.visibleComponents.widgets.MTListCell;
 import org.mt4j.components.visibleComponents.widgets.MTTextArea;
-import org.mt4j.components.visibleComponents.widgets.MTTextArea.ExpandDirection;
-import org.mt4j.components.visibleComponents.widgets.MTTextField;
 import org.mt4j.components.visibleComponents.widgets.buttons.MTImageButton;
 import org.mt4j.input.gestureAction.InertiaDragAction;
 import org.mt4j.input.inputProcessors.IGestureEventListener;
 import org.mt4j.input.inputProcessors.MTGestureEvent;
 import org.mt4j.input.inputProcessors.componentProcessors.dragProcessor.DragProcessor;
-import org.mt4j.input.inputProcessors.componentProcessors.rotateProcessor.RotateProcessor;
-import org.mt4j.input.inputProcessors.componentProcessors.scaleProcessor.ScaleProcessor;
 import org.mt4j.input.inputProcessors.componentProcessors.tapProcessor.TapEvent;
 import org.mt4j.input.inputProcessors.componentProcessors.tapProcessor.TapProcessor;
 import org.mt4j.util.MTColor;
@@ -38,7 +31,6 @@ import org.mt4j.util.font.IFont;
 import org.mt4j.util.math.Vector3D;
 
 import processing.core.PImage;
-import ch.mitoco.components.visibleComponents.widgets.keyboard.MTNumKeyboard;
 import ch.mitoco.components.visibleComponents.widgets.keyboard.MTNumKeyboardInt;
 import ch.mitoco.model.ModelAttributContent;
 import ch.mitoco.model.ModelMtAttributs;
@@ -358,7 +350,7 @@ public class MTListAttribut extends Attributes {
 					stringValue = defaultString;
 				} else {
 					for (ModelAttributContent it : model.getAttributcontent()) {
-						System.out.println("******************33333333" + it.getValue());
+						//System.out.println("******************33333333" + it.getValue());
 						hm.put(it.getType(), it.getValue());
 						//hier muss Counter erhöht werden, damits beim nächsten Durchgang + 1 ist
 						h++;

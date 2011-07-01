@@ -113,7 +113,7 @@ public class FileChooser extends MTComponent
 		this.translate(new Vector3D(100, 100, -10));
 		//this.setSizeLocal(400,400);
 		
-		selectionPath = new String();
+		selectionPath = "";
 		currDir = new WBFile(scene, new File(homeDir));
 		currDispFiles = new ArrayList<WBFile>();
 		prevDirs = new Stack<WBFile>();

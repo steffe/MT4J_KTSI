@@ -2,16 +2,13 @@ package ch.mitoco.components.visibleComponents.widgets;
 
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.mt4j.AbstractMTApplication;
 import org.mt4j.MTApplication;
-import org.mt4j.components.visibleComponents.shapes.MTRoundRectangle;
 import org.mt4j.components.visibleComponents.widgets.MTColorPicker;
 import org.mt4j.components.visibleComponents.widgets.MTTextArea;
 import org.mt4j.components.visibleComponents.widgets.buttons.MTImageButton;
-import org.mt4j.input.gestureAction.DefaultDragAction;
 import org.mt4j.input.inputProcessors.IGestureEventListener;
 import org.mt4j.input.inputProcessors.MTGestureEvent;
 import org.mt4j.input.inputProcessors.componentProcessors.dragProcessor.DragProcessor;
@@ -197,9 +194,9 @@ public class MTDropDownList extends Attributes {
 	 */
 	private void loadDefaultList() {
 		System.out.println("Default Liste wird geladen");
-		list.add(new String("Super"));
-		list.add(new String("Gut"));
-		list.add(new String("Schlecht"));
+		list.add("Super");
+		list.add("Gut");
+		list.add("Schlecht");
 	}
 	
 	/** 

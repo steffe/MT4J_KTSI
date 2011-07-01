@@ -128,8 +128,10 @@ public class SceneMitoco extends AbstractScene{
 		modelfunctionList = scenelist.getSceneListe();
 		
 		exportPath = modelfunctionList.getExportPath();
-		Thread picturSave = new pictureSave(this, exportPath);
-		picturSave.start();
+		
+		//TODO: Thread Fullscreenshot für OpenGL funktioniert nicht 
+		//Thread picturSave = new pictureSave(this, exportPath);
+		//picturSave.start();
 		
 		PImage closeNewImage = mtApplication.loadImage("ch" + MTApplication.separator + "mitoco" + MTApplication.separator + "data" + MTApplication.separator +  "closeButton64.png");
 		MTImageButton buttonClose = new MTImageButton(mtApplication, closeNewImage);

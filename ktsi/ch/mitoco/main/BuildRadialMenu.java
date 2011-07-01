@@ -186,7 +186,7 @@ public class BuildRadialMenu extends MTComponent{
 			   final IMTInputEventListener saveButtonInput = new IMTInputEventListener() {
 				      @Override
 				      public boolean processInputEvent(final MTInputEvent inEvt) {
-				    	  filename = new String();
+				    	  filename = "";
 				        // Most input events in MT4j are an instance of AbstractCursorInputEvt (mouse, multi-touch..)
 				        if (inEvt instanceof MTFingerInputEvt) {
 				          final MTFingerInputEvt cursorInputEvt = (MTFingerInputEvt) inEvt;

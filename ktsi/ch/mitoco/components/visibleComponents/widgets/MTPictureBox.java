@@ -125,7 +125,7 @@ public class MTPictureBox extends Attributes {
 		
 		
 		dataRead(labelname); // Daten lesen
-		fileChooserPath = new String();
+		fileChooserPath = "";
 		
 		this.init(app);
 	}
