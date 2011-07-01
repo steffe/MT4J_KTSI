@@ -167,7 +167,7 @@ public class BuildRadialMenu extends MTComponent{
 			          final MTFingerInputEvt cursorInputEvt = (MTFingerInputEvt) inEvt;
 			          switch (cursorInputEvt.getId()) {
 			            case TapEvent.GESTURE_STARTED:
-			            	Runtime.getRuntime().exit(0);
+			            	//Runtime.getRuntime().exit(0);
 			              break;
 			            default:
 			              break;

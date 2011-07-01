@@ -3,6 +3,7 @@ package ch.mitoco.components.visibleComponents.filechooser;
 import java.awt.event.ActionEvent;
 import java.io.File;
 
+import org.mt4j.AbstractMTApplication;
 import org.mt4j.components.MTComponent;
 import org.mt4j.components.TransformSpace;
 import org.mt4j.components.visibleComponents.shapes.AbstractShape;
@@ -24,8 +25,6 @@ import org.mt4j.util.animation.MultiPurposeInterpolator;
 import org.mt4j.util.font.FontManager;
 import org.mt4j.util.math.Vector3D;
 
-import ch.mitoco.main.MitocoScene;
-
 /** 
  * WBErrorMessage - Class that forwards error messages to the gui of a MitocoScene
  * @author Chris Allen
@@ -34,13 +33,13 @@ import ch.mitoco.main.MitocoScene;
  *		MTTextArea box.
  */
 public class WBErrorMessage extends MTTextArea {
-	private MitocoScene scene;
+	//private MitocoScene scene;
 
-	public WBErrorMessage(MitocoScene sc, String msg) {
-		super(sc.getMTApplication(), FontManager.getInstance().createFont(sc.getMTApplication(), "arial", 15, new MTColor(0,0,0), new MTColor(0,0,0)));
+	public WBErrorMessage(AbstractMTApplication sc, String msg) {
+		super(sc, FontManager.getInstance().createFont(sc, "arial", 15, new MTColor(0,0,0), new MTColor(0,0,0)));
 		this.setFillColor(new MTColor(225,225,225));
 		this.setStrokeColor(new MTColor (0,0,0));
-		this.scene = sc;
+		//this.scene = sc;
 		
 		//Set rotate and scale to false
 		this.setGestureAllowance(RotateProcessor.class, false);
@@ -48,8 +47,8 @@ public class WBErrorMessage extends MTTextArea {
 		
 		setText("\n\n"+msg);
 		this.setHeightLocal(100);
-		this.translate(new Vector3D((sc.getMTApplication().getWidth()/2)-(getWidthXY(TransformSpace.RELATIVE_TO_PARENT)/2),
-				(sc.getMTApplication().getHeight()/2)-(getHeightXY(TransformSpace.RELATIVE_TO_PARENT)/2),0));
+		this.translate(new Vector3D((sc.getWidth()/2)-(getWidthXY(TransformSpace.RELATIVE_TO_PARENT)/2),
+				(sc.getHeight()/2)-(getHeightXY(TransformSpace.RELATIVE_TO_PARENT)/2),0));
 		
 		//Draw this component and its children above 
 		//everything previously drawn and avoid z-fighting
@@ -72,9 +71,9 @@ public class WBErrorMessage extends MTTextArea {
 		closeButton.setName("closeButton");
 		
 		//Ok button
-		MTImageButton okButton = new MTImageButton(sc.getMTApplication().loadImage(System.getProperty("user.dir")+File.separator + "ktsi"
+		MTImageButton okButton = new MTImageButton( sc, sc.loadImage(System.getProperty("user.dir")+File.separator + "ktsi"
 				+File.separator + "ch"+  File.separator+"mitoco"+ File.separator+"data"+ File.separator+"filechooser"+ File.separator
-				+"okButton.png"), sc.getMTApplication());
+				+"okButton.png"));
 		this.addChild(okButton);
 		okButton.setNoStroke(true);
 		okButton.setPositionRelativeToParent(new Vector3D(0,0,0));
@@ -86,8 +85,8 @@ public class WBErrorMessage extends MTTextArea {
 		
 		okButton.setName("okButton");
 		
-		MTTextArea ok = new MTTextArea(scene.getMTApplication(), 
-				FontManager.getInstance().createFont(sc.getMTApplication(), "arial", 15, new MTColor(0,0,0), new MTColor(0,0,0)));
+		MTTextArea ok = new MTTextArea(sc, 
+				FontManager.getInstance().createFont(sc, "arial", 15, new MTColor(0,0,0), new MTColor(0,0,0)));
 		ok.setFillColor(new MTColor(150,150,150));
 		ok.setNoFill(true);
 		ok.setNoStroke(true);

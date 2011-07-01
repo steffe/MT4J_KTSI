@@ -82,6 +82,7 @@ public class MTPictureBox extends Attributes {
 	 * true = min
 	 * */
 	private boolean minmax = true;
+	private boolean loadButton = false;
 	
 	/** Factor for Thumbnail picture.*/
 	private float factor;
@@ -136,10 +137,10 @@ public class MTPictureBox extends Attributes {
 		this.setSizeLocal(width, height);
 		this.setStrokeColor(MTColor.BLACK);
 		
-		setPath("Default");
+		//setPath("Default");
 		//loadSelectedImage();
 		//changePicture();
-	
+		
 		label = new MTTextArea(app, 0, -labelfont.getOriginalFontSize(), width, height, labelfont);
 		label.setInnerPadding(0);
 		label.setNoFill(true);
@@ -151,13 +152,18 @@ public class MTPictureBox extends Attributes {
 		//FileChooser test = new FileChooser(app.getComponent(1));
 		this.addChild(label);
 		//this.addChild(buttonLoad);
+		/*
+		if (!getPath().equals(null)|| !getPath().equals("default")) {
+			setPath();
+		}
+		*/
 		
 		createColorPicker();
 		createLoadButton();
 		createSetButton();
 	}
 	
-	/** Load Images for picturebox.
+	/**Load Images for picturebox.
 	 * Methode ist verantwortlich für das erstellen und laden eines Bilds.
 	 */
 	public void loadSelectedImage() {
@@ -268,9 +274,9 @@ public class MTPictureBox extends Attributes {
 				switch(te.getTapID()) {
 				case TapEvent.TAPPED:
 			
-					setPath("default");
+//					setPath("default");
 					MitocoScene.drawFilechooser("image");
-					
+					loadButton = true;
 					MitocoScene.getFc().addStateChangeListener(StateChange.COMPONENT_DESTROYED, new StateChangeListener() {
 						@Override
 						public void stateChanged(final StateChangeEvent evt) {
@@ -419,14 +425,19 @@ public class MTPictureBox extends Attributes {
 				switch(te.getTapID()) {
 				case TapEvent.TAPPED:
 					if (!MitocoScene.getFilechooserPath().equals(null) || !getPath().equals(null)) {
-						setPath(MitocoScene.getFilechooserPath());
+						if(loadButton){
+							setPath(MitocoScene.getFilechooserPath());
+						}
+					
+						System.out.println("Load Image SetButton " + getPath());
 						try {
-							image = app.loadImage(getPath());	
+							
+							image = app.loadImage(getPath());
 							pictureBox = new MTRectangle(app, image);
 							} catch (NullPointerException ex) {
 								
 								System.out.println("Wrong Path or picture not exits: " + ex);
-								pictureBox = new MTRectangle(app, width, height);
+								pictureBox = new MTRectangle(app, width-70, height-70);
 								pictureBox.setFillColor(MTColor.RED);
 								pictureBox.setNoStroke(true);
 								MTTextArea error = new MTTextArea(app);
@@ -600,7 +611,7 @@ public class MTPictureBox extends Attributes {
 		
 		// Data transfer for value
 		if (model.getAttributcontent() == null) {
-			setPath("Default");
+			//setPath("Default");
 			System.out.println("PictureBox: no Attributcontent found ");
 			
 			//Double.valueOf(textarea.getText()).doubleValue();
@@ -611,8 +622,8 @@ public class MTPictureBox extends Attributes {
 					setPath(it.getValue());
 					break;
 				} else {
-					System.out.println("PictureBox: Value zu Typ String NICHT GEFUNDEN ");
-					setPath("Default");
+					System.out.println("PictureBox: Value zu Typ Path NICHT GEFUNDEN ");
+					//setPath("Default");
 				}
 			}
 		}
@@ -643,7 +654,7 @@ public class MTPictureBox extends Attributes {
 			if (it.getType().equalsIgnoreCase("Path")) {
 				it.setValue(getPath());
 			} else {
-				//TODO Was ist zu tun wenn dieses Werte Paar noch nicht exitiert???
+				//TODO 
 			}
 		}
 		model.setAttcolor(getFillColor());

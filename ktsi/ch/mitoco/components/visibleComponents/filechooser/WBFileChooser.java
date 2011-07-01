@@ -415,7 +415,7 @@ public class WBFileChooser  extends MTImageButton  {
 	public void openSelected() {
 		File file = currFile.getFile();
 		if(!file.exists() && !FileSystemView.getFileSystemView().isDrive(currFile.getFile())) {
-			scene.getGuiOverlay().addChild(new WBErrorMessage(scene, "File does not exist!"));
+			scene.getGuiOverlay().addChild(new WBErrorMessage(scene.getMTApplication(), "File does not exist!"));
 		}
 		else if(file.isDirectory()) {
 			//Set whether the up button will disable when it reaches desktop
@@ -558,7 +558,7 @@ public class WBFileChooser  extends MTImageButton  {
         	//else {
         		//Unreadable drive
         		if(FileSystemView.getFileSystemView().isDrive(currFile.getFile())) {
-            		scene.getGuiOverlay().addChild(new WBErrorMessage(scene, 
+            		scene.getGuiOverlay().addChild(new WBErrorMessage(scene.getMTApplication(), 
 					"Drive cannot be read from!"));
             		currFile.setStrokeColor(new MTColor(0,0,0,0));
         			currFile.setNoFill(true);
@@ -567,7 +567,7 @@ public class WBFileChooser  extends MTImageButton  {
             	}
         		//Unsupported file type
             	else {
-            		scene.getGuiOverlay().addChild(new WBErrorMessage(scene, 
+            		scene.getGuiOverlay().addChild(new WBErrorMessage(scene.getMTApplication(), 
     				"Can't open file of that type!"));
             	}
         	//}

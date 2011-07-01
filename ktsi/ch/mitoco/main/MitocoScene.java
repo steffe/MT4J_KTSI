@@ -247,7 +247,7 @@ public class MitocoScene extends AbstractScene {
 	public void drawXMLload(String filename) {
 	
 		if (!dataController.loadSceneXML(fileChooser.getSelectionPath())) {
-			WBErrorMessage errormessage = new WBErrorMessage(MitocoScene.this,"Fehler beim Laden von XML");
+			WBErrorMessage errormessage = new WBErrorMessage(MitocoScene.this.getMTApplication(),"Fehler beim Laden von XML");
 			errormessage.setVisible(true);
 			getCanvas().addChild(errormessage);
 			for (Iterator<MyMTObject> it = dataController.getMyobjectList().iterator(); it.hasNext();) {

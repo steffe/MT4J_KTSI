@@ -189,7 +189,7 @@ public class DataController {
 			
 			listObjects.remove(y);
 		}
-		
+		objectcounter--;
 		return false;
 	}
 	
