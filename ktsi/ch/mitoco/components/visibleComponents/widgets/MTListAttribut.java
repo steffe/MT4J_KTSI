@@ -322,7 +322,6 @@ public class MTListAttribut extends Attributes {
 					}
 				}); 
 				
-				System.out.println("****************553" + keyb);
 				cell.addChild(alrr.get(i));
 				lista.addListElement(cell);
 			}
@@ -333,7 +332,6 @@ public class MTListAttribut extends Attributes {
 			
 			this.setVisible(true);
 			createColorPicker();
-			System.out.println("****************554" + keyb);
 		}
 		
 		/** 
@@ -354,15 +352,26 @@ public class MTListAttribut extends Attributes {
 		
 		/** Read from datamodel and insert in the gui elements. */
 		private void dataRead() {
-			// Data transfer for value
-			if (model.getAttributcontent() == null) {
-				stringValue = defaultString;
-			} else {
-				for (ModelAttributContent it : model.getAttributcontent()) {
+			try {
+				// Data transfer for value
+				if (model.getAttributcontent() == null) {
+					stringValue = defaultString;
+				} else {
+					for (ModelAttributContent it : model.getAttributcontent()) {
+						System.out.println("******************33333333" + it.getValue());
 						hm.put(it.getType(), it.getValue());
 						//hier muss Counter erhöht werden, damits beim nächsten Durchgang + 1 ist
 						h++;
+					}
 				}
+			} catch (ArrayIndexOutOfBoundsException aiofbe) {
+				System.err.println("MTListAttribut: " + aiofbe);
+			} catch (NullPointerException npe) {
+				System.err.println("MTListAttribut: " + npe);
+			} catch (NumberFormatException nfe) {
+				System.err.println("MTListAttribut: " + nfe);				
+			} catch (Exception e) {
+				System.err.println("MTListAttribut: " + e);
 			}
 		}
 		

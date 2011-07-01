@@ -138,7 +138,12 @@ public class MitocoReporting extends AbstractScene {
 					for (Integer ite : linkedObjects) {
 						for (ModelAttributContent iterat : dataController.getModelScene().getMtobjects().get(ite).getObjectattributs().get(attributCounter).getAttributcontent()) {
 //							System.out.println("**************************************" + iterat.getValue());
-							sumCount += Integer.parseInt(iterat.getValue());
+							try {
+								sumCount += Integer.parseInt(iterat.getValue());
+							} catch (NumberFormatException nfe) {
+								System.err.println("MitocoReporting: " + nfe);
+								sumCount += 0;
+							}
 							attributCounter++;
 							if (attributCounter == 18) {
 								attributCounter = 0;
