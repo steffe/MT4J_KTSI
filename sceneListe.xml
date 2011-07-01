@@ -25,15 +25,6 @@
       <sceneobjekte/>
       <showAll>true</showAll>
     </ch.mitoco.model.ModelSceneList>
-    <ch.mitoco.model.ModelSceneList>
-      <id>0</id>
-      <scenename>Template Modus</scenename>
-      <description>Objekte erstellen</description>
-      <picturepath>templatemodus.jpg</picturepath>
-      <sceneobjekte>
-      </sceneobjekte>
-      <showAll>true</showAll>
-    </ch.mitoco.model.ModelSceneList>
   </sceneliste>
   <exportPath>C:\webserver\</exportPath>
 </ch.mitoco.model.ModelFunctionList>
