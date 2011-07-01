@@ -287,6 +287,7 @@ public class MTDrawingBox extends Attributes {
 	 */
 	private void dataRead(final String defaultlabeltext) {
 		
+	try {
 		// Data transfer for value
 		if (model.getAttributcontent() == null) {
 			setPath("Default");
@@ -306,7 +307,7 @@ public class MTDrawingBox extends Attributes {
 		}
 		
 		// Data transfer for labeltext
-		if (model.getLable() == null || model.getLable().isEmpty() ) {
+		if (model.getLable() == null || model.getLable().isEmpty()) {
 			fname = defaultlabeltext;
 		} else {
 			fname = model.getLable();
@@ -318,6 +319,18 @@ public class MTDrawingBox extends Attributes {
 		} else {
 			this.setFillColor(model.getAttcolor());
 		}
+		
+	} catch (ArrayIndexOutOfBoundsException ae) {
+		System.err.println("MTDrawingBox: ArrayIndexOutOfBoundsException: " + ae);
+	} catch (NullPointerException ne) {
+		System.err.println("MTDrawingBox: NullPointerException: " + ne);
+	} catch (NumberFormatException nfe) {
+		System.err.println("MTDrawingBox: NumberFormatException" + nfe);
+	} catch (Exception ex) {
+		System.err.println("MTDrawingBox: Allgemein Exception " + ex);
+	}
+		
+		
 		
 		
 	}

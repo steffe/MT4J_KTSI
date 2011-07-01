@@ -93,11 +93,7 @@ public class MTLinkController {
 		
 		linkliste = Collections.synchronizedList(new ArrayList<MTLink>()); // Liste für alle Objekte LINK, Thread Safe TODO: Nutzen muss noch abgeklärt werden
 		
-		
-		// Thread für Timer für Automatisches Zeichnen
-		autodraw = new MTAutoDraw(this, 1000);
-		autodraw.start();
-		
+
 		init();
 	}
 
@@ -111,7 +107,11 @@ public class MTLinkController {
 		canvas.addGestureListener(LassoProcessor.class, new DefaultLassoAction(app, canvas.getClusterManager(), canvas));
 		
 		selectedLasso();
-	
+		
+		// Thread für Timer für Automatisches Zeichnen
+		autodraw = new MTAutoDraw(this, 1000);
+		autodraw.start();
+		
 	
 	}
 
@@ -120,10 +120,10 @@ public class MTLinkController {
 	 * @param myobjectList
 	 */
 	public synchronized void setObjectList(List<MyMTObject> myobjectList , List<ModelLink> modellink, ModelObjectTyps modelObjectTyps){
-		this.myobjectList = null;
+//		this.myobjectList = null;
 		this.myobjectList = myobjectList;
 		System.out.println("MTLinkController: setObjectList: ObjektListe " + this.myobjectList + " IM ÜbergabeParameter " + myobjectList);
-		this.modellinkList = null;
+//		this.modellinkList = null;
 		this.modellinkList = modellink;
 		
 
@@ -236,13 +236,15 @@ public class MTLinkController {
 						if (!(linkliste.isEmpty())) {
 							switch (cursorInputEvt.getId()) {
 							case AbstractCursorInputEvt.INPUT_STARTED:
-								drawLinie();	
+								drawLinie();
 								break;
 							case AbstractCursorInputEvt.INPUT_UPDATED:
 								drawLinie();
+								
 								break;
 							case AbstractCursorInputEvt.INPUT_ENDED:
 								drawLinie();
+								
 								break;
 							default:
 								break;
@@ -272,6 +274,21 @@ public class MTLinkController {
 		}	
 	}
 	
+	/**
+	 * Zeichnet zu einem Objekt die Linien neu. 
+	 * 
+	 * @param it MyMTObject
+	 */
+	public void drawLinieOne(MyMTObject it) {
+		for (MTLink itt : linkliste) {
+			if (itt.getStartObjectID() == it.getID() || itt.getEndObjectID() == it.getID()) {
+				itt.setColorPickerVisible(false);
+				itt.setVertices(new Vertex[]{
+						new Vertex(myobjectList.get(itt.getStartObjectID()).getCenterPointGlobal()),
+						new Vertex(myobjectList.get(itt.getEndObjectID()).getCenterPointGlobal())});
+			}				
+		}			
+	}
 
 	/**
 	 * 
@@ -304,8 +321,20 @@ public class MTLinkController {
 		
 		detectionObSelection(obj);
 		detectionObSelectionLasso(obj);	
+	
 		linkHeadlist.add(obj.getID(), new MTObjectLink(pApplet, new Vertex(startPointLH), new Vertex(endPointLH), obj.getID()));
 		obj.addChild(linkHeadlist.get(obj.getID()));
+		/*
+		 * loadSceneXML link.setTapAndHoldLister mit Methode setObjetList umtauschen
+		if (noConnectionsAllowed(obj.getID())) {
+//					linkHeadlist.add(obj.getID(), new MTObjectLink(pApplet, new Vertex(startPointLH), new Vertex(endPointLH), obj.getID()));
+					MTObjectLink objlink = new MTObjectLink(pApplet, new Vertex(startPointLH), new Vertex(endPointLH), obj.getID());
+					linkHeadlist.add(objlink);
+					obj.addChild(objlink);
+		} else {
+			System.out.println("MTLinkController: setTapAndHoldListener: Link darf keine Link habe: " + obj);
+		}
+		 */
 		
 	}
 	

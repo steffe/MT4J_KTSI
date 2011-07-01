@@ -99,6 +99,9 @@ public class MTTextAttribut extends Attributes {
 	 /** MTButton for ColorPicker. */
 	 private MTImageButton colPickButton;
 	 
+	 /** Boolean for only one Keyboard.*/
+	 private boolean oneKeyboard;
+	 
 	/**
 	 * Constructor MTNumField. 
 	 * 
@@ -114,7 +117,7 @@ public class MTTextAttribut extends Attributes {
 	public MTTextAttribut(final AbstractMTApplication app, ModelMtAttributs model, final IFont fontArialMini, final int width, final int height, final String defaultString, final String defaultlabeltext, final IFont labelfont) {
 		super(app);
 		this.model = model;
-		
+		oneKeyboard = true;
 		this.dataRead(defaultString, defaultlabeltext); // Read Data from Model
 	
 		this.height = height;
@@ -160,9 +163,9 @@ public class MTTextAttribut extends Attributes {
 				System.out.println(te.getTapID() + " (" + te.getId() + ")");
 				
 				
-				if (te.getTapID() == TapEvent.TAPPED) {
+				if (te.getTapID() == TapEvent.TAPPED && oneKeyboard) {
 					System.out.println("Button Clicked");
-				
+					oneKeyboard = false;
 					MTTextKeyboard textKeyboard = new MTTextKeyboard(app1);
 					textKeyboard.setFillColor(trans);
 					textKeyboard.setNoStroke(true);
@@ -177,11 +180,12 @@ public class MTTextAttribut extends Attributes {
 						@Override
 						public void stateChanged(final StateChangeEvent evt) {
 							dataWrite();
+							oneKeyboard = true;
 						}
 					}
 					);
 					
-					
+					/*
 					textKeyboard.addInputListener(new IMTInputEventListener() {
 						
 						@Override
@@ -193,7 +197,7 @@ public class MTTextAttribut extends Attributes {
 							return false;
 						}
 					});
-					
+					*/
 					
 				}
 				}	
@@ -216,6 +220,8 @@ public class MTTextAttribut extends Attributes {
 		// Add Object to base Object
 		this.addChild(textarea);
 		this.addChild(label);
+		
+		
 		createColorPicker();
 		this.setVisible(true);
 		
@@ -231,36 +237,50 @@ public class MTTextAttribut extends Attributes {
 	 */
 	private void dataRead(final String defaultString, final String defaultlabeltext) {
 		// Data transfer for value
-		if (model.getAttributcontent() == null) {
-			stringvalue = defaultString;
-		} else {
-			for (ModelAttributContent it : model.getAttributcontent()) {
-				if (it.getType().equalsIgnoreCase("String")) {
-					System.out.println(" Value zu Typ String " + it.getValue());
-					stringvalue = it.getValue();
-					break;
-				} else {
-					System.out.println(" Value zu Typ String NICHT GEFUNDEN ");
-					stringvalue = defaultString;
+		
+		try {
+			if (model.getAttributcontent() == null) {
+				stringvalue = defaultString;
+			} else {
+				for (ModelAttributContent it : model.getAttributcontent()) {
+					if (it.getType().equalsIgnoreCase("String")) {
+						System.out.println(" Value zu Typ String " + it.getValue());
+						stringvalue = it.getValue();
+						break;
+					} else {
+						System.out.println(" Value zu Typ String NICHT GEFUNDEN ");
+						stringvalue = defaultString;
+					}
 				}
 			}
+			
+			// Data transfer for labeltext
+			if (model.getLable() == null || model.getLable().isEmpty() ) {
+				System.out.println("Set Default Label");
+				fname = defaultlabeltext;
+			} else {
+				System.out.println("Set Label " + model.getLable());
+				fname = model.getLable();
+			}
+			
+			// Color for Rectangle Fill Color
+			if (model.getAttcolor() == null) {
+				this.setFillColor(blue1);
+			} else {
+				this.setFillColor(model.getAttcolor());
+			}
+			
+		} catch (ArrayIndexOutOfBoundsException ae) {
+			System.err.println("MTDropDownList: ArrayIndexOutOfBoundsException: " + ae);
+		} catch (NullPointerException ne) {
+			System.err.println("MTDropDownList: NullPointerException: " + ne);
+		} catch (NumberFormatException nfe) {
+			System.err.println("MTDropDownList: NumberFormatException" + nfe);
+		} catch (Exception ex) {
+			System.err.println("MTDropDownList: Allgemein Exception " + ex);
 		}
 		
-		// Data transfer for labeltext
-		if (model.getLable() == null || model.getLable().isEmpty() ) {
-			System.out.println("Set Default Label");
-			fname = defaultlabeltext;
-		} else {
-			System.out.println("Set Label " + model.getLable());
-			fname = model.getLable();
-		}
 		
-		// Color for Rectangle Fill Color
-		if (model.getAttcolor() == null) {
-			this.setFillColor(blue1);
-		} else {
-			this.setFillColor(model.getAttcolor());
-		}
 		
 	}
 	

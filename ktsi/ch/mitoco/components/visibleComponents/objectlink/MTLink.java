@@ -244,5 +244,11 @@ public class MTLink extends MTLine {
 //		this.addChild(colorpicker);
 	}
 	
+	@Override
+	public void destroy() {
+		System.err.println("MyMTObject: destroy: Objekt wird gelöscht.");
+		colorpicker.destroy();
+		colPickButton.destroy();
 	
+	}
 }

@@ -149,44 +149,54 @@ public class MTDropDownList extends Attributes {
 	 */
 	private void dataRead(final String defaultlabeltext) {
 		// Data transfer for value
-		
-		if (model.getAttributcontent() == null) {
-			System.out.println("Load standard list ");
-			loadDefaultList();
-		} else {
-			for (ModelAttributContent it : model.getAttributcontent()) {
-				if (it.getType().equalsIgnoreCase("ListContent")) {
-					System.out.println(" Value zu Typ String " + it.getValue());
-					list.add(it.getValue());
-				} else if (it.getType().equalsIgnoreCase("DefaultValue")){
-					sa.setDefaultValue(it.getValue());
-					//TODO: Store select in GUI Element setSelected()
-					break;
-				} else {
-					System.out.println(" Value zu Typ String NICHT GEFUNDEN ");
-					loadDefaultList();
+		try {
+			if (model.getAttributcontent() == null) {
+				System.out.println("Load standard list ");
+				loadDefaultList();
+			} else {
+				for (ModelAttributContent it : model.getAttributcontent()) {
+					if (it.getType().equalsIgnoreCase("ListContent")) {
+						System.out.println(" Value zu Typ String " + it.getValue());
+						list.add(it.getValue());
+					} else if (it.getType().equalsIgnoreCase("DefaultValue")){
+						sa.setDefaultValue(it.getValue());
+						//TODO: Store select in GUI Element setSelected()
+						break;
+					} else {
+						System.out.println(" Value zu Typ String NICHT GEFUNDEN ");
+						loadDefaultList();
+					}
+					
 				}
-				
 			}
-		}
-	
 		
-		// Data transfer for labeltext
-		if (model.getLable() == null || model.getLable().isEmpty()) {
-			System.out.println("Set Default Label");
-			fname = defaultlabeltext;
-		} else {
-			System.out.println("Set Label " + model.getLable());
-			fname = model.getLable();
+			
+			// Data transfer for labeltext
+			if (model.getLable() == null || model.getLable().isEmpty()) {
+				System.out.println("Set Default Label");
+				fname = defaultlabeltext;
+			} else {
+				System.out.println("Set Label " + model.getLable());
+				fname = model.getLable();
+			}
+			
+			// Color for Rectangle Fill Color
+			if (model.getAttcolor() == null) {
+				this.setFillColor(blue1);
+			} else {
+				this.setFillColor(model.getAttcolor());
+			}
+		} catch (ArrayIndexOutOfBoundsException ae) {
+			System.err.println("MTDropDownList: ArrayIndexOutOfBoundsException: " + ae);
+		} catch (NullPointerException ne) {
+			System.err.println("MTDropDownList: NullPointerException: " + ne);
+		} catch (NumberFormatException nfe) {
+			System.err.println("MTDropDownList: NumberFormatException" + nfe);
+		} catch (Exception ex) {
+			System.err.println("MTDropDownList: Allgemein Exception " + ex);
 		}
-		
-		// Color for Rectangle Fill Color
-		if (model.getAttcolor() == null) {
-			this.setFillColor(blue1);
-		} else {
-			this.setFillColor(model.getAttcolor());
-		}
-		
+			
+			
 	}
 	
 	/**

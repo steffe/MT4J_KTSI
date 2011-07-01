@@ -29,6 +29,7 @@ import org.mt4j.util.math.Vector3D;
 
 import processing.core.PImage;
 
+import ch.mitoco.components.visibleComponents.filechooser.WBErrorMessage;
 import ch.mitoco.components.visibleComponents.widgets.keyboard.MTNumKeyboard;
 import ch.mitoco.model.ModelAttributContent;
 import ch.mitoco.model.ModelMtAttributs;
@@ -97,6 +98,9 @@ public class MTNumField extends Attributes {
 	 /** Abstract MT Application.*/
 	 private AbstractMTApplication app1;
 	 
+	 /** Boolean for only one Keyboard.*/
+	 private boolean oneKeyboard;
+	 
 	/**
 	 * Constructor MTNumField. 
 	 * 
@@ -143,6 +147,8 @@ public class MTNumField extends Attributes {
 		//this.setFillColor(blue1);
 		this.setStrokeColor(MTColor.BLACK);
 		
+		oneKeyboard = true; 
+		
 		textarea = new MTTextArea(app, 0, (height - fontsize) / 2, width, height, font);
 		
 		textarea.setInnerPadding(0);
@@ -168,7 +174,8 @@ public class MTNumField extends Attributes {
 				System.out.println(te.getTapID() + " (" + te.getId() + ")");
 				
 				
-				if (te.getTapID() == TapEvent.TAPPED) {
+				if (te.getTapID() == TapEvent.TAPPED && oneKeyboard) {
+					oneKeyboard = false;
 					System.out.println("Button Clicked");
 				
 					MTNumKeyboard numKeyboard = new MTNumKeyboard(app1);
@@ -198,7 +205,7 @@ public class MTNumField extends Attributes {
 							textarea.setText(numKeyText.getText());
 							setAlign(rAlign);
 							dataWrite();
-							
+							oneKeyboard = true;
 						}
 					}
 					);
@@ -236,58 +243,69 @@ public class MTNumField extends Attributes {
 	 * @param defaultlabeltext String
 	 */
 	private void dataRead(final String defaultString, final String defaultlabeltext) {
-		// Data transfer for value
-		if (model.getAttributcontent() == null) {
-			stringvalue = defaultString;
-			//Double.valueOf(textarea.getText()).doubleValue();
-		} else {
-			for (ModelAttributContent it : model.getAttributcontent()) {
-				if (it.getType().equalsIgnoreCase("Double")) {
-					System.out.println(" Value zu Typ String " + it.getValue());
-					stringvalue = it.getValue();
-					break;
-				} else {
-					System.out.println(" Value zu Typ String NICHT GEFUNDEN ");
-					stringvalue = defaultString;
-				}
-			}
-		}
-		
-		// Data transfer for Align
-		if (model.getAttributcontent() == null) {
-			rAlign = Boolean.parseBoolean(defaultString);
-		} else {
-			for (ModelAttributContent it : model.getAttributcontent()) {
-				if (it.getType().equalsIgnoreCase("Align")) {
-					System.out.println(" Value zu Typ Align " + it.getValue());
-					rAlign = Boolean.parseBoolean(it.getValue());
-					break;
-				} else {
-					System.out.println(" Value zu Typ Align NICHT GEFUNDEN ");
-					rAlign = Boolean.parseBoolean(defaultString);
-				}
-				
-			}
-		}
-		
-		// Data transfer for labeltext
-		if (model.getLable() == null || model.getLable().isEmpty()) {
-			fname = defaultlabeltext;
-		} else {
-			fname = model.getLable();
-		}
-		
-		// Color for Rectangle Fill Color
-		if (model.getAttcolor() == null) {
-			this.setFillColor(blue1);
-			System.out.println("MTNumField: KANN NICHT AUSGELESEN WERDEN");
+		try {
 			
-		} else {
-			System.out.println("MTNumField: Farbe wird ausgelesen = " + model.getAttcolor());
-			//this.setFillColor(MTColor.BLACK);
-			this.setFillColor(model.getAttcolor());
+			// Data transfer for value
+			if (model.getAttributcontent() == null) {
+				stringvalue = defaultString;
+				//Double.valueOf(textarea.getText()).doubleValue();
+			} else {
+				for (ModelAttributContent it : model.getAttributcontent()) {
+					if (it.getType().equalsIgnoreCase("Double")) {
+						System.out.println(" Value zu Typ String " + it.getValue());
+						stringvalue = it.getValue();
+						break;
+					} else {
+						System.out.println(" Value zu Typ String NICHT GEFUNDEN ");
+						stringvalue = defaultString;
+					}
+				}
+			}
+			
+			// Data transfer for Align
+			if (model.getAttributcontent() == null) {
+				rAlign = Boolean.parseBoolean(defaultString);
+			} else {
+				for (ModelAttributContent it : model.getAttributcontent()) {
+					if (it.getType().equalsIgnoreCase("Align")) {
+						System.out.println(" Value zu Typ Align " + it.getValue());
+						rAlign = Boolean.parseBoolean(it.getValue());
+						break;
+					} else {
+						System.out.println(" Value zu Typ Align NICHT GEFUNDEN ");
+						rAlign = Boolean.parseBoolean(defaultString);
+					}
+					
+				}
+			}
+			
+			// Data transfer for labeltext
+			if (model.getLable() == null || model.getLable().isEmpty()) {
+				fname = defaultlabeltext;
+			} else {
+				fname = model.getLable();
+			}
+			
+			// Color for Rectangle Fill Color
+			if (model.getAttcolor() == null) {
+				this.setFillColor(blue1);
+				System.out.println("MTNumField: KANN NICHT AUSGELESEN WERDEN");
+				
+			} else {
+				System.out.println("MTNumField: Farbe wird ausgelesen = " + model.getAttcolor());
+				//this.setFillColor(MTColor.BLACK);
+				this.setFillColor(model.getAttcolor());
+			}
+			
+		} catch (ArrayIndexOutOfBoundsException ae) {
+			System.err.println("MTNumField: ArrayIndexOutOfBoundsException: " + ae);
+		} catch (NullPointerException ne) {
+			System.err.println("MTNumField: NullPointerException: " + ne);
+		} catch (NumberFormatException nfe) {
+			System.err.println("MTNumField: NumberFormatException" + nfe);
+		} catch (Exception ex) {
+			System.err.println("MTNumField: Allgemein Exception " + ex);
 		}
-		
 	}
 	
 	/** 

@@ -151,7 +151,6 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 	 * Default Höhe der Attribute, wenn keinen Wert über das Datamodel mitgegeben wurde .
 	 */
 	private int defaultHeightTextAttribut = 30;
-
 	private int defaultHeightNumField = 30;
 	private int defaultHeightDropDown = 30;
 	private int defaultHeightMTPictureBox = 120;
@@ -161,13 +160,13 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 	
 	/** Constructor MyMTObject.
 	 * 
-	 * Im Konstruktor wird das Grundobjekt mit dem Bilderrahmen und den Grundfunktionen aufgebaut. 
+	 * Im Konstruktor wird das Grundobjekt mit dem Bilderrahmen und den Grundfunktionen (Colorpicker, Min/Max Button und Rotate Button) aufgebaut. 
 	 * 
 	 * 
-	 * Änderungen die Model noch nötig sind:
+	 * Änderungen die im Model noch nötig sind:
 	 * - Labelfont
 	 * - Normalerfont (vorhanden)
-	 * - Objekt grösse (Breite und Höhe)
+	 * - Objekt grösse (Breite)
 	 * - Konstruktion des Objekt in eine init Methode auslagern
 	 * 
 	 * 
@@ -175,7 +174,6 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 	 * @param model ModelMTObjects
 	 * @param objectID INT ObjectID  
 	 * @param linkerorg MTLinkController
-	 * 
 	 */
 	public MyMTObject(final MTApplication pApplet2, final ModelMtObjects model, final int objectID, final MTLinkController linkerorg) {
 		super(pApplet2, 0, 0, 0, 0, 0, 5, 5);
@@ -208,6 +206,7 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 		fontArialMini = FontManager.getInstance().createFont(pApplet, "arial.ttf", 
 				14, 	//Font size
 				MTColor.BLACK);
+		
 		// Font for Label
 		labelfont = FontManager.getInstance().createFont(pApplet, "arial.ttf", 
 				14, 	//Font size
@@ -215,7 +214,6 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 		
 		// Crate ArrayList for Attributs
 		myAttributs = new ArrayList<Attributes>();
-		
 		
 		//Create a textfield
 		textField = new MTTextArea(pApplet, fontArial); 
@@ -237,7 +235,7 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 		colorpicker.translate(new Vector3D(0, -35, 0));
 		colorpicker.setVisible(false);
 	
-		readData();
+		readData(); // Daten aus dem Model lesen
 		
 		// Button for Rotate
 		PImage buttonImage = pApplet.loadImage("ch" + MTApplication.separator + "mitoco" + MTApplication.separator + "data" + MTApplication.separator +  "buttonRotate.png");
@@ -260,10 +258,10 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 					updownrotate = !updownrotate;
 					printMTObjectModel(objectmodel); //TODO: Eintrag fürs Testen: gibt DataModel inhalt aus
 					dataWrite(); 
-					linker.getSelectedList();
-					linker.showTaggedObject();
-					linker.getLinkListObject(0);
-					linker.showLinkListe();
+					linker.getSelectedList(); // TODO: Testpringouts
+					linker.showTaggedObject(); // TODO: Testpringouts
+					linker.getLinkListObject(0); // TODO: Testpringouts
+					linker.showLinkListe(); // TODO: Testpringouts
 					break;	
 				default:
 					break;
@@ -293,12 +291,12 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 				case TapEvent.TAPPED:
 					dataWrite();
 					if (minmaxModus == 0) { //TODO: IF Löschen!!!!
-						setAttributForMinModus();
+						setAttributForMinMaxModus();
 //						setMax(h, w);
 //						minmaxModus = 1;
 						
 					} else {
-						setAttributForMinModus();
+						setAttributForMinMaxModus();
 //						setMin(h, w);
 //						minmaxModus = 0;
 					}
@@ -319,7 +317,7 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 		baserect.addChild(textField); //Titeltext
 
 		createAttributes();
-		setAttributForMinModus();		
+		setAttributForMinMaxModus();		
 		addToBaserect(); // Add all Attributes to the base Rect Object
 		setPickableAttributes();
 		
@@ -336,13 +334,13 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 	 * Anhanden der IDs die im attributesmodel gespeichert sind, wird das Objekt aufgebaut.
 	 * 
 	 * Gibt es weiter Attribute, muss die Case Anweisung um die gewünschte ID erweitern werden. 
-	 * Welche ID welches Attribut ist muss definiert werden und kann nicht einfach so geändert werden.
+	 * Welche ID welches Attribut ist muss definiert werden und darf nicht mehr geändert werden.
 	 * ID 0: 	MTTextAttribut
 	 * ID 1: 	MTNumField
 	 * ID 2: 	MTDropDown
 	 * ID 3: 	MTPictureBox
 	 * ID 4:    MTListAttribut
-	 * ID 5:	futur MTPainter
+	 * ID 5:	futur MTDrawingBox
 	 * ID 6:	futur MTBrowser
 	 * ID 7:	futur MTPDFReader
 	 * ID 8:	futur MTTextBox
@@ -350,7 +348,7 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 	 * TODO: Interface bauen.
 	 * 
 	 * Für Jedes Attribut muss ein Defaulthöhen angegeben werden. Dies wird verwendet, wenn kein Wert im Datamodel (xml) vorhanden ist.
-	 * Jedes Attribut muss der Anchor in der mitte haben (Center) damit das aufstellen klappt.
+	 * Jedes Attribut muss der Anchor in der mitte haben (Center) damit die Aufstellen innerhalb des Objekts klappt.
 	 */
 	private void createAttributes() {
 
@@ -384,7 +382,7 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 				
 			case(5):
 				System.out.println("MyMTObject: " + i + "Attributs MTDrawingBox " + it);
-				myAttributs.add(new MTDrawingBox(pApplet, attributesmodel.get(i), 250, readAttributHeight(i,defaultHeightMTDrawingBox), "Zeichnen", labelfont));
+				myAttributs.add(new MTDrawingBox(pApplet, attributesmodel.get(i), 250, readAttributHeight(i, defaultHeightMTDrawingBox), "Zeichnen", labelfont));
 				break;
 			default:
 				break;
@@ -396,26 +394,17 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 	
 	/**
 	 * 
-	 * Methode um die höhe im Max Modus zu setzten
+	 * Methode um die höhe im Max und Min Modus der Attribute zu setzten.
 	 * 
-	 *  Attribute die im Min-Modus versteckt sind werden ausgeblendet. 
+	 * Attribute die im Min-Modus sind werden ausgeblendet. 
 	 */
-	private void setAttributForMinModus() {
+	private void setAttributForMinMaxModus() {
 		/*
-		 * Zwei Methoden 
-		 *  1. Postitionierung für den Max-Modus
-		 *  2. Positioinierung für den Min-Modus
-		 *  
-		 * Selbe Spiel wir beim erstellen der Attribute createAttributs einfach der min/Max Status des Attributs muss ausgelesen werden Auslesen 
-		 * 
 		 * Ablauf:
 		 * 1. Objekte werden instanziert und erstell (createObject) und dem canvas zugeordnet
 		 * 2. Positioniert wird für den MinModus berechnet
 		 * 
 		 * 3. Positionierung wird für den MaxModus berechnet (wenn Max gedrückt wird)
-		 * 
-		 * setVisible
-		 * 
 		 */
 		int i = 0; // Anzahl Attribute im MaxModus
 		int j = 0; // Anzahl Attribute im MinModus
@@ -559,29 +548,33 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 	
 	
 	/**
-	 * Festlegen der neuen Grösse des MyMTObject.
+	 * Legt die neue grösse anhanden der Attribute für den Min oder Max Modus fest. 
+	 * Zudem wir hier 
 	 * 
-	 * @param size int
+	 * @param sizeObject int
+	 * 			Grösse des Objekts
+	 * @param countforMinAttr int
+	 * 			TODO: Übergabewert löschen und testen
 	 */
-	private void setMyMTObjectNewSize(final int sizeMax, final int countforMinAttr) {
+	private void setMyMTObjectNewSize(final int sizeObject, final int countforMinAttr) {
 	
 	//float h = getHeightXY(TransformSpace.RELATIVE_TO_PARENT);
 	//float w = getWidthXY(TransformSpace.RELATIVE_TO_PARENT);
 	
 	//setMax(h, w);
-		
+	//	obDifSizeHeight = obSizeMaxHeight - obSizeMinHeight;		
 	
-	obSizeMinWidth = 300;
-	obSizeMaxWidth = 300;
+	obSizeMinWidth = 300; // Breite im MinModus
+	obSizeMaxWidth = 300; // Breite im MaxModus
 	
-	obDifSizeHeight = obSizeMaxHeight - obSizeMinHeight;
+
 	
-	if (minmaxModus ==0){
+	if (minmaxModus == 0) {
 		// Im Maxmodus
-		System.out.println("MyMTObject: setMyMTObjectNewSize: Platzbedarf (Höhe) der Attribute MaxModus: " + sizeMax);
+		System.out.println("MyMTObject: setMyMTObjectNewSize: Platzbedarf (Höhe) der Attribute MaxModus: " + sizeObject);
 		
 		
-		obSizeMaxHeight = sizeMax + 40; // 40 + Offset für Abstand zum Objektrand unten
+		obSizeMaxHeight = sizeObject + 40; // 40 + Offset für Abstand zum Objektrand unten
 		this.setSizeLocal(obSizeMaxWidth, obSizeMaxHeight);
 		baserect.setSizeLocal(obSizeMaxWidth - 20, obSizeMaxHeight - 20);
 		
@@ -602,9 +595,9 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 		
 	} else if (minmaxModus == 1) {
 		// IM MinModus
-		System.out.println("MyMTObject: setMyMTObjectNewSize: Platzbedarf (Höhe) der Attribute MinModus: " + sizeMax);
+		System.out.println("MyMTObject: setMyMTObjectNewSize: Platzbedarf (Höhe) der Attribute MinModus: " + sizeObject);
 		
-		obSizeMinHeight = sizeMax + 40;
+		obSizeMinHeight = sizeObject + 40;
 		this.setSizeLocal(obSizeMinWidth, obSizeMinHeight);
 		baserect.setSizeLocal(obSizeMinWidth - 20, obSizeMinHeight - 20);
 		
@@ -767,7 +760,9 @@ public class MyMTObject extends MTRoundRectangle implements ILassoable, DragAndD
 	
 		// Save Directions
 		this.objectmodel.setDirection(updownrotate);
-		for (Attributes it : myAttributs ) {
+		
+		// Run save Methode in the attributs
+		for (Attributes it : myAttributs) {
 			it.dataWrite();
 		}
 		

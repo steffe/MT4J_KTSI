@@ -27,7 +27,7 @@ import ch.mitoco.main.MitocoScene;
 
 
 /* ------------------------------------------------------------ */
-/** File server
+/** Jetty File server.
  * Usage - java org.mortbay.jetty.example.FileServer [ port [ docroot ]]
  * @author gregw
  *
@@ -40,12 +40,23 @@ public class FileServer extends Thread {
 	/** Path String for Jetty Resource.*/
 	private String path;
 	
-	public FileServer(int port, String path) {
+	/**
+	 * Konstruktor des Jetty WebServer.
+	 * 
+	 * @param port int
+	 * 			Webserver Port
+	 * @param path string
+	 * 			Webserver Verzeichnis
+	 */
+	public FileServer(final int port, final String path) {
 		System.out.println("FileServer: Wird gestart !!! ");
 		this.port = port;
 		this.path = path;
 	}
 	
+	/**
+	 * Webserver run Thread Methode.
+	 */
 	public void run() {
 		// TODO Auto-generated method stub
     	try {
@@ -60,6 +71,7 @@ public class FileServer extends Thread {
             
             ResourceHandler resource_handler=new ResourceHandler();
             resource_handler.setWelcomeFiles(new String[]{"index.html"});
+           
             //resource_handler.setResourceBase(args.length==2?args[1]:".");
             Log.info("serving "+resource_handler.getBaseResource());
             
