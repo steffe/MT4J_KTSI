@@ -260,6 +260,7 @@ public class MTPictureBox extends Attributes {
 		PImage buttonImage = app.loadImage("ch" + MTApplication.separator + "mitoco" + MTApplication.separator + "data" + MTApplication.separator +  "buttonLoadImage.png");
 		buttonLoad = new MTImageButton(app, buttonImage);
 		buttonLoad.setSizeLocal(30, 30);
+		buttonLoad.translate(new Vector3D(0,0,0));
 		buttonLoad.setFillColor(new MTColor(255, 255, 255, 200));
 		buttonLoad.setName("KeyboardButton");
 		buttonLoad.setNoStroke(true);
@@ -410,12 +411,13 @@ public class MTPictureBox extends Attributes {
 		// Button for Rotate
 		PImage buttonImage = app.loadImage("ch" + MTApplication.separator + "mitoco" + MTApplication.separator + "data" + MTApplication.separator +  "buttonSetImage.png");
 		buttonSet = new MTImageButton(app, buttonImage);
+		buttonSet.translate(new Vector3D(0,30,0));
 		buttonSet.setSizeLocal(30, 30);
 		buttonSet.setFillColor(new MTColor(255, 255, 255, 200));
 		buttonSet.setName("SetImage");
 		buttonSet.setNoStroke(true);
 		//buttonSet.translateGlobal(new Vector3D(45, 45));
-		buttonSet.setPositionGlobal(new Vector3D(45, 15));
+		//buttonSet.setPositionGlobal(new Vector3D(45, 15));
 		
 		buttonSet.addGestureListener(TapProcessor.class, new IGestureEventListener() {
 			

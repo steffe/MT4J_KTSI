@@ -322,10 +322,12 @@ public class MTLinkController {
 		detectionObSelection(obj);
 		detectionObSelectionLasso(obj);	
 	
-		linkHeadlist.add(obj.getID(), new MTObjectLink(pApplet, new Vertex(startPointLH), new Vertex(endPointLH), obj.getID()));
-		obj.addChild(linkHeadlist.get(obj.getID()));
+//		linkHeadlist.add(obj.getID(), new MTObjectLink(pApplet, new Vertex(startPointLH), new Vertex(endPointLH), obj.getID()));
+//		obj.addChild(linkHeadlist.get(obj.getID()));
+		
 		/*
 		 * loadSceneXML link.setTapAndHoldLister mit Methode setObjetList umtauschen
+		*/
 		if (noConnectionsAllowed(obj.getID())) {
 //					linkHeadlist.add(obj.getID(), new MTObjectLink(pApplet, new Vertex(startPointLH), new Vertex(endPointLH), obj.getID()));
 					MTObjectLink objlink = new MTObjectLink(pApplet, new Vertex(startPointLH), new Vertex(endPointLH), obj.getID());
@@ -334,7 +336,7 @@ public class MTLinkController {
 		} else {
 			System.out.println("MTLinkController: setTapAndHoldListener: Link darf keine Link habe: " + obj);
 		}
-		 */
+		 
 		
 	}
 	
@@ -443,75 +445,80 @@ public class MTLinkController {
 	 */
 	public boolean isValidLinkRequest(int startObj, int endObj) {
 		boolean valid = true;
-				
-		if (myobjectList.get(startObj).getObjecttyp() == -1 || myobjectList.get(endObj).getObjecttyp() == -1) { // Ist dem MyMtObjekt kein Objekttyp zugeordnet (Festgelegt duch -1) kann immer eine Beziehung errichtet werden. 
-			System.out.println("MTLinkController: isValidLinkRequest: Objekttyp ist nicht definiert - ID: " + myobjectList.get(startObj).getObjecttyp());
-			valid = true;
-		} else {
-			
-			// Dem Objekt wurde ein Objekttyp zugordnet und kann nun nach einer Denny Liste gesucht werden
-			for (ModelTypDescription it : modelObjectTypDesc) {
-				
-				// In der Denny Liste nach der Richtigen Description für den richtige Objekttyp suchen
-				if (myobjectList.get(startObj).getObjecttyp() == it.getObjectypeid()) {
-				
-					switch(it.getKardinalitaet()) {
-						case(0): // mehrfach Verbindungen möglich
-							
-							if (noConnectionsAllowed(endObj)) { // Darf auf das Ziel Objekt ein Link gesetzt werden 
-								System.out.println("MTLinkController: isValidLinkRequest: CASE 0");
-								// Objekttyp ist in der ModelTypDescription vorhanden. Jetzt muss nur noch die Denny Liste durchsuchen werden
-								int i = 1;
-								for (Integer itt : it.getObjectdenylink()) {
-									System.out.println("MTLinkController: isValidLinkRequest: Nach Denny Suchen Nr:" + i +" - Nicht erlaubte Objekt IDs: " + itt);	
-									//Liste mit allen Objekten in dem
-									if (myobjectList.get(endObj).getObjecttyp() == itt) {
-										System.out.println("MTLinkController: isValidLinkRequest: LINK NICHT ERLAUBT - End Objekt : " + myobjectList.get(endObj).getObjecttyp() + " ist gleich StartObj: " + itt);
-										return false; // Denny gefunden aus der Schlaufe 
-									} 
-									i++;
-								}
 		
-							} else {
-								return false;
-							}
+		if (noConnectionsAllowed(endObj)) { 
+			if (myobjectList.get(startObj).getObjecttyp() == -1 || myobjectList.get(endObj).getObjecttyp() == -1) { // Ist dem MyMtObjekt kein Objekttyp zugeordnet (Festgelegt duch -1) kann immer eine Beziehung errichtet werden. 
+				System.out.println("MTLinkController: isValidLinkRequest: Objekttyp ist nicht definiert - ID: " + myobjectList.get(startObj).getObjecttyp());
+				valid = true;
+			} else {
+				
+				// Dem Objekt wurde ein Objekttyp zugordnet und kann nun nach einer Denny Liste gesucht werden
+				for (ModelTypDescription it : modelObjectTypDesc) {
+					
+					// In der Denny Liste nach der Richtigen Description für den richtige Objekttyp suchen
+					if (myobjectList.get(startObj).getObjecttyp() == it.getObjectypeid()) {
+					
+						switch(it.getKardinalitaet()) {
+							case(0): // mehrfach Verbindungen möglich
 								
-						
-						case(1): // Eine Verbindung möglich
-							System.out.println("MTLinkController: isValidLinkRequest: CASE 1");
-							
-							if (noConnectionsAllowed(endObj)) {
-								if (hasanyLink(startObj) || hasanyLink(endObj)) {	
-									return false;
-								} else {
-									int j = 1;
+								if (noConnectionsAllowed(endObj)) { // Darf auf das Ziel Objekt ein Link gesetzt werden 
+									System.out.println("MTLinkController: isValidLinkRequest: CASE 0");
+									// Objekttyp ist in der ModelTypDescription vorhanden. Jetzt muss nur noch die Denny Liste durchsuchen werden
+									int i = 1;
 									for (Integer itt : it.getObjectdenylink()) {
-										System.out.println("MTLinkController: isValidLinkRequest: Nach Denny Suchen Nr:" + j +" - Nicht erlaubte Objekt IDs: " + itt);	
+										System.out.println("MTLinkController: isValidLinkRequest: Nach Denny Suchen Nr:" + i +" - Nicht erlaubte Objekt IDs: " + itt);	
 										//Liste mit allen Objekten in dem
 										if (myobjectList.get(endObj).getObjecttyp() == itt) {
 											System.out.println("MTLinkController: isValidLinkRequest: LINK NICHT ERLAUBT - End Objekt : " + myobjectList.get(endObj).getObjecttyp() + " ist gleich StartObj: " + itt);
 											return false; // Denny gefunden aus der Schlaufe 
 										} 
-										j++;
+										i++;
 									}
-									return true;
-								}	
-							} else {
-								return false; // Ziel Objekt darf keine Verbindung auf nehmen
+			
+								} else {
+									return false;
+								}
+									
+								break;
+							case(1): // Eine Verbindung möglich
+								System.out.println("MTLinkController: isValidLinkRequest: CASE 1");
+								
+								if (noConnectionsAllowed(endObj)) {
+									if (hasanyLink(startObj) || hasanyLink(endObj)) {	
+										return false;
+									} else {
+										int j = 1;
+										for (Integer itt : it.getObjectdenylink()) {
+											System.out.println("MTLinkController: isValidLinkRequest: Nach Denny Suchen Nr:" + j +" - Nicht erlaubte Objekt IDs: " + itt);	
+											//Liste mit allen Objekten in dem
+											if (myobjectList.get(endObj).getObjecttyp() == itt) {
+												System.out.println("MTLinkController: isValidLinkRequest: LINK NICHT ERLAUBT - End Objekt : " + myobjectList.get(endObj).getObjecttyp() + " ist gleich StartObj: " + itt);
+												return false; // Denny gefunden aus der Schlaufe 
+											} 
+											j++;
+										}
+										return true;
+									}	
+								} else {
+									return false; // Ziel Objekt darf keine Verbindung auf nehmen
+								}
+								// TODO: Testen ob das ZielObjekt auch Kardinalität 1 hat
+							case(2): // Keine Verbindung möglich
+								System.out.println("MTLinkController: isValidLinkRequest: CASE 2");
+								return false;
+							
+							default:
+								break;
 							}
-							// TODO: Testen ob das ZielObjekt auch Kardinalität 1 hat
-						case(2): // Keine Verbindung möglich
-							System.out.println("MTLinkController: isValidLinkRequest: CASE 2");
-							return false;
-						
-						default:
-							break;
-						}
-				
-				} 
-//				return true;
+					
+					} 
+//					return true;
+				}
 			}
+		} else {
+			return false;
 		}
+		
 		return valid;
 	}
 	
@@ -528,6 +535,7 @@ public class MTLinkController {
 	private boolean hasanyLink(final int searchObj) {
 		boolean hasLink = false;
 		System.out.println("MTLinkController: hasanyLink: Link suchen Search Obj:" + searchObj);
+		
 		for (MTLink it : linkliste) {
 			if (it.getEndObjectID() == searchObj) {
 				hasLink = true;

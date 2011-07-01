@@ -3,7 +3,7 @@
   <mtobjects>
     <ch.mitoco.model.ModelMtObjects>
       <id>1</id>
-      <objecttyp>0</objecttyp>
+      <objecttyp>8</objecttyp>
       <objectcolor>
         <name>undefined</name>
         <r>12.0</r>
@@ -127,7 +127,7 @@
     </ch.mitoco.model.ModelMtObjects>
     <ch.mitoco.model.ModelMtObjects>
       <id>2</id>
-      <objecttyp>0</objecttyp>
+      <objecttyp>8</objecttyp>
       <objectcolor>
         <name>undefined</name>
         <r>12.0</r>
@@ -225,7 +225,7 @@
     </ch.mitoco.model.ModelMtObjects>
     <ch.mitoco.model.ModelMtObjects>
       <id>3</id>
-      <objecttyp>0</objecttyp>
+      <objecttyp>8</objecttyp>
       <objectcolor>
         <name>undefined</name>
         <r>12.0</r>
