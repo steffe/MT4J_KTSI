@@ -245,6 +245,33 @@ public class BuildRadialMenu extends MTComponent{
 				      }
 				    }; 
 				    
+				    
+				    final IMTInputEventListener savePicture = new IMTInputEventListener() {
+					      @Override
+					      public boolean processInputEvent(final MTInputEvent inEvt) {
+					    	  filename = "";
+					        // Most input events in MT4j are an instance of AbstractCursorInputEvt (mouse, multi-touch..)
+					        if (inEvt instanceof MTFingerInputEvt) {
+					          final MTFingerInputEvt cursorInputEvt = (MTFingerInputEvt) inEvt;
+					          switch (cursorInputEvt.getId()) {
+					            case TapEvent.GESTURE_STARTED:
+							            Mitoco.getMTApplication().saveFrame(SceneMitoco.getExportPath() + "out.png");
+					              break;
+					            case TapEvent.GESTURE_ENDED:
+					            default:
+					              break;
+					          }
+					        } else {
+					          //LOG.warn("Some other event occured:" + inEvt);
+					        }
+					        
+					        
+
+					        return false;
+					      }
+					    }; 
+				    
+				    
 				    /**
 				     * Listener to load show the Filechooser und choose an XML Scene
 				     */
@@ -553,12 +580,14 @@ public class BuildRadialMenu extends MTComponent{
 	        final MTMenuItem loadfileTest = new MTMenuItem("LoadThomas", null);
 	        final MTMenuItem saveFile = new MTMenuItem("Save File", null);
 	        final MTMenuItem submenu21 = new MTMenuItem("Reporting", null);
+	        final MTMenuItem savePic = new MTMenuItem("Save Picture", null);
 	        submenu21.addInputEventListener(startReporting); 
 	        actionmenu.addSubMenuItem(submenu21);
 	        actionmenu.addSubMenuItem(loadfile);
 	        actionmenu.addSubMenuItem(loadfileTest);
 	        actionmenu.addSubMenuItem(saveFile);
-	        actionmenu.addSubMenuItem(new MTMenuItem("Save Picture", null));
+	        actionmenu.addSubMenuItem(savePic);
+	        savePic.addInputEventListener(savePicture);
 	        
 	        loadfileTest.addInputEventListener(loadButtonInput2);
 	        loadfile.addInputEventListener(loadButtonInput);

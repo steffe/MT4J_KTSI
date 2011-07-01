@@ -241,6 +241,7 @@
         <z>0.0</z>
         <w>1.0</w>
       </objectposition>
+      <objectlable>2Attribute</objectlable>
     </ch.mitoco.model.ModelMtObjects>
     <ch.mitoco.model.ModelMtObjects>
       <id>0</id>
@@ -401,6 +402,7 @@
         <z>0.0</z>
         <w>1.0</w>
       </objectposition>
+      <objectlable>TestDropDown</objectlable>
     </ch.mitoco.model.ModelMtObjects>
     <ch.mitoco.model.ModelMtObjects>
       <id>0</id>
@@ -434,6 +436,54 @@
         <z>0.0</z>
         <w>1.0</w>
       </objectposition>
+      <objectlable>Picture</objectlable>
+    </ch.mitoco.model.ModelMtObjects>
+    <ch.mitoco.model.ModelMtObjects>
+      <id>0</id>
+      <objecttyp>8</objecttyp>
+      <objectcolor>
+        <name>undefined</name>
+        <r>112.0</r>
+        <g>160.0</g>
+        <b>60.0</b>
+        <alpha>34.0</alpha>
+        <writeProtected>false</writeProtected>
+      </objectcolor>
+      <objectattributs>
+      	<ch.mitoco.model.ModelMtAttributs>
+          <id>0</id>
+          <attributcontent>
+            <ch.mitoco.model.ModelAttributContent>
+              <type>String</type>
+              <value></value>
+            </ch.mitoco.model.ModelAttributContent>
+          </attributcontent>
+          <attributdefinition/>
+          <attcolor reference="../../../objectcolor"/>
+          <Lable>Default String</Lable>
+          <minMax>false</minMax>
+        </ch.mitoco.model.ModelMtAttributs>
+      	<ch.mitoco.model.ModelMtAttributs>
+      		<id>3</id>
+          <attributcontent>
+            <ch.mitoco.model.ModelAttributContent>
+              <type>Path</type>
+              <value></value>
+            </ch.mitoco.model.ModelAttributContent>
+          </attributcontent>
+          <attributdefinition/>
+          <attcolor reference="../../../../ch.mitoco.model.ModelMtObjects/objectcolor"/>
+          <Lable></Lable>
+          <minMax>false</minMax>
+      	</ch.mitoco.model.ModelMtAttributs>
+      </objectattributs>
+      <objectposition>
+        <x>300.0</x>
+        <y>200.0</y>
+        <z>0.0</z>
+        <w>1.0</w>
+      </objectposition>
+      <objectlable>Default Object</objectlable>
     </ch.mitoco.model.ModelMtObjects>
   </objecttyp>
   <objectdescription>
@@ -487,6 +537,13 @@
       <objectypeid>7</objectypeid>
       <objectdescription>Picture</objectdescription>
       <kardinalitaet>2</kardinalitaet>
+      <objectdenylink>
+      </objectdenylink>
+    </ch.mitoco.model.ModelTypDescription>
+    <ch.mitoco.model.ModelTypDescription>
+      <objectypeid>8</objectypeid>
+      <objectdescription>Default Objekt</objectdescription>
+      <kardinalitaet>0</kardinalitaet>
       <objectdenylink>
       </objectdenylink>
     </ch.mitoco.model.ModelTypDescription>
