@@ -6,55 +6,91 @@ import java.util.List;
 import org.mt4j.util.MTColor;
 import org.mt4j.util.font.IFont;
 import org.mt4j.util.math.Vector3D;
-
+/**Datamodel for the Object on a Scene.
+ * Contains a List for all Attributs.
+ * 
+ * The Objecttype ID is very Important for other Classes
+ * @author steffe
+ *
+ */
 public class ModelMtObjects {
+	/**Identification Number for the Object. */
 	private long id;
+	/**IMPORTENT The Objecttyp Number is defined in a other List. */
 	private int objecttyp;
+	/**Color of the Object. */
 	private MTColor objectcolor;
+	/**Line Color of the Object. */
 	private MTColor objectlinecolor;
+	/**Fillcolor of the Object. */
 	private MTColor objectFillcolor;
+	/**Fonttyp of the Attributs in the Object. */
 	private IFont objectfont;
+	/**Fonttyp of the Objectlabel. */
 	private IFont labelfont;
+	/**List of the Datamodel for all Attributs in this Object. */
 	private List<ModelMtAttributs> objectattributs;
+	/**Posision of the Object on a Scene. */
 	private Vector3D objectposition;
+	/**Name of the Object. */
 	private String objectlable;
-	/**	 */
+	/**Direction of the content.	 */
 	private boolean direction;
-	/**	 */
+	/**Size of the Object.	 */
 	private int zoom;
 	
 	
-	
+	/**Datamodel of the Object.
+	 * 
+	 */
 	public ModelMtObjects(){
 		objectattributs = new ArrayList<ModelMtAttributs>();
 	}
 
-
+	/**
+	 * 
+	 * @return
+	 */
 	public long getId() {
 		return id;
 	}
 
-
+	/**
+	 * 
+	 * @param id
+	 */
 	public void setId(long id) {
 		this.id = id;
 	}
 
-
+	/**
+	 * 
+	 * @return objectcolor
+	 */
 	public MTColor getObjectcolor() {
 		return objectcolor;
 	}
 
-
+	/**
+	 * 
+	 * @param objectcolor
+	 */
 	public void setObjectcolor(MTColor objectcolor) {
 		this.objectcolor = objectcolor;
 	}
 
-
+	/**
+	 * 
+	 * @return objectfont
+	 */
 	public IFont getObjectfont() {
 		return objectfont;
 	}
 
-
+	/**
+	 * 
+	 * @param objectfont
+	 */
 	public void setObjectfont(IFont objectfont) {
 		this.objectfont = objectfont;
 	}

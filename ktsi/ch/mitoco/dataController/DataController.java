@@ -8,7 +8,6 @@ import java.util.List;
 
 import org.mt4j.MTApplication;
 import org.mt4j.components.MTCanvas;
-import org.mt4j.util.MT4jSettings;
 
 import ch.mitoco.components.visibleComponents.MyMTObject;
 import ch.mitoco.components.visibleComponents.objectlink.MTLinkController;
@@ -243,8 +242,8 @@ public class DataController {
 			for (Iterator<ModelMtObjects> it = dataModel.getMtobjects().iterator(); it.hasNext();) {
 				myobjectList.add(new MyMTObject(mtApplication, it.next(), objectcounter, linker));
 				System.out.println("Object Gen:" + objectcounter);
-				linker.setTapAndHoldListener(getMyobjectList().get(objectcounter)); //TODO: Test
 				linker.setObjectList(myobjectList, dataModel.getMtobjectlinks(), getObjectetyps());
+				linker.setTapAndHoldListener(getMyobjectList().get(objectcounter)); //TODO: Test
 				objectcounter++;
 				
 			}
@@ -290,26 +289,22 @@ public class DataController {
 	 */
 	public void saveObjectXML() {
 		XStream xstreamSave = new XStream();
-		
-		
-		
-		
 		try {
-			xstreamSave.toXML(objectetyps, new FileOutputStream(MT4jSettings.getInstance().getDataFolderPath()+"objectlist1.xml"));
+			xstreamSave.toXML(objectetyps, new FileOutputStream("objectlist1.xml"));
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
-	/**
+	/**Set the MyMTObjectList
 	 * @param myobjectList the myobjectList to set
 	 */
 	public void setMyobjectList(ArrayList<MyMTObject> myobjectList) {
 		this.myobjectList = myobjectList;
 	}
 
-	/**
+	/**Returns the MyMTObject ArrayList for drawing.
 	 * @return the myobjectList
 	 */
 	public ArrayList<MyMTObject> getMyobjectList() {
@@ -331,14 +326,14 @@ public class DataController {
 		return linker;
 	}
 	
-	/**
+	/**To Set the Datamodel for the Objettyps.
 	 * @param objectetyps the objectetyps to set
 	 */
 	public void setObjectetyps(ModelObjectTyps objectetyps) {
 		this.objectetyps = objectetyps;
 	}
 
-	/**
+	/**Returns the Datamodel for the Objecttyps.
 	 * @return the objectetyps
 	 */
 	public ModelObjectTyps getObjectetyps() {
@@ -349,7 +344,7 @@ public class DataController {
 		
 	}
 
-	/**Returns the Objectcounter
+	/**Returns the Objectcounter.
 	 * @return int objectcounter
 	 */
 	public int getObjectcounter() {

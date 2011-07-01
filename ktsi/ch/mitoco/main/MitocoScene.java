@@ -338,7 +338,7 @@ public class MitocoScene extends AbstractScene {
       		
 		  }
 		  
-		  /**Gibt den Pfad mit der ausgewählten datei des Filechoosers zurück
+		  /**Gibt den Pfad mit der ausgewählten datei des Filechoosers zurück.
 		   * 
 		   * @return string
 		   */

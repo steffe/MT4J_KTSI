@@ -9,6 +9,7 @@ import java.util.Stack;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileSystemView;
 
+import org.mt4j.MTApplication;
 import org.mt4j.components.MTComponent;
 import org.mt4j.components.visibleComponents.shapes.MTRectangle;
 import org.mt4j.components.visibleComponents.shapes.MTRoundRectangle;
@@ -556,6 +557,10 @@ public class FileChooser extends MTComponent
         	
         	else if(pdf.accept(file) && !file.isDirectory()){
         		selectionPath = file.getPath();
+        		PDFViewer testpdf = new PDFViewer((MTApplication) (scene.getMTApplication()), "Test", selectionPath);
+            	scene.getCanvas().addChild(testpdf);
+            	testpdf.setVisible(true);
+            	testpdf.sendToFront();
             	//scene.drawXMLload(getSelectionPath());
             	toggleFileChooser();
         	}

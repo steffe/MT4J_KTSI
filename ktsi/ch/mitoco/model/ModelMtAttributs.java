@@ -11,10 +11,20 @@ import org.mt4j.util.MTColor;
  *
  */
 public class ModelMtAttributs {
-	/**
+	/**Fix Identificationnumber of an Attribut.
+	 * ID 0: 	MTTextAttribut
+	 * ID 1: 	MTNumField
+	 * ID 2: 	MTDropDown
+	 * ID 3: 	MTPictureBox
+	 * ID 4:    MTListAttribut
+	 * ID 5:	futur MTPainter
+	 * ID 6:	futur MTBrowser
+	 * ID 7:	futur MTPDFReader
+	 * ID 8:	futur MTTextBox
 	 * 
 	 */
 	private int id;
+	
 	/**
 	 * 
 	 */

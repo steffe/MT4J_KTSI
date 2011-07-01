@@ -485,13 +485,18 @@ public class SceneMitoco extends AbstractScene{
 		}
 	}
 	
-	
-	public static String getExportPath(){
-	
+	/**Returns the Default Export and Import path for the Application.
+	 * 
+	 * @return exportPath
+	 */
+	public static String getExportPath() {
 		return exportPath;
 	}
 	
-	public static void takescreenshot(){
+	/**Testmethod for Taking Screenshots in Fullscreen Mode from another thread.
+	 * 
+	 */
+	public static void takescreenshot() {
 		app.saveFrame(exportPath + "out###.png");
 	}
 	
