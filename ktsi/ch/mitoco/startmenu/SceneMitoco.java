@@ -2,6 +2,7 @@ package ch.mitoco.startmenu;
 
 import java.awt.event.KeyEvent;
 
+import org.mt4j.AbstractMTApplication;
 import org.mt4j.MTApplication;
 import org.mt4j.components.TransformSpace;
 import org.mt4j.components.visibleComponents.shapes.MTPolygon;
@@ -33,7 +34,11 @@ import org.mt4j.util.opengl.GLFBO;
 
 import processing.core.PApplet;
 import processing.core.PImage;
+import advanced.drawing.MainDrawingScene;
+import advanced.mtShell.ICreateScene;
 import advanced.mtShell.MTShellScene;
+import advanced.physics.scenes.AirHockeyScene;
+import advanced.physics.scenes.PhysicsScene;
 import ch.mitoco.dataController.LoadXML;
 import ch.mitoco.main.MitocoScene;
 import ch.mitoco.model.ModelFunctionList;
@@ -257,6 +262,35 @@ public class SceneMitoco extends AbstractScene{
 			
 			getCanvas().addChild(list);
 	
+			this.addScene(new ICreateScene() {
+				public Iscene getNewScene() {
+					return new AirHockeyScene(app, "Air Hockey");
+				}
+				public String getTitle() {
+					return "Air Hockey";
+				}
+			}, app.loadImage(this.getPathToIcons() + "airhockey_s.png"));
+			
+			if (this.hasFBO){
+				this.addScene(new ICreateScene() {
+					public Iscene getNewScene() {
+						return new MainDrawingScene(app, "MT Paint");
+					}
+					public String getTitle() {
+						return "MT Paint";
+					}
+				}, app.loadImage(this.getPathToIcons() + "drawing_s.png"));
+			}
+			
+			this.addScene(new ICreateScene() {
+				public Iscene getNewScene() {
+					return new PhysicsScene(app, "Physics Playground");
+				}
+				public String getTitle() {
+					return "Physics Playground";
+				}
+			}, app.loadImage(this.getPathToIcons() + "pyhsics_s.png"));
+			
 
 		for (int i = 0; i < emptyPlaceHolder; i++) {
 			this.addScene(new ICreateScene() {
@@ -500,6 +534,12 @@ public class SceneMitoco extends AbstractScene{
 	 */
 	public static void takescreenshot() {
 		app.saveFrame(exportPath + "out###.png");
+	}
+	
+	private String getPathToIcons(){
+//		return System.getProperty("user.dir")+File.separator+"examples"+File.separator+"advanced"+File.separator+"mtShell"+ File.separator +"data"+ File.separator+"images"+File.separator; 
+		//Load from classpath
+		return  "advanced" + AbstractMTApplication.separator + "mtShell" + AbstractMTApplication.separator + "data"+ AbstractMTApplication.separator + "images" + AbstractMTApplication.separator;
 	}
 	
 
