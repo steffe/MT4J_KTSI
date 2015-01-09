@@ -114,7 +114,9 @@ public class FileChooser extends MTComponent
 		//this.setSizeLocal(400,400);
 		
 		selectionPath = "";
+		
 		currDir = new WBFile(scene, new File(homeDir));
+		//currDir = new WBFile(scene, new File("C:\\webserver\\"));
 		currDispFiles = new ArrayList<WBFile>();
 		prevDirs = new Stack<WBFile>();
 		

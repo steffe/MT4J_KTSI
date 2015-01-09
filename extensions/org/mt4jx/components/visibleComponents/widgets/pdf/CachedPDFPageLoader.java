@@ -35,9 +35,9 @@ public class CachedPDFPageLoader {
 			System.out.println("this.storageRoot.getAbsolutePath():" + this.storageRoot.getAbsolutePath());
 			System.out.println("key:" + key);
 			try {
-				if(!new File(saveFilePath).exists()){
+				/*if(!new File(saveFilePath).exists()){
 					image.getPImage().save(saveFilePath);
-				}
+				}*/
 			} catch (Throwable e) {
 				System.out.println(e.getMessage());
 			}
@@ -69,14 +69,14 @@ public class CachedPDFPageLoader {
 		if(img ==null){
 			// from file
 			String storagePath = getStoragePath(key);
-			if(new File(storagePath).exists()){
+			/*if(new File(storagePath).exists()){
 				PApplet p = new PApplet();
 				PImage image = p.loadImage(storagePath);
 				RenderedPDFPage rpdf = new RenderedPDFPage(pdf, image, page, image.width*image.height);
 				System.out.println("CACHE: LOAD (DISK)" + key);
 				this.add(pdf, page, rpdf);
 				return rpdf;
-			}else{
+			}else{*/
 				// render
 				try {
 					System.out.println("CACHE: RENDER" + key);
@@ -98,7 +98,7 @@ public class CachedPDFPageLoader {
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-			}
+			//}
 		}else{
 			System.out.println("CACHE: GET (RAM): " + key);
 		}
@@ -143,6 +143,8 @@ public class CachedPDFPageLoader {
 	}
 	public synchronized void clear(){
 		this.renderedPDFPageTable.clear();
+		//this.cleanup();
+		//this.storageRoot.deleteOnExit();
 		this.lastAccessTable.clear();
 	}
 ////	TODO:Test

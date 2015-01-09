@@ -70,7 +70,14 @@ public class MTPDF extends MTRectangle {
 			File file = pdf;
 			RandomAccessFile raf = new RandomAccessFile(file, "r");
 			FileChannel channel = raf.getChannel();
-			ByteBuffer buf = channel.map(FileChannel.MapMode.READ_ONLY, 0, channel.size());
+			//ByteBuffer buf = channel.map(FileChannel.MapMode.READ_ONLY, 0, channel.size());
+			ByteBuffer buf = ByteBuffer.allocate((int)channel.size());
+			channel.read(buf);
+			//bb = ByteBuffer.allocate((int)fc.size());
+
+			
+			//fc.map(FileChannel.MapMode.READ_WRITE, 0, fc.size());
+			//bb = fc.map(FileChannel.MapMode.READ_WRITE, 0, fc.size());
 			pdffile = new PDFFile(buf);
 			this.numberOfPages = pdffile.getNumPages();
 			buf.clear();
@@ -113,7 +120,7 @@ public class MTPDF extends MTRectangle {
 			}
 		});
 	}
-	public void setPageNumber(int pn){
+	public void setPageNumber(int pn) throws IOException{
 		int pnumber;
 		if(pn<1){
 			pnumber = 1;
@@ -124,15 +131,11 @@ public class MTPDF extends MTRectangle {
 			pnumber = this.numberOfPages;
 		}
 		RenderedPDFPage page= null;
-//		try {
-			setRenderingFlag(true);
-			page = previewLoader.get(pdf, pnumber);
-			this.currentPage = page;
-			setRenderingFlag(false);
-			updateTexture();
-//		} catch (IOException e) {
-//			throw new RuntimeException(e);
-//		}
+		setRenderingFlag(true);
+		page = previewLoader.get(pdf, pnumber);
+		this.currentPage = page;
+		setRenderingFlag(false);
+		updateTexture();
 			System.out.println("page==null: " + (page==null));
 		this.setTexture(page.getPImage());
 		this.pageNumber = pnumber;

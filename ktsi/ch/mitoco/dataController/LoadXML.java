@@ -19,7 +19,7 @@ import com.thoughtworks.xstream.XStreamException;
 
 /**Loading a XML File which was generated with xstream and the MiToCo Datamodel
  * 
- * Erstellen des Scenen Datenmodels mithilfe iner bereits generierten XML Datei.
+ * Erstellen des Scenen Datenmodels mithilfe einer bereits generierten XML Datei.
  * 
  * @author steffe
  *

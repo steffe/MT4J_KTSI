@@ -1,5 +1,6 @@
 package org.mt4jx.components.visibleComponents.widgets.pdf.example;
 import java.io.File;
+import java.io.IOException;
 
 import org.mt4j.MTApplication;
 import org.mt4j.components.visibleComponents.widgets.MTTextArea;
@@ -43,7 +44,12 @@ public class PDFExampleScene extends AbstractScene {
 			public boolean processGestureEvent(MTGestureEvent ge) {
 				TapEvent te = (TapEvent)ge;
 				if(te.isTapped()){
-					pdf.setPageNumber(pdf.getPageNumber()-1);
+					try {
+						pdf.setPageNumber(pdf.getPageNumber()-1);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 				return false;
 			}
@@ -58,7 +64,12 @@ public class PDFExampleScene extends AbstractScene {
 			public boolean processGestureEvent(MTGestureEvent ge) {
 				TapEvent te = (TapEvent)ge;
 				if(te.isTapped()){
-					pdf.setPageNumber(pdf.getPageNumber()+1);
+					try {
+						pdf.setPageNumber(pdf.getPageNumber()+1);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 				return false;
 			}

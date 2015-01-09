@@ -1,6 +1,7 @@
 package ch.mitoco.components.visibleComponents.filechooser;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.mt4j.MTApplication;
 import org.mt4j.components.MTComponent;
@@ -34,7 +35,12 @@ private MTApplication app;
 		public boolean processGestureEvent(MTGestureEvent ge) {
 			TapEvent te = (TapEvent)ge;
 			if(te.isTapped()){
-				pdf.setPageNumber(pdf.getPageNumber()-1);
+				try {
+					pdf.setPageNumber(pdf.getPageNumber()-1);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 			return false;
 		}
@@ -50,7 +56,12 @@ private MTApplication app;
 		public boolean processGestureEvent(MTGestureEvent ge) {
 			TapEvent te = (TapEvent)ge;
 			if(te.isTapped()){
-				pdf.setPageNumber(pdf.getPageNumber()+1);
+				try {
+					pdf.setPageNumber(pdf.getPageNumber()+1);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 			return false;
 		}

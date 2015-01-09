@@ -214,6 +214,7 @@ public class MTNumField extends MTRoundRectangle{
 		
 		if(align==true){
 			float text_width = textarea.getTextWidth();	
+			//float text_width = textarea.getLastLineWidth();
 			System.out.println("Text Breite: = " +text_width);
 			System.out.println("Verschiebsatz: = " +(width-((int)text_width+5)));
 			textarea.setInnerPaddingLeft((width-((int)text_width+5)));
