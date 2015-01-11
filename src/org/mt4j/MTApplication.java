@@ -15,16 +15,19 @@ import java.util.Properties;
 import javax.media.opengl.GL;
 import javax.swing.ImageIcon;
 
+import org.mt4j.audio.Audio;
+import org.mt4j.audio.OpenALAudio;
 import org.mt4j.input.DesktopInputManager;
 import org.mt4j.util.DesktopPlatformUtil;
-import org.mt4j.util.MT4jSettings;
 import org.mt4j.util.PlatformUtil;
+import org.mt4j.util.MT4jSettings;
 import org.mt4j.util.SettingsMenu;
 import org.mt4j.util.animation.ani.AniAnimation;
 import org.mt4j.util.font.FontManager;
 import org.mt4j.util.font.fontFactories.BitmapFontFactory;
 import org.mt4j.util.font.fontFactories.SvgFontFactory;
 import org.mt4j.util.font.fontFactories.TTFontFactory;
+import org.mt4j.util.gdx.DesktopFiles;
 import org.mt4j.util.logging.ILogger;
 import org.mt4j.util.logging.Log4jLogger;
 import org.mt4j.util.logging.MTLoggerFactory;
@@ -55,15 +58,22 @@ public abstract class MTApplication extends AbstractMTApplication {
 	
 	private static boolean settingsLoadedFromFile = false; //cant initialize in constructor, need it before that!
 	protected ImageIcon mt4jIcon;
+
 	public static String CUSTOM_OPENGL_GRAPHICS = "org.mt4j.util.opengl.CustomPGraphicsOpenGL"; //PApplet.OPENGL
 //	public static String CUSTOM_OPENGL_GRAPHICS = OPENGL; //PApplet.OPENGL
+	
+	
+	//Audio Stuff (LibGDX)
+	public int simultaneousSources 		= 16;
+	public int audioDeviceBufferSize 	= 512;
+	public int audioDeviceBufferCount 	= 9;
+	//Audio Stuff
 	
 	
 	
 	public MTApplication(){
 		super();
 	}
-	
 	
 	
 	/**
@@ -177,6 +187,8 @@ public abstract class MTApplication extends AbstractMTApplication {
 			 
 			 MT4jSettings.getInstance().maxFrameRate = Integer.parseInt(properties.getProperty("MaximumFrameRate", String.valueOf(MT4jSettings.getInstance().getMaxFrameRate())).trim());
 			 MT4jSettings.getInstance().renderer = Integer.parseInt(properties.getProperty("Renderer", String.valueOf(MT4jSettings.getInstance().getRendererMode())).trim());
+			 MT4jSettings.getInstance().steroscopic = Boolean.parseBoolean(properties.getProperty("Stereoscopic", Boolean.valueOf(MT4jSettings.getInstance().isFullscreen()).toString()).trim());;
+			 MT4jSettings.getInstance().eyeseparation = Integer.parseInt(properties.getProperty("EyeSeparation", String.valueOf(MT4jSettings.getInstance().getRendererMode())).trim());
 			 MT4jSettings.getInstance().numSamples = Integer.parseInt(properties.getProperty("OpenGLAntialiasing", String.valueOf(MT4jSettings.getInstance().getNumSamples())).trim());
 	
 			 MT4jSettings.getInstance().vSync = Boolean.parseBoolean(properties.getProperty("Vertical_sync", Boolean.valueOf(MT4jSettings.getInstance().isVerticalSynchronization()).toString()).trim());
@@ -324,11 +336,20 @@ public abstract class MTApplication extends AbstractMTApplication {
 		} );
 		*/ 
 		
+		//Initialize OpenAL library for Audio
+		try {
+			if (!disableAudio) 
+				audio = new OpenALAudio(simultaneousSources, audioDeviceBufferCount, audioDeviceBufferSize);	
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		//Initialize Files 
+		files = new DesktopFiles();
+		
 		//Call startup at the end of setup(). Should be overridden in extending classes
 		this.startUp();
 	}
-	
-	
 	
 	
 
@@ -411,6 +432,23 @@ public abstract class MTApplication extends AbstractMTApplication {
 	    	gl.glEnable(GL.GL_LINE_SMOOTH);
 //	    	gl.glDisable(GL.GL_LINE_SMOOTH);
 	    }
+	}
+	
+	@Override
+	protected void runApplication() {
+		super.runApplication();
+		
+		//Update OpenAL Audio
+		if (audio != null)
+			((OpenALAudio)audio).update();
+	}
+	
+	@Override
+	public void exit() {
+		//Dispose OpenAL Audio
+		if (audio != null) 
+			((OpenALAudio)audio).dispose();
+		super.exit();
 	}
 	
 	

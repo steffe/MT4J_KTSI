@@ -1095,6 +1095,16 @@ public final class JoglGL20Plus implements GL20, GL11, GL11Plus {
 		gl.glVertexPointer(size, type, stride, pointer);
 	}
 
+	@Override
+	public void glDrawBuffer(int glBuffer) {
+		gl.glDrawBuffer(glBuffer);
+	}
+
+	@Override
+	public void glReadBuffer(int glBuffer) {
+		gl.glReadBuffer(glBuffer);
+	}
+
 
 
 	

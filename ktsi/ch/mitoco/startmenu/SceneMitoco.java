@@ -34,11 +34,17 @@ import org.mt4j.util.opengl.GLFBO;
 
 import processing.core.PApplet;
 import processing.core.PImage;
+import scenes.WaterSceneExportObf;
 import advanced.drawing.MainDrawingScene;
+import advanced.fluidSimulator.FluidSimulationScene;
+import advanced.models3D.Models3DScene;
+import advanced.modestMapsMT.MapsScene;
 import advanced.mtShell.ICreateScene;
 import advanced.mtShell.MTShellScene;
 import advanced.physics.scenes.AirHockeyScene;
 import advanced.physics.scenes.PhysicsScene;
+import advanced.space3D.Space3DScene;
+import advanced.touchTail.TouchTailScene;
 import ch.mitoco.dataController.LoadXML;
 import ch.mitoco.main.MitocoScene;
 import ch.mitoco.model.ModelFunctionList;
@@ -290,6 +296,61 @@ public class SceneMitoco extends AbstractScene{
 					return "Physics Playground";
 				}
 			}, app.loadImage(this.getPathToIcons() + "pyhsics_s.png"));
+			
+			this.addScene(new ICreateScene() {
+				public Iscene getNewScene() {
+					return new TouchTailScene(app, "Touch Tails");
+				}
+				public String getTitle() {
+					return "Touch Tails";
+				}
+			}, app.loadImage(this.getPathToIcons() + "touchtails_s.png"));
+			
+			this.addScene(new ICreateScene() {
+				public Iscene getNewScene() {
+					return new MapsScene(app, "Maps");
+				}
+				public String getTitle() {
+					return "Maps";
+				}
+			}, app.loadImage(this.getPathToIcons() + "maps_ss.png"));
+			
+			this.addScene(new ICreateScene() {
+				public Iscene getNewScene() {
+					return new WaterSceneExportObf(app, "Interactive Water"); 
+				}
+				public String getTitle() {
+					return "Interactive Water";
+				}
+			}, app.loadImage(this.getPathToIcons() + "water_s.png"));
+			
+			this.addScene(new ICreateScene() {
+				public Iscene getNewScene() {
+					return new FluidSimulationScene(app, "Fluid Particles");
+				}
+				public String getTitle() {
+					return "Fluid Particles";
+				}
+			}, app.loadImage(this.getPathToIcons() + "fluidparticles_s.png"));
+			
+			this.addScene(new ICreateScene() {
+				public Iscene getNewScene() {
+					return new Models3DScene(app, "3D Models");
+				}
+				public String getTitle() {
+					return "3D Models";
+				}
+			}, app.loadImage(this.getPathToIcons() + "teapot.jpg"));
+			
+			this.addScene(new ICreateScene() {
+				public Iscene getNewScene() {
+					return new Space3DScene(app, "Earth 3D");
+				}
+				public String getTitle() {
+					return "Earth 3D";
+				}
+			}, app.loadImage(this.getPathToIcons() + "earth_s.png"));
+					
 			
 
 		for (int i = 0; i < emptyPlaceHolder; i++) {

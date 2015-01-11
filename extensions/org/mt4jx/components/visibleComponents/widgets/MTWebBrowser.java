@@ -326,6 +326,12 @@ public class MTWebBrowser extends MTRoundRectangle {
 				navbar.appendCharByUnicode(unicode);
 			}
 		}
+
+		@Override
+		public void setEnableCaret(boolean b) {
+			// TODO Auto-generated method stub
+			
+		}
 	}
 	
 	private class BrowserInputKeyboardListener implements ITextInputListener{
@@ -365,6 +371,12 @@ public class MTWebBrowser extends MTRoundRectangle {
 				//boolean upper = Character.isUpperCase(chr);
 				getWebView().injectKeyTyped(chr);
 			}
+		}
+
+		@Override
+		public void setEnableCaret(boolean b) {
+			// TODO Auto-generated method stub
+			
 		}
 	}
 	

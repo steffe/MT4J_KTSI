@@ -398,6 +398,14 @@ public class JoglGL10 implements GL10 {
     @Override public void glPolygonMode (int face, int mode) {
             gl.glPolygonMode(face, mode);
     }
+
+	@Override public void glDrawBuffer(int glBuffer) {
+		gl.glDrawBuffer(glBuffer);
+	}
+
+	@Override public void glReadBuffer(int glBuffer) {
+		gl.glReadBuffer(glBuffer);
+	}
 }
 
 
